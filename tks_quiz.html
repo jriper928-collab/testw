@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TKS Test - Telekommunikasiya Şəbəkə və Sistemləri</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d4a;
+    --accent: #3b82f6;
+    --accent2: #6366f1;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --radius: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #60a5fa, #818cf8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+  /* START SCREEN */
+  #start-screen {
+    max-width: 540px;
+    width: 92%;
+    margin: 60px auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+  }
+  #start-screen .icon { font-size: 3rem; margin-bottom: 20px; }
+  #start-screen h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
+  #start-screen p { color: var(--muted); line-height: 1.6; margin-bottom: 32px; }
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 36px;
+  }
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 24px;
+    text-align: center;
+  }
+  .stat-box .num { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-box .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* QUIZ SCREEN */
+  #quiz-screen { display: none; width: 92%; max-width: 720px; margin: 32px auto 60px; }
+
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .q-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .q-text {
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    text-align: left;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.08);
+    transform: translateX(4px);
+  }
+  .option-btn .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .option-btn.correct {
+    border-color: var(--green);
+    background: rgba(16,185,129,0.12);
+    color: #6ee7b7;
+  }
+  .option-btn.correct .opt-letter {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+  }
+  .option-btn.wrong {
+    border-color: var(--red);
+    background: rgba(239,68,68,0.1);
+    color: #fca5a5;
+  }
+  .option-btn.wrong .opt-letter {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+  }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback-bar {
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    margin-top: 16px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .feedback-bar.show { display: flex; }
+  .feedback-bar.ok { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .feedback-bar.ko { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  /* RESULTS SCREEN */
+  #results-screen { display: none; width: 92%; max-width: 680px; margin: 48px auto 80px; }
+
+  .result-hero {
+    background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .result-hero .big-score {
+    font-size: 5rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    background: linear-gradient(90deg, #60a5fa, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .result-hero .out-of { color: var(--muted); font-size: 1rem; margin-bottom: 24px; }
+  .result-hero .verdict {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .result-hero .verdict-sub { color: var(--muted); font-size: 0.9rem; }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .result-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .result-tile .big { font-size: 2rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .result-tile .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .result-tile.green .big { color: var(--green); }
+  .result-tile.red .big { color: var(--red); }
+  .result-tile.blue .big { color: var(--accent); }
+
+  .review-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 0.88rem;
+  }
+  .review-item.wrong-item { border-color: rgba(239,68,68,0.35); }
+  .review-item .ri-q { font-weight: 600; margin-bottom: 6px; }
+  .review-item .ri-your { color: var(--red); margin-bottom: 4px; }
+  .review-item .ri-correct { color: var(--green); }
+  .review-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn-restart {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.18s;
+  }
+  .btn-restart:hover { opacity: 0.88; }
+
+  /* Responsive */
+  @media(max-width:520px){
+    .result-grid { grid-template-columns: 1fr 1fr; }
+    #start-screen { padding: 32px 24px; }
+    .q-card { padding: 22px 18px; }
+    .stats-row { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Telekommunikasiya Şəbəkə və Sistemləri</h1>
+  <p>İnteraktiv Test Sistemi</p>
+</div>
+
+<!-- START -->
+<div id="start-screen">
+  <div class="icon">📡</div>
+  <h2>TKS Testi</h2>
+  <p>Hər sual üçün 4 variant veriləcək. Düzgün cavabı seç. Sonda nəticəni görəcəksən.</p>
+  <div class="stats-row">
+    <div class="stat-box"><div class="num">75</div><div class="lbl">Sual</div></div>
+    <div class="stat-box"><div class="num">4</div><div class="lbl">Variant</div></div>
+    <div class="stat-box"><div class="num">100%</div><div class="lbl">Nəticə</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startQuiz()" style="width:100%;padding:16px;font-size:1rem;border-radius:12px;">Testi Başlat →</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-screen">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  <div class="q-meta">
+    <span class="q-num" id="q-num-label">Sual 1 / 75</span>
+    <span class="q-score" id="q-score-label">✓ 0 &nbsp; ✗ 0</span>
+  </div>
+  <div class="q-card">
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options-wrap"></div>
+    <div class="feedback-bar" id="feedback-bar"></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" id="skip-btn" onclick="nextQuestion()">Ötür</button>
+    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none;">Növbəti →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results-screen">
+  <div class="result-hero">
+    <div class="big-score" id="res-score">0</div>
+    <div class="out-of" id="res-out-of">75 sualdan</div>
+    <div class="verdict" id="res-verdict">—</div>
+    <div class="verdict-sub" id="res-sub">—</div>
+  </div>
+  <div class="result-grid">
+    <div class="result-tile green"><div class="big" id="res-correct">0</div><div class="lbl">✅ Düzgün</div></div>
+    <div class="result-tile red"><div class="big" id="res-wrong">0</div><div class="lbl">❌ Səhv</div></div>
+    <div class="result-tile blue"><div class="big" id="res-pct">0%</div><div class="lbl">📊 Faiz</div></div>
+  </div>
+  <div class="review-label">Səhv cavablar</div>
+  <div class="review-list" id="review-list"></div>
+  <button class="btn-restart" onclick="restartQuiz()">🔄 Testi Yenidən Başlat</button>
+</div>
+
+<script>
+const QA = [
+  { q:"Kanalın eni nə adlanır?", a:"Zolaq eni", w:["Tezlik sahəsi","Siqnal amplitudası","Ötürmə sürəti"] },
+  { q:"Analoq siqnalın əsas xüsusiyyəti nədir?", a:"Kəsilməz dəyişir", w:["Diskret qiymətlər alır","0 və 1 göstərir","Yalnız işıq formadadır"] },
+  { q:"Üçüncü qrup kanalı hansı tezlik zolağında təşkil olunur?", a:"812–2044 kHz", w:["0,3–3,4 kHz","60–108 kHz","2000–4000 kHz"] },
+  { q:"Kanalın effektiv tezlik spektri nədir?", a:"Kənar tezliklərdə zəifləməsi 8,7 dB-ə qədər olan tezlik spektri", w:["Siqnalın maksimal genişliyi","Daşıyıcının tezlik sahəsi","Moduiyasiya zolağı"] },
+  { q:"Səs yayımı üçün tezlik spektri necə əldə edilir?", a:"2 və ya 3 tonal tezlik kanalının birləşdirilməsi ilə", w:["Optik lifin bükülməsi ilə","Rəqəm kodlaşdırması ilə","Modulyasiya siqnalının filtrə edilməsi ilə"] },
+  { q:"Çoxkanallı veriliş sistemi nə üçün istifadə olunur?", a:"Eyni vaxtda bir neçə siqnal ötürmək", w:["Siqnalı şifrələmək","Siqnalı gücləndirmək","Tezlik zolağını daraltmaq"] },
+  { q:"Modulyasiya nədir?", a:"Siqnalın dəyişdirilməsi", w:["Siqnalın gücləndirilməsi","Siqnalın şifrələnməsi","Siqnalın ötürülməsi"] },
+  { q:"Daşıyıcı siqnal nədir?", a:"Yüksək tezlikli siqnal", w:["Aşağı tezlikli siqnal","İkilik siqnal","İmpuls siqnal"] },
+  { q:"Rəqəm veriliş sisteminin üstünlüyü nədir?", a:"Səs-küyə davamlıdır", w:["Qurğusu sadədir","Tezlik zolağı genişdir","Analoji siqnalla işləyir"] },
+  { q:"Optik lifdə siqnal hansı formada ötürülür?", a:"İşıq impulsu", w:["Elektrik impulsu","Maqnit dalğası","Radio dalğası"] },
+  { q:"Optik kabelin əsas elementi hansıdır?", a:"Şüşə lif", w:["Mis naqil","Koaksial kabel","Hava xətti"] },
+  { q:"Siqnalın zəifləməsi nə adlanır?", a:"Atteynuasiya", w:["Modulyasiya","Refleksiya","Dispersiya"] },
+  { q:"Elektromaqnit dalğalar harada istifadə olunur?", a:"Simsiz rabitədə", w:["Simli rabitədə","Optik rabitədə","Koaksial kabellərdə"] },
+  { q:"Rabitə kanalı nədir?", a:"Məlumatın ötürülməsini təmin edən stansiya və xətti qurğuların məcmusu", w:["Yalnız fiziki naqil","Kodlaşdırıcı qurğu","Antena sistemi"] },
+  { q:"Optik rabitənin üstünlüyü nədir?", a:"Yüksək ötürmə sürəti", w:["Ucuz qiymət","Asanlıqla quraşdırılır","Elektrik siqnalı istifadə edir"] },
+  { q:"Rəqəm rabitədə əsas ölçü vahidi:", a:"Bit/s", w:["Hz","Volt","Watt"] },
+  { q:"Rabitə sistemi neçə əsas hissədən ibarətdir?", a:"3", w:["2","4","5"] },
+  { q:"Telekommunikasiyanın əsas məqsədi:", a:"Məlumat ötürmək", w:["Enerji ötürmək","Siqnal yaratmaq","Mühiti gücləndirmək"] },
+  { q:"Multipleksləşdirmə nədir?", a:"Bir neçə siqnalın bir kanalda birləşdirilməsi", w:["Siqnalın bölünməsi","Siqnalın gücləndirilməsi","Siqnalın şifrlənməsi"] },
+  { q:"Rəqəm sistemlərində əsas kod hansıdır?", a:"İkilik", w:["Onluq","On altılıq","Üçlük"] },
+  { q:"Gücləndiricinin vəzifəsi nədir?", a:"Siqnalı gücləndirmək", w:["Siqnalı şifrələmək","Siqnalı modulyasiya etmək","Siqnalı bölmək"] },
+  { q:"Rabitə sisteminin əsas elementləri hansılardır?", a:"Ötürücü, kanal, qəbuledici", w:["Antena, kabel, modem","Server, router, switch","Mikrofon, naqil, dinamik"] },
+  { q:"Optik lifdə daxili tam əks olunma nə təmin edir?", a:"İşığın lifdə yayılmasını", w:["İşığın absorbsiyasını","Siqnalın güclənməsini","Kabelin qorunmasını"] },
+  { q:"Siqnal nədir?", a:"Ötürülən məlumatın fiziki ifadəsi", w:["Elektrik enerjisi","Rəqəmsal kod","Tezlik zolağı"] },
+  { q:"Rabitə sistemində səs-küy nədir?", a:"İstənməyən təsir", w:["Siqnalın gücü","Tezlik zolağı","Ötürmə sürəti"] },
+  { q:"Zolaq Süzgəcləri blokunun əsas vəzifəsi nədir?", a:"Lazımi tezlik zolağını seçib ayırmaq", w:["Siqnalı gücləndirmək","Siqnalı kodlaşdırmaq","Siqnalı rəqəmə çevirmək"] },
+  { q:"Televiziya yayımı üçün tələb olunan effektiv tezlik zolağı nə qədərdir?", a:"6 MHz-dən çox", w:["3,4 kHz","300 kHz","1 MHz"] },
+  { q:"Optik vericinin aktiv elementi?", a:"Lazer", w:["Tranzistor","Fotodiod","Kondensator"] },
+  { q:"Xüsusi kanal qrupları hansı xətlər üzrə təşkil olunur?", a:"Koaksial kabel, radiorele və peyk rabitə xətləri", w:["Mis naqil və optik lif","Hava xətti və kanal","Modem və switch"] },
+  { q:"Rəqəm siqnalı hansı formada ötürülür?", a:"İmpuls", w:["Sinus dalğası","Dalğa paketi","Sabit cərəyan"] },
+  { q:"Diskret siqnal nədir?", a:"Müəyyən anlarda dəyişən", w:["Daim dəyişən","Sabit qalan","İşıq siqnalı"] },
+  { q:"Optik rabitədə istifadə olunan aktiv mənbə hansıdır?", a:"İşıq diodu və lazer", w:["Mis naqil","Fotorezistor","Kondensator"] },
+  { q:"Kanalın ötürmə qabiliyyəti nə ilə ölçülür?", a:"Bit/s", w:["Volt","Amper","Hz"] },
+  { q:"Səs siqnalı hansı növdür?", a:"Analoq", w:["Rəqəm","Diskret","İkilik"] },
+  { q:"Optik veriliş sisteminin əsas elementidir", a:"Optik kabel", w:["Mis naqil","Koaksial kabel","Hava xətti"] },
+  { q:"Kanalları zamana görə ayrılan sistemlər necə adlanır?", a:"Rəqəmli", w:["Analoq","Hibrid","Sxematik"] },
+  { q:"İmpuls nədir?", a:"Qısa müddətli siqnal", w:["Uzun dalğa","Sabit gərginlik","Modulyasiya siqnalı"] },
+  { q:"Telekommunikasiya nədir?", a:"Məlumatın məsafəyə ötürülməsi", w:["Energetika sistemləri","Kompüter şəbəkəsi","Telefon istehsalı"] },
+  { q:"Elektrik rabitəsində əsas siqnal növü hansıdır?", a:"Elektrik", w:["İşıq","Akustik","Maqnit"] },
+  { q:"Rəqəm siqnalı hansı qiymətləri alır?", a:"0 və 1", w:["0, 1 və 2","Kəsilməz qiymətlər","Mənfi qiymətlər"] },
+  { q:"Rabitə kanalının vəzifəsi nədir?", a:"Siqnalı ötürmək", w:["Siqnalı yaratmaq","Siqnalı şifrələmək","Siqnalı saxlamaq"] },
+  { q:"Rabitə kanallarının əsas növlərindən biri hansıdır?", a:"Simli kanal", w:["Lazer kanal","Kvant kanal","Kosmik kanal"] },
+  { q:"Optik lif hansı materialdan hazırlanır?", a:"Şüşə", w:["Mis","Alüminium","Plastik kauçuk"] },
+  { q:"Rabitə xəttində siqnal itkisi nə ilə ölçülür?", a:"dB", w:["Volt","Watt","Amper"] },
+  { q:"Optik veriliş sisteminin aktiv elementi", a:"Fotodetektor", w:["Rezistor","Kondensator","Transformator"] },
+  { q:"Rəqəm siqnalının üstünlüyü nədir?", a:"Səs-küyə davamlılıq", w:["Sadə qurğu","Ucuz qiymət","Geniş tezlik zolağı"] },
+  { q:"Analoq sistemlərdə əsas çatışmazlıq nədir?", a:"Səs-küyə həssasdır", w:["Sürəti azdır","Qurğusu mürəkkəbdir","Şifrələmə olmur"] },
+  { q:"Rabitə sistemində qəbuledicinin vəzifəsi nədir?", a:"Siqnal qəbul edir", w:["Siqnal ötürür","Siqnal yaradır","Siqnal gücləndirmir"] },
+  { q:"Fotodiodun əsas vəzifəsi", a:"İşıq siqnallarını elektrik siqnallarına çevirmək", w:["Elektrik siqnalını işığa çevirmək","Siqnalı gücləndirmək","Siqnalı bölmək"] },
+  { q:"Optik rabitədə itki azdır çünki:", a:"İşıq istifadə olunur", w:["Mis naqil istifadə olunur","Yüksək tezlik var","Modulyasiya yoxdur"] },
+  { q:"Rabitə sistemi hansı məqsədlə yaradılır?", a:"Məlumat ötürmək", w:["Enerji istehsal etmək","Siqnal gücləndirmək","Fotoşəkil çəkmək"] },
+  { q:"Çoxkanallı sistemlərdə kanalların əsas hissəsi nə üçün istifadə olunur?", a:"Telefon siqnallarının ötürülməsi", w:["Video ötürmə","Radio yayımı","Kosmik rabitə"] },
+  { q:"0,3–3,4 kHz tezlik zolağı əsasən hansı siqnal üçündür?", a:"Telefon siqnalları", w:["Televiziya siqnalı","Radio yayımı","Koaksial siqnal"] },
+  { q:"Bit nədir?", a:"İkilik rəqəm", w:["8 rəqəm","Onluq rəqəm","Bayt vahidi"] },
+  { q:"Byte neçə bitdir?", a:"8", w:["4","16","2"] },
+  { q:"Rəqəm siqnalında 1 nəyi göstərir?", a:"Yüksək səviyyə", w:["Aşağı səviyyə","Orta səviyyə","Sıfır gərginlik"] },
+  { q:"Optik lifin örtüyü nə üçündür?", a:"Qorumaq", w:["Siqnalı gücləndirir","Tezliyi artırır","Rəngi dəyişir"] },
+  { q:"Rəqəm rabitədə əsas üstünlük:", a:"Sürət", w:["Ucuz qiymət","Sadə qurğu","Böyük ölçü"] },
+  { q:"Optik xətdə məsafə artdıqca nə baş verir?", a:"Siqnal zəifləyir", w:["Siqnal güclənir","Siqnal dəyişmir","Tezlik artır"] },
+  { q:"Əsas tip kanalın effektiv tezlik zolağı neçədir?", a:"0,3–3,4 kHz", w:["60–108 kHz","812–2044 kHz","1–10 MHz"] },
+  { q:"Qəzet zolaqları əsasən hansı kanalla ötürülür?", a:"İkinci genişzolaqlı", w:["Birinci dar zolaqlı","Üçüncü qrup","Telefon kanalı"] },
+  { q:"Elektromaqnit dalğalar boşluqda yayıla bilərmi?", a:"Bəli", w:["Xeyr","Yalnız sudakı boşluqda","Yalnız havalı mühitdə"] },
+  { q:"Optik lifdə əsas prinsip:", a:"Tam daxili əks olunma", w:["Modulyasiya","Amplituda artımı","Dalğa interferensiyası"] },
+  { q:"Siqnalın forması nə ilə xarakterizə olunur?", a:"Amplituda və tezliklə", w:["Rəng və şəkilçi ilə","Uzunluq və kütlə ilə","Sürət və istiqamətlə"] },
+  { q:"Analoq-rəqəm çevirici nə edir?", a:"Anoloqu rəqəmə çevirir", w:["Rəqəmi analoqa çevirir","Siqnalı gücləndirır","Siqnalı filtrləyir"] },
+  { q:"Rəqəm siqnalının əsas çatışmazlığı:", a:"Qurğu mürəkkəbdir", w:["Sürəti azdır","Səs-küyə həssasdır","Tezlik zolağı dardır"] },
+  { q:"Yayılma mühiti nədir?", a:"Optik kabel", w:["Lazer diod","Gücləndiricı","Multiplekser"] },
+  { q:"Optik siqnalların ötürmə mühiti?", a:"Optik lif", w:["Mis naqil","Hava","Koaksial kabel"] },
+  { q:"dB nəyi göstərir?", a:"Nisbəti və itkini", w:["Tezliyi","Amplitudanı","Sürəti"] },
+  { q:"Kanalın keyfiyyəti nə ilə azalır?", a:"Səs-küy ilə", w:["Tezlik artımı ilə","Güc artımı ilə","Optik lifin uzunluğu ilə"] },
+  { q:"Optik lifli rabitə harada geniş istifadə olunur?", a:"İnternetdə", w:["Televiziyada","Radio yayımında","Enerji sistemlərində"] },
+  { q:"Rəqəm sistemlərində məlumat necə ötürülür?", a:"Kod şəklində", w:["Sinus dalğası ilə","İşıq şüası ilə","Akustik dalğa ilə"] },
+  { q:"Rabitə xətti nədir?", a:"Siqnalın ötürüldüyü mühit", w:["Siqnal yaradıcısı","Gücləndiricı","Modulyator"] },
+  { q:"Analoq siqnalın nümunəsi:", a:"Sinus dalğa", w:["İkilik kod","İmpuls sırası","Rəqəm axını"] },
+  { q:"Analoq veriliş sisteminə misal hansıdır?", a:"Radio yayımı", w:["Rəqəm telefonu","Optik internet","İkilik kod ötürməsi"] },
+];
+
+let questions = [];
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let answered = false;
+let wrongAnswers = [];
+
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+function buildQuestions() {
+  questions = shuffle([...QA]).map(item => {
+    const opts = shuffle([item.a, ...item.w]);
+    return { ...item, opts };
+  });
+}
+
+function startQuiz() {
+  buildQuestions();
+  current = 0; correct = 0; wrong = 0; answered = false; wrongAnswers = [];
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  answered = false;
+  document.getElementById('q-num-label').textContent = `Sual ${current + 1} / ${questions.length}`;
+  document.getElementById('q-score-label').innerHTML = `✓ ${correct} &nbsp; ✗ ${wrong}`;
+  document.getElementById('progress-fill').style.width = `${(current / questions.length) * 100}%`;
+  document.getElementById('q-text').textContent = q.q;
+
+  const wrap = document.getElementById('options-wrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => checkAnswer(opt, btn, q.a);
+    wrap.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback-bar');
+  fb.className = 'feedback-bar';
+  fb.textContent = '';
+
+  document.getElementById('skip-btn').style.display = '';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function checkAnswer(selected, btn, correct_a) {
+  if (answered) return;
+  answered = true;
+
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const txt = b.textContent.slice(1).trim();
+    if (txt === correct_a) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback-bar');
+  if (selected === correct_a) {
+    correct++;
+    btn.classList.add('correct');
+    fb.className = 'feedback-bar show ok';
+    fb.textContent = '✅ Düzgün cavab!';
+  } else {
+    wrong++;
+    btn.classList.add('wrong');
+    fb.className = 'feedback-bar show ko';
+    fb.textContent = `❌ Səhv! Düzgün cavab: ${correct_a}`;
+    wrongAnswers.push({ q: questions[current].q, your: selected, correct: correct_a });
+  }
+
+  document.getElementById('skip-btn').style.display = 'none';
+  document.getElementById('next-btn').style.display = '';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  const rs = document.getElementById('results-screen');
+  rs.style.display = 'block';
+
+  const pct = Math.round((correct / questions.length) * 100);
+  document.getElementById('res-score').textContent = correct;
+  document.getElementById('res-out-of').textContent = `${questions.length} sualdan`;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-pct').textContent = pct + '%';
+
+  let verdict = '', sub = '';
+  if (pct >= 90) { verdict = '🏆 Əla!'; sub = 'Mükəmməl nəticə!'; }
+  else if (pct >= 75) { verdict = '✨ Yaxşı!'; sub = 'Çox yaxşı hazırlıq.'; }
+  else if (pct >= 50) { verdict = '📚 Orta'; sub = 'Bir az daha çalışmaq lazımdır.'; }
+  else { verdict = '💪 Zəif'; sub = 'Mövzuları yenidən oxu.'; }
+  document.getElementById('res-verdict').textContent = verdict;
+  document.getElementById('res-sub').textContent = sub;
+
+  const reviewList = document.getElementById('review-list');
+  reviewList.innerHTML = '';
+  if (wrongAnswers.length === 0) {
+    reviewList.innerHTML = '<div style="text-align:center;color:var(--green);padding:20px;">🎉 Heç bir səhv yoxdur!</div>';
+  } else {
+    wrongAnswers.forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'review-item wrong-item';
+      div.innerHTML = `<div class="ri-q">${i+1}. ${item.q}</div>
+        <div class="ri-your">❌ Sənin cavabın: ${item.your}</div>
+        <div class="ri-correct">✅ Düzgün cavab: ${item.correct}</div>`;
+      reviewList.appendChild(div);
+    });
+  }
+  rs.scrollTop = 0;
+}
+
+function restartQuiz() {
+  document.getElementById('results-screen').style.display = 'none';
+  startQuiz();
+}
+</script>
+</body>
+</html>
