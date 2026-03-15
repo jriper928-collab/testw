@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siqnallar ve Sistemler - Test</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#080c14;min-height:100vh;padding:28px 14px 60px;display:flex;justify-content:center}
+body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(0,198,255,.025)1px,transparent 1px),linear-gradient(90deg,rgba(0,198,255,.025)1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-180px;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(0,100,255,.1)0%,transparent 65%);pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;width:100%;max-width:800px}
+header{text-align:center;margin-bottom:34px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,198,255,.07);border:1px solid rgba(0,198,255,.2);border-radius:50px;padding:5px 16px;font-size:.72rem;color:#00c6ff;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:16px}
+.bdot{width:7px;height:7px;border-radius:50%;background:#00c6ff;box-shadow:0 0 8px #00c6ff;animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:2rem;font-weight:800;color:#fff;margin-bottom:8px}
+h1 em{font-style:normal;background:linear-gradient(90deg,#00c6ff,#0072ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{color:#3d5570;font-size:.87rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.pill{background:rgba(255,255,255,.03);border:1px solid rgba(0,198,255,.1);border-radius:13px;padding:11px 8px;text-align:center}
+.pill .v{font-size:1.2rem;font-weight:800;color:#fff;display:block}
+.pill .l{font-size:.63rem;color:#3d5570;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-top:2px}
+.pill.c .v{color:#00e5a0}.pill.w .v{color:#ff4d6a}.pill.p .v{color:#00c6ff}
+.prow{display:flex;justify-content:space-between;margin-bottom:7px}
+.prow span{font-size:.78rem;color:#3d5570;font-weight:500}
+.prow .hi{color:#00c6ff;font-weight:700}
+.track{background:rgba(255,255,255,.05);border-radius:50px;height:5px;margin-bottom:22px;overflow:hidden}
+.fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#0072ff,#00c6ff);box-shadow:0 0 12px rgba(0,198,255,.4);transition:width .5s ease}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(0,198,255,.12);border-radius:20px;padding:30px 32px;box-shadow:0 24px 64px rgba(0,0,0,.55)}
+.qhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+.qtag{font-size:.7rem;font-weight:700;color:#00c6ff;letter-spacing:2.5px;text-transform:uppercase}
+.mdots{display:flex;gap:5px}
+.md{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.07)}
+.md.done{background:#0072ff}
+.md.cur{background:#00c6ff;box-shadow:0 0 7px #00c6ff}
+.qtext{font-size:1.1rem;font-weight:600;color:#dde8f5;line-height:1.65;margin-bottom:22px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{background:rgba(255,255,255,.025);border:1.5px solid rgba(255,255,255,.07);border-radius:13px;padding:13px 17px;color:#8da8c4;font-size:.93rem;font-family:inherit;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;position:relative;transition:all .17s ease}
+.opt:hover:not(:disabled){border-color:rgba(0,198,255,.35);color:#e8f2ff;transform:translateX(5px);box-shadow:-3px 0 0 #00c6ff}
+.ltr{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#3d5570;transition:all .17s}
+.opt:hover:not(:disabled) .ltr{background:rgba(0,198,255,.1);border-color:rgba(0,198,255,.3);color:#00c6ff}
+.opt.ok{background:rgba(0,229,160,.07);border-color:#00e5a0;color:#9af5d6}
+.opt.ok .ltr{background:#00e5a0;border-color:#00e5a0;color:#00291e}
+.opt.ok::after{content:"✓";position:absolute;right:17px;color:#00e5a0;font-weight:800;font-size:1rem}
+.opt.no{background:rgba(255,77,106,.07);border-color:#ff4d6a;color:#ffb3bc}
+.opt.no .ltr{background:#ff4d6a;border-color:#ff4d6a;color:#fff}
+.opt.no::after{content:"✗";position:absolute;right:17px;color:#ff4d6a;font-weight:800;font-size:1rem}
+.opt:disabled{cursor:default;transform:none!important}
+.fb{margin-top:16px;padding:12px 16px;border-radius:11px;font-size:.87rem;font-weight:500;display:none;line-height:1.5}
+.fb.show{display:block;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.fb.fok{background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.22);color:#6ee7c0}
+.fb.fno{background:rgba(255,77,106,.06);border:1px solid rgba(255,77,106,.22);color:#ffaab5}
+.nxt{margin-top:20px;width:100%;padding:14px;border-radius:13px;border:none;background:linear-gradient(135deg,#0072ff,#00c6ff);color:#fff;font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer;display:none;box-shadow:0 4px 22px rgba(0,114,255,.32);transition:opacity .2s,transform .2s}
+.nxt:hover{opacity:.88;transform:translateY(-2px)}
+.quiz-actions{display:flex;gap:10px;margin-top:10px}
+.act-btn{flex:1;padding:11px 10px;border-radius:12px;border:1px solid rgba(0,198,255,.2);background:rgba(0,198,255,.05);color:#00c6ff;font-size:.82rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .18s}
+.act-btn:hover{background:rgba(0,198,255,.12);border-color:#00c6ff}
+.act-btn.danger{border-color:rgba(255,77,106,.25);background:rgba(255,77,106,.05);color:#ff4d6a}
+.act-btn.danger:hover{background:rgba(255,77,106,.12);border-color:#ff4d6a}
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:#0d1520;border:1px solid rgba(255,77,106,.3);border-radius:18px;padding:32px 28px;text-align:center;max-width:320px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.confirm-box h3{color:#fff;font-size:1.1rem;margin-bottom:8px}
+.confirm-box p{color:#3d5570;font-size:.85rem;margin-bottom:22px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-btns button{flex:1;padding:12px;border-radius:11px;border:none;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all .18s}
+.cb-yes{background:#ff4d6a;color:#fff}
+.cb-yes:hover{opacity:.88}
+.cb-no{background:rgba(255,255,255,.07);color:#8da8c4;border:1px solid rgba(255,255,255,.1)!important}
+.cb-no:hover{background:rgba(255,255,255,.12)}
+.nxt.show{display:block;animation:pop .25s ease}
+#result{display:none}
+.rcard{background:rgba(255,255,255,.03);border:1px solid rgba(0,198,255,.12);border-radius:20px;padding:38px 34px;box-shadow:0 24px 64px rgba(0,0,0,.55)}
+.rtop{text-align:center;margin-bottom:28px}
+.rem{font-size:2.8rem;margin-bottom:10px}
+.rtitle{font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:6px}
+.rsub{color:#3d5570;font-size:.86rem;margin-bottom:24px}
+.ringwrap{display:flex;justify-content:center;margin-bottom:8px}
+.ring{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px rgba(0,198,255,.18);position:relative}
+.ringin{position:relative;z-index:1;text-align:center}
+.rpct{font-size:1.85rem;font-weight:800;color:#fff;line-height:1}
+.rlbl{font-size:.66rem;color:#3d5570;letter-spacing:1.5px;text-transform:uppercase}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.rsi{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:13px 8px;text-align:center}
+.rsi .v{font-size:1.4rem;font-weight:800;color:#fff;display:block}
+.rsi .l{font-size:.63rem;color:#3d5570;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;display:block}
+.rsi.rc .v{color:#00e5a0}.rsi.rw .v{color:#ff4d6a}
+.wsec{margin-top:24px;border-top:1px solid rgba(255,255,255,.05);padding-top:20px}
+.wsec h3{font-size:.73rem;font-weight:700;color:#ff4d6a;letter-spacing:2px;text-transform:uppercase;margin-bottom:13px}
+.wi{background:rgba(255,77,106,.04);border:1px solid rgba(255,77,106,.13);border-radius:12px;padding:13px 15px;margin-bottom:9px}
+.win{font-size:.65rem;font-weight:700;color:#ff4d6a;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.wiq{color:#c5d9ee;font-size:.86rem;font-weight:600;margin-bottom:7px;line-height:1.5}
+.wiy{color:#ff8fa0;font-size:.8rem;margin-bottom:3px}
+.wic{color:#5ef0b8;font-size:.8rem}
+.allok{text-align:center;padding:18px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.18);border-radius:12px;color:#00e5a0;font-weight:600;font-size:.92rem;margin-top:20px}
+.restart{margin-top:24px;width:100%;padding:15px;border-radius:13px;border:none;background:linear-gradient(135deg,#0072ff,#00c6ff);color:#fff;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 22px rgba(0,114,255,.32);transition:opacity .2s,transform .2s}
+.restart:hover{opacity:.88;transform:translateY(-2px)}
+@media(max-width:520px){.card,.rcard{padding:18px 14px}h1{font-size:1.5rem}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge"><span class="bdot"></span>Rabite Texnologiyalari</div>
+  <h1>Siqnallar ve <em>Sistemler</em></h1>
+  <p>75 sual &middot; Cavabla &middot; Neticeni gor</p>
+</header>
+
+<div id="quiz">
+  <div class="stats">
+    <div class="pill"><span class="v" id="s-t">75</span><span class="l">Umumi</span></div>
+    <div class="pill c"><span class="v" id="s-ok">0</span><span class="l">Duzgun</span></div>
+    <div class="pill w"><span class="v" id="s-no">0</span><span class="l">Sehv</span></div>
+    <div class="pill p"><span class="v" id="s-l">75</span><span class="l">Qalir</span></div>
+  </div>
+  <div class="prow"><span id="plbl">Sual 1 / 75</span><span class="hi" id="ppct">0%</span></div>
+  <div class="track"><div class="fill" id="pfill" style="width:0%"></div></div>
+  <div class="card">
+    <div class="qhead">
+      <span class="qtag" id="qtag">SUAL 01</span>
+      <div class="mdots" id="mdots"></div>
+    </div>
+    <div class="qtext" id="qtext"></div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <button class="nxt" id="nxt" onclick="goNext()">Novbeti Sual &rarr;</button>
+    <div class="quiz-actions">
+      <button class="act-btn" id="sound-btn" onclick="toggleSound()" title="Sesi acib/bagla">&#128266; Ses: Aciq</button>
+      <button class="act-btn danger" onclick="confirmRestart()" title="Testi yeniden basla">&#8635; Yeniden Basla</button>
+    </div>
+  </div>
+</div>
+
+<div id="result">
+  <div class="rcard">
+    <div class="rtop">
+      <div class="rem" id="rem">&#127942;</div>
+      <div class="rtitle" id="rtitle">Ela netice!</div>
+      <div class="rsub" id="rsub"></div>
+      <div class="ringwrap"><div class="ring" id="ring">
+        <div class="ringin"><div class="rpct" id="rpct">0%</div><div class="rlbl">netice</div></div>
+      </div></div>
+      <div class="rstats">
+        <div class="rsi"><span class="v">75</span><span class="l">Sual</span></div>
+        <div class="rsi rc"><span class="v" id="rok">0</span><span class="l">Duzgun</span></div>
+        <div class="rsi rw"><span class="v" id="rno">0</span><span class="l">Sehv</span></div>
+      </div>
+    </div>
+    <div id="wlist"></div>
+    <button class="restart" onclick="restart()">&#128260; Yeniden Basla</button>
+  </div>
+</div>
+</div>
+
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3>Testi yeniden basla?</h3>
+    <p>Butun ireli gedis silinecek. Eminsiniz?</p>
+    <div class="confirm-btns">
+      <button class="cb-yes" onclick="doRestart()">Beli, Basla</button>
+      <button class="cb-no" onclick="closeConfirm()">Xeyr, Davam Et</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var Q=[
+{q:"Siqnal nədir?",o:["İnformasiyanın saxlanma forması","Ötürülən məlumatın fiziki prosesini xarakterize edir","Rabitə kanalının yükü","Tezliyin loqarifmik ifadəsi"],a:1},
+{q:"Məlumat nədir?",o:["İnformasiyanın loqarifmik ölçüsü","Siqnalın amplitudası","İnformasiya mənbəyindən alana kimi informasiyanın ötürülməsini təmin edən formasıdır","Periodik siqnalın növü"],a:2},
+{q:"İnformasiya nədir?",o:["Siqnalın tezliyi","Latın sözü olub, hər hansı predmet haqqında məlumat formasında ifadə edilir","Rabitə sisteminin yükü","Diskret siqnal növü"],a:1},
+{q:"Trafik nədir?",o:["Siqnalın amplitudası","Modulyasiya prosesi","Kommunikasiya sistemlərinin yükü, rabitə kanalının yükü","Dekodlama prosesi"],a:2},
+{q:"İKT neçə bazadan ibarətdir?",o:["3 növ","4 növ","5 növ","6 növ"],a:2},
+{q:"Siqnalın hansı əsas növləri var?",o:["Periodik və qeyri-periodik","Analoq və diskret","Sinusoidal və kosinusoidal","Lineer və qeyri-lineer"],a:1},
+{q:"Analoq siqnallar hansı siqnallardır?",o:["Zamandan asılı olaraq sonlu sayda qiymət alır","Yalnız 0 və 1 qiymət alır","Zamandan asılı olaraq sonsuz sayda qiymət alır","Sabit qiymət alır"],a:2},
+{q:"Diskret siqnallar hansı siqnallardır?",o:["Zamandan asılı olaraq sonsuz sayda qiymət alır","Zamandan asılı olaraq sonlu sayda qiymət alır","Periodu daim təkrar olur","Yalnız müsbət qiymət alır"],a:1},
+{q:"Periodik siqnallar hansı siqnallardır?",o:["Periodu heç vaxt təkrar olmur","Periodu təkrar olur","Yalnız bir dəfə baş verir","Tezliyi sıfırdır"],a:1},
+{q:"Qeyri-periodik siqnallar hansı siqnallardır?",o:["Periodu daim sabitdir","Periodu hər dəfə iki dəfə artır","Periodu təkrar olmayanlardır","Amplitudası dəyişməyənlər"],a:2},
+{q:"Rabitə siqnallarında hansı siqnallardan istifadə olunur?",o:["Yalnız periodik siqnallar","Analoq və diskret","Yalnız qeyri-periodik siqnallar","Yalnız analoq siqnallar"],a:1},
+{q:"Rabitə sistemlərində hansı siqnallardan istifadə olunmur?",o:["Analoq siqnallar","Diskret siqnallar","Qeyri-periodik siqnallar","Periodik siqnallar"],a:2},
+{q:"Siqnalın periodu nədir?",o:["Siqnalın maksimum amplitudası","Tam bir dövrə sərf olan zamandır","Tezliyin ikiqat qiyməti","Fazanın loqarifmi"],a:1},
+{q:"Siqnalın tezliyi nədir?",o:["Amplitudanın maksimum qiyməti","Periodu tərsidir","Fazanın bucağı","Siqnalın gücü"],a:1},
+{q:"Siqnalın amplitudası nədir?",o:["Siqnalın orta qiyməti","Siqnalın gərginliyinin maksimum qiymətidir","Siqnalın periodu","Siqnalın tezliyi"],a:1},
+{q:"Siqnalın fazası nədir?",o:["Siqnalın maksimum tezliyi","Siqnalın periodu ilə tezliyinin hasili","Siqnalın koordinat oxu arasında qalan bucaqdır","Siqnalın amplitudasının loqarifmi"],a:2},
+{q:"Tezlik vahidi nə götürülür?",o:["m/s","Hz = 1/san","Desibel","Volt"],a:1},
+{q:"Siqnalın fiziki xarakteristikası hansı parametrlərdən asılıdır?",o:["Yalnız amplitudadan","Güc, zaman, uzunluq","Amplitudadan, fazadan, tezlikdən","Yalnız tezlikdən"],a:2},
+{q:"Dinamik diapazonu nədir?",o:["Siqnalın orta tezliyi","Siqnalın maksimum gücündən minimum gücünə nisbətinin loqarifmik ifadəsidir","Siqnalın amplitudasının kvadratı","Tezlik zolağının eni"],a:1},
+{q:"Dinamik diapazonun vahidi nədir?",o:["Hertz və MHz","Volt və Amper","Desibel və Neper","Farad və Henri"],a:2},
+{q:"Səsli siqnalların insan tezlik zolağının eni neçədir?",o:["0,1 : 1 kHz","0,3 : 3,4 kHz","1 : 10 kHz","10 : 100 kHz"],a:1},
+{q:"Teleqraf rabitəsi kanalları üçün tezlik zolağının eni?",o:["10-100 Hz","80-1200 Hz","4000 Hz","6,5 MHz"],a:1},
+{q:"Verilənlərin rabitə kanalı üçün tezlik zolağı?",o:["dF >= 50-2400 Hz","dF = 6,5 MHz","dF = 80 Hz","dF <= 10 kHz"],a:0},
+{q:"Telefon rabitəsi kanalları üçün tezlik zolağı?",o:["~80 Hz","~4 kHz","~6,5 MHz","~10 GHz"],a:1},
+{q:"Fax / E-mail üçün tezlik zolağı?",o:["FRR >= 1000 Hz","FRR >= 4000 Hz","FRR >= 10 kHz","FRR = 6,5 MHz"],a:1},
+{q:"Radio rabitə üçün tezlik zolağı?",o:[">= 4000 Hz",">= 10 kHz","= 6,5 MHz","<= 80 Hz"],a:1},
+{q:"Televiziya yayımı üçün tezlik zolağı?",o:["= 4 kHz","= 10 kHz","= 6,5 MHz","= 1 GHz"],a:2},
+{q:"Siqnalın həcmi necə hesablanır?",o:["Vs = ts + dFs + dDs","Vs = ts x dFs x dDs","Vs = ts / dFs","Vs = dFs x dDs / ts"],a:1},
+{q:"Dinamik diapazonu hansı düsturla tapılır?",o:["dDs = Pmax + Pmin","dDs = Pmax - Pmin","dDs = 10 lg (Pmax/Pmin)","dDs = Pmax x Pmin"],a:2},
+{q:"Siqnalın keyfiyyətli ötürülməsi üçün hansı şərt ödənilməlidir?",o:["Vk = Vs","Vk < Vs","Vk > Vs","Vk <= Vs"],a:2},
+{q:"Maneə nədir?",o:["Faydalı siqnallara kömək edən amil","Faydalı siqnallara təsir göstərən faktordur","Siqnalın amplitudasını artıran proses","Rabitə kanalını genişləndirən element"],a:1},
+{q:"Ötürülən məlumatın xarakterinə görə rabitə kanalının neçə növü var?",o:["2 növ","3 növ","4 növ","5 növ"],a:1},
+{q:"Modulyasiya prosesi nədir?",o:["Yüksək tezlikli siqnalı alçaq tezlikliyə çevirmə","Siqnalı saxlama prosesi","Alçaq tezlikli siqnalları yüksək tezlikli siqnala çevirmədir","Siqnalın şifrələnməsi"],a:2},
+{q:"Modulyasiyanın analoq növünün mühiti hansıdır?",o:["Optik kabel","Radio","Koaksial kabel","Telefon xətti"],a:1},
+{q:"Rabitə kanalı ilə siqnalın həcmi arasındakı şərt?",o:["Vk = Vs","Vk < Vs","Vk > Vs","Vk >= 2xVs"],a:2},
+{q:"Rabitə kanalında siqnalın keyfiyyətli ötürülməsi üçün şərt?",o:["Vk = Vs","Vk < Vs","Vk > Vs","Vk <= Vs"],a:2},
+{q:"Siqnalın həcmi Vs = Fs x dFs x dDs düsturu ilə ifadə olunur. Bu hansı xarakteristikadır?",o:["Ötürülən məlumatın əsas xarakteristikası","Rabitə kanalının xarakteristikası","Modulyasiyanın xarakteristikası","Siqnalın tezlik xarakteristikası"],a:0},
+{q:"Modulyasiya olunan siqnal nədir?",o:["Yüksək tezlikli siqnalın alçaq tezlikliyə çevrilməsi","Alçaq tezlikli siqnalın yüksək tezlikli siqnala çevrilməsidir","Siqnalın rəqəmsallaşdırılması","Siqnalın şifrələnməsi"],a:1},
+{q:"Modulyasiya prosesində istifadə edilən 2 əsas siqnal hansılardır?",o:["Periodik və qeyri-periodik","Analoq və diskret","AM və FM","Daşıyıcı və modulyasiyaedici siqnal"],a:1},
+{q:"Modulyasiya olunan siqnalın əsas üstünlüyü nədir?",o:["Siqnalı saxlamaq","Uzaq məsafəyə ötürülməsi və maneə davamlılığı","Siqnalın tezliyini azaltmaq","Siqnalın amplitudasını sabitləşdirmək"],a:1},
+{q:"Modulyasiya olunan siqnalın ilkin vəziyyətə qayıtması necə adlanır?",o:["Kodlama","Modulyasiya","Demodulyasiya","Şifrələmə"],a:2},
+{q:"Daşıyıcı siqnalın tezliyi dəyişirsə bu hansı modulyasiyaya aiddir?",o:["Amplitud modulyasiyası","Faza modulyasiyası","Tezlik modulyasiyası","Rəqəmsal modulyasiya"],a:2},
+{q:"Daşıyıcı siqnalın amplitudası dəyişirsə bu hansı modulyasiya adlanır?",o:["Tezlik modulyasiyası","Amplitud modulyasiyası","Faza modulyasiyası","Diskret modulyasiya"],a:1},
+{q:"Daşıyıcı siqnalın fazası dəyişirsə bu hansı modulyasiyasıdır?",o:["Amplitud modulyasiyası","Tezlik modulyasiyası","Faza modulyasiyası","Lineer modulyasiya"],a:2},
+{q:"Demodulyasiya prosesi nədir?",o:["Siqnalın gücləndirilməsi","Modulyasiya olunmuş siqnalın ilkin vəziyyətinə qaytarılmasıdır","Siqnalın rəqəmsallaşdırılması","Siqnalın saxlanması"],a:1},
+{q:"AM siqnalı nəyi bildirir?",o:["Tezlik modulyasiyası","Faza modulyasiyası","Amplituda modulyasiyası","Rəqəmsal modulyasiya"],a:2},
+{q:"FM nəyi bildirir?",o:["Amplituda modulyasiyası","Fazanın modulyasiyası","Tezlik modulyasiyası","Diskret modulyasiya"],a:1},
+{q:"DTM nəyi bildirir?",o:["Amplituda modulyasiyası","Faza modulyasiyası","Diskret tezlik modulyasiyası","Rəqəmsal ötürücü modul"],a:2},
+{q:"Demodulyasiya prosesinin əsas məqsədi nədir?",o:["Siqnalı şifrələmək","Siqnalın uzaq məsafəyə ötürülməsini təmin etmək, maneə davamlılığını artırmaq","Siqnalı saxlamaq","Siqnalın tezliyini azaltmaq"],a:1},
+{q:"Modulyasiya prosesi harada baş verir?",o:["Qəbul edici hissədə","Rabitə kanalında","Verici hissədə","Antennada"],a:2},
+{q:"Demodulyasiya prosesi harada baş verir?",o:["Verici hissədə","Rabitə kanalında","Qəbul edici hissədə","Antennada"],a:2},
+{q:"Modulyasiya prosesini yerinə yetirən qurğu hansıdır?",o:["Detektor","Demodulyator","Modulyator","Modem"],a:2},
+{q:"Demodulyasiya prosesini yerinə yetirən qurğu hansıdır?",o:["Modulyator","Kodlaşdırıcı","Detektor / Demodulyator","Antenna"],a:2},
+{q:"Modulyasiya və demodulyasiya prosesini eyni vaxtda aparan qurğu hansıdır?",o:["Modulyator","Demodulyator","Modem","Koder"],a:2},
+{q:"Modem sözünün açılışı nədir?",o:["Modulyasiya-Dekodlaşdırma","Modulyasiya-Demodulyasiya","Multipleks-Demodulyasiya","Modulyasiya-Dispersion"],a:1},
+{q:"Modemin əsas funksiyası nədir?",o:["Siqnalı gücləndirmək","Siqnalı saxlamaq","Uzaq məsafəyə siqnalın ötürülməsini təmin etmək","Siqnalı şifrələmək"],a:2},
+{q:"Modem hansı prosesləri yerinə yetirir?",o:["Yalnız modulyasiya","Yalnız demodulyasiya","Həm modulyasiya, həm də demodulyasiya","Kodlama və dekodlama"],a:2},
+{q:"Rabitə sistemlərində kodlamanın əsas məqsədi nədir?",o:["Siqnalı şifrələmək","Maneəyə davamlılığı artırmaq və informasiyanı uzaq məsafəyə ötürmək","Siqnalın amplitudasını artırmaq","Tezlik zolağını azaltmaq"],a:1},
+{q:"Aşağıdakılardan hansı kodlama növüdür?",o:["AM, FM, PM","2-lik, 8-lik, 10-luq, 16-lıq","Analoq, diskret, rəqəmsal","Periodik, qeyri-periodik"],a:1},
+{q:"Rəqəmsal kodlamadan hansı üstünlük əldə edilir?",o:["Siqnalın tezliyini artırmaq","Modulyasiya, Demodulyasiya, Kodlama, Dekodlama imkanları","Siqnalı saxlamaq","Siqnalın amplitudasını azaltmaq"],a:1},
+{q:"Kodlama proseslərinə aid əsas mərhələ hansıdır?",o:["Yalnız siqnalın amplitudasına görə","Siqnalin amplitudasına, tezliyinə, fazasına görə çevrilmə","Yalnız siqnalın tezliyinə görə","Yalnız siqnalın fazasına görə"],a:1},
+{q:"Dekodlama nədir?",o:["Kodlama prosesinin davam etdirilməsi","Siqnalın gücləndirilməsi","Kodlama prosesinin əksidir: kod elementlərinin ilkin vəziyyətə qaytarılmasıdır","Siqnalın modulyasiyası"],a:2},
+{q:"Dekodlama prosesi harada həyata keçirilir?",o:["Verici hissədə","Rabitə kanalında","Qəbul edici hissədə","Antennada"],a:2},
+{q:"Rəqəmsal rabitə sistemlərində dekodlama hansı məqsəd üçün aparılır?",o:["Siqnalı şifrələmək","Maneəyə davamlılığı artırmaq, informasiyanı uzaq məsafəyə ötürmək","Siqnalın amplitudasını artırmaq","Tezlik zolağını genişlətmək"],a:1},
+{q:"Kodlama və dekodlama arasındakı əsas fərq nədir?",o:["Hər ikisi qəbul edici hissədədir","Hər ikisi verici hissədədir","Kodlama verici hissədə (koder), dekodlama qəbul edici hissədə (dekoder) aparılır","Hər ikisi rabitə kanalındadır"],a:2},
+{q:"Rabitə kanalının əsas funksiyası nədir?",o:["Siqnalı modulyasiya etmək","Qəbul edici və verici hissə arasında əlaqə yaratmaq","Siqnalı saxlamaq","Siqnalı gücləndirmək"],a:1},
+{q:"Rabitə kanalı hansı meyarlara görə müəyyən olunur?",o:["Yalnız tezlik zolağına görə","ts (ötürmə müddəti), dFs (tezlik zolağı), Ds (dinamik diapazon)","Yalnız dinamik diapazona görə","Yalnız ötürmə müddətinə görə"],a:1},
+{q:"Səs-küy nəyi ifadə edir?",o:["Faydalı siqnalı gücləndirir","Faydalı siqnala əlavə olunan təsadüfi maneədir","Rabitə kanalının tezliyini artırır","Siqnalın amplitudasını sabitləşdirir"],a:1},
+{q:"Rabitə sistemində maneə nədir?",o:["Siqnalı gücləndirən amil","Faydalı siqnalların qarşısını kəsən (əngəl yaradan) təsirdir","Siqnalın tezliyini artıran proses","Kodlamanı asanlaşdıran element"],a:1},
+{q:"Sənaye qurğularında yaranan təsirlər hansı növ maneə adlanır?",o:["Kosmik maneə","Atmosfer maneəsi","Sənaye maneəsi","Additiv maneə"],a:2},
+{q:"Atmosferdə baş verən proseslərdən yaranan maneə nə adlanır?",o:["Sənaye maneəsi","Additiv maneə","Kosmik maneə","Atmosfer maneəsi"],a:2},
+{q:"Additiv nədir?",o:["Siqnaldan çıxılan maneə","Siqnalın üzərinə toplanan maneədir","Siqnalın tezliyini artıran amil","Rəqəmsal kodlaşdırma növü"],a:1}];
+
+var T=Q.length,L=["A","B","C","D"],cur=0,score=0,wc=0,ans=false,wrongs=[];
+
+function dots(){
+  var w=document.getElementById("mdots"); w.innerHTML="";
+  var show=Math.min(9,T),start=Math.max(0,Math.min(cur-4,T-show));
+  for(var i=start;i<start+show;i++){
+    var d=document.createElement("div");
+    d.className="md"+(i<cur?" done":i===cur?" cur":"");
+    w.appendChild(d);
+  }
+}
+
+function render(){
+  ans=false;
+  var q=Q[cur],p=Math.round(cur/T*100);
+  document.getElementById("qtag").textContent="SUAL "+String(cur+1).padStart(2,"0");
+  document.getElementById("qtext").textContent=q.q;
+  document.getElementById("plbl").textContent="Sual "+(cur+1)+" / "+T;
+  document.getElementById("ppct").textContent=p+"%";
+  document.getElementById("pfill").style.width=p+"%";
+  document.getElementById("s-l").textContent=T-cur;
+  dots();
+  var fb=document.getElementById("fb"); fb.className="fb"; fb.textContent="";
+  var nb=document.getElementById("nxt"); nb.className="nxt";
+  nb.textContent=cur===T-1?"Neticeni Gor":"Novbeti Sual";
+  var od=document.getElementById("opts"); od.innerHTML="";
+  q.o.forEach(function(opt,i){
+    var b=document.createElement("button");
+    b.className="opt";
+    b.innerHTML='<span class="ltr">'+L[i]+'</span><span>'+opt+'</span>';
+    (function(idx,btn){b.onclick=function(){pick(idx,btn)};})(i,b);
+    od.appendChild(b);
+  });
+}
+
+function pick(idx,btn){
+  if(ans)return; ans=true;
+  var q=Q[cur],all=document.querySelectorAll(".opt"),fb=document.getElementById("fb");
+  all.forEach(function(b){b.disabled=true;});
+  if(idx===q.a){
+    btn.classList.add("ok"); score++;
+    document.getElementById("s-ok").textContent=score;
+    playSound("correct");
+    fb.textContent="Duzdu! Ela!"; fb.className="fb fok show";
+  } else {
+    btn.classList.add("no"); all[q.a].classList.add("ok"); wc++;
+    document.getElementById("s-no").textContent=wc;
+    playSound("wrong");
+    fb.textContent="Sehv! Duzgun cavab: "+L[q.a]+") "+q.o[q.a]; fb.className="fb fno show";
+    wrongs.push({n:cur+1,q:q.q,y:q.o[idx],c:q.o[q.a]});
+  }
+  document.getElementById("nxt").classList.add("show");
+}
+
+function goNext(){
+  cur++; if(cur>=T) showResult(); else render();
+}
+
+function drawRing(pct){
+  var canvas=document.createElement("canvas");
+  canvas.width=140;canvas.height=140;
+  var ctx=canvas.getContext("2d");
+  ctx.beginPath();ctx.arc(70,70,56,0,Math.PI*2);
+  ctx.strokeStyle="rgba(255,255,255,0.05)";ctx.lineWidth=12;ctx.stroke();
+  if(pct>0){
+    ctx.beginPath();ctx.arc(70,70,56,-Math.PI/2,-Math.PI/2+(Math.PI*2*pct/100));
+    ctx.strokeStyle="#00c6ff";ctx.lineWidth=12;ctx.lineCap="round";ctx.stroke();
+  }
+  var ring=document.getElementById("ring");
+  ring.style.background="none";ring.style.boxShadow="none";
+  ring.style.position="relative";
+  canvas.style.position="absolute";canvas.style.inset="0";canvas.style.borderRadius="50%";
+  ring.insertBefore(canvas,ring.firstChild);
+}
+
+function showResult(){
+  document.getElementById("quiz").style.display="none";
+  document.getElementById("result").style.display="block";
+  var p=Math.round(score/T*100);
+  drawRing(p);
+  document.getElementById("rpct").textContent=p+"%";
+  var em="",ti="";
+  if(p>=90){em="&#127942;";ti="Ela netice!";}
+  else if(p>=75){em="&#127881;";ti="Yaxshi netice!";}
+  else if(p>=55){em="&#128077;";ti="Orta netice";}
+  else if(p>=35){em="&#128218;";ti="Daha cox oxu!";}
+  else{em="&#128169;";ti="Daha cox chalish!";}
+  document.getElementById("rem").innerHTML=em;
+  document.getElementById("rtitle").textContent=ti;
+  document.getElementById("rsub").textContent=score+" duzgun / "+(T-score)+" sehv / "+T+" sual";
+  document.getElementById("rok").textContent=score;
+  document.getElementById("rno").textContent=T-score;
+  var wl=document.getElementById("wlist");
+  if(wrongs.length===0){
+    wl.innerHTML='<div class="allok">Butun suallari duzgun cavabladiniz! Mohtesem!</div>';
+  } else {
+    var h='<div class="wsec"><h3>Sehv cavablar ('+wrongs.length+' eded)</h3>';
+    wrongs.forEach(function(w){
+      h+='<div class="wi"><div class="win">Sual '+w.n+'</div><div class="wiq">'+w.q+'</div>';
+      h+='<div class="wiy">&#10007; Senin cavabın: '+w.y+'</div>';
+      h+='<div class="wic">&#10003; Duzgun cavab: '+w.c+'</div></div>';
+    });
+    h+='</div>';
+    wl.innerHTML=h;
+  }
+}
+
+function restart(){
+  cur=0;score=0;wc=0;wrongs=[];
+  document.getElementById("s-ok").textContent="0";
+  document.getElementById("s-no").textContent="0";
+  document.getElementById("result").style.display="none";
+  document.getElementById("quiz").style.display="block";
+  render();
+}
+
+render();
+
+var soundOn = true;
+
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById('sound-btn').innerHTML = soundOn ? '&#128266; Ses: Aciq' : '&#128263; Ses: Bagla';
+}
+
+function playSound(type){
+  if(!soundOn) return;
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if(type === 'correct'){
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.start(); osc.stop(ctx.currentTime + 0.5);
+    } else {
+      osc.frequency.setValueAtTime(300, ctx.currentTime);
+      osc.frequency.setValueAtTime(200, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(); osc.stop(ctx.currentTime + 0.4);
+    }
+  } catch(e){}
+}
+
+function confirmRestart(){
+  document.getElementById('confirm-overlay').classList.add('show');
+}
+
+function closeConfirm(){
+  document.getElementById('confirm-overlay').classList.remove('show');
+}
+
+function doRestart(){
+  closeConfirm();
+  restart();
+}
+</script>
+</body>
+</html>
