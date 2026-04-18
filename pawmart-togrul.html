@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawMart – Pet Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF6F0;
+    --warm: #F2EBE0;
+    --terracotta: #C2622D;
+    --rust: #A84D1E;
+    --sage: #7A9E7E;
+    --charcoal: #2C2825;
+    --brown: #6B4C35;
+    --gold: #D4A853;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    background: var(--terracotta);
+  }
+
+  /* ══════════════════════
+     SPLASH
+  ══════════════════════ */
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: var(--terracotta);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 999;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  #splash.hide {
+    opacity: 0;
+    transform: scale(1.06);
+    pointer-events: none;
+  }
+
+  /* bg circles */
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    animation: pulse-c 3.5s ease-in-out infinite;
+  }
+  .bc1 { width: 700px; height: 700px; top: -200px; left: -180px; animation-delay: 0s; }
+  .bc2 { width: 500px; height: 500px; bottom: -120px; right: -120px; animation-delay: 1s; }
+  .bc3 { width: 260px; height: 260px; top: 55%; left: -80px; animation-delay: 2s; background: rgba(255,255,255,0.04); }
+
+  @keyframes pulse-c {
+    0%,100% { transform: scale(1); opacity:1; }
+    50% { transform: scale(1.07); opacity: 0.55; }
+  }
+
+  /* floating paws */
+  .paw {
+    position: absolute;
+    font-size: 28px;
+    opacity: 0;
+    animation: float-p linear infinite;
+  }
+  .paw:nth-child(4)  { left: 6%;  animation-duration: 8s;  animation-delay: 0s;   font-size: 22px; }
+  .paw:nth-child(5)  { left: 22%; animation-duration: 11s; animation-delay: 1.5s; font-size: 18px; }
+  .paw:nth-child(6)  { left: 48%; animation-duration: 7s;  animation-delay: 3s;   font-size: 32px; }
+  .paw:nth-child(7)  { left: 68%; animation-duration: 9s;  animation-delay: 0.8s; font-size: 20px; }
+  .paw:nth-child(8)  { left: 86%; animation-duration: 12s; animation-delay: 2.2s; font-size: 16px; }
+  .paw:nth-child(9)  { left: 36%; animation-duration: 8.5s;animation-delay: 4.1s; font-size: 26px; }
+
+  @keyframes float-p {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    8%   { opacity: 0.09; }
+    92%  { opacity: 0.09; }
+    100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+  }
+
+  /* logo */
+  .logo-wrap {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: logo-in 0.85s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+  }
+
+  @keyframes logo-in {
+    from { opacity: 0; transform: scale(0.45) translateY(40px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .icon-box {
+    width: 130px; height: 130px;
+    border-radius: 38px;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.28), 0 0 0 10px rgba(255,255,255,0.13);
+    animation: bounce-icon 2.8s ease-in-out 1.3s infinite;
+    position: relative;
+  }
+
+  @keyframes bounce-icon {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(-10px) rotate(-3deg); }
+    60% { transform: translateY(-5px) rotate(2deg); }
+  }
+
+  .sparkle {
+    position: absolute;
+    animation: sp 2s ease-in-out infinite;
+  }
+  .sp1 { top: -10px; right: -10px; font-size: 18px; animation-delay: 0s; }
+  .sp2 { bottom: -8px; left: -12px; font-size: 15px; animation-delay: 0.7s; }
+  .sp3 { top: 12px; left: -16px; font-size: 12px; animation-delay: 1.4s; }
+
+  @keyframes sp {
+    0%,100% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { transform: scale(1) rotate(22deg); opacity: 1; }
+  }
+
+  .brand {
+    margin-top: 28px;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 52px;
+    color: white;
+    letter-spacing: -2px;
+    line-height: 1;
+    animation: fade-up 0.6s ease 0.9s both;
+  }
+  .brand em {
+    font-style: italic;
+    font-weight: 300;
+    font-size: 44px;
+    color: rgba(255,255,255,0.72);
+  }
+
+  .tagline {
+    margin-top: 12px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.62);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    animation: fade-up 0.6s ease 1.1s both;
+  }
+
+  .loading-dots {
+    display: flex; gap: 7px;
+    margin-top: 24px;
+    animation: fade-up 0.4s ease 1.3s both;
+  }
+  .ld {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    animation: ld-pulse 1.6s ease-in-out infinite;
+  }
+  .ld:nth-child(1) { animation-delay: 0s; }
+  .ld:nth-child(2) { animation-delay: 0.22s; }
+  .ld:nth-child(3) { animation-delay: 0.44s; }
+  @keyframes ld-pulse {
+    0%,100% { background: rgba(255,255,255,0.3); transform: scale(1); }
+    50% { background: white; transform: scale(1.4); }
+  }
+
+  /* bottom wave card */
+  .splash-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 10;
+    animation: slide-up 0.75s cubic-bezier(0.34,1.56,0.64,1) 1.4s both;
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(70px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .wave-svg { display: block; width: 100%; }
+
+  .bottom-card {
+    background: var(--cream);
+    padding: 20px 36px 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .feature-pills {
+    display: flex; gap: 8px;
+    flex-wrap: wrap; justify-content: center;
+  }
+
+  .pill {
+    background: white;
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: var(--brown);
+    font-weight: 500;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    animation: pill-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .pill:nth-child(1) { animation-delay: 1.65s; }
+  .pill:nth-child(2) { animation-delay: 1.8s; }
+  .pill:nth-child(3) { animation-delay: 1.95s; }
+
+  @keyframes pill-pop {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .cta-btn {
+    width: 100%;
+    max-width: 340px;
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 10px 30px rgba(194,98,45,0.45);
+    animation: btn-glow 2.2s ease-in-out 2.2s infinite;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(194,98,45,0.55); }
+  .cta-btn:active { transform: scale(0.97); }
+
+  @keyframes btn-glow {
+    0%,100% { box-shadow: 0 10px 30px rgba(194,98,45,0.4); }
+    50% { box-shadow: 0 10px 44px rgba(194,98,45,0.68); }
+  }
+
+  .login-link {
+    font-size: 13px; color: var(--brown); opacity: 0.7; cursor: pointer;
+  }
+  .login-link b { color: var(--terracotta); font-weight: 600; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══════════════════════
+     HOME SCREEN
+  ══════════════════════ */
+  #home {
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+    overflow: hidden;
+  }
+
+  #home.show {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  /* status bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px 0;
+    flex-shrink: 0;
+  }
+  .time-txt {
+    font-family: 'Fraunces', serif;
+    font-size: 17px; font-weight: 300; color: var(--charcoal);
+  }
+  .status-icons { display: flex; gap: 6px; font-size: 14px; color: var(--charcoal); }
+
+  /* header */
+  .home-header {
+    padding: 18px 28px 14px;
+    flex-shrink: 0;
+  }
+  .greeting-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .greeting-row h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300; font-size: 30px; color: var(--charcoal); line-height: 1.2;
+  }
+  .greeting-row h1 em { font-style: italic; color: var(--terracotta); }
+  .greeting-row p { font-size: 13px; color: var(--brown); opacity: 0.65; margin-top: 4px; }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--terracotta), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+
+  /* search */
+  .search-bar {
+    margin: 0 28px 16px;
+    background: var(--warm);
+    border-radius: 18px;
+    padding: 13px 18px;
+    display: flex; align-items: center; gap: 10px;
+    flex-shrink: 0;
+  }
+  .search-bar input {
+    border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--charcoal);
+    outline: none; flex: 1;
+  }
+  .search-bar input::placeholder { color: #b09880; }
+
+  /* scroll */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 84px;
+    scrollbar-width: none;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* promo */
+  .promo {
+    margin: 4px 28px 0;
+    background: linear-gradient(135deg, var(--terracotta), var(--rust));
+    border-radius: 26px;
+    padding: 24px 22px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .promo::before {
+    content: '';
+    position: absolute; right: -24px; top: -24px;
+    width: 130px; height: 130px;
+    background: rgba(255,255,255,0.09); border-radius: 50%;
+  }
+  .promo::after {
+    content: '';
+    position: absolute; right: 36px; bottom: -34px;
+    width: 90px; height: 90px;
+    background: rgba(255,255,255,0.05); border-radius: 50%;
+  }
+  .promo-label { font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; }
+  .promo-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; color: white; line-height: 1.2; margin-top: 4px; }
+  .promo-sub { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 6px; }
+  .promo-cta {
+    background: white; color: var(--terracotta);
+    border: none; border-radius: 14px;
+    padding: 11px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    position: relative; z-index: 1;
+  }
+
+  /* dots */
+  .ind-dots { display: flex; gap: 5px; justify-content: center; padding: 12px 0 0; }
+  .ind-dot { width: 5px; height: 5px; border-radius: 50%; background: #ddd; }
+  .ind-dot.on { width: 18px; border-radius: 3px; background: var(--terracotta); }
+
+  /* section */
+  .sec-hdr { display: flex; justify-content: space-between; align-items: center; padding: 22px 28px 12px; }
+  .sec-hdr h3 { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 400; color: var(--charcoal); }
+  .sec-hdr a { font-size: 13px; color: var(--terracotta); text-decoration: none; font-weight: 500; }
+
+  /* categories */
+  .cats-row { display: flex; gap: 14px; padding: 0 28px; overflow-x: auto; scrollbar-width: none; }
+  .cats-row::-webkit-scrollbar { display: none; }
+  .cat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
+  .cat-icon {
+    width: 64px; height: 64px; border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    transition: transform 0.18s;
+  }
+  .cat-icon:hover { transform: scale(1.08); }
+  .cat-icon.dog  { background: #FEF0E6; }
+  .cat-icon.cat  { background: #E8F4EC; }
+  .cat-icon.bird { background: #FFF5E0; }
+  .cat-icon.fish { background: #E6F0FE; }
+  .cat-icon.rodent { background: #F9E6F0; }
+  .cat-lbl { font-size: 11px; color: var(--brown); font-weight: 500; }
+
+  /* product grid */
+  .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 28px; }
+  .prod-card {
+    background: white; border-radius: 22px; overflow: hidden;
+    cursor: pointer; box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+    transition: transform 0.18s;
+  }
+  .prod-card:hover { transform: translateY(-3px); }
+  .prod-img {
+    width: 100%; height: 136px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 54px; position: relative;
+  }
+  .prod-img.g1 { background: linear-gradient(135deg,#FEF0E6,#FDDCC4); }
+  .prod-img.g2 { background: linear-gradient(135deg,#E8F4EC,#C8E6CC); }
+  .prod-img.g3 { background: linear-gradient(135deg,#FFF5E0,#FFE8B0); }
+  .prod-img.g4 { background: linear-gradient(135deg,#F9E6F0,#F0C8E0); }
+  .badge {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--terracotta); color: white;
+    font-size: 9px; font-weight: 700;
+    padding: 3px 8px; border-radius: 7px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge.sale { background: var(--sage); }
+  .prod-body { padding: 12px 14px; }
+  .prod-brand { font-size: 10px; color: var(--brown); opacity: 0.55; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 500; }
+  .prod-name { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 400; color: var(--charcoal); margin-top: 3px; line-height: 1.3; }
+  .stars { font-size: 10px; color: var(--gold); margin-top: 2px; }
+  .prod-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .price { font-weight: 600; font-size: 16px; color: var(--terracotta); }
+  .old-price { font-size: 11px; color: #bbb; text-decoration: line-through; margin-left: 4px; }
+  .add-btn {
+    width: 32px; height: 32px; border-radius: 11px;
+    background: var(--terracotta); color: white;
+    border: none; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; line-height: 1;
+    transition: transform 0.15s;
+  }
+  .add-btn:hover { transform: scale(1.1); }
+  .add-btn:active { transform: scale(0.93); }
+
+  /* wide list */
+  .wide-list { display: flex; flex-direction: column; gap: 12px; padding: 0 28px; }
+  .wide-card {
+    background: white; border-radius: 22px;
+    padding: 16px; display: flex; gap: 14px; align-items: center;
+    cursor: pointer; box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+    transition: transform 0.18s;
+  }
+  .wide-card:hover { transform: translateY(-2px); }
+  .wide-img {
+    width: 76px; height: 76px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; flex-shrink: 0;
+  }
+  .wide-info { flex: 1; }
+  .wide-brand { font-size: 10px; color: var(--brown); opacity: 0.55; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 500; }
+  .wide-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 400; color: var(--charcoal); margin-top: 2px; }
+  .wide-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+
+  /* bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 76px;
+    background: rgba(250,246,240,0.95);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(0,0,0,0.07);
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 0 8px 10px;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; padding: 8px 16px; border-radius: 16px;
+    transition: background 0.18s;
+  }
+  .nav-item:hover { background: var(--warm); }
+  .nav-icon { font-size: 23px; color: #c0b4a8; }
+  .nav-lbl { font-size: 10px; color: #c0b4a8; font-weight: 400; }
+  .nav-item.active .nav-icon { color: var(--terracotta); }
+  .nav-item.active .nav-lbl { color: var(--terracotta); font-weight: 600; }
+  .nav-dot { width: 4px; height: 4px; background: var(--terracotta); border-radius: 50%; }
+  .cart-wrap { position: relative; }
+  .cart-wrap::after {
+    content: '3';
+    position: absolute; top: -4px; right: -5px;
+    width: 17px; height: 17px;
+    background: var(--terracotta); border-radius: 50%;
+    font-size: 9px; color: white; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 17px; text-align: center;
+  }
+
+  /* replay btn */
+  .replay-btn {
+    position: fixed; top: 16px; right: 16px; z-index: 9999;
+    background: rgba(194,98,45,0.15);
+    border: 1px solid rgba(194,98,45,0.3);
+    border-radius: 14px;
+    padding: 8px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    color: var(--terracotta);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s;
+    display: none;
+  }
+  .replay-btn:hover { background: rgba(194,98,45,0.25); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SPLASH ═══════════ -->
+<div id="splash">
+  <div class="bg-circle bc1"></div>
+  <div class="bg-circle bc2"></div>
+  <div class="bg-circle bc3"></div>
+  <div class="paw">🐾</div>
+  <div class="paw">🐾</div>
+  <div class="paw">🐾</div>
+  <div class="paw">🐾</div>
+  <div class="paw">🐾</div>
+  <div class="paw">🐾</div>
+
+  <div class="logo-wrap">
+    <div class="icon-box">
+      🐾
+      <div class="sparkle sp1">✨</div>
+      <div class="sparkle sp2">⭐</div>
+      <div class="sparkle sp3">✦</div>
+    </div>
+    <div class="brand">Paw<em>Mart</em></div>
+    <div class="tagline">Evcil Hayvan Marketi</div>
+    <div class="loading-dots">
+      <div class="ld"></div>
+      <div class="ld"></div>
+      <div class="ld"></div>
+    </div>
+  </div>
+
+  <div class="splash-bottom">
+    <svg class="wave-svg" viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,35 C240,70 480,0 720,35 C960,65 1200,10 1440,25 L1440,70 L0,70 Z" fill="#FAF6F0"/>
+    </svg>
+    <div class="bottom-card">
+      <div class="feature-pills">
+        <div class="pill">🚚 Hızlı Teslimat</div>
+        <div class="pill">❤️ Uzman Destek</div>
+        <div class="pill">💎 Premium Ürün</div>
+      </div>
+      <button class="cta-btn" id="startBtn">
+        <span>🐕</span> Hemen Başla
+      </button>
+      <div class="login-link">Zaten hesabın var mı? <b>Giriş Yap</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ HOME ═══════════ -->
+<div id="home">
+
+  <div class="status-bar">
+    <span class="time-txt">9:41</span>
+    <div class="status-icons">
+      <span>●●●</span><span>WiFi</span><span>🔋</span>
+    </div>
+  </div>
+
+  <div class="home-header">
+    <div class="greeting-row">
+      <div>
+        <h1>Merhaba, <em>Togrul!</em></h1>
+        <p>Sevgilileriniz için en iyisi burada 🐾</p>
+      </div>
+      <div class="avatar">🐶</div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <span>🔍</span>
+    <input type="text" placeholder="Ürün, marka veya kategori ara…">
+    <span style="font-size:20px;cursor:pointer;">🎛</span>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- Promo -->
+    <div class="promo">
+      <div>
+        <div class="promo-label">Bu hafta özel</div>
+        <div class="promo-title">%30<br>İndirim</div>
+        <div class="promo-sub">Kedi & Köpek mamaları</div>
+      </div>
+      <button class="promo-cta">Keşfet →</button>
+    </div>
+    <div class="ind-dots">
+      <div class="ind-dot on"></div>
+      <div class="ind-dot"></div>
+      <div class="ind-dot"></div>
+    </div>
+
+    <!-- Kategoriler -->
+    <div class="sec-hdr"><h3>Kategoriler</h3><a href="#">Tümü</a></div>
+    <div class="cats-row">
+      <div class="cat-item"><div class="cat-icon dog">🐕</div><span class="cat-lbl">Köpek</span></div>
+      <div class="cat-item"><div class="cat-icon cat">🐈</div><span class="cat-lbl">Kedi</span></div>
+      <div class="cat-item"><div class="cat-icon bird">🦜</div><span class="cat-lbl">Kuş</span></div>
+      <div class="cat-item"><div class="cat-icon fish">🐠</div><span class="cat-lbl">Balık</span></div>
+      <div class="cat-item"><div class="cat-icon rodent">🐹</div><span class="cat-lbl">Kemirgen</span></div>
+    </div>
+
+    <!-- Öne Çıkanlar -->
+    <div class="sec-hdr"><h3>Öne Çıkanlar</h3><a href="#">Tümü</a></div>
+    <div class="prod-grid">
+      <div class="prod-card">
+        <div class="prod-img g1">🦴<span class="badge">Yeni</span></div>
+        <div class="prod-body">
+          <div class="prod-brand">Royal Canin</div>
+          <div class="prod-name">Adult Maxi Mama</div>
+          <div class="stars">★★★★★</div>
+          <div class="prod-foot"><span class="price">₺420</span><button class="add-btn">+</button></div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img g2">🐟<span class="badge sale">%20</span></div>
+        <div class="prod-body">
+          <div class="prod-brand">Whiskas</div>
+          <div class="prod-name">Ton Balıklı Yaş Mama</div>
+          <div class="stars">★★★★☆</div>
+          <div class="prod-foot"><div><span class="price">₺85</span><span class="old-price">₺106</span></div><button class="add-btn">+</button></div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img g3">🎾</div>
+        <div class="prod-body">
+          <div class="prod-brand">Kong</div>
+          <div class="prod-name">Klasik Oyun Topu</div>
+          <div class="stars">★★★★★</div>
+          <div class="prod-foot"><span class="price">₺195</span><button class="add-btn">+</button></div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img g4">🛁<span class="badge">Trend</span></div>
+        <div class="prod-body">
+          <div class="prod-brand">Petlogix</div>
+          <div class="prod-name">Doğal Şampuan</div>
+          <div class="stars">★★★★☆</div>
+          <div class="prod-foot"><span class="price">₺149</span><button class="add-btn">+</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popüler -->
+    <div class="sec-hdr"><h3>Popüler Ürünler</h3><a href="#">Tümü</a></div>
+    <div class="wide-list">
+      <div class="wide-card">
+        <div class="wide-img" style="background:linear-gradient(135deg,#E8F4EC,#C8E6CC)">🐾</div>
+        <div class="wide-info">
+          <div class="wide-brand">Ruffwear</div>
+          <div class="wide-name">Harness Koşum Takımı</div>
+          <div class="stars">★★★★★</div>
+          <div class="wide-foot"><span class="price">₺650</span><button class="add-btn">+</button></div>
+        </div>
+      </div>
+      <div class="wide-card">
+        <div class="wide-img" style="background:linear-gradient(135deg,#FEF0E6,#FDDCC4)">🛏</div>
+        <div class="wide-info">
+          <div class="wide-brand">Trixie</div>
+          <div class="wide-name">Bellek Köpüklü Yatak</div>
+          <div class="stars">★★★★☆</div>
+          <div class="wide-foot"><span class="price">₺890</span><button class="add-btn">+</button></div>
+        </div>
+      </div>
+      <div class="wide-card">
+        <div class="wide-img" style="background:linear-gradient(135deg,#FFF5E0,#FFE8B0)">🦮</div>
+        <div class="wide-info">
+          <div class="wide-brand">Flexi</div>
+          <div class="wide-name">Otomatik Tasma 8m</div>
+          <div class="stars">★★★★☆</div>
+          <div class="wide-foot"><span class="price">₺340</span><button class="add-btn">+</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:24px"></div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon">🏠</div>
+      <span class="nav-lbl">Ana Sayfa</span>
+      <div class="nav-dot"></div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">🔍</div>
+      <span class="nav-lbl">Keşfet</span>
+    </div>
+    <div class="nav-item">
+      <div class="cart-wrap nav-icon">🛒</div>
+      <span class="nav-lbl">Sepet</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">❤️</div>
+      <span class="nav-lbl">Favoriler</span>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">👤</div>
+      <span class="nav-lbl">Profil</span>
+    </div>
+  </div>
+</div>
+
+<!-- Replay -->
+<button class="replay-btn" id="replayBtn" onclick="replay()">↺ Tekrar</button>
+
+<script>
+  function goHome() {
+    const splash = document.getElementById('splash');
+    const home   = document.getElementById('home');
+    const replay = document.getElementById('replayBtn');
+    splash.classList.add('hide');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      home.classList.add('show');
+      replay.style.display = 'block';
+    }, 720);
+  }
+
+  function replay() {
+    const splash = document.getElementById('splash');
+    const home   = document.getElementById('home');
+    const replay = document.getElementById('replayBtn');
+    home.classList.remove('show');
+    splash.style.display = 'flex';
+    replay.style.display = 'none';
+    // force reflow to restart animations
+    splash.classList.remove('hide');
+    void splash.offsetWidth;
+    // re-attach btn listener after clone isn't needed — just reset
+    setTimeout(() => {}, 50);
+  }
+
+  document.getElementById('startBtn').addEventListener('click', goHome);
+
+  // auto-transition after 3.8s
+  setTimeout(goHome, 3800);
+</script>
+
+</body>
+</html>
