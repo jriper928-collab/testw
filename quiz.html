@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Quiz – Kollokvium 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0d1a;--surface:#141727;--card:#1a1e32;--border:#252a45;
+  --accent:#7c6fff;--accent2:#ff6b8a;--green:#22d68c;--red:#ff4d6d;
+  --yellow:#ffd166;--text:#e8eaf6;--muted:#7b85a8;--dim:#3a4060;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;
+  background-image:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(124,111,255,.09) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 40% at 85% 90%,rgba(255,107,138,.07) 0%,transparent 60%)}
+header{text-align:center;padding:40px 20px 20px}
+header h1{font-family:'Sora',sans-serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;
+  background:linear-gradient(135deg,#7c6fff,#ff6b8a);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+header p{color:var(--muted);font-size:.9rem}
+.statsbar{display:flex;justify-content:center;gap:12px;padding:12px 20px;flex-wrap:wrap}
+.stat-pill{background:var(--card);border:1px solid var(--border);border-radius:99px;
+  padding:6px 16px;font-size:.82rem;display:flex;align-items:center;gap:6px}
+.stat-pill span{color:var(--muted)}.stat-pill strong{color:var(--text)}
+.filter-tabs{display:flex;gap:8px;padding:0 20px 20px;max-width:760px;margin:0 auto;flex-wrap:wrap}
+.tab-btn{background:var(--card);border:1px solid var(--border);border-radius:99px;
+  padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);
+  cursor:pointer;transition:all .2s}
+.tab-btn:hover,.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.prog-wrap{max-width:760px;margin:0 auto 24px;padding:0 20px}
+.prog-info{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:6px}
+.prog-track{height:7px;background:var(--border);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#7c6fff,#ff6b8a);border-radius:99px;transition:width .5s}
+.quiz-area{max-width:760px;margin:0 auto;padding:0 20px 40px}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:28px;margin-bottom:16px;animation:pop .3s ease;transition:border-color .3s}
+.qcard.card-correct{border-color:var(--green)}.qcard.card-wrong{border-color:var(--red)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.qhead{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.qnum{background:linear-gradient(135deg,#7c6fff,#ff6b8a);color:#fff;
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.75rem;
+  padding:3px 11px;border-radius:99px;white-space:nowrap;margin-top:3px;flex-shrink:0}
+.qtag{background:var(--surface);border:1px solid var(--border);color:var(--muted);
+  font-size:.72rem;padding:2px 9px;border-radius:99px;margin-top:3px;flex-shrink:0}
+.qtext{font-size:.95rem;line-height:1.65;white-space:pre-wrap}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:11px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;
+  text-align:left;cursor:pointer;transition:all .17s;line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(124,111,255,.1);transform:translateX(4px)}
+.opt.opt-correct{border-color:var(--green)!important;background:rgba(34,214,140,.1)!important;color:var(--green)!important}
+.opt.opt-wrong{border-color:var(--red)!important;background:rgba(255,77,109,.1)!important;color:var(--red)!important}
+.opt.opt-reveal{border-color:var(--green)!important;color:var(--green)!important;opacity:.6}
+.opt:disabled{cursor:default}
+.inp-row{display:flex;gap:10px;align-items:center}
+.ans-inp{flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:12px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;
+  transition:border-color .2s,box-shadow .2s}
+.ans-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,111,255,.15)}
+.ans-inp.inp-correct{border-color:var(--green)!important;background:rgba(34,214,140,.07)}
+.ans-inp.inp-wrong{border-color:var(--red)!important;background:rgba(255,77,109,.07)}
+.chk-btn{background:linear-gradient(135deg,#7c6fff,#a370f7);color:#fff;border:none;border-radius:12px;
+  padding:12px 20px;font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;
+  white-space:nowrap;transition:opacity .2s,transform .15s}
+.chk-btn:hover{opacity:.88;transform:translateY(-1px)}
+.chk-btn:disabled{opacity:.35;cursor:default;transform:none}
+.hint-btn{background:none;border:1px dashed var(--dim);border-radius:8px;color:var(--muted);
+  font-size:.78rem;padding:5px 12px;cursor:pointer;transition:all .2s;margin-top:8px;font-family:'DM Sans',sans-serif}
+.hint-btn:hover{border-color:var(--yellow);color:var(--yellow)}
+.hint-box{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);border-radius:10px;
+  padding:9px 13px;font-size:.82rem;color:var(--yellow);margin-top:8px;display:none}
+.hint-box.show{display:block}
+.skip-btn{background:none;border:1px dashed var(--dim);border-radius:8px;color:var(--muted);
+  font-size:.78rem;padding:5px 12px;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.skip-btn:hover{border-color:var(--muted);color:var(--text)}
+.fb{display:none;align-items:center;gap:8px;font-size:.87rem;font-weight:500;margin-top:11px;flex-wrap:wrap}
+.fb.show{display:flex}.fb.fb-ok{color:var(--green)}.fb.fb-no{color:var(--red)}
+.bottom-actions{display:flex;gap:12px;justify-content:center;margin:24px 0 16px;flex-wrap:wrap;max-width:760px;margin-left:auto;margin-right:auto;padding:0 20px}
+.action-btn{border:none;border-radius:14px;padding:14px 32px;font-family:'Sora',sans-serif;
+  font-weight:700;font-size:.92rem;cursor:pointer;transition:all .2s}
+.btn-submit{background:linear-gradient(135deg,#ffd166,#f4a261);color:#1a1a2e;box-shadow:0 4px 20px rgba(255,209,102,.2)}
+.btn-review{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.action-btn:hover{transform:translateY(-2px);opacity:.9}
+#resultsSection{max-width:760px;margin:0 auto;padding:0 20px 60px;display:none}
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 32px;text-align:center}
+.res-emoji{font-size:3.5rem;display:block;margin-bottom:12px}
+.res-score{font-family:'Sora',sans-serif;font-size:4.5rem;font-weight:800;
+  background:linear-gradient(135deg,#7c6fff,#ff6b8a);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.res-pct{color:var(--muted);margin:6px 0 4px}.res-grade{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:24px}
+.res-time{color:var(--muted);font-size:.88rem;margin-bottom:24px}
+.res-bars{text-align:left;margin-bottom:24px}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:.85rem}
+.bar-lbl{width:80px}.bar-track{flex:1;height:9px;background:var(--border);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width .8s ease}
+.bar-cnt{width:28px;text-align:right;font-weight:600}
+.res-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:28px;text-align:left}
+.res-cat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px}
+.res-cat-name{font-size:.72rem;color:var(--muted);margin-bottom:4px}
+.res-cat-val{font-family:'Sora',sans-serif;font-weight:700;font-size:1.05rem}
+.retry-btn{background:linear-gradient(135deg,#7c6fff,#ff6b8a);color:#fff;border:none;
+  border-radius:14px;padding:14px 40px;font-family:'Sora',sans-serif;font-weight:800;
+  font-size:1rem;cursor:pointer;transition:all .2s}
+.retry-btn:hover{opacity:.88;transform:translateY(-2px)}
+#streakToast{position:fixed;top:24px;right:24px;background:linear-gradient(135deg,#ff9f43,#ffd166);
+  color:#1a1a2e;border-radius:14px;padding:12px 22px;font-family:'Sora',sans-serif;
+  font-weight:700;font-size:.95rem;opacity:0;transform:translateY(-20px);
+  transition:all .35s;pointer-events:none;z-index:999;box-shadow:0 4px 20px rgba(255,160,67,.3)}
+#streakToast.show{opacity:1;transform:translateY(0)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+</style>
+</head>
+<body>
+
+<div id="streakToast">🔥 <span id="streakNum">3</span> ardıcıl düzgün!</div>
+
+<header>
+  <h1>📚 English Quiz</h1>
+  <p>Kollokvium 2 · 80 Sual · Düzgün cavabda ✅ səs, səhvdə ❌ səs</p>
+</header>
+
+<div class="statsbar">
+  <div class="stat-pill"><span>✅</span><strong id="sC">0</strong><span>düzgün</span></div>
+  <div class="stat-pill"><span>❌</span><strong id="sW">0</strong><span>səhv</span></div>
+  <div class="stat-pill"><span style="color:#ff9f43">🔥</span><strong id="sSt">0</strong><span>ardıcıl</span></div>
+  <div class="stat-pill"><span style="color:#ffd166">⏱</span><strong id="sT">0:00</strong></div>
+  <div class="stat-pill"><span>📊</span><strong id="sA">0</strong><span>/ 80</span></div>
+</div>
+
+<div class="filter-tabs" id="filterTabs"></div>
+
+<div class="prog-wrap">
+  <div class="prog-info"><span id="pLabel">0 / 80 cavablandı</span><span id="pScore">Xal: 0</span></div>
+  <div class="prog-track"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+</div>
+
+<div class="quiz-area" id="quizArea"></div>
+
+<div class="bottom-actions" id="bottomActs" style="display:none">
+  <button class="action-btn btn-review" onclick="scrollTop()">⬆ Yuxarı qayıt</button>
+  <button class="action-btn btn-submit" onclick="showResults()">🏁 Final Nəticə</button>
+</div>
+
+<div id="resultsSection">
+  <div class="res-card">
+    <span class="res-emoji" id="rEmoji">🎉</span>
+    <div class="res-score" id="rScore">0/80</div>
+    <div class="res-pct" id="rPct">0%</div>
+    <div class="res-grade" id="rGrade"></div>
+    <div class="res-time" id="rTime"></div>
+    <div class="res-bars">
+      <div class="bar-row">
+        <span class="bar-lbl" style="color:var(--green)">✅ Düzgün</span>
+        <div class="bar-track"><div class="bar-fill" id="bC" style="width:0%;background:var(--green)"></div></div>
+        <span class="bar-cnt" style="color:var(--green)" id="bcC">0</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-lbl" style="color:var(--red)">❌ Səhv</span>
+        <div class="bar-track"><div class="bar-fill" id="bW" style="width:0%;background:var(--red)"></div></div>
+        <span class="bar-cnt" style="color:var(--red)" id="bcW">0</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-lbl" style="color:var(--muted)">⬜ Keçildi</span>
+        <div class="bar-track"><div class="bar-fill" id="bSk" style="width:0%;background:var(--muted)"></div></div>
+        <span class="bar-cnt" style="color:var(--muted)" id="bcSk">0</span>
+      </div>
+    </div>
+    <div class="res-cats" id="rCats"></div>
+    <button class="retry-btn" onclick="resetQuiz()">🔄 Yenidən başla</button>
+  </div>
+</div>
+
+<script>
+// ═══ WEB AUDIO ════════════════════════════════════════════════════
+let AC;
+function getAC(){
+  if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+// Unlock on first interaction
+document.addEventListener('click',()=>{ try{ getAC(); }catch(e){} },{once:true,capture:true});
+
+function tone(freq,dur,type,vol,delay){
+  try{
+    const ac=getAC();
+    const g=ac.createGain(), o=ac.createOscillator();
+    o.type=type||'sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol||.25, ac.currentTime+delay);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+delay+dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(ac.currentTime+delay); o.stop(ac.currentTime+delay+dur+.05);
+  }catch(e){}
+}
+
+function playOK(){
+  tone(523,.1,'sine',.28,0);
+  tone(659,.1,'sine',.28,.11);
+  tone(784,.2,'sine',.28,.22);
+}
+function playFail(){
+  tone(330,.1,'sawtooth',.22,0);
+  tone(247,.2,'sawtooth',.22,.09);
+}
+function playStreak(){
+  [523,659,784,1046].forEach((f,i)=>tone(f,.12,'sine',.22,i*.08));
+}
+function playWin(){
+  [392,523,659,784,1046,1318].forEach((f,i)=>tone(f,.13,'sine',.2,i*.09));
+}
+function playLose(){
+  tone(330,.3,'sine',.2,0);
+  tone(294,.4,'sine',.2,.25);
+}
+
+// ═══ DATA ══════════════════════════════════════════════════════════
+const CATS={
+  grammar:'📝 Qrammatika',vocab:'📖 Lüğət',passive:'🔄 Passive',
+  reading:'📄 Oxu',sentence:'🧩 Cümlə',articles:'📌 Artikl',
+  modals:'🎯 Modals',quantifiers:'🔢 Kəmiyyət'
+};
+const Q=[
+  {id:1,cat:'grammar',text:'Düzgün əvəzliyi seçin:\nCan you give … to …, please?',answer:'me',hint:'Obyekt əvəzliyi: me/him/her/them'},
+  {id:2,cat:'vocab',text:'Cümləni tamamlayın:\nShe\'s always … — she always tells the truth.',answer:'honest',hint:'Həmişə həqiqəti danışan → honest'},
+  {id:3,cat:'passive',text:'Düzgün Passive Voice cümləsini seçin:\nThe man dropped the axe into the river.',
+   options:['The axe is dropped by the man.','The axe has been dropped by the man.','The man was dropped the axe into the river.','The axe dropped into the river by the man.','The axe was dropped by the man.'],
+   answer:'The axe was dropped by the man.',hint:'Keçmiş Passive: was/were + V3'},
+  {id:4,cat:'grammar',text:'Cümləni tamamlayın:\n… have you been waiting here?',
+   options:['How long','How much','How many','How often'],answer:'How long',hint:'Müddət üçün → How long'},
+  {id:5,cat:'grammar',text:'Düzgün cavabı seçin:\nWhere … you buy your shirt?',
+   options:['did','do','does','have'],answer:'did',hint:'yesterday yox amma keçmiş nəzərdə tutulur → did'},
+  {id:6,cat:'vocab',text:'Sözləri uyğunlaşdırın:\n1.fall  2.feel  3.finish\na)tired  b)work/school  c)asleep',
+   options:['1–a,2–b,3–c','1–b,2–c,3–a','1–c,2–a,3–b','1–c,2–b,3–a'],
+   answer:'1–c,2–a,3–b',hint:'fall asleep · feel tired · finish work/school'},
+  {id:7,cat:'modals',text:'Modal feli seçin:\nJohn has backache. He … carry heavy things.',
+   options:["can't","mustn't","shouldn't","couldn't"],answer:"can't",hint:'Fiziki imkansızlıq → can\'t'},
+  {id:8,cat:'sentence',text:'Cümləni düzəldin:\n1.in  2.you often find  3.articles  4.interesting  5.newspapers',
+   answer:'You often find interesting articles in newspapers.',hint:'2→4→3→1→5'},
+  {id:9,cat:'grammar',text:'Düzgün sual cümləsini seçin.',
+   options:['What he did advise him?','What did he advised him?','What he advise him?','What did he advise him?','What does he advises him?'],
+   answer:'What did he advise him?',hint:'did + məsdər (advise) — not advised'},
+  {id:10,cat:'grammar',text:'Zaman formasını seçin:\nThey … in the park at 3 o\'clock yesterday.',
+   options:['were','was','are','had been'],answer:'were',hint:'They (cəm) + past → were'},
+  {id:11,cat:'vocab',text:'Tərifi oxuyun, peşəni yazın:\nSomeone who works with languages:',answer:'linguist',hint:'Dilçi'},
+  {id:12,cat:'vocab',text:'Hansı söz başqalarına uyğun gəlmir?\nsea  beach  sand  eye  sun',
+   options:['sea','beach','sand','eye','sun'],answer:'eye',hint:'Hamısı çimərlik/üz, biri bədən üzvüdür'},
+  {id:13,cat:'quantifiers',text:'Düzgün variantları seçin:\n1.much peace organizations\n2.many music fans\n3.few news channels\n4.several tasty cake',
+   options:['1 və 4','2 və 3','1 və 2','3 və 4'],answer:'2 və 3',hint:'many music fans; few news channels'},
+  {id:14,cat:'modals',text:'Modal feli seçin:\nShe … to change her lifestyle.',
+   options:['has','have','must','should'],answer:'has',hint:'3-cü şəxs tək → has to'},
+  {id:15,cat:'grammar',text:'Cəm formada olan isimlər:\n1.money 2.goose 3.mice 4.jeans 5.advice 6.teeth',
+   options:['1,2,3','3,4,6','2,4,5','1,3,5'],answer:'3,4,6',hint:'mice · jeans · teeth'},
+  {id:16,cat:'grammar',text:'Zaman formasını seçin:\nThey usually … about their day in the evening.',
+   options:['talk','are talking','talked','have talked'],answer:'talk',hint:'usually → Simple Present'},
+  {id:17,cat:'reading',text:'📄 Ramin mətni\nRamin neçədə oyanır?',answer:'at 7:00',hint:'On school days Ramin gets up at 7:00'},
+  {id:18,cat:'reading',text:'📄 Ramin mətni\nRiyaziyyatı kim yaxşı bilir?',answer:'Raul',hint:'Raul is good at math'},
+  {id:19,cat:'reading',text:'📄 Ramin mətni\nNeçə dərsi var bu gün?',answer:'five',hint:'He has five lessons today'},
+  {id:20,cat:'reading',text:'📄 Ramin mətni\nRamin nəyi yaxşı öyrənir?',answer:'English',hint:'He studies English well'},
+  {id:21,cat:'vocab',text:'Tərifi oxuyun, peşəni yazın:\nSomeone who makes food in a restaurant:',answer:'cook',hint:'Aşpaz'},
+  {id:22,cat:'grammar',text:'Zaman formasını seçin:\nBruce … only three photographs yesterday.',
+   options:['took','takes','has taken','was taking'],answer:'took',hint:'yesterday → Simple Past → took'},
+  {id:23,cat:'grammar',text:'Düzgün əvəzliyi seçin:\nOlivia left … school bag on the bus.',
+   options:['her','his','their','its'],answer:'her',hint:'Olivia (qadın) → her'},
+  {id:24,cat:'vocab',text:'Cümləni tamamlayın:\nHe\'s a … — he always works a lot.',answer:'hardworking',hint:'Həmişə çox işləyən → hardworking'},
+  {id:25,cat:'grammar',text:'Düzgün variantı seçin:\n… did you go home at 10 p.m.?',
+   options:['when','why','what','where'],answer:'when',hint:'Konkret vaxt → when'},
+  {id:26,cat:'passive',text:'Düzgün Passive Voice cümləsini seçin:\nI water the plants in the morning.',
+   options:['The plants are watered in the morning.','The plants were watered in the morning.','I am watered the plants in the morning.','The plants have been watered in the morning.','The plants are been watered in the morning.'],
+   answer:'The plants are watered in the morning.',hint:'İndiki Passive: am/is/are + V3'},
+  {id:27,cat:'grammar',text:'Düzgün variantı seçin:\n… have you been sitting there?',
+   options:['How long','How much','How often','How many'],answer:'How long',hint:'Müddət → How long'},
+  {id:28,cat:'modals',text:'Modal feli seçin:\nI think you … apologize to him.',
+   options:['should','must','have to','can'],answer:'should',hint:'Məsləhət → should'},
+  {id:29,cat:'grammar',text:'Zaman formasını seçin:\nI … the topic at 5 o\'clock yesterday.',
+   options:['discussed, studied','was discussing','have discussed','discuss'],
+   answer:'discussed, studied',hint:'at 5 o\'clock yesterday → Simple Past'},
+  {id:30,cat:'grammar',text:'Düzgün sahib halını seçin:\n1.a few deers\'s skin\n2.a day\'s rest\n3.5 minute\'s break\n4.mice\'s tails',
+   options:['1','2','3','4'],answer:'2',hint:"a day's rest — düzgün forma"},
+  {id:31,cat:'articles',text:'Düzgün artikli seçin:\nI saw … elephant in … Zoo.',
+   options:['a / the','an / the','the / the','an / a'],answer:'an / the',hint:'an (sait) + the (müəyyən yer)'},
+  {id:32,cat:'modals',text:'Modal feli seçin:\nChildren … respect their parents.',
+   options:['should','must','have to','can'],answer:'should',hint:'Mənəvi öhdəlik → should'},
+  {id:33,cat:'grammar',text:'Düzgün variantı seçin:\nAnn\'s cakes … very delicious.',
+   options:['is','are','was','were'],answer:'are',hint:'cakes (cəm) → are'},
+  {id:34,cat:'vocab',text:'Düzgün cavabı seçin:\nShe was … because her manager shouted at her.',
+   options:['upset','bored','surprised','tired'],answer:'upset',hint:'Rəhbər bağırdıqda → upset'},
+  {id:35,cat:'grammar',text:'Düzgün bağlayıcını seçin:\nHe hadn\'t learned the direction … he lost his way.',
+   options:['and','so','but','though'],answer:'so',hint:'Nəticə → so'},
+  {id:36,cat:'sentence',text:'Cümləni düzəldin:\n1.lost 2.I 3.my pen 4.today 5.have',
+   answer:'I lost my pen today.',hint:'2→5→3→1→4  (I have lost my pen today)'},
+  {id:37,cat:'reading',text:'📄 Melanie mətni\nƏn yaxşı başlığı seçin.',
+   options:['My School','My Family','My Pets','My Friends'],answer:'My Family',hint:'Hekayə ailə haqqındadır'},
+  {id:38,cat:'reading',text:'📄 Melanie mətni\nDüzgün cümləni seçin.',
+   options:["Melanie's dad is a teacher.","Sheila doesn't like cats.","Ted doesn't like dogs.","Melanie's mother is a teacher."],
+   answer:"Melanie's mother is a teacher.",hint:'My mom is a teacher'},
+  {id:39,cat:'reading',text:'📄 Melanie mətni\nMelanie\'nin atası nə işləyir?',answer:'He is a doctor.',hint:'My dad is a doctor'},
+  {id:40,cat:'reading',text:'📄 Melanie mətni\nAiləsində neçə nəfər var?',answer:'5',hint:'dad+mom+brother+sister+Melanie=5'},
+  {id:41,cat:'vocab',text:'Tərifi oxuyun, peşəni yazın:\nSomeone who helps you when you are ill:',answer:'doctor',hint:'Xəstəni müalicə edən'},
+  {id:42,cat:'grammar',text:'Düzgün variantı seçin:\n… did Anya phone you yesterday?',
+   options:['Did','Does','Was','Do'],answer:'Did',hint:'Keçmiş zaman sualı → Did'},
+  {id:43,cat:'passive',text:'Düzgün Passive Voice cümləsini seçin:\nThe restaurant manager showed us the table.',
+   options:['We were shown the manager the table.','The table was been shown to us.','We were shown the table by the manager.','The manager was shown the table by us.','We showed the table to the manager.'],
+   answer:'We were shown the table by the manager.',hint:'show sb sth → sb be shown sth by...'},
+  {id:44,cat:'grammar',text:'Zaman formasını seçin:\nThe students often … skiing during winter vacation.',
+   options:['go','went','are going','have gone'],answer:'go',hint:'often → Simple Present'},
+  {id:45,cat:'vocab',text:'Mürəkkəb isimləri seçin.',
+   options:['sportsman, Norman','information, fireplace','moonlight, movement','leadership, handshake','spaceship, airmail'],
+   answer:'sportsman, fireplace',hint:'sport+man · fire+place'},
+  {id:46,cat:'grammar',text:'Düzgün variantı seçin:\nThose are the people … missed the train.',
+   options:['who','which','whom','whose'],answer:'who',hint:'İnsanlar üçün → who'},
+  {id:47,cat:'modals',text:'Modal feli seçin:\nHe … to be at home by seven o\'clock.',
+   options:['has to','have to','must','should'],answer:'has to',hint:'3-cü şəxs tək → has to'},
+  {id:48,cat:'quantifiers',text:'"advice" sözü üçün düzgün variantı seçin:\n1.a piece of advice\n2.an advice\n3.two advice\n4.some advice',
+   options:['Yalnız 1','Yalnız 4','1 və 4','2 və 3'],answer:'1 və 4',hint:'advice sayılmayan isim: some / a piece of'},
+  {id:49,cat:'vocab',text:'Uyğunlaşdırın:\n1.get  2.go to  3.have a  →  a)bed  b)nap  c)up',
+   options:['1–a,2–b,3–c','1–c,2–a,3–b','1–b,2–c,3–a','1–c,2–b,3–a'],
+   answer:'1–c,2–a,3–b',hint:'get up · go to bed · have a nap'},
+  {id:50,cat:'modals',text:'Modal feli seçin:\nMy brother has toothache. He … eat candies.',
+   options:["shouldn't","mustn't","can't","doesn't have to"],answer:"shouldn't",hint:'Diş sağlığı məsləhəti → shouldn\'t'},
+  {id:51,cat:'vocab',text:'Cümləni tamamlayın:\nHe is very … — he listens when they have problems.',
+   options:['kind','helpful','patient','honest'],answer:'kind',hint:'Dinləyən, mehriban → kind'},
+  {id:52,cat:'articles',text:'Düzgün artikli seçin:\n… Thames is … second longest river in … Britain.',
+   options:['The / the / –','The / a / –','A / the / the','– / the / –'],answer:'The / the / –',hint:'çaylar + sıra sayı = the; ölkə adı = yox'},
+  {id:53,cat:'sentence',text:'Cümləni düzəldin:\n1.Alice noticed 2.from 3.was coming 4.that 5.the next room 6.the noise',
+   answer:'Alice noticed that the noise was coming from the next room.',hint:'1→4→6→3→2→5'},
+  {id:54,cat:'grammar',text:'Tək isimli cərgəni seçin.',
+   options:['arms, brain, carrots','police, cattle, information','hair, people, clothes','watch, clock, gate','team, family, goods'],
+   answer:'watch, clock, gate',hint:'watch, clock, gate — tək sayıla bilər'},
+  {id:55,cat:'vocab',text:'Düzgün variantı seçin:\nI was really … to see her because I thought she was on holiday.',
+   options:['surprised','upset','bored','tired'],answer:'surprised',hint:'Gözlənilməz görüş → surprised'},
+  {id:56,cat:'articles',text:'Düzgün artikli seçin:\n… south of Turkey is hotter than … north.',
+   options:['The / the','A / the','The / a','– / –'],answer:'The / the',hint:'Coğrafi istiqamətlər → the'},
+  {id:57,cat:'reading',text:'📄 Nigar mətni\nMətn kim haqqındadır?',
+   options:['Aygun','Nigar','nənəsi','məktəb'],answer:'Nigar',hint:'Her name is Nigar'},
+  {id:58,cat:'reading',text:'📄 Nigar mətni\nHansı sualın cavabı mətndə yoxdur?',
+   options:['How old is Aygun?','Who takes Nigar for a walk?','What is Aygun\'s sister\'s name?','Does Nigar go to school?','Has Nigar got a pet?'],
+   answer:'How old is Aygun?',hint:'Aygun\'un yaşı mətndə qeyd edilmir'},
+  {id:59,cat:'reading',text:'📄 Nigar mətni\nSƏHV cümləni seçin.',
+   options:["Nigar isn't a schoolgirl.","Nigar's pet is funny.","Aygun's grandmother stays with Nigar.","Nigar takes her cat for a walk.","Aygun's pet is a small cat."],
+   answer:"Aygun's pet is a small cat.",hint:"It's Nigar's pet, not Aygun's"},
+  {id:60,cat:'reading',text:'📄 Nigar mətni\nNigar evdə kimlərlə qalır?',answer:'with her grandmother',hint:'She stays at home with her grandmother'},
+  {id:61,cat:'vocab',text:'Düzgün cavabı seçin:\nShe was … because there was nothing to do.',
+   options:['bored','upset','surprised','tired'],answer:'bored',hint:'Heç nə yoxdursa → bored'},
+  {id:62,cat:'grammar',text:'Zaman formasını seçin:\nMark … tennis while his sister … in the pool.',
+   options:['was playing, was swimming','plays, had swum','was playing, had swum','played, is swimming','had played, was swimming'],
+   answer:'was playing, was swimming',hint:'Eyni anda 2 hərəkət → Past Continuous'},
+  {id:63,cat:'passive',text:'Düzgün Passive Voice cümləsini seçin:\nThe friends visit David every week.',
+   options:['David visits his friend every week.','The friends are visited by David every week.','David was visited by his friends every week.','David is visited by his friends every week.','David has been visited by his friends every week.'],
+   answer:'David is visited by his friends every week.',hint:'İndiki Passive: is/are + V3'},
+  {id:64,cat:'modals',text:'Modal feli seçin:\nIt was too late and she … stay there any longer.',
+   options:["couldn't","can't","shouldn't","mustn't"],answer:"couldn't",hint:'Keçmişdə imkansızlıq → couldn\'t'},
+  {id:65,cat:'grammar',text:'Düzgün bağlayıcını seçin:\nThe train stopped … the passengers began to get out.',
+   options:['and','so','but','though'],answer:'and',hint:'Ardıcıl hərəkətlər → and'},
+  {id:66,cat:'grammar',text:'Düzgün variantı seçin:\nDiligence and honesty … his positive qualities.',
+   options:['are','is','was','were','has been'],answer:'are',hint:'İki mövzu (cəm) → are'},
+  {id:67,cat:'vocab',text:'Cümləni tamamlayın:\nHe\'s very … — he is good at waiting calmly without getting angry.',answer:'patient',hint:'Sakit gözləmək → patient'},
+  {id:68,cat:'vocab',text:'Tərifi oxuyun, peşəni yazın:\nSomeone who drives you where you want to go:',answer:'driver',hint:'Sürücü'},
+  {id:69,cat:'vocab',text:'Düzgün variantı seçin:\nShe invited us round for a … meal.',
+   options:['evening','home-cooked','tasty','special'],answer:'evening',hint:'evening meal (axşam yeməyi)'},
+  {id:70,cat:'sentence',text:'Cümləni düzəldin:\n1.children 2.sitting 3.were 4.little 5.the 6.grass 7.on',
+   answer:'The little children were sitting on the grass.',hint:'5→4→1→3→2→7→6'},
+  {id:71,cat:'quantifiers',text:'Düzgün variantı seçin:\nI don\'t have … time to finish this exercise.',
+   options:['much','many','few','a few'],answer:'much',hint:'time (sayılmayan) → much'},
+  {id:72,cat:'modals',text:'Modal feli seçin:\nBrian has a cough. He … drink cold drinks.',
+   options:["shouldn't","mustn't","can't","doesn't have to"],answer:"shouldn't",hint:'Sağlıq məsləhəti → shouldn\'t'},
+  {id:73,cat:'grammar',text:'Zaman formasını seçin:\nThe friends … to the forest every autumn.',
+   options:['go','went','are going','have gone'],answer:'go',hint:'every autumn → Simple Present'},
+  {id:74,cat:'grammar',text:'Düzgün variantı seçin:\n… is the man with the long beard?',
+   options:['Who','What','Which','Whom'],answer:'Who',hint:'İnsan haqqında → Who'},
+  {id:75,cat:'quantifiers',text:'Tək isimli cərgəni seçin.',
+   options:['weather, money','teeth, family','wheat, mistakes','scissors, roads','knife, ladies'],
+   answer:'weather, money',hint:'weather və money — hər ikisi sayılmayan tək isimdir'},
+  {id:76,cat:'grammar',text:'Düzgün variantı seçin:\n… was Pat so angry?',
+   options:['Why','What','When','How'],answer:'Why',hint:'Səbəb sualı → Why'},
+  {id:77,cat:'reading',text:'📄 Eldar mətni\nSƏHV variantı seçin: Eldar and his friends …',
+   options:['work hard','have a music band','want to be rich','hope to be popular','play only TV'],
+   answer:'play only TV',hint:'Mətn: they play at schools, weddings, parties AND sometimes on TV'},
+  {id:78,cat:'reading',text:'📄 Eldar mətni\n"famous" sözünün sinonimi:',
+   options:['popular','rich','talented','successful'],answer:'popular',hint:'famous = popular (məşhur)'},
+  {id:79,cat:'reading',text:'📄 Eldar mətni\nEldar and his four friends play …',
+   options:['for television every evening','the piano','at concert halls','at restaurants','at schools'],
+   answer:'at schools',hint:'They play at schools, weddings, parties...'},
+  {id:80,cat:'reading',text:'📄 Eldar mətni\nDüzgün başlığı seçin.',
+   options:['My Band','Eldar the Musician','Eldar and his Band','A Music School'],
+   answer:'Eldar and his Band',hint:'Eldar + band haqqındadır'},
+];
+
+// ═══ STATE ════════════════════════════════════════════════════════
+const ST={ans:{},streak:0,cat:'all',t0:Date.now(),tmr:null};
+
+// ═══ TIMER ════════════════════════════════════════════════════════
+function startTimer(){
+  ST.tmr=setInterval(()=>{
+    const s=Math.floor((Date.now()-ST.t0)/1000);
+    document.getElementById('sT').textContent=`${Math.floor(s/60)}:${(s%60+'').padStart(2,'0')}`;
+  },500);
+}
+function getElapsed(){
+  const s=Math.floor((Date.now()-ST.t0)/1000);
+  return `${Math.floor(s/60)} dəq ${s%60} san`;
+}
+
+// ═══ FILTER ═══════════════════════════════════════════════════════
+function buildTabs(){
+  const wrap=document.getElementById('filterTabs');
+  [['all','🔎 Hamısı'],...Object.entries(CATS)].forEach(([k,v])=>{
+    const b=document.createElement('button');
+    b.className='tab-btn'+(k==='all'?' active':'');
+    b.textContent=v;
+    b.onclick=()=>{
+      ST.cat=k;
+      wrap.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      renderQuiz();
+    };
+    wrap.appendChild(b);
+  });
+}
+
+// ═══ RENDER ═══════════════════════════════════════════════════════
+function vis(){ return ST.cat==='all'?Q:Q.filter(q=>q.cat===ST.cat); }
+
+function renderQuiz(){
+  const area=document.getElementById('quizArea');
+  area.innerHTML='';
+  vis().forEach(q=>{
+    const ar=ST.ans[q.id];
+    const card=document.createElement('div');
+    card.className='qcard'+(ar?(ar.skipped?' card-wrong':ar.correct?' card-correct':' card-wrong'):'');
+    card.id='card-'+q.id;
+
+    // head
+    let h=`<div class="qhead"><span class="qnum">${q.id}</span><span class="qtag">${CATS[q.cat]||q.cat}</span><span class="qtext">${q.text.replace(/\n/g,'<br>')}</span></div>`;
+
+    // body
+    let b='';
+    if(q.options){
+      b='<div class="opts" id="opts-'+q.id+'">';
+      q.options.forEach(o=>{
+        let cls='opt';
+        if(ar){
+          if(n(o)===n(q.answer)) cls+=' opt-reveal';
+          if(ar.chosen&&n(ar.chosen)===n(o)) cls=cls.replace('opt-reveal','')+(ar.correct?' opt-correct':' opt-wrong');
+        }
+        b+=`<button class="${cls}" ${ar?'disabled':''} onclick="selOpt(${q.id},'${esc(o)}',this)">${o}</button>`;
+      });
+      b+='</div>';
+    } else {
+      const val=ar?ar.chosen:'';
+      const cls='ans-inp'+(ar?(ar.skipped?'':ar.correct?' inp-correct':' inp-wrong'):'');
+      b=`<div class="inp-row"><input class="${cls}" id="inp-${q.id}" placeholder="Cavabınızı yazın…" value="${val}" ${ar?'disabled':''}
+        oninput="onType(${q.id},this)" onkeydown="onEnter(event,${q.id})">
+        <button class="chk-btn" id="chk-${q.id}" ${!val||ar?'disabled':''} onclick="chkTxt(${q.id})">Yoxla ↵</button></div>`;
+    }
+
+    // hint + skip (only if not answered)
+    let extra='';
+    if(!ar && q.hint) extra+=`<button class="hint-btn" onclick="showHint(${q.id})">💡 İpucu</button><div class="hint-box" id="hint-${q.id}">${q.hint}</div>`;
+    if(!ar) extra+=`<button class="skip-btn" onclick="skipQ(${q.id})">⏭ Keç</button>`;
+
+    // feedback
+    let fb='<div class="fb';
+    if(ar){ fb+=' show'+(ar.skipped?' fb-no':ar.correct?' fb-ok':' fb-no')+'">'; if(ar.skipped) fb+=`⏭ Keçildi. Düzgün: <strong>${ar.answer}</strong>`; else if(ar.correct) fb+='✅ Düzgündür!'; else fb+=`❌ Səhv. Düzgün: <strong>${ar.answer}</strong>`; }
+    else fb+='">'; fb+='</div>';
+
+    card.innerHTML=h+b+extra+fb;
+    area.appendChild(card);
+  });
+  updateStats();
+  checkBA();
+}
+
+function esc(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+// ═══ HINT ════════════════════════════════════════════════════════
+function showHint(id){ const h=document.getElementById('hint-'+id); if(h) h.classList.toggle('show'); }
+
+// ═══ SKIP ════════════════════════════════════════════════════════
+function skipQ(id){
+  if(ST.ans[id]) return;
+  const q=Q.find(x=>x.id===id);
+  ST.ans[id]={correct:false,chosen:'—',answer:q.answer,skipped:true};
+  ST.streak=0;
+  const card=document.getElementById('card-'+id);
+  if(card){ card.classList.add('card-wrong'); card.querySelector('.skip-btn')?.remove(); card.querySelector('.hint-btn')?.remove(); card.querySelector('.hint-box')?.remove(); }
+  const fb=document.getElementById('fb-'+id);
+  if(fb){ fb.className='fb show fb-no'; fb.innerHTML=`⏭ Keçildi. Düzgün: <strong>${q.answer}</strong>`; }
+  disQ(id);
+  updateStats(); checkBA();
+}
+
+// ═══ INPUT ═══════════════════════════════════════════════════════
+function onType(id,el){ const b=document.getElementById('chk-'+id); if(b) b.disabled=!el.value.trim(); }
+function onEnter(e,id){ if(e.key==='Enter') chkTxt(id); }
+
+function chkTxt(id){
+  if(ST.ans[id]) return;
+  const q=Q.find(x=>x.id===id);
+  const inp=document.getElementById('inp-'+id);
+  const val=inp.value.trim(); if(!val) return;
+  const ok=match(val,q.answer);
+  record(id,ok,val,q.answer);
+  inp.classList.add(ok?'inp-correct':'inp-wrong'); inp.disabled=true;
+  const b=document.getElementById('chk-'+id); if(b) b.disabled=true;
+  setFb(id,ok,q.answer);
+  post(id,ok);
+}
+
+function selOpt(id,val,btn){
+  if(ST.ans[id]) return;
+  const q=Q.find(x=>x.id===id);
+  const ok=n(val)===n(q.answer);
+  record(id,ok,val,q.answer);
+  document.querySelectorAll('#opts-'+id+' .opt').forEach(b=>{
+    b.disabled=true;
+    if(n(b.textContent.trim())===n(q.answer)) b.classList.add('opt-reveal');
+  });
+  btn.classList.remove('opt-reveal');
+  btn.classList.add(ok?'opt-correct':'opt-wrong');
+  setFb(id,ok,q.answer);
+  post(id,ok);
+}
+
+function record(id,ok,chosen,answer){ if(!ST.ans[id]) ST.ans[id]={correct:ok,chosen,answer,skipped:false}; }
+
+function post(id,ok){
+  const card=document.getElementById('card-'+id);
+  if(card){ card.classList.add(ok?'card-correct':'card-wrong'); card.querySelector('.skip-btn')?.remove(); card.querySelector('.hint-btn')?.remove(); card.querySelector('.hint-box')?.remove(); }
+  if(ok){ playOK(); ST.streak++; if(ST.streak>=3&&ST.streak%3===0) showToast(ST.streak); }
+  else{ playFail(); ST.streak=0; }
+  updateStats(); checkBA();
+}
+
+function disQ(id){
+  document.querySelectorAll('#opts-'+id+' .opt').forEach(b=>b.disabled=true);
+  const inp=document.getElementById('inp-'+id); if(inp) inp.disabled=true;
+  const b=document.getElementById('chk-'+id); if(b) b.disabled=true;
+}
+
+function setFb(id,ok,answer){
+  const fb=document.getElementById('fb-'+id); if(!fb) return;
+  fb.className='fb show '+(ok?'fb-ok':'fb-no');
+  fb.innerHTML=ok?'✅ Düzgündür!':`❌ Səhv. Düzgün: <strong>${answer}</strong>`;
+}
+
+// ═══ STREAK TOAST ════════════════════════════════════════════════
+let toastT=null;
+function showToast(n){
+  playStreak();
+  document.getElementById('streakNum').textContent=n;
+  const t=document.getElementById('streakToast');
+  t.classList.add('show');
+  if(toastT) clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ═══ STATS ═══════════════════════════════════════════════════════
+function updateStats(){
+  const all=Object.values(ST.ans), cor=all.filter(a=>a.correct).length, tot=all.length;
+  const wrong=all.filter(a=>!a.correct&&!a.skipped).length;
+  document.getElementById('sC').textContent=cor;
+  document.getElementById('sW').textContent=wrong;
+  document.getElementById('sSt').textContent=ST.streak;
+  document.getElementById('sA').textContent=tot;
+  document.getElementById('pLabel').textContent=`${tot} / 80 cavablandı`;
+  document.getElementById('pScore').textContent=`Xal: ${cor}`;
+  document.getElementById('pFill').style.width=(tot/80*100)+'%';
+}
+function checkBA(){ document.getElementById('bottomActs').style.display=Object.keys(ST.ans).length?'flex':'none'; }
+
+// ═══ RESULTS ═════════════════════════════════════════════════════
+function showResults(){
+  clearInterval(ST.tmr);
+  const all=Object.values(ST.ans);
+  const cor=all.filter(a=>a.correct).length;
+  const wrong=all.filter(a=>!a.correct&&!a.skipped).length;
+  const skip=all.filter(a=>a.skipped).length;
+  const pct=Math.round(cor/80*100);
+
+  document.getElementById('quizArea').style.display='none';
+  document.getElementById('bottomActs').style.display='none';
+  document.getElementById('filterTabs').style.display='none';
+
+  document.getElementById('rScore').textContent=cor+'/80';
+  document.getElementById('rPct').textContent=pct+'%';
+  document.getElementById('rTime').textContent='⏱ Vaxt: '+getElapsed();
+  document.getElementById('bC').style.width=(cor/80*100)+'%';
+  document.getElementById('bW').style.width=(wrong/80*100)+'%';
+  document.getElementById('bSk').style.width=(skip/80*100)+'%';
+  document.getElementById('bcC').textContent=cor;
+  document.getElementById('bcW').textContent=wrong;
+  document.getElementById('bcSk').textContent=skip;
+
+  let em,gr;
+  if(pct>=90){em='🏆';gr='Əla! Mükəmməl nəticə!';}
+  else if(pct>=75){em='🎉';gr='Yaxşı iş! Davam et!';}
+  else if(pct>=60){em='👍';gr='Orta nəticə, çalış!';}
+  else if(pct>=40){em='💪';gr='Daha çox məşq lazımdır!';}
+  else{em='📖';gr='Materiala yenidən baxmaq lazımdır!';}
+
+  document.getElementById('rEmoji').textContent=em;
+  document.getElementById('rGrade').textContent=gr;
+
+  const rc=document.getElementById('rCats'); rc.innerHTML='';
+  Object.keys(CATS).forEach(c=>{
+    const qs=Q.filter(q=>q.cat===c);
+    const cr=qs.filter(q=>ST.ans[q.id]&&ST.ans[q.id].correct).length;
+    const p=Math.round(cr/qs.length*100);
+    const col=p>=70?'var(--green)':p>=40?'var(--yellow)':'var(--red)';
+    const d=document.createElement('div'); d.className='res-cat';
+    d.innerHTML=`<div class="res-cat-name">${CATS[c]}</div><div class="res-cat-val" style="color:${col}">${cr}/${qs.length} (${p}%)</div>`;
+    rc.appendChild(d);
+  });
+
+  const rs=document.getElementById('resultsSection'); rs.style.display='block';
+  rs.scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>pct>=60?playWin():playLose(),400);
+}
+
+function scrollTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+// ═══ RESET ═══════════════════════════════════════════════════════
+function resetQuiz(){
+  clearInterval(ST.tmr);
+  Object.keys(ST.ans).forEach(k=>delete ST.ans[k]);
+  ST.streak=0; ST.cat='all'; ST.t0=Date.now();
+  document.getElementById('resultsSection').style.display='none';
+  document.getElementById('quizArea').style.display='';
+  document.getElementById('filterTabs').style.display='';
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  updateStats(); renderQuiz(); startTimer();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══ HELPERS ═════════════════════════════════════════════════════
+function n(s){ return (s||'').trim().toLowerCase().replace(/[.,!?;:'"]/g,'').replace(/\s+/g,' '); }
+function match(inp,ans){
+  const ni=n(inp),na=n(ans);
+  if(ni===na) return true;
+  if(na.length>4&&na.includes(ni)&&ni.length>3) return true;
+  const map={'five':'5','5':'five','doctor':'he is a doctor','he is a doctor':'doctor','5 (five)':'5','five (5)':'5'};
+  return map[ni]===na||map[na]===ni;
+}
+
+// ═══ INIT ════════════════════════════════════════════════════════
+buildTabs(); renderQuiz(); startTimer();
+</script>
+</body>
+</html>
