@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGN Texnologiyaları — Kollokvium 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --accent: #00e5ff;
+    --accent2: #ff4757;
+    --accent3: #ffd32a;
+    --correct: #00e676;
+    --wrong: #ff1744;
+    --text: #e8eaf6;
+    --muted: #7986cb;
+    --border: rgba(0,229,255,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow blob */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: blobMove 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes blobMove {
+    from { transform: translate(0,0); }
+    to { transform: translate(-100px, 100px); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .header .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    background: rgba(0,229,255,0.05);
+  }
+
+  .header h1 {
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #e8eaf6 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    margin-bottom: 32px;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-meta span {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .progress-meta .q-counter {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #7c4dff);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(0,229,255,0.5);
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: cardIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), #7c4dff, transparent);
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .q-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-size: clamp(16px, 2.5vw, 19px);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* OPTIONS */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    animation: optionIn 0.3s ease both;
+  }
+
+  .option-btn:nth-child(1) { animation-delay: 0.05s; }
+  .option-btn:nth-child(2) { animation-delay: 0.1s; }
+  .option-btn:nth-child(3) { animation-delay: 0.15s; }
+  .option-btn:nth-child(4) { animation-delay: 0.2s; }
+
+  @keyframes optionIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.07);
+    transform: translateX(4px);
+    box-shadow: 0 0 20px rgba(0,229,255,0.1);
+  }
+
+  .option-label {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .option-btn:hover:not(:disabled) .option-label {
+    background: rgba(0,229,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: rgba(0,230,118,0.1);
+    animation: correctPulse 0.4s ease;
+  }
+
+  .option-btn.correct .option-label {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #000;
+  }
+
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,23,68,0.1);
+    animation: wrongShake 0.4s ease;
+  }
+
+  .option-btn.wrong .option-label {
+    background: var(--wrong);
+    border-color: var(--wrong);
+    color: #fff;
+  }
+
+  .option-btn.reveal-correct {
+    border-color: var(--correct);
+    background: rgba(0,230,118,0.07);
+    opacity: 0.8;
+  }
+
+  .option-btn.reveal-correct .option-label {
+    background: rgba(0,230,118,0.3);
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+
+  @keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes wrongShake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-btns {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.25);
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .btn-ghost:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-hint {
+    background: rgba(255,211,42,0.1);
+    border: 1px solid rgba(255,211,42,0.3);
+    color: var(--accent3);
+  }
+
+  .btn-hint:hover {
+    background: rgba(255,211,42,0.2);
+    box-shadow: 0 0 15px rgba(255,211,42,0.2);
+  }
+
+  .btn-finish {
+    background: linear-gradient(135deg, #7c4dff, var(--accent));
+    color: #000;
+    font-weight: 700;
+    padding: 12px 28px;
+  }
+
+  .btn-finish:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,229,255,0.3);
+  }
+
+  /* HINT BOX */
+  .hint-box {
+    background: rgba(255,211,42,0.06);
+    border: 1px solid rgba(255,211,42,0.25);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #ffe57f;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .hint-box.show { display: flex; gap: 10px; align-items: flex-start; }
+  .hint-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* SCORE BAR */
+  .score-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  .score-chip {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .score-chip .val {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .score-chip .lbl {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .score-chip.correct-chip .val { color: var(--correct); }
+  .score-chip.wrong-chip .val { color: var(--wrong); }
+  .score-chip.remain-chip .val { color: var(--accent); }
+
+  /* RESULTS PAGE */
+  #results-page {
+    display: none;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .result-hero {
+    text-align: center;
+    padding: 50px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,229,255,0.1) 0%, transparent 60%);
+  }
+
+  .result-score-big {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(60px, 15vw, 90px);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(0,229,255,0.4);
+    position: relative;
+  }
+
+  .result-label {
+    font-size: 18px;
+    color: var(--muted);
+    margin-top: 8px;
+    font-family: 'Space Mono', monospace;
+    position: relative;
+  }
+
+  .result-grade {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 28px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .grade-a { background: rgba(0,230,118,0.15); color: var(--correct); border: 1px solid rgba(0,230,118,0.4); }
+  .grade-b { background: rgba(0,229,255,0.15); color: var(--accent); border: 1px solid rgba(0,229,255,0.4); }
+  .grade-c { background: rgba(255,211,42,0.15); color: var(--accent3); border: 1px solid rgba(255,211,42,0.4); }
+  .grade-f { background: rgba(255,23,68,0.15); color: var(--wrong); border: 1px solid rgba(255,23,68,0.4); }
+
+  .wrong-answers-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wrong-answers-section h2 span {
+    width: 8px; height: 8px;
+    background: var(--wrong);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px var(--wrong);
+  }
+
+  .wrong-item {
+    background: var(--surface);
+    border: 1px solid rgba(255,23,68,0.2);
+    border-left: 3px solid var(--wrong);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+
+  .wrong-item .wi-q {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .wi-q .q-num {
+    color: var(--wrong);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .wrong-item .wi-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+
+  .wi-your { color: var(--wrong); }
+  .wi-correct { color: var(--correct); }
+  .wi-label {
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: 4px;
+  }
+
+  .btn-restart {
+    width: 100%;
+    justify-content: center;
+    background: linear-gradient(135deg, #7c4dff, var(--accent));
+    color: #000;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 16px;
+    border-radius: 10px;
+    margin-top: 32px;
+  }
+
+  .btn-restart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,229,255,0.3);
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Floating particles */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat linear infinite;
+  }
+
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-20px) scale(1); opacity: 0; }
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  @media (max-width: 600px) {
+    .question-card { padding: 24px 18px; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .nav-btns { justify-content: space-between; }
+    .btn-finish { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">NGN Texnologiyaları · Kollokvium 2</div>
+    <h1>Mock Exam</h1>
+    <p>75 sual · Test yoxlama rejimi</p>
+  </div>
+
+  <!-- EXAM PAGE -->
+  <div id="exam-page">
+    <!-- Score chips -->
+    <div class="score-row">
+      <div class="score-chip correct-chip">
+        <div class="val" id="score-correct">0</div>
+        <div class="lbl">Düzgün</div>
+      </div>
+      <div class="score-chip wrong-chip">
+        <div class="val" id="score-wrong">0</div>
+        <div class="lbl">Səhv</div>
+      </div>
+      <div class="score-chip remain-chip">
+        <div class="val" id="score-remain">75</div>
+        <div class="lbl">Qalıb</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span>İrəliləyiş</span>
+        <span class="q-counter"><span id="q-current">1</span> / 75</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:1.33%"></div>
+      </div>
+    </div>
+
+    <!-- Question card -->
+    <div class="question-card" id="q-card">
+      <div class="q-number" id="q-num-label">Sual 01</div>
+      <div class="q-text" id="q-text">Yüklənir...</div>
+    </div>
+
+    <!-- Hint box -->
+    <div class="hint-box" id="hint-box">
+      <div class="hint-icon">💡</div>
+      <div id="hint-text"></div>
+    </div>
+
+    <!-- Options -->
+    <div class="options" id="options"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="nav-btns">
+        <button class="btn btn-ghost" id="btn-prev" onclick="navigate(-1)" disabled>← Əvvəlki</button>
+        <button class="btn btn-ghost" id="btn-next" onclick="navigate(1)">Sonrakı →</button>
+      </div>
+      <button class="btn btn-hint" onclick="toggleHint()">💡 İpucu</button>
+      <button class="btn btn-finish" onclick="finishExam()">Bitir ✓</button>
+    </div>
+  </div>
+
+  <!-- RESULTS PAGE -->
+  <div id="results-page">
+    <div class="result-hero">
+      <div class="result-score-big" id="res-score">0%</div>
+      <div class="result-label" id="res-label">0 düzgün / 75 sual</div>
+      <div class="result-grade" id="res-grade"></div>
+    </div>
+
+    <div class="wrong-answers-section" id="wrong-section"></div>
+
+    <button class="btn btn-restart" onclick="restartExam()">🔄 Yenidən Başla</button>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const QA = [
+  { q: "Nəqliyyat paket şəbəkəsinin funksiyası nədir?", a: "NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir." },
+  { q: "Tranzit qovşağın funksiyası nədir?", a: "İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir." },
+  { q: "Son sərhəd qovşağın funksiyası nədir?", a: "Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir." },
+  { q: "Nəqliyyat paket şəbəkəsində şlüzlər hansı funksiyanı həyata keçirir?", a: "Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı." },
+  { q: "Siqnallaşma selinin idarəedici qurğularının funksiyası nədir?", a: "İnformasiya seli emal olunaraq birləşmələr, çağırışlar idarə olunur." },
+  { q: "ATM sözünün mənası nədir?", a: "Asinxron veriş rejimi." },
+  { q: "ATM paketinin uzunluğu nə qədərdir?", a: "53 bayt." },
+  { q: "ATM paketində başlığın ölçüsü neçə baytdır?", a: "5 bayt." },
+  { q: "ATM paketində informasiya həcmi neçə baytdır?", a: "48 bayt." },
+  { q: "Bunlardan hansı ATM trafiKlərinin ötürülmə üsulu deyil?", a: "Ötürülmə üsulları → CBR, VBR, ABR, UBR." },
+  { q: "CBR hansı tipli trafikdir?", a: "Sabit bit sürətli sinxron rejimdə xidmət olunur, gecikmələr əsasdır." },
+  { q: "UBR hansı tipli trafikdir?", a: "Spesifik olmayan bit sürətli, qeyri-müəyyən bit sürətinə malik etibarlılığı yoxdur." },
+  { q: "VBR hansı tipli trafikdir?", a: "Dəyişən bit sürətli." },
+  { q: "ABR hansı tipli trafikdir?", a: "Sərbəst bit sürətli, gecikməyə yol verilir. Veriş sürəti yükdən ibarətdir." },
+  { q: "Bunlardan hansı dəyişən bit sürətli trafiklərdə aiddir?", a: "VBR." },
+  { q: "Bunlardan hansı ATM səviyyələridir?", a: "ATM səviyyələri: Fiziki səviyyə, ATM səviyyəsi, ATM uyğunlaşma səviyyəsi." },
+  { q: "ATM texnologiyası neçə səviyyəlidir?", a: "3." },
+  { q: "Fiziki səviyyənin vəzifəsi nədir?", a: "ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi təşkil olunur." },
+  { q: "ATM səviyyəsinin vəzifəsi nədir?", a: "Fiziki səviyyədə elementar siqnal selinin ATM ilə uyğunlaşma səviyyəsi və ya əksinə verilişi olur." },
+  { q: "ATM uyğunlaşma səviyyəsinin vəzifəsi nədir?", a: "ATM səviyyəsi ilə daha yüksək səviyyəli protokol interfeysi arasında uyğunlaşma prosesi olur." },
+  { q: "Hansı virtual kanalın növləridiR?", a: "Virtual kanallar: Daimi virtual kanal (PVC), Kommutasiyalı virtual kanal (SVC), İntellektual virtual kanal (SPVC)." },
+  { q: "ATM nəqliyyat şəbəkəsinin əsas elementi nədir?", a: "Məntiqi virtual kanal." },
+  { q: "Virtual kanal neçə istiqamətli təşkil edilir?", a: "2 istiqamətlə." },
+  { q: "PVC hansı növ virtual kanaldır?", a: "Daimi virtual kanal." },
+  { q: "SVC hansı növ virtual kanaldır?", a: "Kommutasiyalı virtual kanal." },
+  { q: "SPVC hansı növ virtual kanaldır?", a: "İntellektual daimi virtual kanal." },
+  { q: "ATM multipleksoru ilk dəfə Bakıda neçənci ildə quraşdırılmışdır?", a: "2005-ci il." },
+  { q: "ATM şəbəkəsində istifadə olunan interfeys tipləri hansıdır?", a: "UNI, NNI." },
+  { q: "ATM multipleksoru Bakıda ilk dəfə hansı ATS-də quraşdırılmışdır?", a: "Bakı Şts ATS 423/498." },
+  { q: "ATM şəbəkəsində maksimum veriLiş sürəti nə qədərdir?", a: "2,4 Gbit/san." },
+  { q: "ATM-in xüsusiyyətlərinə aid olmayanı göstərin.", a: "Aid olanlar - geniş zolaqli multiservice sistemlərinin yaradılması üçün, daha çox interys blok olunur, ATM texnologiyası geniş tətbiq olunmayib." },
+  { q: "ATM texnologiyası ilə NGN şəbəkəsində uzaq məsafəyə rabitə yaratmaq üçün hansı kabeldən istifadə olunur?", a: "Optik kabel." },
+  { q: "İP telefonun kəşfi hansı ölkəyə məxsusdur?", a: "İsrail." },
+  { q: "Vokatel şirkəti neçənci ildə internet şəbəkəsilə danışıq ötürməyə nail olmuşdur?", a: "1995." },
+  { q: "Ənənəvi diskret məlumat şəbəkələri hansı prinsipə əsaslanır?", a: "Kanal kommutasiyası prinsipi." },
+  { q: "İP şəbəkəsi hansı kommutasiya prinsipi əsasında işləyir?", a: "Paket kommutasiyası." },
+  { q: "İP şəbəkəsindən veriLiş sürəti nə qədər nəzərdə tutulmuşdur?", a: "10 Gbit/san." },
+  { q: "İP-nin xüsusiyyətlərinə aid olmayanı göstərin.", a: "Aid olan: paket kommutasiyası prinsipə əsaslanır, kiçik ünvanlara malikdir, minimum gecikməsi, yaddaş qurğuların olması tələb edir." },
+  { q: "Paketlərin gecikməsi nədir?", a: "2 istifadəçi arasında bir nöqtədən digər nöqtəyə ötürülməsinə deyilir." },
+  { q: "Paketlərin gecikməsi səbəblərinə aid olmayan hansıdır?", a: "Əlaqə bağlı gecikməsi; şəbəkəylə bağlı gecikmə, əməliyyat sistemi ilə bağlı gecikmə, təsadüfi interval ilə gecikmə, kodekin və paketdəki kadrların sayı ilə bağlı gecikmə." },
+  { q: "Ən yaxşı danışıq keyfiyyəti üçün gecikMə müddəti nə qədər ola bilər?", a: "150 ms-dən çox ola bilməz." },
+  { q: "Jitter nədir?", a: "Paketlərin verilməsi ardıcıllığının pozulması nəticəsində paketlər arasında vaxt fərqi." },
+  { q: "Kosmik peyk rabitəsindən siqnaLın gedib qayıtma müddəti nə qədərdir?", a: "250-300 ms/san." },
+  { q: "Əks-səda nədir?", a: "Danışan insan müəyyən gecikməylə öz səsini eşidir." },
+  { q: "GecikMələrin ən dözülməz müddəti hansıdır?", a: "300 ms/san." },
+  { q: "Boş otaq effekti nə vaxt yaranır?", a: "Hər siqnalin gecikməsi 15-20 ms/san olarsa boş effekti yaranır." },
+  { q: "Akustik formalı əks-səda effekti nəyin hesabına yaranır?", a: "Ucadan danışan qurğulardan terminallar hesabına yaranır." },
+  { q: "Peyk rabitəsindən İP şəbəkəsilə gecikMə vaxtı yaxşı danışıq üçün nə qədərdir?", a: "250-300 ms/san." },
+  { q: "Abunəçi neçə millisaniyəyə qədər gecikMələrə ciddi reaksiya vermir?", a: "50 ms/san." },
+  { q: "Əks-səda effektini aradan qaldıran qurğulara aid olan hansıdır?", a: "Əks-səda məhdudlaşdırıcı, əks-səda kompensatoru." },
+  { q: "Əks-səda məhdudlaşdırıcısı nə vaxtdan tətbiq edilməyə başlayıb?", a: "20-ci əsrin 70-cu illərindən." },
+  { q: "Əks-səda kompensatorları hansı siqnalları ləğv edir?", a: "32-64 ms/san." },
+  { q: "Uzun kadrlı protokolların tətbiqi nəyə təsir edir?", a: "İnformasiyanın emalı prosesindən gecikmə." },
+  { q: "Yerli şəbəkədə gecikMənin maksimal qiyməti nə qədər olmalıdır?", a: "Yerli şəbəkə gecikməsi minimal olmalıdır." },
+  { q: "Kodek nədir?", a: "Kodlama və dekodlama prosesini yerinə yetirən qurğu." },
+  { q: "G 711 seriyalı kodek hansı növ kodeklərə aiddir?", a: "İKM tipli." },
+  { q: "G 711 seriyalı kodekdə veriLiş sürəti nə qədərdir?", a: "64 kbit/san." },
+  { q: "Bu kodekdərden hansı ənənəvi telefon şəbəkəsindən istifadə edilir?", a: "G 711." },
+  { q: "G 711 seriyalı kodek nə vaxtdan tətbiq edilir?", a: "1984-cü il." },
+  { q: "G 711 seriyalı kodeklər harada istifadə edilir?", a: "Ənənəvi telefon şəbəkəsi." },
+  { q: "G 726 seriyalı kodekdə veriLiş sürəti nə qədərdir?", a: "16, 24, 32 kbit/san." },
+  { q: "G 726 seriyalı kodek neçə veriLiş sürətinə malikdir?", a: "3." },
+  { q: "G 726 seriyalı kodek harada tətbiq edilir?", a: "Video konfrans rabitəsi." },
+  { q: "G 726 seriyalı kodek hansı tip kodekdir?", a: "ADIKM." },
+  { q: "G 726 seriyalı kodekdə 1 saniyədə aparılan əməliyyatların sayı nə qədərdir?", a: "8 milyon." },
+  { q: "G 723.1 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?", a: "16 milyon." },
+  { q: "G 723.1 seriyalı kodekdə gecikMə nə qədərdir?", a: "30 ms/san." },
+  { q: "G 729 a seriyalı kodekdə 1 san aparılan əməliyyat sayı nə qədərdir?", a: "20 milyon." },
+  { q: "G 729 a seriyalı kodekdə veriLiş sürəti nə qədərdir?", a: "8 kbit/san." },
+  { q: "G 729 seriyalı kodekdə 1 san aparılan əməliyyat sayı nə qədərdir?", a: "30 milyon." },
+  { q: "G 728 seriyalı kodekdə 1 san aparılan əməliyyat sayı nə qədərdir?", a: "40 milyon." },
+  { q: "G 729 a seriyalı kodekdə gecikMə nə qədərdir?", a: "10 ms/san." },
+  { q: "G 728 seriyalı kodekdə veriLiş sürəti nə qədərdir?", a: "16 kbit/san." },
+  { q: "G 728 seriyalı kodekdə gecikMə nə qədərdir?", a: "3-5 ms/san." },
+  { q: "G 728 seriyalı kodek harada istifadə olunur?", a: "Sıxlaşdırılmış rabitə kanalında." },
+];
+
+// Wrong answer pool
+const WRONG_POOL = [
+  "Paket kommutasiyası prinsipi ilə işləyir.",
+  "128 bayt ölçüsündə sabit uzunluqlu bloklar.",
+  "Yalnız optik lifli kabellər vasitəsilə.",
+  "Minimum 1 Gbit/san sürəti tələb olunur.",
+  "SDH texnologiyasına əsaslanır.",
+  "RFC 2616 standartı ilə müəyyənləşdirilir.",
+  "ITU-T G.821 tövsiyəsinə uyğundur.",
+  "Siqnallaşma sistemi SS7 istifadə olunur.",
+  "Yalnız tam rəqəmli şəbəkələrdə tətbiq edilir.",
+  "ISDN B kanalı 64 kbit/san sürəti.",
+  "Proqramla idarə edilən kommutator vasitəsilə.",
+  "Coaxial kabel istifadə edilir.",
+  "TCP/IP protokol dəsti əsasında.",
+  "H.323 standartına uyğundur.",
+  "SIP protokolu ilə işləyir.",
+  "MPLS texnologiyası tətbiq olunur.",
+  "Frame Relay texnologiyası əsasında.",
+  "VPN şəbəkəsi kimi istifadə olunur.",
+  "Yalnız korporativ şəbəkələrdə.",
+  "Maksimum 10 Mbit/san ötürmə sürəti.",
+  "PDH texnologiyası ilə uyğun gəlir.",
+  "WDM multipleksləmə üsulu tətbiq edilir.",
+  "QoS parametrləri ilə tənzimlənir.",
+  "RSVP protokolu istifadə olunur.",
+  "DiffServ modeli əsasında.",
+  "Yaddaş buferindən istifadə olunur.",
+  "İki istiqamətli siqnal ötürülməsi.",
+  "Rəqəmli modulyasiya üsulları tətbiq edilir.",
+  "Multipleksor qurğusu vasitəsilə idarə olunur.",
+  "Bandwidth on Demand prinsipinə əsaslanır.",
+];
+
+// ==================== STATE ====================
+let current = 0;
+let answers = new Array(75).fill(null); // stores selected answer text
+let options = new Array(75).fill(null); // stores generated options [{text, correct}]
+let hintVisible = false;
+
+// ==================== AUDIO ====================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx = null;
+
+function getCtx() {
+  if (!ctx) ctx = new AudioCtx();
+  return ctx;
+}
+
+function playCorrect() {
+  try {
+    const c = getCtx();
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.frequency.setValueAtTime(523, c.currentTime);
+    o.frequency.setValueAtTime(659, c.currentTime + 0.1);
+    o.frequency.setValueAtTime(784, c.currentTime + 0.2);
+    g.gain.setValueAtTime(0.3, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.6);
+    o.start(); o.stop(c.currentTime + 0.6);
+  } catch(e) {}
+}
+
+function playWrong() {
+  try {
+    const c = getCtx();
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(200, c.currentTime);
+    o.frequency.setValueAtTime(150, c.currentTime + 0.15);
+    g.gain.setValueAtTime(0.2, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
+    o.start(); o.stop(c.currentTime + 0.4);
+  } catch(e) {}
+}
+
+// ==================== GENERATE OPTIONS ====================
+function generateOptions(idx) {
+  if (options[idx]) return options[idx];
+  const correctAnswer = QA[idx].a;
+  // pick 3 random wrong answers
+  let pool = [...WRONG_POOL];
+  // shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const wrongs = pool.slice(0, 3);
+  const all = [
+    { text: correctAnswer, correct: true },
+    { text: wrongs[0], correct: false },
+    { text: wrongs[1], correct: false },
+    { text: wrongs[2], correct: false },
+  ];
+  // shuffle options
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  options[idx] = all;
+  return all;
+}
+
+// ==================== RENDER ====================
+function render() {
+  const q = QA[current];
+  const opts = generateOptions(current);
+
+  // Update meta
+  document.getElementById('q-num-label').textContent = `Sual ${String(current + 1).padStart(2, '0')}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-current').textContent = current + 1;
+  document.getElementById('progress-fill').style.width = ((current + 1) / 75 * 100) + '%';
+
+  // Nav buttons
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = current === 74;
+
+  // Card animation
+  const card = document.getElementById('q-card');
+  card.style.animation = 'none';
+  requestAnimationFrame(() => { card.style.animation = 'cardIn 0.35s cubic-bezier(0.4,0,0.2,1) both'; });
+
+  // Hint
+  hintVisible = false;
+  document.getElementById('hint-box').classList.remove('show');
+
+  // Render options
+  const container = document.getElementById('options');
+  container.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+  const answered = answers[current];
+
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.disabled = answered !== null;
+
+    let cls = '';
+    if (answered !== null) {
+      if (opt.correct) cls = answered === opt.text ? 'correct' : 'reveal-correct';
+      else if (answered === opt.text) cls = 'wrong';
+      if (cls) btn.classList.add(cls);
+    }
+
+    btn.innerHTML = `<span class="option-label">${labels[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectAnswer(opt, i);
+    btn.style.animationDelay = (i * 0.05) + 's';
+    container.appendChild(btn);
+  });
+
+  // Update scores
+  updateScores();
+}
+
+function selectAnswer(opt, idx) {
+  if (answers[current] !== null) return;
+  answers[current] = opt.text;
+
+  if (opt.correct) {
+    playCorrect();
+  } else {
+    playWrong();
+  }
+
+  render();
+
+  // Auto-advance after 1.5s if not last question
+  if (current < 74) {
+    setTimeout(() => {
+      current++;
+      render();
+    }, 1500);
+  }
+}
+
+function updateScores() {
+  const answered = answers.filter(a => a !== null).length;
+  let correct = 0;
+  answers.forEach((a, i) => {
+    if (a !== null && options[i]) {
+      const correctOpt = options[i].find(o => o.correct);
+      if (correctOpt && a === correctOpt.text) correct++;
+    }
+  });
+  const wrong = answered - correct;
+  const remain = 75 - answered;
+  document.getElementById('score-correct').textContent = correct;
+  document.getElementById('score-wrong').textContent = wrong;
+  document.getElementById('score-remain').textContent = remain;
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next > 74) return;
+  current = next;
+  render();
+}
+
+function toggleHint() {
+  hintVisible = !hintVisible;
+  const box = document.getElementById('hint-box');
+  if (hintVisible) {
+    document.getElementById('hint-text').textContent = 'Düzgün cavab: ' + QA[current].a;
+    box.classList.add('show');
+  } else {
+    box.classList.remove('show');
+  }
+}
+
+function finishExam() {
+  showResults();
+}
+
+function showResults() {
+  document.getElementById('exam-page').style.display = 'none';
+  const rp = document.getElementById('results-page');
+  rp.style.display = 'block';
+
+  let correct = 0;
+  const wrongList = [];
+
+  answers.forEach((a, i) => {
+    if (options[i]) {
+      const correctOpt = options[i].find(o => o.correct);
+      if (a !== null && correctOpt && a === correctOpt.text) {
+        correct++;
+      } else {
+        wrongList.push({
+          idx: i,
+          question: QA[i].q,
+          yourAnswer: a || 'Cavabsız',
+          correctAnswer: QA[i].a
+        });
+      }
+    } else {
+      wrongList.push({
+        idx: i,
+        question: QA[i].q,
+        yourAnswer: 'Cavabsız',
+        correctAnswer: QA[i].a
+      });
+    }
+  });
+
+  const pct = Math.round(correct / 75 * 100);
+  document.getElementById('res-score').textContent = pct + '%';
+  document.getElementById('res-label').textContent = `${correct} düzgün / 75 sual`;
+
+  const grade = document.getElementById('res-grade');
+  if (pct >= 90) { grade.textContent = 'A — Əla'; grade.className = 'result-grade grade-a'; }
+  else if (pct >= 75) { grade.textContent = 'B — Yaxşı'; grade.className = 'result-grade grade-b'; }
+  else if (pct >= 60) { grade.textContent = 'C — Kafi'; grade.className = 'result-grade grade-c'; }
+  else { grade.textContent = 'F — Qeyri-kafi'; grade.className = 'result-grade grade-f'; }
+
+  // Wrong answers section
+  const section = document.getElementById('wrong-section');
+  if (wrongList.length === 0) {
+    section.innerHTML = '<div style="text-align:center;color:var(--correct);font-size:18px;padding:20px">🎉 Bütün suallara düzgün cavab verdiniz!</div>';
+  } else {
+    section.innerHTML = `
+      <h2><span></span> Səhv Cavablar (${wrongList.length})</h2>
+      ${wrongList.map(w => `
+        <div class="wrong-item">
+          <div class="wi-q"><span class="q-num">#${w.idx + 1}</span>${w.question}</div>
+          <div class="wi-row">
+            <span><span class="wi-label">Sizin:</span><span class="wi-your">${w.yourAnswer}</span></span>
+          </div>
+          <div class="wi-row" style="margin-top:6px">
+            <span><span class="wi-label">Düzgün:</span><span class="wi-correct">${w.correctAnswer}</span></span>
+          </div>
+        </div>
+      `).join('')}
+    `;
+  }
+}
+
+function restartExam() {
+  current = 0;
+  answers = new Array(75).fill(null);
+  options = new Array(75).fill(null);
+  hintVisible = false;
+  document.getElementById('results-page').style.display = 'none';
+  document.getElementById('exam-page').style.display = 'block';
+  render();
+}
+
+// ==================== PARTICLES ====================
+function initParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    p.style.opacity = Math.random() * 0.5;
+    container.appendChild(p);
+  }
+}
+
+// ==================== INIT ====================
+initParticles();
+render();
+</script>
+</body>
+</html>
