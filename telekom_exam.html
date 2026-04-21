@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telekommunikasiya Mock Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0d1525;
+    --card: #111d33;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --correct: #00ff88;
+    --wrong: #ff3366;
+    --hint: #ffd700;
+    --text: #e0eeff;
+    --muted: #5a7a9a;
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(0,80,160,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(0,180,255,0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(255,107,53,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grid lines */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 30px 0 20px;
+    animation: fadeDown 0.6s ease;
+  }
+
+  .header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,212,255,0.6);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    height: 8px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #0080ff);
+    border-radius: 50px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 12px rgba(0,212,255,0.6);
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .q-counter {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    animation: slideIn 0.4s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), transparent);
+    border-radius: 4px 0 0 4px;
+  }
+
+  .q-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  /* OPTIONS */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    font-family: 'Exo 2', sans-serif;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .option-letter {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    min-width: 22px;
+    height: 22px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.06);
+    transform: translateX(4px);
+  }
+
+  .option:hover:not(.disabled) .option-letter {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .option.correct {
+    border-color: var(--correct);
+    background: rgba(0,255,136,0.08);
+    animation: correctPulse 0.5s ease;
+  }
+
+  .option.correct .option-letter {
+    background: var(--correct);
+    color: #000;
+    border-color: var(--correct);
+  }
+
+  .option.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,51,102,0.08);
+    animation: wrongShake 0.4s ease;
+  }
+
+  .option.wrong .option-letter {
+    background: var(--wrong);
+    color: #fff;
+    border-color: var(--wrong);
+  }
+
+  .option.reveal-correct {
+    border-color: var(--correct);
+    background: rgba(0,255,136,0.05);
+    opacity: 0.8;
+  }
+
+  .option.disabled { cursor: default; }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .nav-btns {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-nav {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--muted);
+  }
+
+  .btn-nav:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--glow);
+  }
+
+  .btn-hint {
+    background: rgba(255,215,0,0.08);
+    border-color: var(--hint);
+    color: var(--hint);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .btn-hint:hover {
+    background: rgba(255,215,0,0.15);
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+  }
+
+  .btn-finish {
+    background: linear-gradient(135deg, var(--accent2), #ff4500);
+    border-color: var(--accent2);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255,107,53,0.3);
+  }
+
+  .btn-finish:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 25px rgba(255,107,53,0.5);
+  }
+
+  /* HINT BOX */
+  .hint-box {
+    margin-top: 16px;
+    background: rgba(255,215,0,0.06);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 0.9rem;
+    color: var(--hint);
+    display: none;
+    animation: fadeIn 0.3s ease;
+    line-height: 1.5;
+  }
+
+  .hint-box.show { display: block; }
+
+  .hint-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+
+  /* FEEDBACK */
+  .feedback {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 14px;
+    min-height: 28px;
+    transition: all 0.3s;
+  }
+
+  .feedback.correct { color: var(--correct); }
+  .feedback.wrong { color: var(--wrong); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .stat-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .stat-dot.c { background: var(--correct); box-shadow: 0 0 6px var(--correct); }
+  .stat-dot.w { background: var(--wrong); box-shadow: 0 0 6px var(--wrong); }
+  .stat-dot.s { background: var(--muted); }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  /* RESULT SCREEN */
+  .result-screen {
+    display: none;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 60px rgba(0,0,0,0.6);
+  }
+
+  .result-score {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(3rem, 10vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin: 16px 0;
+  }
+
+  .result-label {
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .result-grade {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+  }
+
+  .result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+
+  .result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .result-stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .result-stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* WRONG ANSWERS REVIEW */
+  .review-section {
+    margin-top: 24px;
+  }
+
+  .review-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    color: var(--wrong);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .review-item {
+    background: var(--card);
+    border: 1px solid rgba(255,51,102,0.2);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+
+  .review-q {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .review-your {
+    font-size: 0.82rem;
+    color: var(--wrong);
+    margin-bottom: 4px;
+  }
+
+  .review-correct {
+    font-size: 0.82rem;
+    color: var(--correct);
+  }
+
+  .btn-restart {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px;
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--accent), #0066cc);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 30px rgba(0,212,255,0.3);
+    transition: all 0.3s;
+  }
+
+  .btn-restart:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 40px rgba(0,212,255,0.5);
+  }
+
+  /* SCORE RING */
+  .score-ring-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 20px;
+  }
+
+  .score-ring-wrap svg {
+    transform: rotate(-90deg);
+  }
+
+  .score-ring-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes wrongShake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  @media (max-width: 500px) {
+    .question-card { padding: 22px 16px 18px; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .nav-btns { justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1>⚡ TELEKOM EXAM</h1>
+    <p>Telekommunikasiya Şəbəkələri · Mock Test</p>
+  </div>
+
+  <!-- EXAM SCREEN -->
+  <div id="examScreen">
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-dot c"></div><span class="stat-num" id="statCorrect">0</span><span>Düzgün</span></div>
+      <div class="stat"><div class="stat-dot w"></div><span class="stat-num" id="statWrong">0</span><span>Səhv</span></div>
+      <div class="stat"><div class="stat-dot s"></div><span class="stat-num" id="statSkipped">75</span><span>Qalıb</span></div>
+    </div>
+
+    <div class="progress-info">
+      <span class="q-counter" id="qCounter">Sual 1 / 75</span>
+      <span id="pctLabel">0%</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <div class="q-number" id="qNumber">SUAL 01</div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="hint-box" id="hintBox">
+        <div class="hint-label">💡 İPUCU</div>
+        <div id="hintText"></div>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="controls">
+      <div class="nav-btns">
+        <button class="btn btn-nav" onclick="prevQ()">← GERİ</button>
+        <button class="btn btn-nav" onclick="nextQ()">İRƏLİ →</button>
+      </div>
+      <button class="btn btn-hint" onclick="showHint()">💡 İPUCU</button>
+      <button class="btn btn-finish" onclick="finishExam()">NƏTİCƏ ⚡</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="resultScreen" class="result-screen">
+    <div class="result-card">
+      <div class="result-label">Exam Nəticəsi</div>
+      <div class="score-ring-wrap">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(30,58,95,0.8)" stroke-width="12"/>
+          <circle cx="80" cy="80" r="68" fill="none" stroke="url(#scoreGrad)" stroke-width="12"
+            stroke-linecap="round" stroke-dasharray="427" id="scoreCircle" stroke-dashoffset="427"/>
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#00ff88"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-ring-text">
+          <div class="result-score" id="resultPct">0%</div>
+        </div>
+      </div>
+      <div class="result-grade" id="resultGrade"></div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-num" style="color:var(--correct)" id="rCorrect">0</div>
+          <div class="result-stat-label">DÜZGÜN</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" style="color:var(--wrong)" id="rWrong">0</div>
+          <div class="result-stat-label">SƏHVİ</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num" style="color:var(--muted)" id="rSkip">0</div>
+          <div class="result-stat-label">KEÇILDI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-section" id="reviewSection"></div>
+
+    <button class="btn-restart" onclick="restartExam()">🔄 YENİDƏN BAŞLA</button>
+  </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" preload="auto">
+  <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFhYqFhYqF" type="audio/wav">
+</audio>
+
+<script>
+// ============================================================
+// QUESTIONS DATA
+// ============================================================
+const questions = [
+  { q: "Qapalı nömrələnmə sistemi nə ilə xarakterizə olunur?", a: "Vahid nömrə yığımı (abunəçi tam nömrəsi)", opts: ["Vahid nömrə yığımı (abunəçi tam nömrəsi)", "Fərqli uzunluqlu nömrələr", "Yalnız şəhərlərarası nömrələr", "İnternetə bağlı nömrələr"] },
+  { q: "80000-dən çox tutumlu şəbəkə quruluşu giriş və çıxış məlumat qovşaqlarına əsaslanırsa, nömrə neçə rəqəmli olur?", a: "7 rəqəmli", opts: ["5 rəqəmli", "6 rəqəmli", "7 rəqəmli", "8 rəqəmli"] },
+  { q: "ŞTŞ-nin qurulmasında I mərhələdə nə tələb olunur?", a: "Rayonlaşdırılmamış şəbəkənin yaradılması (bir ATS-li şəbəkə)", opts: ["Rayonlaşdırılmamış şəbəkənin yaradılması (bir ATS-li şəbəkə)", "Qovşaqlı şəbəkənin qurulması", "Optik liflərin quraşdırılması", "Tam rəqəmli sisteme keçid"] },
+  { q: "İnteqral xidmətli telekommunikasiya şəbəkələrinin yaranmasında I mərhələdə hansı saxlanılır?", a: "Mövcud analoq və rəqəmli sistemlərin birgə fəaliyyəti", opts: ["Mövcud analoq və rəqəmli sistemlərin birgə fəaliyyəti", "Yalnız rəqəmli sistemlər", "Yalnız analoq sistemlər", "Optik sistemlər"] },
+  { q: "Birləşdirici xətləri təşkil etmək üçün şəbəkədə ən azı neçə ATS olmalıdır?", a: "2", opts: ["1", "2", "3", "4"] },
+  { q: "\"Radial-qovşaq\" prinsipi nəyi təmin edir?", a: "Xətt təsərrüfatına qənaət və idarəetmənin mərkəzləşməsini", opts: ["Xətt təsərrüfatına qənaət və idarəetmənin mərkəzləşməsini", "Maksimum band genişliyini", "Hər ATS-nin birbaşa əlaqəsini", "Paket kommutasiyasını"] },
+  { q: "Telekommunikasiya şəbəkələrinin qurulmasında \"biri hər biri\" prinsipi nə vaxt daha çox istifadə olunur?", a: "ATS-lərin sayı az olduqda (kiçik tutumlu şəbəkələrdə)", opts: ["ATS-lərin sayı az olduqda (kiçik tutumlu şəbəkələrdə)", "Böyük şəhərlərdə", "Beynəlxalq şəbəkələrdə", "Peyk şəbəkələrində"] },
+  { q: "Kommutasiya nə üçün istifadə olunur?", a: "Məlumatın daxil olan xətdən lazımi çıxış xəttinə ötürülməsini və birləşməni təmin etmək üçün", opts: ["Məlumatın daxil olan xətdən lazımi çıxış xəttinə ötürülməsini və birləşməni təmin etmək üçün", "Siqnalı gücləndirmək üçün", "Məlumatı şifrələmək üçün", "Tezliyi artırmaq üçün"] },
+  { q: "Kanal kommutasiyası hansı xüsusiyyətə malikdir?", a: "Rabitə seansı boyu fiziki yolun (kanalın) tam tutulması", opts: ["Rabitə seansı boyu fiziki yolun (kanalın) tam tutulması", "Məlumatın paketlərə bölünməsi", "Dinamik marşrutlaşdırma", "Çoxlu istifadəçi bölüşməsi"] },
+  { q: "Paket kommutasiyası necə işləyir?", a: "Məlumat paketlərə bölünür və hər paket ünvan məlumatına əsasən müstəqil ötürülür", opts: ["Məlumat paketlərə bölünür və hər paket ünvan məlumatına əsasən müstəqil ötürülür", "Sabit kanal ayrılır", "Məlumat ardıcıl göndərilir", "Yalnız səs ötürülür"] },
+  { q: "Şəbəkənin tutumu 80000 qədər olduqda nömrələnmə neçə rəqəmli tətbiq olunur?", a: "6 və ya 7 rəqəmli", opts: ["4 rəqəmli", "5 rəqəmli", "6 və ya 7 rəqəmli", "8 rəqəmli"] },
+  { q: "80000-800000 tutumlu şəbəkələrdə nömrələnmə prinsipi necədir?", a: "6 qovşaq kodlar", opts: ["4 rəqəmli nömrə", "5 rəqəmli nömrə", "6 qovşaq kodlar", "8 rəqəmli nömrə"] },
+  { q: "1-ci rəqəm ATS kodu, qalan 4 rəqəm abunəçi nömrəsi olduqda şəbəkənin maksimal tutumu nə qədər ola bilər?", a: "10.000 abunəci (hər ATS kodu üçün)", opts: ["1.000 abunəci", "10.000 abunəci (hər ATS kodu üçün)", "100.000 abunəci", "1.000.000 abunəci"] },
+  { q: "Kommutasiya sistemi nəyi həyata keçirir?", a: "Abunəçi xətlərinin və ya kanalların bir-birinə müvəqqəti qoşulmasını", opts: ["Abunəçi xətlərinin və ya kanalların bir-birinə müvəqqəti qoşulmasını", "Daimi bağlantı saxlanmasını", "Məlumatın şifrələnməsini", "Antena siqnalının yayılmasını"] },
+  { q: "1-ci rəqəm milyonluq göstəricisi, 2-ci rəqəm qovşaq kodu olduqda nömrənin qalan hissəsi nəyi göstərir?", a: "ATS-in kodunu və abunəçinin fərdi nömrəsini", opts: ["Yalnız abunəçi nömrəsini", "ATS-in kodunu və abunəçinin fərdi nömrəsini", "Ölkə kodunu", "Zona kodunu"] },
+  { q: "ŞTŞ-nin əsas məqsədi nədir?", a: "Şəhər ərazisindəki müəssisə və sakinləri telefon rabitəsi ilə təmin etmək", opts: ["İnternet xidməti göstərmək", "Şəhər ərazisindəki müəssisə və sakinləri telefon rabitəsi ilə təmin etmək", "Peyk rabitəsi qurmaq", "Yalnız dövlət qurumlarına xidmət etmək"] },
+  { q: "Əvvəllər şəbəkənin son qurğusu nə idi?", a: "Analoq telefon aparatı", opts: ["Modem", "Analoq telefon aparatı", "Router", "Optik splitter"] },
+  { q: "Böyük tutumlu şəbəkələrdə 7 rəqəmli nömrələnmədə 2-ci rəqəm nədir?", a: "Giriş qovşaq kodu (GQK)", opts: ["ATS kodu", "Giriş qovşaq kodu (GQK)", "Abunəçi nömrəsi", "Zona kodu"] },
+  { q: "ŞTŞ hansı xidmətləri göstərir?", a: "Səs ötürülməsi, faks və aşağı sürətli məlumat ötürülməsi", opts: ["Yalnız internet", "Yalnız tv yayımı", "Səs ötürülməsi, faks və aşağı sürətli məlumat ötürülməsi", "Yalnız mobil rabitə"] },
+  { q: "1-ci rəqəm ATS kodu, qalan 4 rəqəm abunəçi nömrəsini göstərirsə, şəbəkənin tutumu hansı aralıqda olur?", a: "10.000-dən 80.000-ə qədər", opts: ["1.000-dən 10.000-ə qədər", "10.000-dən 80.000-ə qədər", "80.000-dən 800.000-ə qədər", "800.000-dən çox"] },
+  { q: "Telefon şəbəkələrində nömrələnmə sistemi nəyə xidmət edir?", a: "Abunəçinin şəbəkədə birmənalı ünvanlandırılmasına", opts: ["Abunəçinin şəbəkədə birmənalı ünvanlandırılmasına", "Məlumatın şifrələnməsinə", "Bant genişliyinin artırılmasına", "Siqnalın gücləndiriilməsinə"] },
+  { q: "Beynəlxalq abonent nömrəsinin strukturu necədir?", a: "Ölkə kodu + Ərazi kodu + Abunəci nömrəsi", opts: ["Yalnız abunəçi nömrəsi", "ATS kodu + abunəçi nömrəsi", "Ölkə kodu + Ərazi kodu + Abunəci nömrəsi", "Zona + şəhər + abunəçi"] },
+  { q: "ŞTŞ neçə mərhələdə qurulur?", a: "Əsasən 3 mərhələdə (Rayonlaşdırılmamış, Rayonlaşdırılmış, Qovşaqlı)", opts: ["2 mərhələdə", "Əsasən 3 mərhələdə (Rayonlaşdırılmamış, Rayonlaşdırılmış, Qovşaqlı)", "4 mərhələdə", "5 mərhələdə"] },
+  { q: "1-ci rəqəm milyonluq, 2-ci rəqəm qovşağın kodu, 3-cü rəqəm ATS kodu, axırıncı 4 rəqəm abunəçi nömrəsini göstərirsə, bu hansı tutumlu şəbəkə üçündür?", a: "Milyonluq (çox böyük tutumlu) şəbəkə üçün", opts: ["Kiçik tutumlu (10.000-ə qədər)", "Orta tutumlu (80.000-ə qədər)", "Böyük tutumlu (800.000-ə qədər)", "Milyonluq (çox böyük tutumlu) şəbəkə üçün"] },
+  { q: "BTİ nömrələnmə sistemində hansı indeks istifadə olunur?", a: "E.164 standartı üzrə beynəlxalq indekslər", opts: ["Yalnız milli indekslər", "E.164 standartı üzrə beynəlxalq indekslər", "IP ünvanları", "MAC ünvanları"] },
+  { q: "Azərbaycanda yerli abonent nömrəsinin uzunluğu adətən nə qədər olur?", a: "7 rəqəmli (Bakı üçün) və ya 5-6 rəqəmli (bölgələr üçün)", opts: ["4 rəqəmli", "5 rəqəmli", "7 rəqəmli (Bakı üçün) və ya 5-6 rəqəmli (bölgələr üçün)", "10 rəqəmli"] },
+  { q: "Kommutasiya sahəsi nədir?", a: "Kommutasiya sisteminin girişlərini çıxışlarına birləşdirən hissəsi", opts: ["Antena yayım sahəsi", "Məlumat saxlama sahəsi", "Kommutasiya sisteminin girişlərini çıxışlarına birləşdirən hissəsi", "Şifrələmə bloku"] },
+  { q: "Aşağıdakılardan hansı informasiya ötürmə vasitəsidir?", a: "Kabel xətləri, radio-rele xətləri, optik liflər", opts: ["Yalnız optik liflər", "Yalnız mis kabellər", "Kabel xətləri, radio-rele xətləri, optik liflər", "Yalnız peyk rabitəsi"] },
+  { q: "Kanal kommutasiyası hansı xüsusiyyətə malikdir?", a: "İnformasiyanın real vaxt rejimində gecikmesiz ötürülməsi", opts: ["İnformasiyanın real vaxt rejimində gecikmesiz ötürülməsi", "Məlumatın paketlərə bölünməsi", "Dinamik marşrutlaşdırma", "Yüksək effektivlik"] },
+  { q: "Paket kommutasiyası necə işləyir?", a: "Məlumat \"Store and Forward\" (Saxla və Ötür) prinsipi ilə hərəkət edir", opts: ["Sabit kanal ayrılır", "Məlumat \"Store and Forward\" (Saxla və Ötür) prinsipi ilə hərəkət edir", "Real vaxtda ötürülür", "Paketlər sıra ilə göndərilmir"] },
+  { q: "ŞTŞ-nin qurulmasında II mərhələdə hansı sistem istifadə olunur?", a: "Rəqəmli inteqral şəbəkə", opts: ["Analoq sistem", "Rəqəmli inteqral şəbəkə", "Peyk sistemi", "Fiber-optik sistem"] },
+  { q: "STM-16 sürəti nə qədərdir?", a: "2.5 Gbit/san", opts: ["155 Mbit/san", "622 Mbit/san", "2.5 Gbit/san", "10 Gbit/san"] },
+  { q: "STM-64 sürəti nə qədərdir?", a: "10 Gbit/san", opts: ["2.5 Gbit/san", "5 Gbit/san", "10 Gbit/san", "40 Gbit/san"] },
+  { q: "III mərhələdə hansı xidmətlər artır?", a: "Multimediya, yüksək sürətli internet və IP televiziya", opts: ["Yalnız səs xidmətləri", "Faks xidmətləri", "Multimediya, yüksək sürətli internet və IP televiziya", "Yalnız data ötürmə"] },
+  { q: "Rəqəmli sistemin üstünlüyü nədir?", a: "Maneəyə davamlılıq və yüksək ötürmə keyfiyyəti", opts: ["Ucuz avadanlıq", "Maneəyə davamlılıq və yüksək ötürmə keyfiyyəti", "Daha az enerji sərfi", "Sadə quraşdırma"] },
+  { q: "Geniş zolaqlı şəbəkə nə üçündür?", a: "Eyni vaxtda müxtəlif növ böyük həcmli informasiyaların ötürülməsi üçün", opts: ["Yalnız səs ötürmə üçün", "Eyni vaxtda müxtəlif növ böyük həcmli informasiyaların ötürülməsi üçün", "Yalnız video üçün", "Kiçik fayl ötürülməsi üçün"] },
+  { q: "SDH nədir?", a: "Sinxron Rəqəmli İyerarxiya – magistral rabitə xətlərinin qurulması standartı", opts: ["Sinxron Rəqəmli İyerarxiya – magistral rabitə xətlərinin qurulması standartı", "Şəbəkə protokolu", "Optik detektor növü", "Paket kommutasiyası sistemi"] },
+  { q: "TKŞ-lərinin qurulmasında radial-qovşaq prinsipi nəyə görə üstünlük təşkil edir?", a: "Kabel xərclərini minimuma endirdiyi üçün", opts: ["Daha sürətli olduğu üçün", "Kabel xərclərini minimuma endirdiyi üçün", "Daha etibarlı olduğu üçün", "Daha az enerji istifadə etdiyi üçün"] },
+  { q: "Optik telekommunikasiya şəbəkələrinin strukturunda əsasən hansı prinsiplər əsas götürülür?", a: "Yüksək etibarlılıq və geniş keçid zolağı", opts: ["Aşağı qiymət", "Yüksək etibarlılıq və geniş keçid zolağı", "Kiçik ölçü", "Simsiz ötürmə"] },
+  { q: "\"Radial-qovşaq\" prinsipi vasitəsilə şəbəkənin hansı xüsusiyyəti təmin olunur?", a: "Şəbəkənin asan genişləndirilə bilməsi (skalyarlıq)", opts: ["Daha yüksək sürət", "Şəbəkənin asan genişləndirilə bilməsi (skalyarlıq)", "Daha az gecikmə", "Şifrələnmiş rabitə"] },
+  { q: "Bütün şəbəkələrdə rabitə yaratmaq üçün əsasən hansı kabellərdən istifadə edilir?", a: "Optik-lifli və mis (burulmuş cüt) kabellər", opts: ["Yalnız mis kabellər", "Yalnız koaksial kabellər", "Optik-lifli və mis (burulmuş cüt) kabellər", "Yalnız optik liflər"] },
+  { q: "Kommutasiya nədir?", a: "İstifadəçilər arasında müvəqqəti rabitə yolunun yaradılması prosesi", opts: ["Məlumatın şifrələnməsi prosesi", "İstifadəçilər arasında müvəqqəti rabitə yolunun yaradılması prosesi", "Siqnalın gücləndiriilməsi", "Məlumatın saxlanması"] },
+  { q: "Kommutasiyanın əsas növləri hansılardır?", a: "Kanal kommutasiyası, paket kommutasiyası, mesaj kommutasiyası", opts: ["Yalnız kanal kommutasiyası", "Kanal və paket kommutasiyası", "Kanal kommutasiyası, paket kommutasiyası, mesaj kommutasiyası", "Rəqəmli və analoq kommutasiya"] },
+  { q: "Paket kommutasiyası nədir?", a: "Məlumatın hissə-hissə paketlər şəklində ünvana göndərilməsi texnologiyası", opts: ["Sabit kanal tutması", "Məlumatın hissə-hissə paketlər şəklində ünvana göndərilməsi texnologiyası", "Siqnalın regenerasiyası", "Kanalların bölüşdürülməsi"] },
+  { q: "III mərhələdə sürət nə qədərdir?", a: "1 Gbit/san", opts: ["144 Mbit/san", "622 Mbit/san", "1 Gbit/san", "10 Gbit/san"] },
+  { q: "Qapalı nömrələnmə sistemi nə ilə xarakterizə olunur?", a: "Vahid nömrə yığımı (abunəçi tam nömrəsi)", opts: ["Fərqli rəqəm sayı", "Vahid nömrə yığımı (abunəçi tam nömrəsi)", "Yalnız şəhərdaxili zənglər", "Beynəlxalq kodlar"] },
+  { q: "Regenerasiya prosesi nədir?", a: "Zəifləmiş və forması pozulmuş rəqəmli siqnalın tam bərpası", opts: ["Siqnalın şifrələnməsi", "Zəifləmiş və forması pozulmuş rəqəmli siqnalın tam bərpası", "Siqnalın modulyasiyası", "Məlumatın sıxılması"] },
+  { q: "Kommutasiya sahəsi nədir?", a: "Giriş və çıxış kanallarını birləşdirən nöqtələr çoxluğu", opts: ["Yalnız giriş nöqtəsi", "Yalnız çıxış nöqtəsi", "Giriş və çıxış kanallarını birləşdirən nöqtələr çoxluğu", "Şifrələmə bloku"] },
+  { q: "Optik telekommunikasiya şəbəkələrinin qurulmasında əsas komponentlər hansılardır?", a: "Lazer şüalandırıcı, optik lif, fotodetektor və gücləndiricilər", opts: ["Yalnız optik lif", "Lazer şüalandırıcı, optik lif, fotodetektor və gücləndiricilər", "Yalnız fotodetektor", "Mis kabel və gücləndiricilər"] },
+  { q: "\"Radial-qovşaq\" prinsipi hansı üstünlüyü verir?", a: "Mərkəzi idarəetmə və aşağı infrastruktur xərci", opts: ["Daha yüksək sürət", "Daha çox istifadəçi", "Mərkəzi idarəetmə və aşağı infrastruktur xərci", "Daha az gecikmə"] },
+  { q: "Şəbəkənin \"biri hər biri\" prinsipi ilə qurulması nə deməkdir?", a: "Hər bir ATS-in digərlərinin hər biri ilə birbaşa xətti olması", opts: ["Hər bir ATS-in digərlərinin hər biri ilə birbaşa xətti olması", "Yalnız qovşaq vasitəsilə əlaqə", "Simsiz əlaqə", "Optik liflərlə əlaqə"] },
+  { q: "Kommutasiya sistemi nədir?", a: "Telekommunikasiya şəbəkəsinin kommutasiya stansiyalarının operativ idarəetmə sistemi", opts: ["Antena sistemi", "Telekommunikasiya şəbəkəsinin kommutasiya stansiyalarının operativ idarəetmə sistemi", "Şifrələmə cihazı", "Gücləndiricilər toplusu"] },
+  { q: "Paket kommutasiyası hansı halda istifadə olunur?", a: "İnternet trafikinin ötürülməsində və məlumat şəbəkələrində", opts: ["Yalnız səs rabitəsində", "İnternet trafikinin ötürülməsində və məlumat şəbəkələrində", "Yalnız TV yayımında", "Peyk rabitəsində"] },
+  { q: "Kanal kommutasiyası necə işləyir?", a: "İnformasiya real zamanda ötürülür, kanal tam tutulur", opts: ["Paketlərə bölünür", "İnformasiya real zamanda ötürülür, kanal tam tutulur", "Store-and-forward prinsipi", "Dinamik marşrutlaşdırma"] },
+  { q: "Şəbəkə tutumu 80000-dən çox olduqda hansı nömrələnmə prinsipi tətbiq olunur?", a: "7 rəqəmli nömrələnmə", opts: ["5 rəqəmli", "6 rəqəmli", "7 rəqəmli nömrələnmə", "8 rəqəmli"] },
+  { q: "7 rəqəmli nömrələnmədə 1-ci rəqəm nəyi göstərir?", a: "Milyonluq qrupun (indeksin) nömrəsini", opts: ["ATS kodunu", "Zona kodunu", "Milyonluq qrupun (indeksin) nömrəsini", "Abunəçi nömrəsini"] },
+  { q: "Şəbəkənin quruluşu giriş və çıxış məlumat qovşaqlarına əsaslanırsa və tutumu 80000-dən çoxdursa, nömrə neçə rəqəmli tətbiq olunur?", a: "7 rəqəmli", opts: ["5 rəqəmli", "6 rəqəmli", "7 rəqəmli", "8 rəqəmli"] },
+  { q: "ŞTŞ-yə nə qoşulur?", a: "Abunəçi terminalları (telefon, modem, ATS)", opts: ["Yalnız telefonlar", "Abunəçi terminalları (telefon, modem, ATS)", "Yalnız moderlər", "Peyk antenası"] },
+  { q: "İnformasiya şəbəkələri nə təmin edir?", a: "Məlumatın toplanması, saxlanması və ötürülməsini", opts: ["Yalnız məlumatın ötürülməsini", "Yalnız saxlanmasını", "Məlumatın toplanması, saxlanması və ötürülməsini", "Məlumatın silinməsini"] },
+  { q: "6 rəqəmli nömrələnmədə 2-ci rəqəm nəyi bildirir?", a: "ATS-in kodunu (və ya qovşaq daxili indeksi)", opts: ["Zona kodunu", "Ölkə kodunu", "ATS-in kodunu (və ya qovşaq daxili indeksi)", "Abunəçi nömrəsini"] },
+  { q: "Kanal kommutasiyasında nə baş verir?", a: "Zəng boyu resurslar yalnız bir cütlük üçün ayrılır", opts: ["Resurslar paylaşılır", "Zəng boyu resurslar yalnız bir cütlük üçün ayrılır", "Dinamik bölüşdürmə olur", "Paketlər göndərilir"] },
+  { q: "Rəqəmli kommutasiya neçə formada olur?", a: "Kanal və məlumatların kommutasiyası", opts: ["Yalnız kanal kommutasiyası", "Kanal və məlumatların kommutasiyası", "Yalnız paket kommutasiyası", "Mesaj kommutasiyası"] },
+  { q: "1-ci rəqəm milyonluq, 2-ci rəqəm qovşaq, 3-cü rəqəm ATS kodu olduqda abunəçi nömrəsi neçə rəqəmdən ibarət olur?", a: "4 rəqəmdən", opts: ["2 rəqəmdən", "3 rəqəmdən", "4 rəqəmdən", "5 rəqəmdən"] },
+  { q: "Şəbəkə tutumu 80000-800000 aralığında olduqda hansı nömrə uzunluğu tətbiq edilir?", a: "6 rəqəmli", opts: ["5 rəqəmli", "6 rəqəmli", "7 rəqəmli", "8 rəqəmli"] },
+  { q: "Kommutasiya avadanlığının funksiyalarına daxildir:", a: "Çağırışı qəbul etmək, nömrəni təhlil etmək, yolu qurmaq", opts: ["Yalnız zəngi qəbul etmək", "Məlumatı şifrələmək", "Çağırışı qəbul etmək, nömrəni təhlil etmək, yolu qurmaq", "Siqnalı gücləndirmək"] },
+  { q: "Aşağıdakılardan hansı 7 rəqəmli nömrə strukturu üçün doğrudur?", a: "1 rəqəm milyonluq + 1 rəqəm qovşaq + 1 rəqəm ATS + 4 rəqəm abunəçi", opts: ["2 rəqəm zona + 5 rəqəm abunəçi", "1 rəqəm milyonluq + 1 rəqəm qovşaq + 1 rəqəm ATS + 4 rəqəm abunəçi", "3 rəqəm ATS + 4 rəqəm abunəçi", "1 rəqəm zona + 6 rəqəm abunəçi"] },
+  { q: "Abonent nömrəsinin unikal olması nə üçün vacibdir?", a: "Səhv birləşmələrin qarşısını almaq üçün", opts: ["Sürəti artırmaq üçün", "Səhv birləşmələrin qarşısını almaq üçün", "Güvenliyi artırmaq üçün", "Xərcləri azaltmaq üçün"] },
+  { q: "Şəhərlərarası kod hansı məqsədlə istifadə olunur?", a: "Fərqli şəhər şəbəkələrinə çıxış əldə etmək üçün", opts: ["Beynəlxalq zəng üçün", "Fərqli şəhər şəbəkələrinə çıxış əldə etmək üçün", "Mobil rabitə üçün", "İnternet bağlantısı üçün"] },
+  { q: "STM-1 sürəti nə qədərdir?", a: "155.52 Mbit/san", opts: ["51.84 Mbit/san", "155.52 Mbit/san", "622 Mbit/san", "2.5 Gbit/san"] },
+  { q: "STM-4 sürəti nə qədərdir?", a: "622.08 Mbit/san", opts: ["155 Mbit/san", "310 Mbit/san", "622.08 Mbit/san", "1 Gbit/san"] },
+  { q: "ŞTŞ-nin qurulmasında II mərhələdə nə yaradılır?", a: "Rayonlaşdırılmış (Giriş Qovşağı olmayan) şəbəkə", opts: ["Qovşaqlı şəbəkə", "Rayonlaşdırılmış (Giriş Qovşağı olmayan) şəbəkə", "Beynəlxalq şəbəkə", "Peyk şəbəkəsi"] },
+  { q: "ŞTŞ-nin qurulmasında II mərhələdə sürət neçə olur?", a: "2048 kbit/san-dən 155 Mbit/san-dək", opts: ["144 kbit/san", "2048 kbit/san-dən 155 Mbit/san-dək", "1 Gbit/san-dən çox", "10 Gbit/san"] },
+  { q: "ŞTŞ-nin qurulmasında III mərhələdə əsas fərq nədir?", a: "Tam intellektual və rəqəmsal şəbəkəyə keçid (NGN - Next Generation Networks)", opts: ["Yalnız sürətin artırılması", "Analoq sistemlərə qayıdış", "Tam intellektual və rəqəmsal şəbəkəyə keçid (NGN - Next Generation Networks)", "Peyk sisteminin əvəzlənməsi"] },
+  { q: "Optik kabel hansı sistemə aiddir?", a: "Ötürmə sistemlərinə (Fiziki səviyyə)", opts: ["Kommutasiya sistemlərinə", "Ötürmə sistemlərinə (Fiziki səviyyə)", "Nömrələnmə sistemlərinə", "İdarəetmə sistemlərinə"] },
+  { q: "Şəbəkənin tutumu 80000-800000 arası olduqda nömrələnmə neçə rəqəmli olur?", a: "6 rəqəmli", opts: ["5 rəqəmli", "6 rəqəmli", "7 rəqəmli", "8 rəqəmli"] }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let current = 0;
+let answers = new Array(questions.length).fill(null); // null = not answered
+let hintShown = new Array(questions.length).fill(false);
+
+// Audio context for sounds
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+
+function playCorrect() {
+  try {
+    const ctx = new AudioCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(523, ctx.currentTime);
+    o.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+    o.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    o.start(); o.stop(ctx.currentTime + 0.5);
+  } catch(e) {}
+}
+
+function playWrong() {
+  try {
+    const ctx = new AudioCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(220, ctx.currentTime);
+    o.frequency.setValueAtTime(180, ctx.currentTime + 0.15);
+    g.gain.setValueAtTime(0.2, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    o.start(); o.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderQuestion() {
+  const q = questions[current];
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'slideIn 0.35s cubic-bezier(.4,0,.2,1)';
+
+  document.getElementById('qNumber').textContent = `SUAL ${String(current+1).padStart(2,'0')} / ${questions.length}`;
+  document.getElementById('qCounter').textContent = `Sual ${current+1} / ${questions.length}`;
+  document.getElementById('qText').textContent = q.q;
+
+  const pct = Math.round((current / questions.length) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('pctLabel').textContent = pct + '%';
+
+  // Hint
+  const hintBox = document.getElementById('hintBox');
+  hintBox.classList.remove('show');
+  if (hintShown[current]) {
+    document.getElementById('hintText').textContent = q.a;
+    hintBox.classList.add('show');
+  }
+
+  // Feedback
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+
+  // Options
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const answered = answers[current];
+
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    if (answered !== null) {
+      btn.classList.add('disabled');
+      if (opt === q.a) btn.classList.add('correct');
+      else if (opt === answered && opt !== q.a) btn.classList.add('wrong');
+    }
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    if (answered === null) {
+      btn.onclick = () => selectAnswer(opt);
+    }
+    container.appendChild(btn);
+  });
+
+  if (answered !== null) {
+    const fb = document.getElementById('feedback');
+    if (answered === q.a) {
+      fb.textContent = '✓ Düzgün cavab!';
+      fb.classList.add('correct');
+    } else {
+      fb.textContent = '✗ Səhv cavab!';
+      fb.classList.add('wrong');
+    }
+  }
+
+  updateStats();
+}
+
+function selectAnswer(chosen) {
+  if (answers[current] !== null) return;
+  answers[current] = chosen;
+  const correct = questions[current].a;
+  if (chosen === correct) {
+    playCorrect();
+  } else {
+    playWrong();
+  }
+  renderQuestion();
+}
+
+function showHint() {
+  const q = questions[current];
+  hintShown[current] = true;
+  document.getElementById('hintText').textContent = q.a;
+  document.getElementById('hintBox').classList.add('show');
+}
+
+function prevQ() {
+  if (current > 0) { current--; renderQuestion(); }
+}
+
+function nextQ() {
+  if (current < questions.length - 1) { current++; renderQuestion(); }
+}
+
+function updateStats() {
+  let correct = 0, wrong = 0;
+  answers.forEach((a, i) => {
+    if (a === null) return;
+    if (a === questions[i].a) correct++;
+    else wrong++;
+  });
+  const skipped = questions.length - correct - wrong;
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statSkipped').textContent = skipped;
+}
+
+// ============================================================
+// FINISH
+// ============================================================
+function finishExam() {
+  let correct = 0, wrong = 0, skip = 0;
+  const wrongList = [];
+
+  answers.forEach((a, i) => {
+    if (a === null) { skip++; return; }
+    if (a === questions[i].a) correct++;
+    else {
+      wrong++;
+      wrongList.push({ i, q: questions[i].q, yours: a, correct: questions[i].a });
+    }
+  });
+
+  const total = correct + wrong;
+  const pct = total > 0 ? Math.round((correct / questions.length) * 100) : 0;
+
+  document.getElementById('examScreen').style.display = 'none';
+  const rs = document.getElementById('resultScreen');
+  rs.style.display = 'block';
+
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkip').textContent = skip;
+  document.getElementById('resultPct').textContent = pct + '%';
+
+  // Color & grade
+  let grade, color;
+  if (pct >= 90) { grade = '🏆 ƏLAS'; color = '#00ff88'; }
+  else if (pct >= 75) { grade = '⭐ YAXŞI'; color = '#00d4ff'; }
+  else if (pct >= 60) { grade = '📚 KAFI'; color = '#ffd700'; }
+  else { grade = '❌ ZƏİF'; color = '#ff3366'; }
+
+  document.getElementById('resultGrade').textContent = grade;
+  document.getElementById('resultGrade').style.color = color;
+  document.getElementById('resultPct').style.color = color;
+
+  // Animate circle
+  const circ = document.getElementById('scoreCircle');
+  const circumference = 427;
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => {
+    circ.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
+    circ.style.strokeDashoffset = offset;
+  }, 100);
+
+  // Wrong answers review
+  const rev = document.getElementById('reviewSection');
+  if (wrongList.length > 0) {
+    rev.innerHTML = `<div class="review-title">⚠ SƏHV CAVABLAR (${wrongList.length})</div>`;
+    wrongList.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      div.innerHTML = `
+        <div class="review-q">${item.i+1}. ${item.q}</div>
+        <div class="review-your">✗ Sizin cavab: ${item.yours || 'Cavablanmayıb'}</div>
+        <div class="review-correct">✓ Düzgün cavab: ${item.correct}</div>
+      `;
+      rev.appendChild(div);
+    });
+  } else if (skip === 0) {
+    rev.innerHTML = `<div style="text-align:center;color:var(--correct);font-size:1.2rem;padding:20px">🎉 Bütün sualları düzgün cavablandırdınız!</div>`;
+  }
+}
+
+function restartExam() {
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  hintShown = new Array(questions.length).fill(false);
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('examScreen').style.display = 'block';
+  document.getElementById('scoreCircle').style.strokeDashoffset = '427';
+  renderQuestion();
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown', e => {
+  if (document.getElementById('resultScreen').style.display === 'block') return;
+  if (e.key === 'ArrowRight') nextQ();
+  if (e.key === 'ArrowLeft') prevQ();
+  if (e.key === 'h' || e.key === 'H') showHint();
+  if (['1','2','3','4'].includes(e.key)) {
+    const idx = parseInt(e.key) - 1;
+    const opts = questions[current].opts;
+    if (opts[idx] && answers[current] === null) selectAnswer(opts[idx]);
+  }
+});
+
+// START
+renderQuestion();
+</script>
+</body>
+</html>
