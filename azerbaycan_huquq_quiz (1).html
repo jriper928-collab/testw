@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azərbaycan Hüquq Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f3ee;
+  --card:#ffffff;
+  --card2:#faf9f6;
+  --border:#e2ddd6;
+  --border2:#ccc7bf;
+  --text:#1a1814;
+  --text2:#6b6560;
+  --text3:#a09b95;
+  --accent:#c1440e;
+  --accent-light:#fdf0eb;
+  --accent2:#e05a28;
+  --green:#1a7a45;
+  --green-bg:#edf7f2;
+  --green-border:#a8dbbe;
+  --red:#b52b2b;
+  --red-bg:#fdf0f0;
+  --red-border:#f0b8b8;
+  --gold:#8a6800;
+  --gold-bg:#fdf8e7;
+  --radius:14px;
+  --shadow:0 2px 12px rgba(0,0,0,0.07);
+}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Sora',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 16px 64px;
+}
+.wrap{width:100%;max-width:660px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700}
+.logo-text{font-size:15px;font-weight:600;color:var(--text)}
+.logo-sub{font-size:12px;color:var(--text3);font-weight:400}
+.score-pill{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;color:var(--text2)}
+.score-pill span{color:var(--green);font-weight:500}
+.prog-wrap{margin-bottom:24px}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3)}
+.prog-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:500}
+.prog-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width 0.5s cubic-bezier(.4,0,.2,1)}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 28px 24px;margin-bottom:14px;position:relative;overflow:hidden}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.q-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:14px}
+.q-text{font-size:17px;font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'Sora',sans-serif;cursor:pointer;transition:all 0.15s;line-height:1.45}
+.opt-letter{width:26px;height:26px;min-width:26px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text3);transition:all 0.15s;font-family:'JetBrains Mono',monospace}
+.opt:hover:not(:disabled){background:var(--card2);border-color:var(--border2);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,0.06)}
+.opt:hover:not(:disabled) .opt-letter{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.opt.correct .opt-letter{background:var(--green);border-color:var(--green);color:#fff}
+.opt.wrong{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+.opt.wrong .opt-letter{background:var(--red);border-color:var(--red);color:#fff}
+.opt:disabled{cursor:default;transform:none;box-shadow:none}
+.hint-row{margin-bottom:18px}
+.hint-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:1px dashed var(--border2);border-radius:8px;color:var(--text3);font-size:12px;font-weight:500;font-family:'Sora',sans-serif;padding:7px 14px;cursor:pointer;transition:all 0.15s}
+.hint-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
+.hint-box{display:none;margin-top:10px;padding:12px 16px;background:var(--gold-bg);border:1px solid #e8d48a;border-radius:10px;font-size:13px;color:var(--gold);line-height:1.6}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:14px;font-weight:500;font-family:'Sora',sans-serif;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow)}
+.nav-btn:hover:not(:disabled){background:var(--text);color:#fff;border-color:var(--text)}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.nav-btn.primary:hover:not(:disabled){background:var(--accent2);border-color:var(--accent2)}
+.nav-btn:disabled{opacity:0.35;cursor:default}
+.nav-answered{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--green);font-weight:500}
+#result-wrap{display:none}
+.result-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:36px 28px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.result-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.result-emoji{font-size:48px;margin-bottom:12px}
+.result-score{font-family:'JetBrains Mono',monospace;font-size:52px;font-weight:700;color:var(--accent);line-height:1;margin-bottom:6px}
+.result-pct{font-size:22px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.result-sub{font-size:13px;color:var(--text3)}
+.result-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;margin-bottom:4px}
+.stat-num.green{color:var(--green)}
+.stat-num.red{color:var(--red)}
+.stat-lbl{font-size:12px;color:var(--text3)}
+.mistakes-hd{font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.review-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow)}
+.review-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:6px}
+.review-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.45}
+.review-wrong{font-size:13px;color:var(--red);margin-bottom:6px;padding:6px 10px;background:var(--red-bg);border-radius:7px}
+.review-right{font-size:13px;color:var(--green);padding:6px 10px;background:var(--green-bg);border-radius:7px}
+.all-ok{text-align:center;font-size:16px;font-weight:600;color:var(--green);margin-bottom:20px;padding:20px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px}
+.restart-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:20px;padding:15px;background:var(--accent);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;transition:background 0.15s;box-shadow:0 4px 16px rgba(193,68,14,0.25)}
+.restart-btn:hover{background:var(--accent2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">AZ</div>
+      <div>
+        <div class="logo-text">Hüquq Testi</div>
+        <div class="logo-sub">Konstitusiya &amp; Dövlət Quruluşu</div>
+      </div>
+    </div>
+    <div class="score-pill" id="live-score">Düzgün: <span>0</span></div>
+  </div>
+
+  <div id="quiz-wrap">
+    <div class="prog-wrap">
+      <div class="prog-top">
+        <span class="prog-label" id="prog-label">Sual 1 / 50</span>
+        <span class="prog-pct" id="prog-pct">2%</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:2%"></div></div>
+    </div>
+    <div class="q-card">
+      <div class="q-badge" id="q-badge">&#9679; Sual 01</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="opts" id="opts"></div>
+    <div class="hint-row">
+      <button class="hint-btn" id="hint-btn">💡 İpucu gör</button>
+      <div class="hint-box" id="hint-box"></div>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" id="prev-btn" disabled>← Əvvəlki</button>
+      <div class="nav-answered" id="nav-answered"></div>
+      <button class="nav-btn primary" id="next-btn">Növbəti →</button>
+    </div>
+  </div>
+
+  <div id="result-wrap">
+    <div class="result-hero">
+      <div class="result-emoji" id="res-emoji">🏆</div>
+      <div class="result-score" id="res-score"></div>
+      <div class="result-pct" id="res-pct"></div>
+      <div class="result-sub">düzgün cavab</div>
+    </div>
+    <div class="result-stats">
+      <div class="stat-box"><div class="stat-num green" id="st-correct">0</div><div class="stat-lbl">Düzgün</div></div>
+      <div class="stat-box"><div class="stat-num red" id="st-wrong">0</div><div class="stat-lbl">Səhv</div></div>
+    </div>
+    <div id="mistakes-section"></div>
+    <button class="restart-btn" id="restart-btn">↺ Yenidən başla</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS=[
+  {q:"Absenteizm prinsipi nədir?",correct:"Seçkidə iştirak məcburidir",opts:["Seçkidə iştirak məcburidir","Seçkidə iştirak könüllüdür","Seçkidə iştirak qadağandır","Namizədlər geri çəkilə bilər"],hint:"Düzgün cavab: Seçkidə iştirak məcburidir"},
+  {q:"Majoritar seçki sistemi nədir?",correct:"Fransız sözüdür, mənası əksəriyyət deməkdir, 3 forması var",opts:["Fransız sözüdür, mənası əksəriyyət deməkdir, 3 forması var","Proporsional bölgü sistemidir","Namizədlər siyahıya görə seçilir","Seçkini parlament təyin edir"],hint:"Düzgün cavab: Fransız sözüdür, mənası əksəriyyət deməkdir, 3 forması var"},
+  {q:"Əcnəbilər və vətəndaşlığı olmayan şəxslərin hansı hüquqları olmur?",correct:"Seçmək, seçilmək, dövlət orqanına qəbul olmaq, siyasi hüquqlar",opts:["Seçmək, seçilmək, dövlət orqanına qəbul olmaq, siyasi hüquqlar","Sosial müdafiə və sağlamlıq hüquqları","Mülkiyyət və miras hüquqları","Söz azadlığı hüquqları"],hint:"Düzgün cavab: Seçmək, seçilmək, dövlət orqanına qəbul olmaq, siyasi hüquqlar"},
+  {q:"Hüquqi normanın elementləri hansılardır?",correct:"Hipoteza, dispozisiya, sanksiya",opts:["Hipoteza, dispozisiya, sanksiya","Məqsəd, metod, nəticə","Hüquq, vəzifə, qadağa","Fərd, cəmiyyət, dövlət"],hint:"Düzgün cavab: Hipoteza, dispozisiya, sanksiya"},
+  {q:"Dövlət hakimiyyət orqanları hansılardır?",correct:"Qanunverici, icra, məhkəmə hakimiyyəti",opts:["Qanunverici, icra, məhkəmə hakimiyyəti","Prezident, nazir, parlament","Federal, regional, yerli","Siyasi, iqtisadi, sosial"],hint:"Düzgün cavab: Qanunverici, icra, məhkəmə hakimiyyəti"},
+  {q:"Vətəndaşın vəzifələri hansılardır?",correct:"Vətəni qorumaq, dövlət rəmzlərinə hörmət, vergi ödəmək, tarixi abidələri qorumaq",opts:["Vətəni qorumaq, dövlət rəmzlərinə hörmət, vergi ödəmək, tarixi abidələri qorumaq","Yalnız vergi ödəmək","Yalnız seçkilərə qatılmaq","Xarici ölkələrə getməmək"],hint:"Düzgün cavab: Vətəni qorumaq, dövlət rəmzlərinə hörmət, vergi ödəmək, tarixi abidələri qorumaq"},
+  {q:"Xalqı təmsil etmək hüququ kimə verilir?",correct:"Prezidentə",opts:["Prezidentə","Baş nazirə","Parlamentə","Konstitusiya Məhkəməsinə"],hint:"Düzgün cavab: Prezidentə"},
+  {q:"Konstitusiyanın 155-ci maddəsi nəyi tənzimləyir?",correct:"Konstitusiyada dəyişikliklər",opts:["Konstitusiyada dəyişikliklər","Seçki hüquqları","Vətəndaşlıq qaydaları","Parlament fəaliyyəti"],hint:"Düzgün cavab: Konstitusiyada dəyişikliklər"},
+  {q:"Aktiv seçki hüququ nədir?",correct:"Seçmək hüququ — hər hansı bir şəxsi seçmək",opts:["Seçmək hüququ — hər hansı bir şəxsi seçmək","Seçilmək hüququ","Namizəd olmaq hüququ","Referendumda iştirak hüququ"],hint:"Düzgün cavab: Seçmək hüququ — hər hansı bir şəxsi seçmək"},
+  {q:"İnsan və vətəndaşın hüquq və azadlıqları neçə yerə bölünür?",correct:"3 yerə: siyasi, sosial-siyasi, mədəni",opts:["3 yerə: siyasi, sosial-siyasi, mədəni","2 yerə: şəxsi və ictimai","4 yerə: iqtisadi, siyasi, sosial, mədəni","5 yerə"],hint:"Düzgün cavab: 3 yerə: siyasi, sosial-siyasi, mədəni"},
+  {q:"Demokratik seçki hüququnun prinsipləri hansılardır?",correct:"Ümumi, bərabər, birbaşa",opts:["Ümumi, bərabər, birbaşa","Məxfi, proporsional, şəffaf","Ümumi, məcburi, açıq","Azad, çoxpartiyalı, dövri"],hint:"Düzgün cavab: Ümumi, bərabər, birbaşa"},
+  {q:"Seçki hüququ hansı hüquq qrupuna daxildir?",correct:"Siyasi hüquqlar",opts:["Siyasi hüquqlar","Şəxsi hüquqlar","Sosial hüquqlar","Mədəni hüquqlar"],hint:"Düzgün cavab: Siyasi hüquqlar"},
+  {q:"Dövlət quruluş formaları hansılardır?",correct:"Unitar, Federativ",opts:["Unitar, Federativ","Monarxiya, Respublika","Demokratiya, Avtokratiya","Prezidentli, Parlamentli"],hint:"Düzgün cavab: Unitar, Federativ"},
+  {q:"Unitar dövlət quruluşu nə deməkdir?",correct:"Vahid deməkdir, 3 forması var",opts:["Vahid deməkdir, 3 forması var","Federal deməkdir","Çoxmillətli deməkdir","Avtonom deməkdir"],hint:"Düzgün cavab: Vahid deməkdir, 3 forması var"},
+  {q:"Federativ dövlət quruluşunun xüsusiyyəti nədir?",correct:"Öz pul-maliyyə, kredit sistemi, vətəndaşlığı və konstitusiyası var",opts:["Öz pul-maliyyə, kredit sistemi, vətəndaşlığı və konstitusiyası var","Vahid mərkəzdən idarə olunur","Bütün qanunlar parlament tərəfindən qəbul edilir","Yalnız bir milli dil var"],hint:"Düzgün cavab: Öz pul-maliyyə, kredit sistemi, vətəndaşlığı və konstitusiyası var"},
+  {q:"Monarxiyanın neçə növü var?",correct:"3 növü var",opts:["3 növü var","2 növü var","4 növü var","5 növü var"],hint:"Düzgün cavab: 3 növü var"},
+  {q:"Vətəndaşlıq institutu Konstitusiyanın neçənci maddəsində qeyd olunur?",correct:"52-ci maddə",opts:["52-ci maddə","56-cı maddə","48-ci maddə","71-ci maddə"],hint:"Düzgün cavab: 52-ci maddə"},
+  {q:"Vətəndaşın siyasi hüquqları hansılardır?",correct:"Seçmək, seçilmək, birləşmək, dövlət idarə etmək",opts:["Seçmək, seçilmək, birləşmək, dövlət idarə etmək","Yalnız seçmək hüququ","Mülkiyyət, miras, sahibkarlıq","Təhsil, səhiyyə, sosial müdafiə"],hint:"Düzgün cavab: Seçmək, seçilmək, birləşmək, dövlət idarə etmək"},
+  {q:"Gizli səsvermə prinsipinin xüsusiyyəti nədir?",correct:"Səsvermə gizli keçirilir",opts:["Səsvermə gizli keçirilir","Hər kəs kimin seçdiyini bilir","Nəticələr açıqlanmır","Yalnız qeydiyyatdan keçənlər iştirak edə bilər"],hint:"Düzgün cavab: Səsvermə gizli keçirilir"},
+  {q:"İnsan və vətəndaşın hüquqlarının təmin olunmasının əsas hüquqi sənədi hansıdır?",correct:"Konstitusiya",opts:["Konstitusiya","Mülki Məcəllə","Cinayət Məcəlləsi","Beynəlxalq müqavilələr"],hint:"Düzgün cavab: Konstitusiya"},
+  {q:"Passiv seçki hüququ nədir?",correct:"Seçilmək hüququ",opts:["Seçilmək hüququ","Seçmək hüququ","Referendumda iştirak hüququ","Namizədi irəli sürmək hüququ"],hint:"Düzgün cavab: Seçilmək hüququ"},
+  {q:"Konstitusiyaya görə insan və vətəndaş hüququ necə adlanır?",correct:"Əsas insan və vətəndaş hüquqları və azadlıqları",opts:["Əsas insan və vətəndaş hüquqları və azadlıqları","Fundamental hüquqlar","Universal hüquqlar","Milli hüquqlar"],hint:"Düzgün cavab: Əsas insan və vətəndaş hüquqları və azadlıqları"},
+  {q:"AR Konstitusiyasına görə insan hüquqları necə qorunur?",correct:"Dövlət tərəfindən, məhkəmə müdafiəsi və beynəlxalq hüquq normaları ilə",opts:["Dövlət tərəfindən, məhkəmə müdafiəsi və beynəlxalq hüquq normaları ilə","Yalnız milli məhkəmələr vasitəsilə","Yalnız beynəlxalq təşkilatlar vasitəsilə","Yalnız dövlət orqanları vasitəsilə"],hint:"Düzgün cavab: Dövlət tərəfindən, məhkəmə müdafiəsi və beynəlxalq hüquq normaları ilə"},
+  {q:"AR-da seçkilər hansı maddə əsasında keçirilir?",correct:"56-cı maddə",opts:["56-cı maddə","52-ci maddə","48-ci maddə","71-ci maddə"],hint:"Düzgün cavab: 56-cı maddə"},
+  {q:"AR vətəndaşlığı neçə yolla əldə olunur?",correct:"3 yolla: filliasiya, naturalizasiya, optasiya",opts:["3 yolla: filliasiya, naturalizasiya, optasiya","2 yolla: doğum və müraciət","4 yolla: doğum, evlilik, xidmət, alış","Yalnız doğum faktı ilə"],hint:"Düzgün cavab: 3 yolla: filliasiya, naturalizasiya, optasiya"},
+  {q:"Dövlət quruluşunun əsas formaları hansılardır?",correct:"Unitar, Federativ",opts:["Unitar, Federativ","Monarxiya, Respublika","Demokratiya, Diktatura","Prezidentli, Parlamentli"],hint:"Düzgün cavab: Unitar, Federativ"},
+  {q:"Konstitusiyanın 48 və 18-ci maddələri nəyi tənzimləyir?",correct:"Dünyəvi dövlət",opts:["Dünyəvi dövlət","Demokratik dövlət","Hüquqi dövlət","Federal dövlət"],hint:"Düzgün cavab: Dünyəvi dövlət"},
+  {q:"Filliasiya nədir?",correct:"Vətəndaşlığı valideynlərin mənsubiyyətinə görə əldə etmək",opts:["Vətəndaşlığı valideynlərin mənsubiyyətinə görə əldə etmək","Öz iradəsi ilə vətəndaşlığa keçmək","İki vətəndaşlıqdan birini seçmək","Kütləvi şəkildə vətəndaşlıq əldə etmək"],hint:"Düzgün cavab: Vətəndaşlığı valideynlərin mənsubiyyətinə görə əldə etmək"},
+  {q:"Vətəndaşlıqdan çıxma necə adlanır?",correct:"Denaturalizasiya",opts:["Denaturalizasiya","Optasiya","Ekstradisiya","Transfert"],hint:"Düzgün cavab: Denaturalizasiya"},
+  {q:"Yüksək absenteizmi olan ölkələrə misal ver",correct:"Türkiyə, Yunanıstan",opts:["Türkiyə, Yunanıstan","ABŞ, Kanada","Fransa, Almaniya","İsveç, Norveç"],hint:"Düzgün cavab: Türkiyə, Yunanıstan"},
+  {q:"Naxçıvan MR-nin hüquqi statusu nədir?",correct:"Muxtar Respublika — Qanunvericilik",opts:["Muxtar Respublika — Qanunvericilik","Federativ subyekt","Müstəqil respublika","Xüsusi iqtisadi zona"],hint:"Düzgün cavab: Muxtar Respublika — Qanunvericilik"},
+  {q:"Respublika sözünün mənası nədir?",correct:"İctimai iş",opts:["İctimai iş","Tək hakimiyyət","Xalq hakimiyyəti","Dövlət birliyi"],hint:"Düzgün cavab: İctimai iş"},
+  {q:"Monarxiya sözünün mənası nədir?",correct:"Latın sözüdür, tək hakimiyyət deməkdir",opts:["Latın sözüdür, tək hakimiyyət deməkdir","Fransız sözüdür, xalq hakimiyyəti deməkdir","Yunan sözüdür, ikili idarə deməkdir","Ərəb sözüdür, ədalət deməkdir"],hint:"Düzgün cavab: Latın sözüdür, tək hakimiyyət deməkdir"},
+  {q:"Dövlət idarəetmə formaları hansılardır?",correct:"Monarxiya, Respublika",opts:["Monarxiya, Respublika","Unitar, Federativ","Demokratiya, Avtokratiya","Prezidentli, Parlamentli"],hint:"Düzgün cavab: Monarxiya, Respublika"},
+  {q:"Demokratik respublika haqqında nə doğrudur?",correct:"Şəxsə hüquq azadlığı verir, xalqa məxsus idarəetmə nümayəndəli demokratiya ilə həyata keçirilir",opts:["Şəxsə hüquq azadlığı verir, xalqa məxsus idarəetmə nümayəndəli demokratiya ilə həyata keçirilir","Yalnız prezident idarə edir","Hakimiyyət irsi yolla keçir","Yalnız parlament idarə edir"],hint:"Düzgün cavab: Şəxsə hüquq azadlığı verir, xalqa məxsus idarəetmə nümayəndəli demokratiya ilə həyata keçirilir"},
+  {q:"Seçki sistemləri hansılardır?",correct:"Majoritar, proporsional",opts:["Majoritar, proporsional","Unitar, federativ","Birbaşa, dolayı","Açıq, gizli"],hint:"Düzgün cavab: Majoritar, proporsional"},
+  {q:"Seçki hüququnun anlayışına görə kim seçkidə iştirak edə bilməz?",correct:"Fəaliyyət qabiliyyəti məhdud olanlar",opts:["Fəaliyyət qabiliyyəti məhdud olanlar","Yalnız əcnəbilər","Yalnız 30 yaşdan yuxarılar","Yalnız cinayət törədənlər"],hint:"Düzgün cavab: Fəaliyyət qabiliyyəti məhdud olanlar"},
+  {q:"Senz nədir?",correct:"Seçki hüququndan istifadə üçün qanunla müəyyən edilmiş məhdudiyyət",opts:["Seçki hüququndan istifadə üçün qanunla müəyyən edilmiş məhdudiyyət","Seçkinin nəticəsinin elanı","Namizədin qeydiyyat proseduru","Seçki bülleteninə verilən ad"],hint:"Düzgün cavab: Seçki hüququndan istifadə üçün qanunla müəyyən edilmiş məhdudiyyət"},
+  {q:"AR-da vətəndaşın seçki hüququ neçə yaşdan qüvvəyə minir?",correct:"18 yaş",opts:["18 yaş","16 yaş","21 yaş","25 yaş"],hint:"Düzgün cavab: 18 yaş"},
+  {q:"İnsan və vətəndaşın əsas hüquq və azadlıqlarının növləri hansılardır?",correct:"Şəxsi, siyasi, sosial-iqtisadi, mədəni",opts:["Şəxsi, siyasi, sosial-iqtisadi, mədəni","Yalnız siyasi və şəxsi","Milli, beynəlxalq, regional","Dövlət, cəmiyyət, fərd"],hint:"Düzgün cavab: Şəxsi, siyasi, sosial-iqtisadi, mədəni"},
+  {q:"Naturalizasiya nədir?",correct:"Şəxsin öz iradəsi ilə vətəndaşlığı qəbul etməsi",opts:["Şəxsin öz iradəsi ilə vətəndaşlığı qəbul etməsi","Valideyn vətəndaşlığının uşağa keçməsi","İki vətəndaşlıqdan birini seçmək","Kütləvi şəkildə vətəndaşlıq əldə etmək"],hint:"Düzgün cavab: Şəxsin öz iradəsi ilə vətəndaşlığı qəbul etməsi"},
+  {q:"Transfert nədir?",correct:"Vətəndaşlığı kütləvi şəkildə əldə etmək",opts:["Vətəndaşlığı kütləvi şəkildə əldə etmək","Tək şəxsin vətəndaşlığa keçməsi","Vətəndaşlıqdan çıxma","Diplomatik immunitet"],hint:"Düzgün cavab: Vətəndaşlığı kütləvi şəkildə əldə etmək"},
+  {q:"Muxtariyyətin formaları hansılardır?",correct:"Milli-ərazi, milli-mədəni",opts:["Milli-ərazi, milli-mədəni","Federal və unitar","Prezidentli və parlamentli","Demokratik və avtokratik"],hint:"Düzgün cavab: Milli-ərazi, milli-mədəni"},
+  {q:"50%+1 səs tələb olunan seçki sistemi hansıdır?",correct:"Mütləq əksəriyyət sistemi",opts:["Mütləq əksəriyyət sistemi","Nisbi əksəriyyət sistemi","Proporsional sistem","Qarışıq sistem"],hint:"Düzgün cavab: Mütləq əksəriyyət sistemi"},
+  {q:"Parlamentli respublikada ölkəni kim idarə edir?",correct:"Baş nazir",opts:["Baş nazir","Prezident","Parlament sədri","Monarx"],hint:"Düzgün cavab: Baş nazir"},
+  {q:"Prezidentli respublikada prezident necə seçilir?",correct:"Xalq tərəfindən seçilir, daxili və xarici siyasəti idarə edir",opts:["Xalq tərəfindən seçilir, daxili və xarici siyasəti idarə edir","Parlament tərəfindən seçilir","Nazirlər kabineti tərəfindən seçilir","Ömürlük təyin edilir"],hint:"Düzgün cavab: Xalq tərəfindən seçilir, daxili və xarici siyasəti idarə edir"},
+  {q:"Dualist monarxiya nədir?",correct:"Hakimiyyətin monarx və parlament arasında bölündüyü, monarxın geniş icra səlahiyyətlərinə malik olduğu sistem",opts:["Hakimiyyətin monarx və parlament arasında bölündüyü, monarxın geniş icra səlahiyyətlərinə malik olduğu sistem","Monarxın tam suveren olduğu sistem","Parlamentin tam hakimiyyətli olduğu sistem","Prezident və monarxın birlikdə idarə etdiyi sistem"],hint:"Düzgün cavab: Hakimiyyətin monarx və parlament arasında bölündüyü, monarxın geniş icra səlahiyyətlərinə malik olduğu sistem"},
+  {q:"Optasiya nədir?",correct:"İki vətəndaşlıqdan birini seçmək",opts:["İki vətəndaşlıqdan birini seçmək","Vətəndaşlıqdan məhrum edilmə","Doğum faktına görə vətəndaşlıq","Müraciətlə vətəndaşlıq qəbulu"],hint:"Düzgün cavab: İki vətəndaşlıqdan birini seçmək"},
+  {q:"Mütləq monarxiya nədir?",correct:"Monarxın bütün hakimiyyəti öz əlində cəmləşdirdiyi idarəetmə forması",opts:["Monarxın bütün hakimiyyəti öz əlində cəmləşdirdiyi idarəetmə forması","Parlamentin üstün olduğu monarxiya","Monarxiya ilə respublikanın birləşməsi","Seçkili monarxlıq"],hint:"Düzgün cavab: Monarxın bütün hakimiyyəti öz əlində cəmləşdirdiyi idarəetmə forması"},
+  {q:"Konstitusiyalı (məhdud) monarxiya nədir?",correct:"Monarxın hakimiyyətinin konstitusiya ilə məhdudlaşdırıldığı sistem",opts:["Monarxın hakimiyyətinin konstitusiya ilə məhdudlaşdırıldığı sistem","Monarxın tam suveren olduğu sistem","Parlamentin monarxı seçdiyi sistem","Respublika ilə eyni sistem"],hint:"Düzgün cavab: Monarxın hakimiyyətinin konstitusiya ilə məhdudlaşdırıldığı sistem"}
+];
+
+const LETTERS=['A','B','C','D'];
+let answers=new Array(QUESTIONS.length).fill(null);
+let current=0;
+
+const correctAudio=()=>{try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.setValueAtTime(523,a.currentTime);o.frequency.setValueAtTime(659,a.currentTime+0.12);g.gain.setValueAtTime(0.25,a.currentTime);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+0.4);o.start();o.stop(a.currentTime+0.4);}catch(e){}};
+const wrongAudio=()=>{try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.type='square';o.connect(g);g.connect(a.destination);o.frequency.setValueAtTime(200,a.currentTime);o.frequency.setValueAtTime(160,a.currentTime+0.12);g.gain.setValueAtTime(0.15,a.currentTime);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+0.4);o.start();o.stop(a.currentTime+0.4);}catch(e){}};
+
+function updateLiveScore(){
+  const c=answers.filter((a,i)=>a===QUESTIONS[i].correct).length;
+  document.getElementById('live-score').innerHTML='Düzgün: <span>'+c+'</span>';
+}
+
+function render(){
+  const q=QUESTIONS[current],total=QUESTIONS.length;
+  const pct=Math.round((current+1)/total*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent='Sual '+(current+1)+' / '+total;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('q-badge').textContent='● Sual '+(current+1<10?'0':'')+(current+1);
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('hint-box').style.display='none';
+  document.getElementById('hint-box').textContent=q.hint;
+  document.getElementById('hint-btn').textContent='💡 İpucu gör';
+  document.getElementById('nav-answered').textContent=answers[current]!==null?'✓ Cavablandı':'';
+  document.getElementById('prev-btn').disabled=current===0;
+  document.getElementById('next-btn').textContent=current===total-1?'Nəticəyə bax →':'Növbəti →';
+
+  const answered=answers[current]!==null;
+  if(!answered) q._shuffled=[...q.opts].sort(()=>Math.random()-0.5);
+  const toShow=q._shuffled||q.opts;
+  const container=document.getElementById('opts');
+  container.innerHTML='';
+  toShow.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="opt-letter">'+LETTERS[i]+'</span><span>'+o+'</span>';
+    if(answered){
+      btn.disabled=true;
+      if(o===q.correct)btn.classList.add('correct');
+      else if(o===answers[current]&&o!==q.correct)btn.classList.add('wrong');
+    }
+    btn.addEventListener('click',()=>{
+      if(answers[current]!==null)return;
+      answers[current]=o;
+      o===q.correct?correctAudio():wrongAudio();
+      document.getElementById('nav-answered').textContent='✓ Cavablandı';
+      updateLiveScore();
+      container.querySelectorAll('.opt').forEach(b=>{
+        const txt=b.querySelector('span:last-child').textContent;
+        b.disabled=true;
+        if(txt===q.correct)b.classList.add('correct');
+        else if(txt===o&&o!==q.correct)b.classList.add('wrong');
+      });
+    });
+    container.appendChild(btn);
+  });
+}
+
+document.getElementById('hint-btn').addEventListener('click',()=>{
+  const h=document.getElementById('hint-box');
+  const show=h.style.display==='none'||!h.style.display;
+  h.style.display=show?'block':'none';
+  document.getElementById('hint-btn').textContent=show?'💡 İpucunu gizlə':'💡 İpucu gör';
+});
+document.getElementById('prev-btn').addEventListener('click',()=>{if(current>0){current--;render();}});
+document.getElementById('next-btn').addEventListener('click',()=>{
+  if(current<QUESTIONS.length-1){current++;render();}
+  else showResult();
+});
+
+function showResult(){
+  document.getElementById('quiz-wrap').style.display='none';
+  document.getElementById('result-wrap').style.display='block';
+  const total=QUESTIONS.length;
+  let correct=0;const mistakes=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(answers[i]===q.correct)correct++;
+    else mistakes.push({n:i+1,q:q.q,yours:answers[i],correct:q.correct});
+  });
+  const pct=Math.round(correct/total*100);
+  document.getElementById('res-emoji').textContent=pct>=90?'🏆':pct>=70?'🎯':pct>=50?'📚':'💪';
+  document.getElementById('res-score').textContent=correct+' / '+total;
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('st-correct').textContent=correct;
+  document.getElementById('st-wrong').textContent=total-correct;
+  const ms=document.getElementById('mistakes-section');
+  ms.innerHTML='';
+  if(mistakes.length===0){
+    ms.innerHTML='<div class="all-ok">🎉 Əla nəticə! Bütün 50 sualı düzgün cavablandırdınız!</div>';
+  } else {
+    ms.innerHTML='<div class="mistakes-hd">Səhv cavablar — '+mistakes.length+' sual:</div>';
+    mistakes.forEach(m=>{
+      const d=document.createElement('div');
+      d.className='review-item';
+      d.innerHTML='<div class="review-num">SUAL '+(m.n<10?'0':'')+m.n+'</div>'
+        +'<div class="review-q">'+m.q+'</div>'
+        +(m.yours?'<div class="review-wrong">✗ Sizin cavabınız: '+m.yours+'</div>':'<div class="review-wrong">✗ Cavablanmadı</div>')
+        +'<div class="review-right">✓ Düzgün cavab: '+m.correct+'</div>';
+      ms.appendChild(d);
+    });
+  }
+}
+
+document.getElementById('restart-btn').addEventListener('click',()=>{
+  answers=new Array(QUESTIONS.length).fill(null);
+  current=0;
+  document.getElementById('quiz-wrap').style.display='block';
+  document.getElementById('result-wrap').style.display='none';
+  updateLiveScore();
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
