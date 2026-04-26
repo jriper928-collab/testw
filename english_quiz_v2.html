@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Grammar Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --primary: #6c8eff;
+    --primary-dark: #4a6cf7;
+    --correct: #3ecf8e;
+    --wrong: #ff6b6b;
+    --hint: #ffbe3d;
+    --text: #2d3a5e;
+    --subtext: #6b7a9e;
+    --border: #e2e8f8;
+    --shadow: 0 8px 30px rgba(108,142,255,0.13);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 12px 48px;
+    color: var(--text);
+  }
+  h1 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+  .subtitle { color: var(--subtext); font-size: 1rem; margin-bottom: 28px; text-align: center; }
+  .progress-bar-wrap {
+    width: 100%; max-width: 700px;
+    background: var(--border);
+    border-radius: 99px;
+    height: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #a78bfa);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .progress-text { color: var(--subtext); font-size: 0.88rem; margin-bottom: 18px; text-align: right; max-width: 700px; width: 100%; }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%; max-width: 700px;
+    padding: 36px 36px 28px;
+    border: 1.5px solid var(--border);
+    animation: fadeIn 0.35s ease;
+    position: relative;
+  }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(18px); } to { opacity:1; transform: translateY(0); } }
+  .q-number { font-size: 0.82rem; color: var(--subtext); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .q-text { font-size: 1.18rem; font-weight: 700; color: var(--text); margin-bottom: 22px; line-height: 1.5; }
+  .context { background: #f7f9ff; border-left: 4px solid var(--primary); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; color: var(--subtext); font-size: 0.97rem; }
+  .options { display: flex; flex-direction: column; gap: 11px; margin-bottom: 20px; }
+  .opt-btn {
+    background: #f4f7ff;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .opt-btn:hover:not(:disabled) { background: #e8eeff; border-color: var(--primary); color: var(--primary-dark); }
+  .opt-btn.correct { background: #d4f7ea; border-color: var(--correct); color: #1a7a52; }
+  .opt-btn.wrong { background: #ffe4e4; border-color: var(--wrong); color: #a33; }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--border);
+    color: var(--subtext);
+    font-size: 0.85rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .opt-btn.correct .opt-letter { background: var(--correct); color: #fff; }
+  .opt-btn.wrong .opt-letter { background: var(--wrong); color: #fff; }
+  .opt-btn:hover:not(:disabled) .opt-letter { background: var(--primary); color: #fff; }
+
+  .hint-btn {
+    background: none; border: 2px solid var(--hint);
+    color: #b8860b; border-radius: 10px;
+    padding: 7px 18px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; transition: all 0.16s;
+    font-family: 'Nunito', sans-serif;
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .hint-btn:hover { background: #fff7e0; }
+  .hint-box {
+    background: #fff8e8; border: 1.5px solid #ffd87a;
+    border-radius: 10px; padding: 12px 16px;
+    color: #8a6000; font-size: 0.95rem;
+    margin-bottom: 14px;
+    display: none;
+    animation: fadeIn 0.2s;
+  }
+  .hint-box.show { display: block; }
+
+  .nav-row { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .nav-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 11px 26px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background 0.16s, transform 0.1s;
+  }
+  .nav-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .nav-btn:disabled { background: #c5d0f0; cursor: default; transform: none; }
+  .reset-btn {
+    background: none; border: 2px solid #e0e8ff;
+    color: var(--subtext); border-radius: 10px;
+    padding: 10px 18px; font-size: 0.92rem; font-weight: 700;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--wrong); color: var(--wrong); background: #fff0f0; }
+
+  /* Result screen */
+  .result-screen { display: none; animation: fadeIn 0.4s; }
+  .result-screen.show { display: block; }
+  .result-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); width: 100%; max-width: 700px;
+    padding: 40px 36px; border: 1.5px solid var(--border);
+    text-align: center;
+  }
+  .result-emoji { font-size: 4rem; margin-bottom: 12px; }
+  .result-title { font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px; }
+  .result-score { font-size: 3.5rem; font-weight: 800; color: var(--primary); margin: 10px 0; }
+  .result-sub { color: var(--subtext); font-size: 1.05rem; margin-bottom: 30px; }
+  .wrong-list { text-align: left; margin-top: 24px; }
+  .wrong-list h3 { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 14px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+  .wrong-item {
+    background: #fff8f8; border: 1.5px solid #ffd0d0;
+    border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;
+  }
+  .wrong-item .wq { font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .wrong-item .wy { color: var(--wrong); font-size: 0.95rem; margin-bottom: 3px; }
+  .wrong-item .wc { color: var(--correct); font-size: 0.95rem; font-weight: 700; }
+  .restart-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 12px;
+    padding: 14px 40px; font-size: 1.1rem; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    margin-top: 28px; transition: background 0.16s;
+  }
+  .restart-btn:hover { background: var(--primary-dark); }
+
+  .feedback-label {
+    font-size: 0.95rem; font-weight: 700;
+    padding: 6px 14px; border-radius: 8px;
+    display: inline-block; margin-bottom: 10px;
+  }
+  .feedback-label.correct { background: #d4f7ea; color: #1a7a52; }
+  .feedback-label.wrong { background: #ffe4e4; color: #a33; }
+
+  @media (max-width: 520px) {
+    .card, .result-card { padding: 22px 14px 18px; }
+    h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🎓 English Grammar Quiz</h1>
+<p class="subtitle">80 Questions · Grammar · Vocabulary · Reading</p>
+
+<div id="quizArea">
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress-text" id="progressText"></div>
+  <div class="card" id="questionCard">
+    <div class="q-number" id="qNumber"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="context" id="qContext" style="display:none"></div>
+    <div class="options" id="optionsDiv"></div>
+    <button class="hint-btn" id="hintBtn" onclick="toggleHint()">💡 Hint</button>
+    <div class="hint-box" id="hintBox"></div>
+    <div id="feedbackLabel"></div>
+    <div class="nav-row">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Prev</button>
+      <button class="reset-btn" onclick="resetQuiz()">↺ Reset</button>
+      <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="result-screen" id="resultScreen">
+  <div class="result-card">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-title">Quiz Complete!</div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="wrong-list" id="wrongList"></div>
+    <button class="restart-btn" onclick="resetQuiz()">🔄 Try Again</button>
+  </div>
+</div>
+
+<script>
+// ---- SOUND EFFECTS ----
+function playCorrect() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.frequency.setValueAtTime(523, ctx.currentTime);
+  o.frequency.setValueAtTime(659, ctx.currentTime + 0.12);
+  o.frequency.setValueAtTime(784, ctx.currentTime + 0.24);
+  g.gain.setValueAtTime(0.18, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+  o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.55);
+}
+function playWrong() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(220, ctx.currentTime);
+  o.frequency.setValueAtTime(180, ctx.currentTime + 0.15);
+  g.gain.setValueAtTime(0.13, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+  o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.4);
+}
+
+// ---- QUIZ DATA ----
+const questions = [
+  {
+    q: "Choose the correct pronouns.\nCan you give … to …, please?",
+    opts: ["it / me", "them / I", "it / I", "them / me"],
+    ans: 0,
+    hint: "Use object pronouns after a verb and after a preposition. 'Give it to me.'"
+  },
+  {
+    q: "Complete the sentence.\nShe's always … - she always tells the truth.",
+    opts: ["honest", "lazy", "rude", "patient"],
+    ans: 0,
+    hint: "Someone who always tells the truth is 'honest'."
+  },
+  {
+    q: "Choose the correct sentence in the Passive Voice.\nThe man dropped the axe into the river.",
+    opts: ["The axe is dropped by the man.", "The axe has been dropped by the man.", "The axe was dropped by the man.", "The axe dropped into the river by the man."],
+    ans: 2,
+    hint: "The original sentence is Past Simple. Passive: Subject + was/were + past participle + by + agent."
+  },
+  {
+    q: "Complete the sentence.\n… have you been waiting here?",
+    opts: ["How long", "How often", "How much", "When"],
+    ans: 0,
+    hint: "For duration of time with Present Perfect Continuous, use 'How long'."
+  },
+  {
+    q: "Choose the correct answer.\nWhere … you buy your shirt?",
+    opts: ["did", "do", "does", "have"],
+    ans: 0,
+    hint: "This is a Past Simple question. Use 'did' + base verb."
+  },
+  {
+    q: "Match the words.\n1. fall – ?\n2. feel – ?\n3. finish – ?",
+    opts: ["1-c, 2-a, 3-b", "1-a, 2-b, 3-c", "1-b, 2-c, 3-a", "1-c, 2-b, 3-a"],
+    ans: 0,
+    hint: "fall asleep (c), feel tired (a), finish work/school (b)"
+  },
+  {
+    q: "Choose the correct modal verb.\nJohn has backache. He … carry heavy things.",
+    opts: ["can't", "should", "must", "will"],
+    ans: 0,
+    hint: "When someone has backache, they are not able to carry heavy things. Use 'can't'."
+  },
+  {
+    q: "Make up a sentence.\n1. in  2. you often find  3. articles  4. interesting  5. newspapers",
+    opts: [
+      "You often find interesting articles in newspapers.",
+      "In newspapers interesting articles you often find.",
+      "Interesting articles in newspapers you often find.",
+      "You often find articles interesting in newspapers."
+    ],
+    ans: 0,
+    hint: "Word order: Subject + verb + object + place. 'You often find interesting articles in newspapers.'"
+  },
+  {
+    q: "Choose the correct interrogative sentence.\nWhat did he advise him?",
+    opts: ["What he did advise him?", "What did he advise him?", "What he advise him?", "What does he advises him?"],
+    ans: 1,
+    hint: "Past Simple question: What + did + subject + base verb?"
+  },
+  {
+    q: "Choose the correct tense form.\nThey … in the park at 3 o'clock yesterday.",
+    opts: ["were", "are", "have been", "had"],
+    ans: 0,
+    hint: "At a specific time in the past (3 o'clock yesterday) → Past Simple. Verb 'to be' → 'were'."
+  },
+  {
+    q: "Read the definition and complete the job.\nsomeone who works with languages:",
+    opts: ["linguist", "journalist", "surgeon", "pilot"],
+    ans: 0,
+    hint: "A person who studies or works with languages is called a 'linguist'."
+  },
+  {
+    q: "Which word doesn't go with others?\nsea  beach  sand  eye  sun",
+    opts: ["eye", "sea", "beach", "sun"],
+    ans: 0,
+    hint: "Sea, beach, sand, sun are all related to the seaside/summer. 'Eye' is a body part."
+  },
+  {
+    q: "Choose the correct variant. (Countability)\n1. much peace organizations\n2. many music fans\n3. few news channels\n4. several tasty cake",
+    opts: ["2 and 3", "1 and 4", "1 and 2", "3 and 4"],
+    ans: 0,
+    hint: "'Many' is used with countable nouns (fans), 'few' with countable nouns (channels). Options 2 & 3 are correct."
+  },
+  {
+    q: "Choose the correct modal verb.\nShe … to change her lifestyle and eating habits.",
+    opts: ["has", "must", "should", "can"],
+    ans: 0,
+    hint: "Here 'has to' = obligation (necessity). 'She has to change...' means it is necessary."
+  },
+  {
+    q: "Choose the nouns in the plural.\n1. money  2. goose  3. mice  4. jeans  5. advice  6. teeth",
+    opts: ["3, 4, 6", "1, 2, 5", "1, 3, 5", "2, 4, 6"],
+    ans: 0,
+    hint: "Mice (plural of mouse), jeans (always plural), teeth (plural of tooth). Money and advice are uncountable."
+  },
+  {
+    q: "Choose the correct tense form.\nThey usually … about their day in the evening.",
+    opts: ["talk", "talked", "are talking", "have talked"],
+    ans: 0,
+    hint: "'Usually' signals a habit → Present Simple. Use base form 'talk' for plural subject."
+  },
+  {
+    q: "When does Ramin get up in the morning?",
+    context: "On school days Ramin gets up at 7:00 in the morning.",
+    opts: ["At 7:00", "At 7:45", "At 8:00", "At 6:30"],
+    ans: 0,
+    hint: "Read the first sentence of the text carefully."
+  },
+  {
+    q: "Who studies Math well?",
+    context: "Raul is good at math, Asim is fond of Azerbaijani literature.",
+    opts: ["Raul", "Ramin", "Asim", "The teacher"],
+    ans: 0,
+    hint: "'Good at math' means studying math well."
+  },
+  {
+    q: "How many lessons does he have today?",
+    context: "He has five lessons today: The Azerbaijani language, literature, math, English and music.",
+    opts: ["Five", "Four", "Six", "Three"],
+    ans: 0,
+    hint: "Count the subjects listed in the text."
+  },
+  {
+    q: "What does Ramin study well?",
+    context: "He studies English well.",
+    opts: ["English", "Math", "Music", "Literature"],
+    ans: 0,
+    hint: "The text says 'He studies English well.'"
+  },
+  {
+    q: "Read the definition and complete the job.\nsomeone who makes food in a restaurant:",
+    opts: ["cook", "doctor", "driver", "linguist"],
+    ans: 0,
+    hint: "A person who prepares food professionally is a 'cook' (or chef)."
+  },
+  {
+    q: "Choose the correct tense form.\nBruce … only three photographs yesterday.",
+    opts: ["took", "takes", "has taken", "was taking"],
+    ans: 0,
+    hint: "'Yesterday' signals Past Simple. Irregular verb: take → took."
+  },
+  {
+    q: "Choose the correct pronoun.\nOlivia left … school bag on the bus.",
+    opts: ["her", "his", "their", "its"],
+    ans: 0,
+    hint: "Olivia is a female name, so use the possessive pronoun 'her'."
+  },
+  {
+    q: "Complete the sentence.\nHe's a … - he always works a lot.",
+    opts: ["hardworking", "lazy", "honest", "patient"],
+    ans: 0,
+    hint: "Someone who always works a lot is 'hardworking'."
+  },
+  {
+    q: "Choose the correct variant.\n… did you go home at 10 p.m.?",
+    opts: ["When", "Why", "How", "Where"],
+    ans: 0,
+    hint: "The answer is a time (10 p.m.), so the question word is 'When'."
+  },
+  {
+    q: "Choose the correct sentence in the Passive Voice.\nI water the plants in the morning.",
+    opts: ["The plants are watered in the morning.", "The plants were watered in the morning.", "I am watered the plants in the morning.", "The plants have been watered in the morning."],
+    ans: 0,
+    hint: "Present Simple Passive: subject + am/is/are + past participle. 'Plants' → 'are watered'."
+  },
+  {
+    q: "Choose the correct variant.\n… have you been sitting there?",
+    opts: ["How long", "How often", "When", "How much"],
+    ans: 0,
+    hint: "Present Perfect Continuous with duration → 'How long'."
+  },
+  {
+    q: "Choose the correct modal verb.\nI think you … apologize to him.",
+    opts: ["should", "can't", "must", "have to"],
+    ans: 0,
+    hint: "'Should' expresses advice/recommendation."
+  },
+  {
+    q: "Choose the correct tense form.\nI … the topic at 5 o'clock yesterday.",
+    opts: ["was discussing", "discussed", "have discussed", "discuss"],
+    ans: 0,
+    hint: "At a specific time in the past → Past Continuous (was/were + -ing)."
+  },
+  {
+    q: "Choose the correct variant. (Apostrophe/Possessive)\n1. a few deers's skin\n2. a day's rest\n3. 5 minute's break\n4. mice's tails",
+    opts: ["a day's rest", "a few deers's skin", "5 minute's break", "mice's tails"],
+    ans: 0,
+    hint: "'A day's rest' is correct. 'Deer' is already plural (no 's'), '5 minutes' break' needs no apostrophe on minutes."
+  },
+  {
+    q: "Choose the correct article.\nI saw … elephant in … Zoo.",
+    opts: ["an / the", "a / the", "an / a", "the / the"],
+    ans: 0,
+    hint: "'Elephant' starts with a vowel sound → 'an'. 'Zoo' is a specific place → 'the'."
+  },
+  {
+    q: "Choose the correct modal verb.\nChildren … respect their parents.",
+    opts: ["should", "can't", "mustn't", "don't have to"],
+    ans: 0,
+    hint: "Giving moral advice/obligation → 'should'."
+  },
+  {
+    q: "Choose the correct variant.\nAnn's cakes … very delicious.",
+    opts: ["are", "is", "was", "were"],
+    ans: 0,
+    hint: "'Cakes' is plural → use 'are' for present tense."
+  },
+  {
+    q: "Choose the correct answer.\nShe was … because her manager shouted at her.",
+    opts: ["upset", "happy", "excited", "bored"],
+    ans: 0,
+    hint: "When someone shouts at you, you feel 'upset'."
+  },
+  {
+    q: "Choose the correct conjunction.\nHe hadn't learned the direction … he lost his way.\n1. and  2. so  3. but  4. though",
+    opts: ["so", "and", "but", "though"],
+    ans: 0,
+    hint: "Cause → result: 'He hadn't learned → so he lost his way.' 'So' shows result."
+  },
+  {
+    q: "Make up a sentence.\n1. lost  2. I  3. my pen  4. today  5. have",
+    opts: ["I have lost my pen today.", "I lost my pen today have.", "Today I lost have my pen.", "Have I lost my pen today."],
+    ans: 0,
+    hint: "Present Perfect: Subject + have/has + past participle. 'I have lost my pen today.'"
+  },
+  {
+    q: "Choose the best title for the text about Melanie's family.",
+    context: "Hi! My name is Melanie. I have a big family. I have a dad, a mom, a brother and a sister.",
+    opts: ["My Family", "My School", "My Pets", "My Friends"],
+    ans: 0,
+    hint: "The text is entirely about Melanie's family members."
+  },
+  {
+    q: "Choose the correct variant about Melanie's text.",
+    context: "My dad is a doctor. My mom is a teacher. My brother Ted is a schoolboy. My sister Sheila likes cats.",
+    opts: ["Melanie's mother is a teacher.", "Melanie's dad is a teacher.", "Shelia doesn't like cats.", "Ted doesn't like dogs."],
+    ans: 0,
+    hint: "Read the text carefully. 'My mom is a teacher' = Melanie's mother is a teacher."
+  },
+  {
+    q: "What is Melanie's dad's profession?",
+    context: "My dad is a doctor.",
+    opts: ["He is a doctor.", "He is a teacher.", "He is a driver.", "He is a cook."],
+    ans: 0,
+    hint: "The text directly states 'My dad is a doctor.'"
+  },
+  {
+    q: "How many people are there in Melanie's family?",
+    context: "I have a dad, a mom, a brother and a sister. (+ Melanie herself)",
+    opts: ["5 (five)", "4 (four)", "6 (six)", "3 (three)"],
+    ans: 0,
+    hint: "Count: Melanie + dad + mom + brother + sister = 5 people."
+  },
+  {
+    q: "Read the definition and complete the job.\nsomeone who helps you when you are ill:",
+    opts: ["doctor", "cook", "driver", "linguist"],
+    ans: 0,
+    hint: "A 'doctor' is a medical professional who treats sick people."
+  },
+  {
+    q: "Choose the correct variant.\n… did Anya phone you yesterday?",
+    opts: ["When", "Where", "How", "Who"],
+    ans: 0,
+    hint: "The question asks about time → 'When'."
+  },
+  {
+    q: "Choose the correct sentence in the Passive Voice.\nThe restaurant manager showed us the table.",
+    opts: [
+      "We were shown the table by the manager.",
+      "We were shown the manager the table.",
+      "The table was been shown to us.",
+      "The manager was shown the table by us."
+    ],
+    ans: 0,
+    hint: "Past Simple Passive with indirect object: We were shown the table by the manager."
+  },
+  {
+    q: "Choose the correct tense form.\nThe students often … skiing during winter vacation.",
+    opts: ["go", "went", "are going", "have gone"],
+    ans: 0,
+    hint: "'Often' signals a habit/routine → Present Simple. 'go skiing' is the correct phrase."
+  },
+  {
+    q: "Choose the compound nouns.",
+    opts: ["moonlight, movement / leadership, handshake", "sportsman, Norman", "information, fireplace", "spaceship, airmail"],
+    ans: 0,
+    hint: "Compound nouns are formed from two words joined together: moon+light, leader+ship, hand+shake."
+  },
+  {
+    q: "Choose the correct variant.\nThose are the people … missed the train.",
+    opts: ["who", "which", "whose", "whom"],
+    ans: 0,
+    hint: "Use 'who' for people in relative clauses."
+  },
+  {
+    q: "Choose the correct modal verb.\nHe … to be at home by seven o'clock.",
+    opts: ["has to", "should", "can", "might"],
+    ans: 0,
+    hint: "'Has to' expresses obligation/necessity. 'He has to be home by seven.'"
+  },
+  {
+    q: "Choose the correct variant. (Uncountable nouns)\n1. a piece of advice\n2. an advice\n3. two advice\n4. some advice",
+    opts: ["1 and 4", "2 and 3", "1 and 2", "3 and 4"],
+    ans: 0,
+    hint: "'Advice' is uncountable: use 'a piece of advice' or 'some advice'. Never 'an advice' or 'two advice'."
+  },
+  {
+    q: "Match the halves.\n1. get – ?\n2. go to – ?\n3. have a – ?",
+    opts: ["1-c (up), 2-a (bed), 3-b (nap)", "1-a, 2-b, 3-c", "1-b, 2-c, 3-a", "1-c, 2-b, 3-a"],
+    ans: 0,
+    hint: "get up, go to bed, have a nap – common daily routine phrases."
+  },
+  {
+    q: "Choose the correct modal verb.\nMy brother has toothache. He … eat candies.",
+    opts: ["shouldn't", "should", "must", "can"],
+    ans: 0,
+    hint: "Giving negative advice: 'shouldn't' = should not. Don't eat candies if you have toothache."
+  },
+  {
+    q: "Complete the sentence.\nHe is very … to other people – he listens when they have problems.",
+    opts: ["kind", "rude", "lazy", "honest"],
+    ans: 0,
+    hint: "Someone who listens to others' problems is 'kind' (or helpful)."
+  },
+  {
+    q: "Choose the correct article.\n… Thames is … second longest river in … Britain.",
+    opts: ["The / the / –", "A / the / the", "The / a / –", "– / the / the"],
+    ans: 0,
+    hint: "The Thames (specific river), the second (ordinal), Britain (no article with country names)."
+  },
+  {
+    q: "Make up a sentence.\n1. Alice noticed  2. from  3. was coming  4. that  5. the next room  6. the noise",
+    opts: [
+      "Alice noticed that the noise was coming from the next room.",
+      "Alice noticed the noise that was coming from the next room.",
+      "Alice noticed from the next room the noise was coming.",
+      "The noise Alice noticed was coming from the next room that."
+    ],
+    ans: 0,
+    hint: "Structure: Subject + verb + that + clause. 'Alice noticed that the noise was coming from the next room.'"
+  },
+  {
+    q: "Choose the line of nouns in the singular.",
+    opts: ["watch, clock, gate", "arms, brain, carrots", "police, cattle, information", "hair, people, clothes"],
+    ans: 0,
+    hint: "Watch, clock, and gate are all countable singular nouns. The others include plural or mass nouns."
+  },
+  {
+    q: "Choose the correct variant.\nI was really … to see her because I thought she was on holiday.",
+    opts: ["surprised", "upset", "bored", "tired"],
+    ans: 0,
+    hint: "When you didn't expect to see someone, you are 'surprised'."
+  },
+  {
+    q: "Choose the correct article.\n… south of Turkey is hotter than … north.",
+    opts: ["The / the", "A / a", "– / –", "The / a"],
+    ans: 0,
+    hint: "Use 'the' with geographical directions used as nouns: the south, the north."
+  },
+  {
+    q: "The passage is about … .",
+    context: "This is Aygun's sister. Her name is Nigar. She is three. She doesn't go to school.",
+    opts: ["Nigar", "Aygun", "Grandmother", "A cat"],
+    ans: 0,
+    hint: "The passage describes Nigar throughout. It is about Nigar."
+  },
+  {
+    q: "Which question has NO answer in the passage?\nHow old is Aygun? / Who takes Nigar for a walk? / What is Aygun's sister's name? / Does Nigar go to school? / Has Nigar got a pet?",
+    context: "This is Aygun's sister. Her name is Nigar. She is three. She doesn't go to school. She's got a pet.",
+    opts: ["How old is Aygun?", "Who takes Nigar for a walk?", "What is Aygun's sister's name?", "Does Nigar go to school?"],
+    ans: 0,
+    hint: "The text tells us Nigar's age (3), not Aygun's age. So 'How old is Aygun?' cannot be answered."
+  },
+  {
+    q: "Choose the WRONG sentence about the text.",
+    context: "Nigar isn't a schoolgirl. / Nigar's pet is funny. / Aygun's grandmother stays with Nigar. / Nigar takes her cat for a walk. / Aygun's pet is a small cat.",
+    opts: ["Aygun's pet is a small cat.", "Nigar isn't a schoolgirl.", "Nigar's pet is funny.", "Nigar takes her cat for a walk."],
+    ans: 0,
+    hint: "The text says 'This is Aygun's SISTER's pet.' The cat belongs to Nigar, not Aygun."
+  },
+  {
+    q: "Choose the correct variant.\nWho does Nigar stay at home with?",
+    context: "She stays at home with her grandmother.",
+    opts: ["with her grandmother", "with her mother", "with Aygun", "alone"],
+    ans: 0,
+    hint: "The text says 'She stays at home with her grandmother.'"
+  },
+  {
+    q: "Choose the correct answer.\nShe was … because there was nothing to do.",
+    opts: ["bored", "upset", "happy", "surprised"],
+    ans: 0,
+    hint: "When there is nothing to do, you feel 'bored'."
+  },
+  {
+    q: "Choose the correct tense form.\nMark … tennis while his sister … in the pool.",
+    opts: ["was playing, was swimming", "plays, had swum", "was playing, had swum", "played, is swimming"],
+    ans: 0,
+    hint: "Two simultaneous past actions → Past Continuous + Past Continuous: was playing, was swimming."
+  },
+  {
+    q: "Choose the correct Passive Voice of the sentence.\nThe friends visit David every week.",
+    opts: [
+      "David is visited by his friends every week.",
+      "David visits his friend every week.",
+      "The friends are visited by David every week.",
+      "David was visited by his friends every week."
+    ],
+    ans: 0,
+    hint: "Present Simple Passive: Object + is/are + past participle + by + subject."
+  },
+  {
+    q: "Choose the correct modal verb.\nIt was too late and she … stay there any longer.",
+    opts: ["couldn't", "shouldn't", "mustn't", "needn't"],
+    ans: 0,
+    hint: "'Couldn't' = was not able to. She was unable to stay longer."
+  },
+  {
+    q: "Choose the correct conjunction.\nThe train stopped … the passengers began to get out.",
+    opts: ["and", "so", "but", "though"],
+    ans: 0,
+    hint: "Two connected events happening in sequence → 'and'."
+  },
+  {
+    q: "Choose the correct variant.\nDiligence and honesty … his positive qualities.",
+    opts: ["are", "is", "was", "were"],
+    ans: 0,
+    hint: "Two subjects joined by 'and' → plural verb → 'are' (present)."
+  },
+  {
+    q: "Complete the sentence.\nHe's very … person – he is good at waiting calmly without getting angry.",
+    opts: ["patient", "rude", "kind", "honest"],
+    ans: 0,
+    hint: "Someone who waits calmly without anger is 'patient'."
+  },
+  {
+    q: "Read the definition and complete the job.\nsomeone who drives you where you want to go:",
+    opts: ["driver", "cook", "doctor", "linguist"],
+    ans: 0,
+    hint: "A 'driver' (or taxi driver/chauffeur) takes you to your destination."
+  },
+  {
+    q: "Choose the correct variant.\nShe invited us round for a … meal.",
+    opts: ["home-cooked", "evening", "fast", "quick"],
+    ans: 0,
+    hint: "'Home-cooked meal' is a common collocation meaning food made at home."
+  },
+  {
+    q: "Make up a sentence.\n1. children  2. sitting  3. were  4. little  5. the  6. grass  7. on",
+    opts: [
+      "The little children were sitting on the grass.",
+      "The children little were sitting on the grass.",
+      "Little the children sitting were on grass.",
+      "On the grass were the little children sitting."
+    ],
+    ans: 0,
+    hint: "Standard word order: The + adjective + noun + verb phrase. 'The little children were sitting on the grass.'"
+  },
+  {
+    q: "Choose the correct variant.\nI don't have … time to finish this exercise.",
+    opts: ["much", "many", "a lot of", "few"],
+    ans: 0,
+    hint: "'Time' is uncountable → use 'much' in negative sentences."
+  },
+  {
+    q: "Choose the correct modal verb.\nBrain has a cough. He … drink cold drinks.",
+    opts: ["shouldn't", "should", "must", "can"],
+    ans: 0,
+    hint: "Giving negative health advice → 'shouldn't' (= should not)."
+  },
+  {
+    q: "Choose the correct tense form.\nThe friends … to the forest every autumn.",
+    opts: ["go", "went", "are going", "have gone"],
+    ans: 0,
+    hint: "'Every autumn' = habitual action → Present Simple. 'go' for plural subject."
+  },
+  {
+    q: "Choose the correct variant.\n… is the man with the long beard?",
+    opts: ["Who", "What", "Where", "Which"],
+    ans: 0,
+    hint: "Asking about a person → 'Who'."
+  },
+  {
+    q: "Choose the line of singular nouns.",
+    opts: ["weather, money", "teeth, family", "wheat, mistakes", "scissors, roads"],
+    ans: 0,
+    hint: "'Weather' and 'money' are both uncountable/singular nouns. Teeth and scissors are plural."
+  },
+  {
+    q: "Choose the correct variant.\n… was Pat so angry?",
+    opts: ["Why", "When", "How", "Who"],
+    ans: 0,
+    hint: "Asking for a reason → 'Why'."
+  },
+  {
+    q: "Choose the WRONG variant about Eldar.\nEldar and his friends …",
+    context: "My cousin Eldar is a musician. He plays the guitar and also sings songs. He and four of his friends have a small music band. They play at schools, weddings, parties and sometimes at television programs. They practice and try a lot. They play and sing in English, they sing pop music. Eldar wants to be a popular singer. They wish to be rich and famous.",
+    opts: ["play only TV", "work hard", "have a music band", "want to be rich"],
+    ans: 0,
+    hint: "They play at schools, weddings, parties AND television – not ONLY TV."
+  },
+  {
+    q: "Choose the synonym to the word 'famous'.",
+    opts: ["popular", "rich", "talented", "successful"],
+    ans: 0,
+    hint: "Famous = well-known = 'popular' (in this context)."
+  },
+  {
+    q: "Choose the correct sentence from the text.\nEldar and his four friends play …",
+    context: "They play at schools, weddings, parties and sometimes at television programs.",
+    opts: ["at schools", "for television every evening", "the piano", "at concert halls"],
+    ans: 0,
+    hint: "The text says they play 'at schools, weddings, parties and sometimes at television programs'."
+  },
+  {
+    q: "Choose the correct title for the text about Eldar.",
+    opts: ["Eldar and his band", "My School", "Famous Musicians", "Pop Music in Azerbaijan"],
+    ans: 0,
+    hint: "The text is mainly about Eldar and his friends' music band."
+  }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+let hintVisible = false;
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('qNumber').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('qText').textContent = q.q;
+
+  const ctx = document.getElementById('qContext');
+  if (q.context) {
+    ctx.textContent = q.context;
+    ctx.style.display = 'block';
+  } else {
+    ctx.style.display = 'none';
+  }
+
+  const opts = document.getElementById('optionsDiv');
+  opts.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    if (answers[current] !== null) {
+      btn.disabled = true;
+      if (i === q.ans) btn.classList.add('correct');
+      else if (i === answers[current]) btn.classList.add('wrong');
+    }
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span> ${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+
+  // hint
+  document.getElementById('hintBox').classList.remove('show');
+  document.getElementById('hintBox').textContent = q.hint;
+  hintVisible = false;
+
+  // feedback
+  const fb = document.getElementById('feedbackLabel');
+  if (answers[current] !== null) {
+    const correct = answers[current] === q.ans;
+    fb.innerHTML = `<span class="feedback-label ${correct ? 'correct' : 'wrong'}">${correct ? '✅ Correct!' : '❌ Wrong! Correct: ' + q.opts[q.ans]}</span>`;
+  } else {
+    fb.innerHTML = '';
+  }
+
+  // progress
+  const pct = ((current + 1) / questions.length * 100).toFixed(0);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${current + 1} / ${questions.length}`;
+
+  // nav
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').textContent = current === questions.length - 1 ? 'Finish 🏁' : 'Next →';
+}
+
+function selectAnswer(i) {
+  if (answers[current] !== null) return;
+  answers[current] = i;
+  const q = questions[current];
+  if (i === q.ans) playCorrect(); else playWrong();
+  // Update buttons in place - no navigation
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((btn, idx) => {
+    btn.disabled = true;
+    btn.classList.remove('correct','wrong');
+    if (idx === q.ans) btn.classList.add('correct');
+    else if (idx === i) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById('feedbackLabel');
+  const correct = i === q.ans;
+  fb.innerHTML = '<span class="feedback-label ' + (correct ? 'correct' : 'wrong') + '">' + (correct ? '✅ Correct!' : '❌ Wrong! Correct: ' + q.opts[q.ans]) + '</span>';
+}
+
+function toggleHint() {
+  const box = document.getElementById('hintBox');
+  hintVisible = !hintVisible;
+  if (hintVisible) box.classList.add('show'); else box.classList.remove('show');
+}
+
+function navigate(dir) {
+  if (dir === 1 && current === questions.length - 1) {
+    showResult();
+    return;
+  }
+  current = Math.max(0, Math.min(questions.length - 1, current + dir));
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('quizArea').style.display = 'none';
+  const rs = document.getElementById('resultScreen');
+  rs.classList.add('show');
+
+  const score = answers.filter((a, i) => a === questions[i].ans).length;
+  const pct = Math.round(score / questions.length * 100);
+
+  document.getElementById('resultScore').textContent = `${score} / ${questions.length}`;
+  document.getElementById('resultSub').textContent = `You scored ${pct}%`;
+
+  let emoji = '🎉';
+  if (pct < 40) emoji = '😔';
+  else if (pct < 70) emoji = '🙂';
+  else if (pct < 90) emoji = '😊';
+  document.getElementById('resultEmoji').textContent = emoji;
+
+  // wrong list
+  const wrongItems = [];
+  answers.forEach((a, i) => {
+    if (a !== questions[i].ans) {
+      wrongItems.push({ idx: i, chosen: a, correct: questions[i].ans });
+    }
+  });
+
+  const wl = document.getElementById('wrongList');
+  if (wrongItems.length === 0) {
+    wl.innerHTML = '<p style="color:var(--correct);font-weight:800;font-size:1.1rem;text-align:center">🏆 Perfect score! All answers correct!</p>';
+  } else {
+    wl.innerHTML = `<h3>❌ Incorrect Answers (${wrongItems.length})</h3>` + wrongItems.map(w => `
+      <div class="wrong-item">
+        <div class="wq">Q${w.idx + 1}: ${questions[w.idx].q.split('\n')[0]}</div>
+        <div class="wy">Your answer: ${w.chosen !== null ? questions[w.idx].opts[w.chosen] : '(not answered)'}</div>
+        <div class="wc">✅ Correct: ${questions[w.idx].opts[w.correct]}</div>
+        <div style="color:#8a6000;font-size:0.88rem;margin-top:5px">💡 ${questions[w.idx].hint}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function resetQuiz() {
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizArea').style.display = 'block';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
