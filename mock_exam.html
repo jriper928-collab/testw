@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>English Mock Exam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf2;min-height:100vh}
+
+.wrap{max-width:720px;margin:0 auto;padding:24px 20px}
+
+.header{text-align:center;margin-bottom:28px}
+.header h1{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;
+  background:linear-gradient(135deg,#4f8ef7,#7c5cf7);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:#7a80a0;font-size:.9rem;margin-top:6px}
+
+.prog-row{display:flex;justify-content:space-between;font-size:.78rem;color:#7a80a0;margin-bottom:6px}
+.prog-bar{background:#1e2230;border-radius:99px;height:6px;overflow:hidden;margin-bottom:22px}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#4f8ef7,#7c5cf7);transition:width .4s}
+
+.card{background:#161920;border:1px solid #2a2f42;border-radius:20px;padding:32px 36px;
+  box-shadow:0 8px 40px rgba(0,0,0,.4)}
+@media(max-width:500px){.card{padding:22px 18px}}
+
+.q-num{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#4f8ef7;margin-bottom:8px}
+.q-text{font-size:1.15rem;font-weight:500;line-height:1.6;margin-bottom:24px}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{background:#1e2230;border:1.5px solid #2a2f42;border-radius:12px;padding:13px 18px;
+  color:#e8eaf2;font-family:'DM Sans',sans-serif;font-size:.97rem;text-align:left;
+  cursor:pointer;display:flex;align-items:center;gap:12px;
+  transition:border-color .15s,background .15s,transform .1s;width:100%}
+.opt:hover:not(:disabled){border-color:#4f8ef7;background:rgba(79,142,247,.08);transform:translateX(4px)}
+.opt:disabled{cursor:default}
+.opt-letter{width:26px;height:26px;border-radius:7px;background:#2a2f42;display:flex;
+  align-items:center;justify-content:center;font-family:'Syne',sans-serif;
+  font-size:.72rem;font-weight:700;flex-shrink:0;transition:background .15s}
+.opt.correct{border-color:#22c97a;background:rgba(34,201,122,.12)}
+.opt.correct .opt-letter{background:#22c97a;color:#0d0f14}
+.opt.wrong{border-color:#f75c5c;background:rgba(247,92,92,.1)}
+.opt.wrong .opt-letter{background:#f75c5c;color:#0d0f14}
+
+.hint-wrap{margin-top:18px;background:#1a2035;border:1px solid #7c5cf7;border-radius:12px;overflow:hidden}
+.hint-btn{width:100%;background:none;border:none;color:#7c5cf7;font-family:'DM Sans',sans-serif;
+  font-size:.88rem;font-weight:500;padding:11px 16px;cursor:pointer;text-align:left}
+.hint-btn:hover{color:#fff}
+.hint-body{padding:10px 16px 14px;font-size:.87rem;color:#b0c0e8;line-height:1.55;
+  border-top:1px solid rgba(124,92,247,.25);display:none}
+.hint-body b{color:#7c5cf7}
+.hint-body.open{display:block}
+
+.feedback{margin-top:16px;padding:12px 16px;border-radius:11px;font-size:.93rem;font-weight:500;display:none}
+.feedback.show{display:block}
+.fb-correct{background:rgba(34,201,122,.12);border:1px solid #22c97a;color:#22c97a}
+.fb-wrong{background:rgba(247,92,92,.1);border:1px solid #f75c5c;color:#f75c5c}
+
+.nav{display:flex;align-items:center;justify-content:space-between;margin-top:20px;gap:10px}
+.nav-btn{background:#1e2230;border:1.5px solid #2a2f42;border-radius:12px;color:#e8eaf2;
+  font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:11px 20px;
+  cursor:pointer;transition:border-color .15s,background .15s}
+.nav-btn:hover{border-color:#4f8ef7;background:rgba(79,142,247,.08)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.nav-primary{background:linear-gradient(135deg,#4f8ef7,#7c5cf7);border-color:transparent;color:#fff;font-weight:600}
+.nav-primary:hover{opacity:.9;border-color:transparent}
+.reset-btn{background:transparent;border:1.5px solid rgba(247,92,92,.35);border-radius:12px;
+  color:#f75c5c;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;
+  padding:10px 15px;cursor:pointer;transition:background .15s,border-color .15s}
+.reset-btn:hover{background:rgba(247,92,92,.1);border-color:#f75c5c}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);
+  z-index:999;display:none;align-items:center;justify-content:center;
+  animation:fadeIn .2s}
+.modal-bg.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#161920;border:1px solid #2a2f42;border-radius:20px;padding:30px 32px;
+  max-width:340px;width:90%;text-align:center;box-shadow:0 16px 60px rgba(0,0,0,.5);
+  animation:popIn .2s cubic-bezier(.4,0,.2,1)}
+@keyframes popIn{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-icon{font-size:2.2rem;margin-bottom:10px}
+.modal h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.modal p{color:#7a80a0;font-size:.88rem;margin-bottom:22px;line-height:1.5}
+.modal-btns{display:flex;gap:10px;justify-content:center}
+.m-cancel{background:#1e2230;border:1.5px solid #2a2f42;border-radius:10px;color:#e8eaf2;
+  font-family:'DM Sans',sans-serif;font-size:.92rem;padding:10px 22px;cursor:pointer;
+  transition:border-color .15s}
+.m-cancel:hover{border-color:#4f8ef7}
+.m-confirm{background:#f75c5c;border:none;border-radius:10px;color:#fff;
+  font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;padding:10px 22px;
+  cursor:pointer;transition:opacity .15s}
+.m-confirm:hover{opacity:.85}
+
+.result-card{background:#161920;border:1px solid #2a2f42;border-radius:20px;padding:36px 32px;
+  text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4);display:none}
+.result-card.show{display:block}
+.quiz-section{display:block}
+.quiz-section.hidden{display:none}
+
+.ring-wrap{width:130px;height:130px;position:relative;margin:0 auto 20px}
+.ring-wrap svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#1e2230;stroke-width:8}
+.ring-score{fill:none;stroke:url(#rg);stroke-width:8;stroke-linecap:round;
+  transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
+.ring-inner{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.ring-pct{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;
+  background:linear-gradient(135deg,#4f8ef7,#7c5cf7);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text}
+.ring-lbl{font-size:.68rem;color:#7a80a0;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.res-title{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:6px}
+.res-sub{color:#7a80a0;margin-bottom:24px}
+.wrong-list{text-align:left;background:#1e2230;border:1px solid #2a2f42;border-radius:14px;
+  padding:18px 20px;max-height:300px;overflow-y:auto;margin-bottom:20px}
+.wrong-list h3{font-family:'Syne',sans-serif;font-size:.78rem;letter-spacing:1.5px;
+  text-transform:uppercase;color:#f75c5c;margin-bottom:12px}
+.wi{padding:9px 0;border-bottom:1px solid #2a2f42;font-size:.85rem}
+.wi:last-child{border-bottom:none}
+.wi .wq{color:#7a80a0;margin-bottom:3px;font-size:.8rem}
+.wi .wa{color:#f75c5c}
+.wi .wr{color:#22c97a;font-weight:600}
+.restart-btn{background:linear-gradient(135deg,#4f8ef7,#7c5cf7);border:none;border-radius:12px;
+  color:#fff;font-family:'Syne',sans-serif;font-size:.97rem;font-weight:700;
+  padding:13px 34px;cursor:pointer;transition:opacity .15s,transform .1s}
+.restart-btn:hover{opacity:.9;transform:scale(1.03)}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#2a2f42;border-radius:99px}
+
+.sound-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:14px}
+.sound-btn{background:none;border:1.5px solid #2a2f42;border-radius:8px;color:#7a80a0;
+  font-size:.82rem;padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;
+  transition:border-color .15s,color .15s}
+.sound-btn:hover,.sound-btn.on{border-color:#4f8ef7;color:#4f8ef7}
+.sound-dot{width:7px;height:7px;border-radius:50%;background:#4f8ef7;display:inline-block;
+  animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- QUIZ SECTION -->
+  <div class="quiz-section" id="quizSection">
+    <div class="header">
+      <h1>English Mock Exam</h1>
+      <p>80 sual · Hər sualın bir düzgün cavabı var</p>
+    </div>
+
+    <div class="sound-row">
+      <button class="sound-btn on" id="soundBtn" onclick="toggleSound()">
+        <span class="sound-dot"></span>Səs: Açıq
+      </button>
+    </div>
+
+    <div class="prog-row">
+      <span id="progText">Sual 1 / 80</span>
+      <span id="scoreText">Xal: 0</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:1.25%"></div></div>
+
+    <div class="card">
+      <div class="q-num" id="qNum">SUAL 01</div>
+      <div class="q-text" id="qText"></div>
+      <div class="opts" id="opts"></div>
+
+      <div class="hint-wrap">
+        <button class="hint-btn" id="hintBtn" onclick="toggleHint()">💡 İpucu göster</button>
+        <div class="hint-body" id="hintBody"></div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>← Əvvəl</button>
+      <button class="reset-btn" onclick="openModal()">↺ Sıfırla</button>
+      <button class="nav-btn nav-primary" id="nextBtn" onclick="navigate(1)">Sonra →</button>
+    </div>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="result-card" id="resultCard">
+    <div class="ring-wrap">
+      <svg viewBox="0 0 130 130">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4f8ef7"/>
+            <stop offset="100%" stop-color="#7c5cf7"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-bg" cx="65" cy="65" r="60"/>
+        <circle class="ring-score" id="ringScore" cx="65" cy="65" r="60" stroke-dasharray="376" stroke-dashoffset="376"/>
+      </svg>
+      <div class="ring-inner">
+        <div class="ring-pct" id="ringPct">0%</div>
+        <div class="ring-lbl">uğur</div>
+      </div>
+    </div>
+    <div class="res-title" id="resTitle"></div>
+    <div class="res-sub" id="resSub"></div>
+    <div class="wrong-list" id="wrongList"></div>
+    <button class="restart-btn" onclick="doReset()">🔄 Yenidən Başla</button>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modalBg" onclick="closeModalBg(event)">
+    <div class="modal">
+      <div class="modal-icon">⚠️</div>
+      <h3>İmtahanı sıfırla?</h3>
+      <p>Bütün cavablarınız silinəcək və imtahan əvvəlindən başlayacaq.</p>
+      <div class="modal-btns">
+        <button class="m-cancel" onclick="closeModal()">Xeyr, qal</button>
+        <button class="m-confirm" onclick="doReset()">Bəli, sıfırla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── SOUND (Web Audio API - no external libs) ────────────────────
+const _ac = () => new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, type, startOffset, duration, vol, ctx, when) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, when);
+  gain.gain.linearRampToValueAtTime(vol, when + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, when + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(when);
+  osc.stop(when + duration + 0.05);
+}
+
+// Note frequencies
+const NOTE = {A3:220,F3:174.6,C5:523.3,E5:659.3,G5:784,C6:1046.5};
+
+function playCorrect() {
+  try {
+    const ctx = _ac();
+    const now = ctx.currentTime;
+    playTone(NOTE.C5,'triangle',0,0.35,0.25,ctx,now);
+    playTone(NOTE.E5,'triangle',0,0.35,0.25,ctx,now+0.08);
+    playTone(NOTE.G5,'triangle',0,0.35,0.25,ctx,now+0.16);
+  } catch(e){}
+}
+
+function playWrong() {
+  try {
+    const ctx = _ac();
+    const now = ctx.currentTime;
+    playTone(NOTE.A3,'sawtooth',0,0.3,0.18,ctx,now);
+    playTone(NOTE.F3,'sawtooth',0,0.3,0.18,ctx,now+0.2);
+  } catch(e){}
+}
+
+function playFanfare(pct) {
+  try {
+    const ctx = _ac();
+    const now = ctx.currentTime;
+    if (pct >= 85) {
+      [NOTE.C5,NOTE.E5,NOTE.G5,NOTE.C6].forEach((f,i)=>playTone(f,'triangle',0,0.4,0.22,ctx,now+i*0.13));
+    } else if (pct >= 60) {
+      [NOTE.C5,NOTE.E5].forEach((f,i)=>playTone(f,'triangle',0,0.4,0.22,ctx,now+i*0.15));
+    } else {
+      [NOTE.A3,NOTE.F3].forEach((f,i)=>playTone(f,'sawtooth',0,0.45,0.18,ctx,now+i*0.22));
+    }
+  } catch(e){}
+}
+
+// ─── QUESTIONS ──────────────────────────────────────────────────
+const ALL_QUESTIONS = [
+  {q:"Can you give ___ to ___ please?",opts:["it / me","it / they","its / me","it / I"],ans:0,hint:"Düzgün cavab: <b>it / me</b> — obyekt əvəzlikləri işlədilir."},
+  {q:"She is always ___ with her friends.",opts:["honest","honestly","honesty","honested"],ans:0,hint:"Düzgün cavab: <b>honest</b> — 'is' felindən sonra sifət gəlir."},
+  {q:"The man dropped the axe. (Passive voice)",opts:["The axe was dropped by the man.","The axe is dropped by the man.","The axe dropped by the man.","The axe were dropped by man."],ans:0,hint:"Düzgün cavab: <b>The axe was dropped by the man.</b> — past simple passive: was/were + V3."},
+  {q:"___ have you been waiting? — For two hours.",opts:["How long","How many","How much","How often"],ans:0,hint:"Düzgün cavab: <b>How long</b> — müddəti soruşur."},
+  {q:"He ___ play football when he was young.",opts:["did","used to","was","had"],ans:1,hint:"Düzgün cavab: <b>used to</b> — keçmişdəki adət üçün."},
+  {q:"Match: 1-tall, 2-fast, 3-careful → a)carefully b)tallness c)faster",opts:["1-c, 2-a, 3-b","1-a, 2-b, 3-c","1-b, 2-c, 3-a","1-c, 2-b, 3-a"],ans:0,hint:"Düzgün cavab: <b>1–c, 2–a, 3–b</b>"},
+  {q:"I ___ find my keys. They are lost!",opts:["can't","couldn't","won't","shouldn't"],ans:0,hint:"Düzgün cavab: <b>can't</b> — hal-hazırda bacarmamaq."},
+  {q:"Active: Newspapers often contain interesting articles. → Passive?",opts:["You often find interesting articles in newspapers.","Interesting articles are often found in newspapers.","Articles often found in newspapers.","Newspapers often found interesting articles."],ans:1,hint:"Düzgün cavab: <b>Interesting articles are often found in newspapers.</b>"},
+  {q:"___ did he advise him to do?",opts:["What","How","Why","When"],ans:0,hint:"Düzgün cavab: <b>What</b> — 'nə etməsini' soruşur."},
+  {q:"They ___ tired after the long journey.",opts:["were","was","are","be"],ans:0,hint:"Düzgün cavab: <b>were</b> — 'they' ilə past simple."},
+  {q:"A person who studies language is a ___.",opts:["linguist","historian","biologist","physicist"],ans:0,hint:"Düzgün cavab: <b>linguist</b> — dil mütəxəssisi."},
+  {q:"'Eye' is a part of the ___.",opts:["face","hand","foot","knee"],ans:0,hint:"Düzgün cavab: <b>face</b> — göz üzdədir."},
+  {q:"Choose: ___ music fans attended; ___ news channels covered it.",opts:["many / few","much / few","many / little","few / many"],ans:0,hint:"Düzgün cavab: <b>many / few</b> — sayıla bilənlər üçün."},
+  {q:"She ___ finished her homework already.",opts:["has","have","had","is"],ans:0,hint:"Düzgün cavab: <b>has</b> — 3rd person singular present perfect."},
+  {q:"Which are irregular plurals?",opts:["mice, jeans, teeth","cats, dogs, birds","boxes, classes, buses","child, childs, childes"],ans:0,hint:"Düzgün cavab: <b>mice, jeans, teeth</b> — qeyri-müntəzəm cəmlər."},
+  {q:"Can I ___ to the manager, please?",opts:["talk","speak","tell","say"],ans:0,hint:"Düzgün cavab: <b>talk</b> (also: speak) — 'talk/speak to someone'."},
+  {q:"The train arrives ___ 7:00.",opts:["at","in","on","by"],ans:0,hint:"Düzgün cavab: <b>at 7:00</b> — dəqiq saatlarla 'at'."},
+  {q:"Who won the match? — ___ did.",opts:["Raul","Raul's","The Raul","A Raul"],ans:0,hint:"Düzgün cavab: <b>Raul</b> — xüsusi isim, artikel olmur."},
+  {q:"How many players are in a basketball team?",opts:["five","six","seven","four"],ans:0,hint:"Düzgün cavab: <b>five</b> — basketbolda 5 oyunçu."},
+  {q:"Which language is most widely studied in the world?",opts:["English","French","Spanish","Chinese"],ans:0,hint:"Düzgün cavab: <b>English</b>"},
+  {q:"She wants to ___ for her family every day.",opts:["cook","cooking","cooked","cooks"],ans:0,hint:"Düzgün cavab: <b>cook</b> — 'want to' + bare infinitive."},
+  {q:"He ___ a deep breath and jumped.",opts:["took","taken","takes","taking"],ans:0,hint:"Düzgün cavab: <b>took</b> — past simple 'take → took'."},
+  {q:"I gave the book to ___.",opts:["her","she","hers","herself"],ans:0,hint:"Düzgün cavab: <b>her</b> — 'give to' + object pronoun."},
+  {q:"She is very ___ and always helps others.",opts:["hardworking","hardly","hardwork","harder"],ans:0,hint:"Düzgün cavab: <b>hardworking</b> — sifət: çalışqan."},
+  {q:"___ did he arrive? — Just after midnight.",opts:["When","Where","Why","How"],ans:0,hint:"Düzgün cavab: <b>when</b> — vaxtı soruşur."},
+  {q:"The plants ___ (water) in the morning. (Passive)",opts:["are watered","is watered","are watering","were watered"],ans:0,hint:"Düzgün cavab: <b>are watered</b> — present simple passive."},
+  {q:"___ have you known her? — Since 2010.",opts:["How long","How often","How much","How far"],ans:0,hint:"Düzgün cavab: <b>How long</b> — 'since' ilə 'how long'."},
+  {q:"You ___ see a doctor. You look very pale.",opts:["should","must","can","would"],ans:0,hint:"Düzgün cavab: <b>should</b> — məsləhət vermək."},
+  {q:"The past participles of 'discuss' and 'study' are:",opts:["discussed, studied","discuss, study","discussing, studying","discussed, studyed"],ans:0,hint:"Düzgün cavab: <b>discussed, studied</b> — regular verbs + -d/-ed."},
+  {q:"After work, he needed ___.",opts:["a day's rest","a days rest","a day rest","day's resting"],ans:0,hint:"Düzgün cavab: <b>a day's rest</b> — possessive apostrophe."},
+  {q:"I ___ her at the market / ___ book is interesting.",opts:["saw / the","see / a","seen / the","saw / a"],ans:0,hint:"Düzgün cavab: <b>saw / the</b>"},
+  {q:"You ___ drive faster — it's dangerous!",opts:["shouldn't","should","mustn't","might"],ans:0,hint:"Düzgün cavab: <b>shouldn't</b> — məsləhət (mənfi)."},
+  {q:"The students ___ very excited about the trip.",opts:["are","is","was","be"],ans:0,hint:"Düzgün cavab: <b>are</b> — plural subject."},
+  {q:"She looked ___ when she heard the news.",opts:["upset","upsetting","upsettingly","upseted"],ans:0,hint:"Düzgün cavab: <b>upset</b> — hissi ifadə edən sifət."},
+  {q:"He was tired ___ he went to bed early.",opts:["so","because","but","although"],ans:0,hint:"Düzgün cavab: <b>so</b> — nəticəni bildirir."},
+  {q:"Choose correct present perfect sentence:",opts:["I have lost my pen today.","I lost my pen today.","I have lose my pen today.","I had lost my pen today."],ans:0,hint:"Düzgün cavab: <b>I have lost my pen today.</b>"},
+  {q:"What is the best title for a text about a family?",opts:["My Family","My House","My School","My Pet"],ans:0,hint:"Düzgün cavab: <b>My Family</b>"},
+  {q:"___ mother is a teacher. (Melanie)",opts:["Melanie's","Melanies'","Melanies","Melanie is"],ans:0,hint:"Düzgün cavab: <b>Melanie's</b> — possessive apostrophe."},
+  {q:"He works in a hospital. What is he?",opts:["a doctor","a teacher","a driver","a cook"],ans:0,hint:"Düzgün cavab: <b>He is a doctor.</b>"},
+  {q:"How many letters are in the word 'HOUSE'?",opts:["5 (five)","4 (four)","6 (six)","3 (three)"],ans:0,hint:"Düzgün cavab: <b>5 (five)</b> — H-O-U-S-E."},
+  {q:"She works in a clinic and helps sick people. She is a ___.",opts:["doctor","lawyer","engineer","teacher"],ans:0,hint:"Düzgün cavab: <b>doctor</b>"},
+  {q:"___ did the accident happen? — At 6 pm.",opts:["When","Where","Why","How"],ans:0,hint:"Düzgün cavab: <b>when</b> — vaxtı soruşur."},
+  {q:"The manager showed us the table. → Passive:",opts:["We were shown the table by the manager.","We was shown the table by the manager.","The table was showed us by the manager.","We shown the table by manager."],ans:0,hint:"Düzgün cavab: <b>We were shown the table by the manager.</b>"},
+  {q:"Shall we ___ for a walk?",opts:["go","going","gone","went"],ans:0,hint:"Düzgün cavab: <b>go</b> — 'Shall we' + bare infinitive."},
+  {q:"He is good at sport → He is a ___. / The fire burns → ___.",opts:["sportsman / fireplace","sportive / fireman","sporty / firewall","athlete / fireplace"],ans:0,hint:"Düzgün cavab: <b>sportsman, fireplace</b> — compound nouns."},
+  {q:"The person ___ called you is waiting outside.",opts:["who","which","what","whose"],ans:0,hint:"Düzgün cavab: <b>who</b> — şəxs üçün 'who'."},
+  {q:"She ___ leave early today. (obligation)",opts:["has to","have to","must to","had"],ans:0,hint:"Düzgün cavab: <b>has to</b> — 3rd person singular obligation."},
+  {q:"Can you give me ___ advice?",opts:["some advice","an advice","advices","many advice"],ans:0,hint:"Düzgün cavab: <b>some advice</b> — 'advice' sayılmaz isimdir."},
+  {q:"Match: 1-get up  2-go to bed  3-have a nap",opts:["1-c(get up), 2-a(go to bed), 3-b(nap)","1-a, 2-b, 3-c","1-b, 2-c, 3-a","1-c, 2-b, 3-a"],ans:0,hint:"Düzgün cavab: <b>1–c, 2–a, 3–b</b>"},
+  {q:"You ___ eat so much sugar — it's bad for you!",opts:["shouldn't","should","can","would"],ans:0,hint:"Düzgün cavab: <b>shouldn't</b> — məsləhət (mənfi)."},
+  {q:"A ___ person always helps others.",opts:["kind","unkind","rude","selfish"],ans:0,hint:"Düzgün cavab: <b>kind</b> (or helpful)"},
+  {q:"___ sun rises in ___ east.",opts:["The / the","A / the","The / a","A / a"],ans:0,hint:"Düzgün cavab: <b>The / the</b> — unikal şeylər üçün 'the'."},
+  {q:"She noticed ___ the noise came from next room.",opts:["that the noise was coming","what noise was coming","the noise is coming","that noise came"],ans:0,hint:"Düzgün cavab: <b>that the noise was coming</b>"},
+  {q:"Things that show time: ___, ___, ___",opts:["watch, clock, gate","watch, clock, calendar","alarm, clock, sun","timer, watch, gate"],ans:0,hint:"Düzgün cavab: <b>watch, clock, gate</b>"},
+  {q:"She was ___ to see her old friend again.",opts:["surprised","surprising","surprisedly","surprise"],ans:0,hint:"Düzgün cavab: <b>surprised</b> — hissi ifadə edən sifət (-ed form)."},
+  {q:"___ film was amazing. I loved ___ ending.",opts:["The / the","A / the","The / a","A / a"],ans:0,hint:"Düzgün cavab: <b>The / the</b>"},
+  {q:"Who came first in the competition? — ___ did.",opts:["Nigar","Nigar's","A Nigar","The Nigar"],ans:0,hint:"Düzgün cavab: <b>Nigar</b>"},
+  {q:"___ is Aygun? — She is 12 years old.",opts:["How old","How long","How tall","How much"],ans:0,hint:"Düzgün cavab: <b>How old</b>"},
+  {q:"Aygun's pet is ___.",opts:["a small cat","small cat","the small cat","a little dog"],ans:0,hint:"Düzgün cavab: <b>a small cat</b>"},
+  {q:"She lives ___ her grandmother.",opts:["with","at","on","by"],ans:0,hint:"Düzgün cavab: <b>with</b>"},
+  {q:"He had nothing to do, so he felt ___.",opts:["bored","boring","boredly","bore"],ans:0,hint:"Düzgün cavab: <b>bored</b> — şəxsin hissi (-ed sifəti)."},
+  {q:"At 5pm yesterday: She ___ in the pool and he ___ TV.",opts:["was swimming / was watching","swam / watched","is swimming / is watching","swam / was watching"],ans:0,hint:"Düzgün cavab: <b>was swimming / was watching</b> — past continuous."},
+  {q:"His friends visit David every week. → Passive:",opts:["David is visited by his friends every week.","David visited by his friends every week.","David is visit by his friends every week.","David was visited by his friends every week."],ans:0,hint:"Düzgün cavab: <b>David is visited by his friends every week.</b>"},
+  {q:"She tried but ___ run any faster.",opts:["couldn't","can't","won't","doesn't"],ans:0,hint:"Düzgün cavab: <b>couldn't</b> — past inability."},
+  {q:"He is smart ___ hardworking.",opts:["and","but","or","so"],ans:0,hint:"Düzgün cavab: <b>and</b> — iki müsbət sifəti birləşdirir."},
+  {q:"The students ___ ready for the exam.",opts:["are","is","was","be"],ans:0,hint:"Düzgün cavab: <b>are</b> — plural."},
+  {q:"A nurse is always ___ with patients.",opts:["patient","patience","patiently","patientful"],ans:0,hint:"Düzgün cavab: <b>patient</b> — sifət."},
+  {q:"He drives a taxi. He is a ___.",opts:["driver","doctor","cook","teacher"],ans:0,hint:"Düzgün cavab: <b>driver</b>"},
+  {q:"He prefers spending his ___ at home with family.",opts:["evenings","evening's","the evening","a evening"],ans:0,hint:"Düzgün cavab: <b>evenings</b>"},
+  {q:"___ little children were sitting on ___ grass.",opts:["The / the","A / a","The / a","A / the"],ans:0,hint:"Düzgün cavab: <b>The / the</b>"},
+  {q:"There isn't ___ milk left.",opts:["much","many","few","little"],ans:0,hint:"Düzgün cavab: <b>much</b> — sayılmaz isimlər üçün."},
+  {q:"You ___ stay up so late on school nights.",opts:["shouldn't","should","must","can"],ans:0,hint:"Düzgün cavab: <b>shouldn't</b>"},
+  {q:"Let's ___ to the cinema tonight.",opts:["go","going","went","gone"],ans:0,hint:"Düzgün cavab: <b>go</b> — Let's + bare infinitive."},
+  {q:"___ told you that? — Nobody.",opts:["Who","Whose","Whom","Which"],ans:0,hint:"Düzgün cavab: <b>Who</b> — subyekt sualı."},
+  {q:"We can't control ___ and ___.",opts:["weather / money","weather / time","time / money","luck / weather"],ans:0,hint:"Düzgün cavab: <b>weather / money</b>"},
+  {q:"___ did he go? — To the library.",opts:["Where","When","Why","How"],ans:0,hint:"Düzgün cavab: <b>Where</b> — yerini soruşur."},
+  {q:"Children today watch too much TV. They should ___.",opts:["play outside","play only TV","watch more TV","stay indoors"],ans:0,hint:"Düzgün cavab: <b>play outside</b>"},
+  {q:"Football is one of the most ___ sports in the world.",opts:["popular","popularly","populared","popularity"],ans:0,hint:"Düzgün cavab: <b>popular</b> — sifət."},
+  {q:"PE lessons are held ___ schools.",opts:["at","in","on","by"],ans:0,hint:"Düzgün cavab: <b>at</b> schools"},
+  {q:"Who performs in the school concert? — ___.",opts:["Eldar and his band","Eldar and his friends","The school choir","A music teacher"],ans:0,hint:"Düzgün cavab: <b>Eldar and his band</b>"},
+];
+
+// ─── STATE ──────────────────────────────────────────────────────
+const LETTERS = ["A","B","C","D"];
+const CIRC = 376;
+let state = {};
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function buildQuestions() {
+  return ALL_QUESTIONS.map(q => {
+    const correctText = q.opts[q.ans];
+    const shuffled = shuffle(q.opts);
+    return { ...q, opts: shuffled, ans: shuffled.indexOf(correctText) };
+  });
+}
+
+function initState() {
+  state = {
+    qs: buildQuestions(),
+    ua: new Array(ALL_QUESTIONS.length).fill(null),
+    ans: new Array(ALL_QUESTIONS.length).fill(false),
+    cur: 0,
+    hintOpen: false,
+    soundOn: true,
+  };
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────
+function render() {
+  const q = state.qs[state.cur];
+  const isAnswered = state.ans[state.cur];
+  const score = state.ua.filter((a,i) => a !== null && a === state.qs[i].ans).length;
+  const total = state.qs.length;
+
+  // progress
+  document.getElementById('progText').textContent = `Sual ${state.cur+1} / ${total}`;
+  document.getElementById('scoreText').textContent = `Xal: ${score}`;
+  document.getElementById('progFill').style.width = `${((state.cur+1)/total)*100}%`;
+
+  // question
+  document.getElementById('qNum').textContent = `SUAL ${String(state.cur+1).padStart(2,'0')}`;
+  document.getElementById('qText').textContent = q.q;
+
+  // options
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, idx) => {
+    let cls = 'opt';
+    if (isAnswered) {
+      if (idx === q.ans) cls += ' correct';
+      else if (idx === state.ua[state.cur]) cls += ' wrong';
+    }
+    const btn = document.createElement('button');
+    btn.className = cls;
+    btn.disabled = isAnswered;
+    btn.innerHTML = `<span class="opt-letter">${LETTERS[idx]}</span>${escHtml(opt)}`;
+    btn.onclick = () => selectAnswer(idx);
+    optsEl.appendChild(btn);
+  });
+
+  // hint
+  document.getElementById('hintBody').innerHTML = q.hint;
+  document.getElementById('hintBody').className = 'hint-body' + (state.hintOpen ? ' open' : '');
+  document.getElementById('hintBtn').textContent = state.hintOpen ? '💡 İpucunu gizlə' : '💡 İpucu göster';
+
+  // feedback
+  const fb = document.getElementById('feedback');
+  if (isAnswered) {
+    const correct = state.ua[state.cur] === q.ans;
+    fb.className = 'feedback show ' + (correct ? 'fb-correct' : 'fb-wrong');
+    fb.textContent = correct ? '✅ Düzgündür! Əla!' : '❌ Səhvdir. İpucuna bax.';
+  } else {
+    fb.className = 'feedback';
+  }
+
+  // nav
+  document.getElementById('prevBtn').disabled = state.cur === 0;
+  document.getElementById('nextBtn').textContent =
+    state.cur === total - 1 ? 'Nəticə →' : 'Sonra →';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── ACTIONS ────────────────────────────────────────────────────
+function selectAnswer(idx) {
+  if (state.ans[state.cur]) return;
+  const q = state.qs[state.cur];
+  const correct = idx === q.ans;
+  state.ans[state.cur] = true;
+  state.ua[state.cur] = idx;
+  state.hintOpen = false;
+  render();
+  if (state.soundOn) {
+    correct ? playCorrect() : playWrong();
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0) return;
+  if (next >= state.qs.length) {
+    showResult();
+    return;
+  }
+  state.cur = next;
+  state.hintOpen = false;
+  render();
+}
+
+function toggleHint() {
+  state.hintOpen = !state.hintOpen;
+  render();
+}
+
+function toggleSound() {
+  state.soundOn = !state.soundOn;
+  const btn = document.getElementById('soundBtn');
+  if (state.soundOn) {
+    btn.className = 'sound-btn on';
+    btn.innerHTML = '<span class="sound-dot"></span>Səs: Açıq';
+  } else {
+    btn.className = 'sound-btn';
+    btn.textContent = '🔇 Səs: Qapalı';
+  }
+}
+
+function openModal() { document.getElementById('modalBg').classList.add('open'); }
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function closeModalBg(e) { if (e.target === e.currentTarget) closeModal(); }
+
+function doReset() {
+  closeModal();
+  initState();
+  document.getElementById('quizSection').classList.remove('hidden');
+  document.getElementById('resultCard').classList.remove('show');
+  render();
+}
+
+function showResult() {
+  const score = state.ua.filter((a,i) => a !== null && a === state.qs[i].ans).length;
+  const pct = Math.round((score / state.qs.length) * 100);
+
+  document.getElementById('quizSection').classList.add('hidden');
+  const rc = document.getElementById('resultCard');
+  rc.classList.add('show');
+
+  // ring
+  document.getElementById('ringPct').textContent = pct + '%';
+  setTimeout(() => {
+    const offset = CIRC - (pct/100)*CIRC;
+    document.getElementById('ringScore').style.strokeDashoffset = offset;
+  }, 50);
+
+  // title
+  document.getElementById('resTitle').textContent =
+    pct >= 85 ? '🏆 Əla Nəticə!' : pct >= 60 ? '👍 Yaxşı Nəticə' : '📚 Daha çox məşq et';
+  document.getElementById('resSub').textContent = `${score} düzgün / ${state.qs.length} sual`;
+
+  // wrong list
+  const wrongItems = state.qs
+    .map((q,i) => ({q,i,ua:state.ua[i]}))
+    .filter(({q,ua}) => ua === null || ua !== q.ans);
+
+  const wl = document.getElementById('wrongList');
+  if (wrongItems.length === 0) {
+    wl.innerHTML = '<p style="color:#22c97a;font-weight:600">🎉 Bütün suallar düzgün cavablandırıldı!</p>';
+  } else {
+    wl.innerHTML = `<h3>❌ Səhv cavablar (${wrongItems.length})</h3>` +
+      wrongItems.map(({q,i,ua}) => `
+        <div class="wi">
+          <div class="wq">Sual ${i+1}: ${escHtml(q.q)}</div>
+          <div class="wa">Sizin: ${ua !== null ? escHtml(q.opts[ua]) : 'Cavablanmadı'}</div>
+          <div class="wr">✅ Düzgün: ${escHtml(q.opts[q.ans])}</div>
+        </div>
+      `).join('');
+  }
+
+  if (state.soundOn) playFanfare(pct);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+initState();
+render();
+</script>
+</body>
+</html>
