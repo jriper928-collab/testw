@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>WulziShop — Premium Alış-Veriş</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --o:#FF6B00;--og:#FF9240;--og2:#FFB347;
+  --blk:#080808;--d1:#0E0E0E;--d2:#141414;--d3:#1C1C1C;--d4:#242424;
+  --wh:#FFFFFF;--g1:#AAAAAA;--g2:#666666;--g3:#333333;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Montserrat',sans-serif;background:var(--blk);color:var(--wh);overflow-x:hidden;min-height:100vh;}
+
+/* ── CURSOR ── */
+#cursor{position:fixed;width:12px;height:12px;background:var(--o);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference;}
+#cursor-ring{position:fixed;width:34px;height:34px;border:1.5px solid rgba(255,107,0,.45);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:all .1s ease;}
+@media(hover:none){#cursor,#cursor-ring{display:none;}}
+
+/* ════════════════════════════════
+   SPLASH
+════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--blk);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* Mesh BG */
+.sp-mesh{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 90% 70% at 20% 60%,rgba(255,107,0,.1) 0%,transparent 65%),
+    radial-gradient(ellipse 70% 90% at 80% 40%,rgba(255,146,64,.07) 0%,transparent 65%),
+    radial-gradient(ellipse 110% 110% at 50% 110%,rgba(255,107,0,.06) 0%,transparent 50%);
+  animation:meshAnim 6s ease-in-out infinite alternate;
+}
+@keyframes meshAnim{from{opacity:.6;}to{opacity:1;}}
+
+/* Grid lines */
+.sp-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,107,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,107,0,.04) 1px,transparent 1px);
+  background-size:50px 50px;
+  animation:gridPulse 4s ease-in-out infinite alternate;
+}
+@keyframes gridPulse{from{opacity:.4;}to{opacity:1;}}
+
+/* Orbiting rings */
+.sp-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.sp-ring{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(255,107,0,.1);
+  animation:orbitSpin linear infinite;
+}
+.sp-ring:nth-child(1){width:160px;height:160px;animation-duration:8s;border-color:rgba(255,107,0,.25);}
+.sp-ring:nth-child(2){width:280px;height:280px;animation-duration:14s;animation-direction:reverse;border-color:rgba(255,107,0,.15);}
+.sp-ring:nth-child(3){width:400px;height:400px;animation-duration:22s;}
+.sp-ring:nth-child(4){width:540px;height:540px;animation-duration:32s;animation-direction:reverse;border-color:rgba(255,107,0,.06);}
+.sp-ring:nth-child(5){width:680px;height:680px;animation-duration:46s;border-color:rgba(255,107,0,.04);}
+@keyframes orbitSpin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+.sp-ring::before{content:'';position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--o);transform:translateX(-50%);box-shadow:0 0 16px var(--o),0 0 32px rgba(255,107,0,.5);}
+
+/* Center glow */
+.sp-glow{
+  position:absolute;width:320px;height:320px;
+  background:radial-gradient(circle,rgba(255,107,0,.2) 0%,transparent 70%);
+  border-radius:50%;
+  animation:glowBreath 2.5s ease-in-out infinite alternate;
+}
+@keyframes glowBreath{from{transform:scale(.7);opacity:.5;}to{transform:scale(1.2);opacity:1;}}
+
+/* Particles */
+.sp-pts{position:absolute;inset:0;pointer-events:none;}
+.sp-pt{
+  position:absolute;border-radius:50%;background:var(--o);opacity:0;
+  animation:ptFloat linear infinite;
+}
+@keyframes ptFloat{
+  0%{transform:translateY(110vh) scale(0);opacity:0;}
+  8%{opacity:.7;}92%{opacity:.3;}
+  100%{transform:translateY(-10vh) scale(1.5);opacity:0;}
+}
+
+/* Logo */
+.sp-center{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;}
+
+.sp-logo{
+  width:110px;height:110px;
+  background:linear-gradient(135deg,#FF9000 0%,#FF4500 100%);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  animation:logoAppear 1s cubic-bezier(.175,.885,.32,1.275) .5s both;
+  box-shadow:0 0 0 0 rgba(255,107,0,.4),0 24px 70px rgba(255,107,0,.45),inset 0 1px 0 rgba(255,255,255,.25);
+}
+.sp-logo::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 55%);}
+.sp-logo::after{
+  content:'';position:absolute;
+  width:110px;height:110px;border-radius:50%;
+  border:2px solid rgba(255,107,0,.5);
+  animation:logoPing 2s ease-out 1.5s infinite;
+}
+@keyframes logoPing{0%{width:110px;height:110px;opacity:1;}100%{width:180px;height:180px;opacity:0;}}
+@keyframes logoAppear{0%{transform:scale(0) rotate(-180deg);opacity:0;}100%{transform:scale(1) rotate(0);opacity:1;}}
+
+.sp-logo-letter{
+  font-family:'Playfair Display',serif;font-size:48px;font-weight:900;
+  color:var(--blk);position:relative;z-index:1;line-height:1;
+  text-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+
+.sp-brand{
+  margin-top:28px;text-align:center;
+  animation:slideUp .8s ease 1s both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.sp-brand-main{
+  font-size:42px;font-weight:900;letter-spacing:6px;text-transform:uppercase;line-height:1;
+}
+.sp-brand-main .hl{color:var(--o);}
+.sp-brand-sub{
+  font-size:10px;font-weight:600;letter-spacing:8px;text-transform:uppercase;
+  color:var(--g2);margin-top:8px;
+}
+
+/* Loader */
+.sp-loader{
+  margin-top:52px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  animation:fadeIn .5s ease 1.4s both;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+.sp-dots{display:flex;gap:8px;}
+.sp-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--g3);
+  animation:dotBounce .8s ease-in-out infinite;
+}
+.sp-dot:nth-child(1){animation-delay:0s;}
+.sp-dot:nth-child(2){animation-delay:.12s;background:rgba(255,107,0,.5);}
+.sp-dot:nth-child(3){animation-delay:.24s;background:var(--o);}
+.sp-dot:nth-child(4){animation-delay:.36s;background:rgba(255,107,0,.5);}
+.sp-dot:nth-child(5){animation-delay:.48s;}
+@keyframes dotBounce{0%,100%{transform:translateY(0);opacity:.3;}50%{transform:translateY(-12px);opacity:1;}}
+
+.sp-prog-track{width:220px;height:2px;background:var(--g3);border-radius:2px;overflow:hidden;}
+.sp-prog-fill{
+  height:100%;width:0;
+  background:linear-gradient(90deg,var(--o),var(--og2));
+  border-radius:2px;
+  box-shadow:0 0 12px rgba(255,107,0,.7);
+  animation:progFill 3.2s cubic-bezier(.4,0,.2,1) 1.5s forwards;
+}
+@keyframes progFill{0%{width:0;}100%{width:100%;}}
+
+.sp-pct{
+  font-size:11px;font-weight:800;color:var(--o);
+  letter-spacing:2px;align-self:flex-end;
+}
+
+/* Exit */
+#splash.exit{animation:splashExit .9s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes splashExit{
+  0%{opacity:1;clip-path:circle(150% at 50% 50%);}
+  100%{opacity:0;clip-path:circle(0% at 50% 50%);}
+}
+
+/* ════════════════════════════════
+   APP
+════════════════════════════════ */
+#app{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease;padding-bottom:82px;}
+#app.show{opacity:1;transform:translateY(0);}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 20px;
+  background:rgba(8,8,8,.88);
+  backdrop-filter:blur(28px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-icon{
+  width:38px;height:38px;
+  background:linear-gradient(135deg,#FF9000,#FF4500);
+  border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:900;
+  color:var(--blk);
+  box-shadow:0 4px 16px rgba(255,107,0,.35);
+  flex-shrink:0;
+}
+.nav-name{font-size:17px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;}
+.nav-name span{color:var(--o);}
+.nav-actions{display:flex;align-items:center;gap:8px;}
+.nav-btn{
+  width:38px;height:38px;border-radius:11px;
+  background:var(--d3);border:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;position:relative;transition:all .25s;cursor:pointer;
+}
+.nav-btn:hover{background:var(--d4);border-color:rgba(255,107,0,.3);}
+.nbadge{
+  position:absolute;top:-5px;right:-5px;
+  min-width:17px;height:17px;border-radius:9px;
+  background:var(--o);font-size:9px;font-weight:800;
+  display:none;align-items:center;justify-content:center;
+  color:var(--blk);border:2px solid var(--blk);padding:0 3px;
+}
+.wbadge{
+  position:absolute;top:-5px;right:-5px;
+  min-width:17px;height:17px;border-radius:9px;
+  background:#E53E3E;font-size:9px;font-weight:800;
+  display:none;align-items:center;justify-content:center;
+  color:var(--wh);border:2px solid var(--blk);padding:0 3px;
+}
+
+/* SEARCH BAR */
+.search-wrap{padding:14px 20px 0;}
+.search-bar{
+  display:flex;align-items:center;gap:12px;
+  background:var(--d2);border:1.5px solid rgba(255,255,255,.06);
+  border-radius:14px;padding:12px 16px;transition:all .3s;
+}
+.search-bar:focus-within{border-color:rgba(255,107,0,.5);box-shadow:0 0 0 3px rgba(255,107,0,.08);}
+.search-bar input{flex:1;background:transparent;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--wh);}
+.search-bar input::placeholder{color:var(--g2);}
+.s-ico{font-size:17px;color:var(--g2);}
+.s-btn{background:var(--o);border:none;padding:6px 14px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;color:var(--blk);letter-spacing:.5px;transition:all .25s;cursor:pointer;}
+.s-btn:hover{background:var(--og);}
+.s-btn.ghost{background:var(--d3);color:var(--g1);}
+
+/* HERO */
+.hero{
+  margin:18px 20px 0;border-radius:24px;
+  background:linear-gradient(135deg,#1A0D00 0%,#0E0500 100%);
+  border:1px solid rgba(255,107,0,.18);
+  padding:26px 22px;position:relative;overflow:hidden;min-height:188px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.hero-glow{position:absolute;right:-50px;top:-50px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,107,0,.22) 0%,transparent 70%);border-radius:50%;animation:hGlow 3s ease-in-out infinite alternate;}
+@keyframes hGlow{from{opacity:.5;transform:scale(.9);}to{opacity:1;transform:scale(1.1);}}
+.hero-deco{
+  position:absolute;right:18px;bottom:18px;
+  width:90px;height:90px;
+  border:1px solid rgba(255,107,0,.12);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  animation:heroDeco 4s ease-in-out infinite alternate;
+}
+@keyframes heroDeco{from{transform:translateY(0) rotate(-5deg);}to{transform:translateY(-10px) rotate(5deg);}}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.25);
+  color:var(--o);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;margin-bottom:12px;width:fit-content;
+}
+.hero-tag-dot{width:6px;height:6px;background:var(--o);border-radius:50%;animation:blink 1.2s ease-in-out infinite alternate;}
+@keyframes blink{from{opacity:1;}to{opacity:.2;}}
+.hero h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;line-height:1.25;margin-bottom:18px;position:relative;z-index:1;}
+.hero h1 em{color:var(--o);font-style:normal;}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--o);color:var(--blk);
+  font-family:inherit;font-size:13px;font-weight:800;letter-spacing:.5px;
+  padding:12px 22px;border-radius:12px;border:none;cursor:pointer;
+  box-shadow:0 8px 24px rgba(255,107,0,.35);transition:all .3s;width:fit-content;
+}
+.hero-cta:hover{background:var(--og);transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,107,0,.5);}
+.arr{transition:transform .3s;}
+.hero-cta:hover .arr{transform:translateX(4px);}
+
+/* STATS */
+.stats{display:flex;gap:10px;padding:16px 20px 0;overflow-x:auto;scrollbar-width:none;}
+.stats::-webkit-scrollbar{display:none;}
+.stat-card{
+  flex-shrink:0;background:var(--d2);border:1px solid rgba(255,255,255,.05);
+  border-radius:16px;padding:14px 18px;min-width:96px;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,0,.06),transparent);opacity:0;transition:opacity .3s;}
+.stat-card:hover::before{opacity:1;}
+.stat-card:hover{border-color:rgba(255,107,0,.2);transform:translateY(-2px);}
+.stat-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--o);}
+.stat-l{font-size:10px;font-weight:600;color:var(--g2);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+/* SEC HEADER */
+.sec-h{display:flex;align-items:center;justify-content:space-between;padding:24px 20px 14px;}
+.sec-h h2{font-size:18px;font-weight:800;}
+.sec-h h2 span{color:var(--o);}
+.sec-link{font-size:12px;font-weight:700;color:var(--o);display:flex;align-items:center;gap:4px;cursor:pointer;}
+
+/* CATEGORY PILLS */
+.cats{display:flex;gap:8px;padding:0 20px;overflow-x:auto;scrollbar-width:none;margin-bottom:4px;}
+.cats::-webkit-scrollbar{display:none;}
+.cat{
+  flex-shrink:0;display:flex;align-items:center;gap:7px;
+  background:var(--d2);border:1.5px solid rgba(255,255,255,.06);
+  border-radius:50px;padding:9px 16px;
+  font-size:12px;font-weight:700;color:var(--g1);
+  transition:all .25s;white-space:nowrap;cursor:pointer;
+}
+.cat.active,.cat:hover{background:var(--o);color:var(--blk);border-color:var(--o);box-shadow:0 6px 20px rgba(255,107,0,.3);transform:translateY(-1px);}
+
+/* PRODUCTS */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px;}
+.pcard{
+  background:var(--d2);border:1px solid rgba(255,255,255,.05);
+  border-radius:20px;overflow:hidden;
+  transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;
+}
+.pcard:hover{transform:translateY(-6px);border-color:rgba(255,107,0,.25);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 0 1px rgba(255,107,0,.08);}
+.pcard-img{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:48px;
+  background:linear-gradient(135deg,var(--d3),var(--d4));position:relative;
+}
+.pcard-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.35) 100%);}
+.plbl{position:absolute;top:9px;left:9px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;border-radius:6px;z-index:2;}
+.lnew{background:var(--o);color:var(--blk);}
+.lhot{background:#E53E3E;color:var(--wh);}
+.lsale{background:#276749;color:var(--wh);}
+.lbest{background:#D69E2E;color:var(--blk);}
+.pfav{
+  position:absolute;top:8px;right:8px;z-index:2;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .25s;cursor:pointer;
+}
+.pfav:hover,.pfav.on{background:rgba(229,62,62,.25);border-color:rgba(229,62,62,.4);}
+.pinfo{padding:13px 13px 15px;}
+.pname{font-size:13px;font-weight:700;margin-bottom:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.psub{font-size:11px;color:var(--g2);margin-bottom:10px;}
+.pbot{display:flex;align-items:center;justify-content:space-between;}
+.pprice{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--o);}
+.pprice small{font-family:'Montserrat',sans-serif;font-size:10px;color:var(--g2);font-weight:400;}
+.padd{
+  width:32px;height:32px;border-radius:10px;
+  background:var(--o);border:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;color:var(--blk);cursor:pointer;
+  transition:all .25s;box-shadow:0 4px 12px rgba(255,107,0,.3);
+}
+.padd:hover{background:var(--og);transform:scale(1.1);}
+.padd.done{background:#276749;}
+
+/* FLASH DEAL */
+.flash{
+  margin:24px 20px 0;
+  background:linear-gradient(135deg,#1A0800,#0E0400);
+  border:1px solid rgba(255,107,0,.2);border-radius:20px;overflow:hidden;
+}
+.flash-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid rgba(255,107,0,.1);
+}
+.flash-ttl{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;}
+.ffire{font-size:20px;animation:fireShake .5s ease-in-out infinite alternate;}
+@keyframes fireShake{0%{transform:rotate(-5deg);}100%{transform:rotate(5deg);}}
+.flash-tmr{display:flex;align-items:center;gap:5px;}
+.tblk{background:var(--d3);border:1px solid rgba(255,107,0,.2);border-radius:8px;padding:5px 9px;text-align:center;}
+.tnum{font-size:15px;font-weight:800;color:var(--o);line-height:1;font-variant-numeric:tabular-nums;}
+.tsep{font-size:13px;font-weight:800;color:var(--o);opacity:.5;}
+.tl{font-size:8px;color:var(--g2);letter-spacing:1px;text-transform:uppercase;}
+.flash-body{display:flex;align-items:center;gap:14px;padding:16px 18px;}
+.femi{font-size:54px;animation:heroDeco 3.5s ease-in-out infinite alternate;}
+.finfo h3{font-size:15px;font-weight:800;margin-bottom:4px;}
+.finfo p{font-size:12px;color:var(--g2);margin-bottom:10px;}
+.fprices{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.fpnew{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--o);}
+.fpold{font-size:14px;color:var(--g2);text-decoration:line-through;}
+.fdsc{background:rgba(229,62,62,.2);color:#FC8181;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:6px;}
+.fbuy{
+  background:var(--o);border:none;color:var(--blk);
+  font-family:inherit;font-size:13px;font-weight:800;
+  padding:11px 20px;border-radius:10px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(255,107,0,.35);transition:all .3s;letter-spacing:.5px;
+}
+.fbuy:hover{background:var(--og);transform:scale(1.03);}
+
+/* TELEGRAM */
+.tg{
+  margin:24px 20px 0;
+  background:linear-gradient(135deg,rgba(0,120,200,.13),rgba(0,80,160,.06));
+  border:1px solid rgba(0,136,204,.2);border-radius:20px;
+  padding:20px;display:flex;align-items:center;gap:14px;
+  transition:all .3s;cursor:pointer;
+}
+.tg:hover{border-color:rgba(0,136,204,.4);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.3);}
+.tg-ico{width:52px;height:52px;flex-shrink:0;background:linear-gradient(135deg,#229ED9,#0088CC);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 6px 20px rgba(0,136,204,.3);}
+.tg-txt{flex:1;}
+.tg-txt h3{font-size:15px;font-weight:800;margin-bottom:4px;}
+.tg-txt p{font-size:12px;color:var(--g1);line-height:1.5;}
+.tg-mbr{display:inline-flex;align-items:center;gap:4px;margin-top:7px;font-size:11px;font-weight:700;color:#40BFFF;}
+.tg-btn{flex-shrink:0;background:linear-gradient(135deg,#229ED9,#0088CC);color:var(--wh);border:none;font-family:inherit;font-size:12px;font-weight:800;padding:10px 14px;border-radius:12px;transition:all .3s;letter-spacing:.5px;cursor:pointer;}
+.tg-btn:hover{transform:scale(1.06);box-shadow:0 6px 20px rgba(0,136,204,.4);}
+
+/* ── CART SHEET ── */
+#cart-sheet{position:fixed;inset:0;z-index:800;pointer-events:none;}
+.cart-ov{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);opacity:0;transition:opacity .4s;}
+.cart-panel{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--d1);border-radius:28px 28px 0 0;
+  border-top:1px solid rgba(255,255,255,.08);
+  padding:0 0 36px;
+  transform:translateY(100%);transition:transform .45s cubic-bezier(.4,0,.2,1);
+  max-height:80vh;overflow-y:auto;scrollbar-width:none;
+}
+.cart-panel::-webkit-scrollbar{display:none;}
+#cart-sheet.open{pointer-events:all;}
+#cart-sheet.open .cart-ov{opacity:1;}
+#cart-sheet.open .cart-panel{transform:translateY(0);}
+.cart-hndl{width:40px;height:4px;background:var(--g3);border-radius:2px;margin:12px auto 16px;}
+.cart-top{display:flex;align-items:center;justify-content:space-between;padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,.05);}
+.cart-top h3{font-size:18px;font-weight:800;}
+.cart-x{width:34px;height:34px;border-radius:50%;background:var(--d3);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--g1);cursor:pointer;transition:all .2s;}
+.cart-x:hover{background:var(--d4);color:var(--wh);}
+.cart-empty{text-align:center;padding:50px 20px;font-size:14px;color:var(--g2);}
+.ce-ico{font-size:52px;display:block;margin-bottom:14px;}
+#cart-list{padding:12px 20px;}
+.ci{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ci:last-child{border-bottom:none;}
+.ci-ico{width:58px;height:58px;border-radius:12px;background:var(--d3);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.ci-info{flex:1;}
+.ci-name{font-size:13px;font-weight:700;margin-bottom:3px;}
+.ci-price{font-size:13px;color:var(--o);font-weight:800;}
+.ci-qty{display:flex;align-items:center;gap:8px;}
+.qbtn{width:28px;height:28px;border-radius:8px;background:var(--d3);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .2s;}
+.qbtn:hover{background:var(--o);color:var(--blk);}
+.qnum{font-size:14px;font-weight:800;min-width:20px;text-align:center;}
+.cart-foot{padding:16px 20px 0;border-top:1px solid rgba(255,255,255,.05);}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.ct-lbl{font-size:14px;color:var(--g1);font-weight:600;}
+.ct-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--o);}
+.checkout-btn{width:100%;background:var(--o);border:none;color:var(--blk);font-family:inherit;font-size:15px;font-weight:800;padding:16px;border-radius:16px;box-shadow:0 8px 24px rgba(255,107,0,.35);transition:all .3s;letter-spacing:.5px;cursor:pointer;}
+.checkout-btn:hover{background:var(--og);transform:scale(1.01);}
+
+/* ── PAGES ── */
+.page{display:none;}
+.page.active{display:block;}
+
+/* SEARCH PAGE */
+.sr-cnt{padding:16px 20px 0;}
+.sr-lbl{font-size:12px;font-weight:600;color:var(--g2);margin-bottom:14px;letter-spacing:.5px;}
+.no-res{text-align:center;padding:60px 20px;font-size:14px;color:var(--g2);}
+.no-res .nri{font-size:52px;display:block;margin-bottom:14px;}
+
+/* WISHLIST */
+#wish-empty{text-align:center;padding:60px 20px;font-size:14px;color:var(--g2);}
+
+/* PROFILE */
+.prof-h{padding:24px 20px;display:flex;align-items:center;gap:16px;}
+.prof-av{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,var(--o),#FF3D00);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--wh);font-family:'Playfair Display',serif;box-shadow:0 8px 24px rgba(255,107,0,.3);flex-shrink:0;}
+.prof-info h3{font-size:18px;font-weight:800;}
+.prof-info p{font-size:13px;color:var(--g2);margin-top:3px;}
+.plist{padding:0 20px;}
+.pli{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:all .25s;cursor:pointer;}
+.pli:last-child{border-bottom:none;}
+.pli:hover{padding-left:6px;}
+.pli-ico{width:42px;height:42px;border-radius:12px;background:var(--d3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.pli-txt{flex:1;}
+.pli-txt h4{font-size:14px;font-weight:700;}
+.pli-txt p{font-size:12px;color:var(--g2);margin-top:2px;}
+.pli-arr{color:var(--g2);font-size:18px;}
+
+/* BOTTOM NAV */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:rgba(10,10,10,.96);backdrop-filter:blur(24px) saturate(180%);
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0 20px;
+}
+.bn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 20px;transition:all .25s;cursor:pointer;position:relative;}
+.bn-ico{font-size:22px;transition:transform .3s;}
+.bn-lbl{font-size:10px;font-weight:600;color:var(--g2);letter-spacing:.5px;transition:color .25s;}
+.bn.active .bn-lbl{color:var(--o);}
+.bn.active .bn-ico{transform:scale(1.12);}
+.bn-dot{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--o);opacity:0;transition:opacity .25s;}
+.bn.active .bn-dot{opacity:1;}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(18px);
+  background:var(--d3);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:12px 20px;
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+  opacity:0;transition:all .35s;z-index:9000;
+  white-space:nowrap;box-shadow:0 12px 40px rgba(0,0,0,.6);pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.ok{border-color:rgba(72,187,120,.3);}
+#toast.err{border-color:rgba(252,129,74,.3);}
+
+/* Misc */
+::selection{background:rgba(255,107,0,.2);color:var(--wh);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--g3);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ═══════ SPLASH ═══════ -->
+<div id="splash">
+  <div class="sp-mesh"></div>
+  <div class="sp-grid"></div>
+  <div class="sp-rings">
+    <div class="sp-ring"></div><div class="sp-ring"></div>
+    <div class="sp-ring"></div><div class="sp-ring"></div><div class="sp-ring"></div>
+  </div>
+  <div class="sp-glow"></div>
+  <div class="sp-pts" id="spPts"></div>
+
+  <div class="sp-center">
+    <div class="sp-logo"><span class="sp-logo-letter">W</span></div>
+    <div class="sp-brand">
+      <div class="sp-brand-main">WULZI<span class="hl">SHOP</span></div>
+      <div class="sp-brand-sub">Premium Alış-Veriş Platformu</div>
+    </div>
+    <div class="sp-loader">
+      <div class="sp-dots">
+        <div class="sp-dot"></div><div class="sp-dot"></div>
+        <div class="sp-dot"></div><div class="sp-dot"></div><div class="sp-dot"></div>
+      </div>
+      <div class="sp-prog-track"><div class="sp-prog-fill"></div></div>
+      <div class="sp-pct" id="spPct">0%</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ APP ═══════ -->
+<div id="app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-icon">W</div>
+      <div class="nav-name">WULZI<span>SHOP</span></div>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-btn" id="nSearchBtn" title="Axtarış">🔍</div>
+      <div class="nav-btn" id="nFavBtn" title="Sevimli" style="position:relative">❤️<div class="wbadge" id="wBadge">0</div></div>
+      <div class="nav-btn" id="nCartBtn" title="Səbət" style="position:relative">🛒<div class="nbadge" id="cBadge">0</div></div>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="pg-home">
+
+    <div class="search-wrap">
+      <div class="search-bar">
+        <span class="s-ico">🔍</span>
+        <input type="text" id="hSearch" placeholder="Məhsul axtar…" autocomplete="off">
+        <button class="s-btn" id="hSearchBtn">Axtar</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-deco">🏎️</div>
+      <div class="hero-tag"><span class="hero-tag-dot"></span> Yeni Gəliş</div>
+      <h1>Ən Yaxşı <em>Oyuncaqlar</em> &amp; Kolleksiyalar</h1>
+      <button class="hero-cta" id="heroCta">Kataloqa Bax <span class="arr">→</span></button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="stat-n">909</div><div class="stat-l">Üzv</div></div>
+      <div class="stat-card"><div class="stat-n">50+</div><div class="stat-l">Məhsul</div></div>
+      <div class="stat-card"><div class="stat-n">2022</div><div class="stat-l">Quruluş</div></div>
+      <div class="stat-card"><div class="stat-n">⭐4.9</div><div class="stat-l">Reytinq</div></div>
+    </div>
+
+    <div class="sec-h"><h2>Kateqoriya<span>lar</span></h2></div>
+    <div class="cats" id="catRow">
+      <div class="cat active" data-cat="all">✨ Hamısı</div>
+      <div class="cat" data-cat="racing">🏎️ Racing</div>
+      <div class="cat" data-cat="cabin">🏠 Log Cabin</div>
+      <div class="cat" data-cat="toys">🧸 Oyuncaq</div>
+      <div class="cat" data-cat="gift">🎁 Hədiyyə</div>
+    </div>
+
+    <div class="sec-h"><h2>Məhsul<span>lar</span></h2><span class="sec-link" id="seeAll">Hamısı →</span></div>
+    <div class="pgrid" id="homeGrid"></div>
+
+    <!-- Flash -->
+    <div class="flash">
+      <div class="flash-h">
+        <div class="flash-ttl"><span class="ffire">🔥</span> Flash Endirim</div>
+        <div class="flash-tmr">
+          <div class="tblk"><div class="tnum" id="th">02</div><div class="tl">saat</div></div>
+          <span class="tsep">:</span>
+          <div class="tblk"><div class="tnum" id="tm">47</div><div class="tl">dəq</div></div>
+          <span class="tsep">:</span>
+          <div class="tblk"><div class="tnum" id="ts">30</div><div class="tl">san</div></div>
+        </div>
+      </div>
+      <div class="flash-body">
+        <div class="femi">🏎️</div>
+        <div class="finfo">
+          <h3>Racing Auto #41081</h3>
+          <p>395 hissə • 6+ yaş • Jieile</p>
+          <div class="fprices">
+            <span class="fpnew">₼39</span>
+            <span class="fpold">₼55</span>
+            <span class="fdsc">−29%</span>
+          </div>
+          <button class="fbuy" id="flashBtn">Səbətə Əlavə Et</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telegram -->
+    <div class="tg" id="tgCard">
+      <div class="tg-ico">✈️</div>
+      <div class="tg-txt">
+        <h3>Telegram Qrupumuza Qoşul</h3>
+        <p>Ən yeni məhsullar, yarışmalar &amp; endirimlər</p>
+        <div class="tg-mbr">👥 909 üzv</div>
+      </div>
+      <button class="tg-btn">Qoşul</button>
+    </div>
+
+  </div><!-- /home -->
+
+  <!-- SEARCH PAGE -->
+  <div class="page" id="pg-search">
+    <div class="search-wrap" style="padding-top:20px">
+      <div class="search-bar">
+        <span class="s-ico">🔍</span>
+        <input type="text" id="sInput" placeholder="Məhsul axtar…" autocomplete="off">
+        <button class="s-btn ghost" id="sClear">✕</button>
+      </div>
+    </div>
+    <div class="sr-cnt" id="srCnt"></div>
+  </div>
+
+  <!-- WISHLIST PAGE -->
+  <div class="page" id="pg-wishlist">
+    <div class="sec-h"><h2>Sevimli<span>lər</span></h2></div>
+    <div class="pgrid" id="wishGrid"></div>
+    <div id="wish-empty" class="no-res">
+      <span class="nri">❤️</span>Hələ sevilən məhsul yoxdur.<br>Məhsullara ❤️ toxun!
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="pg-profile">
+    <div class="prof-h">
+      <div class="prof-av">W</div>
+      <div class="prof-info">
+        <h3>WulziShop Müştəri</h3>
+        <p>+994 51 305 98 12</p>
+      </div>
+    </div>
+    <div class="plist">
+      <div class="pli"><div class="pli-ico">📦</div><div class="pli-txt"><h4>Sifarişlərim</h4><p>Son sifarişlərə bax</p></div><span class="pli-arr">›</span></div>
+      <div class="pli"><div class="pli-ico">❤️</div><div class="pli-txt"><h4>Sevimlilərim</h4><p id="wlCnt">0 məhsul</p></div><span class="pli-arr">›</span></div>
+      <div class="pli"><div class="pli-ico">🛒</div><div class="pli-txt"><h4>Səbətim</h4><p id="cCnt">0 məhsul</p></div><span class="pli-arr">›</span></div>
+      <div class="pli"><div class="pli-ico">🏆</div><div class="pli-txt"><h4>Yarışmalar</h4><p>Aktiv yarışmalara qatıl</p></div><span class="pli-arr">›</span></div>
+      <div class="pli"><div class="pli-ico">✈️</div><div class="pli-txt"><h4>Telegram Qrupu</h4><p>909 üzv ilə tanış ol</p></div><span class="pli-arr">›</span></div>
+      <div class="pli"><div class="pli-ico">⭐</div><div class="pli-txt"><h4>Reytinq &amp; Şərh</h4><p>Məhsulları qiymətləndir</p></div><span class="pli-arr">›</span></div>
+      <div class="pli"><div class="pli-ico">❓</div><div class="pli-txt"><h4>Dəstək</h4><p>Sualın var? Yaz bizə</p></div><span class="pli-arr">›</span></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- CART SHEET -->
+<div id="cart-sheet">
+  <div class="cart-ov" id="cartOv"></div>
+  <div class="cart-panel">
+    <div class="cart-hndl"></div>
+    <div class="cart-top">
+      <h3>🛒 Səbətim</h3>
+      <div class="cart-x" id="cartX">✕</div>
+    </div>
+    <div id="cart-list"></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-total-row">
+        <span class="ct-lbl">Cəmi</span>
+        <span class="ct-val" id="cartTot">₼0</span>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn">Sifariş Ver →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <div class="bn active" data-pg="home"><div class="bn-ico">🏠</div><div class="bn-lbl">Əsas</div><div class="bn-dot"></div></div>
+  <div class="bn" data-pg="search"><div class="bn-ico">🔍</div><div class="bn-lbl">Axtarış</div><div class="bn-dot"></div></div>
+  <div class="bn" data-pg="wishlist"><div class="bn-ico">❤️</div><div class="bn-lbl">Sevimli</div><div class="bn-dot"></div></div>
+  <div class="bn" data-pg="profile"><div class="bn-ico">👤</div><div class="bn-lbl">Profil</div><div class="bn-dot"></div></div>
+</div>
+
+<script>
+/* ── DATA ── */
+const PRODS = [
+  {id:1,name:'Racing Auto #41081',sub:'395 hissə • 6+ yaş',price:49,cat:'racing',ico:'🏎️',lbl:'new'},
+  {id:2,name:'Forest Log Cabin',sub:'MZ-326 • LED işıqlı',price:39,cat:'cabin',ico:'🏠',lbl:'hot'},
+  {id:3,name:'Motor Sport Set',sub:'Divar aksessuar • 5202',price:55,cat:'racing',ico:'🚗',lbl:'best'},
+  {id:4,name:'A-Frame Cabin',sub:'MZ-322 • Fine Model',price:42,cat:'cabin',ico:'🏡',lbl:'new'},
+  {id:5,name:'Speed Racer Pro',sub:'480 hissə • 8+ yaş',price:62,cat:'racing',ico:'🏁',lbl:'sale'},
+  {id:6,name:'Oyuncaq Seti',sub:'3-8 yaş • Çeşidli',price:28,cat:'toys',ico:'🧸',lbl:'hot'},
+  {id:7,name:'Premium Hədiyyə',sub:'Hazır paklaşma',price:18,cat:'gift',ico:'🎁',lbl:'new'},
+  {id:8,name:'Uno Kart Oyunu',sub:'2-10 oyunçu',price:15,cat:'toys',ico:'🃏',lbl:'best'},
+];
+const LBL_CLS = {new:'lnew',hot:'lhot',sale:'lsale',best:'lbest'};
+const LBL_TXT = {new:'YENİ',hot:'SƏR',sale:'ENDİRİM',best:'TOP'};
+
+let cart={}, wish=new Set(), activeCat='all';
+
+/* ── SPLASH ── */
+(()=>{
+  const pts=document.getElementById('spPts');
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');p.className='sp-pt';
+    p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*5+2}px;height:${Math.random()*5+2}px;animation-duration:${Math.random()*5+4}s;animation-delay:${Math.random()*5}s`;
+    pts.appendChild(p);
+  }
+  let pct=0;const pctEl=document.getElementById('spPct');
+  const iv=setInterval(()=>{pct=Math.min(100,pct+Math.random()*3.5+1);pctEl.textContent=Math.floor(pct)+'%';if(pct>=100)clearInterval(iv);},55);
+  setTimeout(()=>{
+    const s=document.getElementById('splash'),a=document.getElementById('app');
+    s.classList.add('exit');
+    setTimeout(()=>{s.style.display='none';a.classList.add('show');},900);
+  },4200);
+})();
+
+/* ── CURSOR ── */
+const cur=document.getElementById('cursor'),curR=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animC(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(animC);})();
+
+/* ── RENDER ── */
+function renderGrid(el,items){
+  if(!items.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--g2);font-size:14px">Məhsul tapılmadı</div>';return;}
+  el.innerHTML=items.map(p=>{
+    const inW=wish.has(p.id),inC=cart[p.id]>0;
+    return `<div class="pcard">
+      <div class="pcard-img">
+        <div class="plbl ${LBL_CLS[p.lbl]}">${LBL_TXT[p.lbl]}</div>
+        <div class="pfav ${inW?'on':''}" onclick="togWish(${p.id},this)">${inW?'❤️':'🤍'}</div>
+        <span style="position:relative;z-index:1">${p.ico}</span>
+      </div>
+      <div class="pinfo">
+        <div class="pname">${p.name}</div>
+        <div class="psub">${p.sub}</div>
+        <div class="pbot">
+          <div class="pprice">₼${p.price}<small>/ədəd</small></div>
+          <button class="padd ${inC?'done':''}" onclick="addCart(${p.id})">${inC?'✓':'+'}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getFiltered(){return activeCat==='all'?PRODS:PRODS.filter(p=>p.cat===activeCat);}
+function refreshHome(){renderGrid(document.getElementById('homeGrid'),getFiltered());}
+function refreshWish(){
+  const g=document.getElementById('wishGrid'),e=document.getElementById('wish-empty');
+  const items=PRODS.filter(p=>wish.has(p.id));
+  if(!items.length){g.innerHTML='';e.style.display='block';}
+  else{e.style.display='none';renderGrid(g,items);}
+}
+
+/* ── CATEGORIES ── */
+document.getElementById('catRow').addEventListener('click',e=>{
+  const c=e.target.closest('.cat');if(!c)return;
+  document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));
+  c.classList.add('active');activeCat=c.dataset.cat;refreshHome();
+});
+
+/* ── CART ── */
+function addCart(id,qty=1){
+  cart[id]=(cart[id]||0)+qty;
+  updCartBadge();refreshHome();refreshWish();
+  showToast('✅ Səbətə əlavə edildi','ok');
+}
+function remCart(id){
+  if(cart[id]>1)cart[id]--;else delete cart[id];
+  updCartBadge();renderCartPanel();refreshHome();refreshWish();
+}
+function updCartBadge(){
+  const tot=Object.values(cart).reduce((a,b)=>a+b,0);
+  const b=document.getElementById('cBadge');
+  b.textContent=tot;b.style.display=tot?'flex':'none';
+  const cc=document.getElementById('cCnt');if(cc)cc.textContent=tot+' məhsul';
+}
+function renderCartPanel(){
+  const el=document.getElementById('cart-list'),foot=document.getElementById('cartFoot');
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  if(!keys.length){
+    el.innerHTML='<div class="cart-empty"><span class="ce-ico">🛒</span>Səbətiniz boşdur</div>';
+    foot.style.display='none';return;
+  }
+  el.innerHTML=keys.map(k=>{
+    const p=PRODS.find(x=>x.id==k);
+    return `<div class="ci"><div class="ci-ico">${p.ico}</div><div class="ci-info"><div class="ci-name">${p.name}</div><div class="ci-price">₼${p.price*cart[k]}</div></div><div class="ci-qty"><div class="qbtn" onclick="remCart(${p.id})">−</div><div class="qnum">${cart[k]}</div><div class="qbtn" onclick="addCart(${p.id})">+</div></div></div>`;
+  }).join('');
+  const sum=keys.reduce((a,k)=>a+PRODS.find(x=>x.id==k).price*cart[k],0);
+  document.getElementById('cartTot').textContent='₼'+sum;
+  foot.style.display='block';
+}
+function openCart(){renderCartPanel();document.getElementById('cart-sheet').classList.add('open');document.body.style.overflow='hidden';}
+function closeCart(){document.getElementById('cart-sheet').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('nCartBtn').addEventListener('click',openCart);
+document.getElementById('cartX').addEventListener('click',closeCart);
+document.getElementById('cartOv').addEventListener('click',closeCart);
+document.getElementById('checkoutBtn').addEventListener('click',()=>{
+  if(!Object.keys(cart).length)return;
+  showToast('🎉 Sifarişiniz qeydə alındı!','ok');
+  cart={};updCartBadge();closeCart();refreshHome();refreshWish();
+});
+document.getElementById('flashBtn').addEventListener('click',()=>addCart(1));
+
+/* ── WISHLIST ── */
+function togWish(id,el){
+  const p=PRODS.find(x=>x.id===id);
+  if(wish.has(id)){
+    wish.delete(id);el.textContent='🤍';el.classList.remove('on');
+    showToast('💔 Sevimlilərdən silindi','err');
+  } else {
+    wish.add(id);el.textContent='❤️';el.classList.add('on');
+    showToast('❤️ Sevimlilərə əlavə edildi','ok');
+  }
+  updWishBadge();refreshWish();
+}
+function updWishBadge(){
+  const n=wish.size,b=document.getElementById('wBadge');
+  b.textContent=n;b.style.display=n?'flex':'none';
+  const w=document.getElementById('wlCnt');if(w)w.textContent=n+' məhsul';
+}
+document.getElementById('nFavBtn').addEventListener('click',()=>switchPg('wishlist'));
+
+/* ── SEARCH ── */
+function doSearch(q){
+  const el=document.getElementById('srCnt');
+  if(!q.trim()){el.innerHTML='<div class="no-res"><span class="nri">🔍</span>Axtarmaq üçün məhsul adı yazın</div>';return;}
+  const res=PRODS.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.sub.toLowerCase().includes(q.toLowerCase()));
+  if(!res.length){el.innerHTML=`<div class="no-res"><span class="nri">😕</span>"${q}" üçün nəticə tapılmadı</div>`;return;}
+  el.innerHTML=`<div class="sr-lbl">${res.length} nəticə tapıldı</div><div class="pgrid" id="srGrid"></div>`;
+  renderGrid(document.getElementById('srGrid'),res);
+}
+document.getElementById('sInput').addEventListener('input',e=>doSearch(e.target.value));
+document.getElementById('sClear').addEventListener('click',()=>{document.getElementById('sInput').value='';doSearch('');});
+document.getElementById('hSearchBtn').addEventListener('click',()=>{
+  const q=document.getElementById('hSearch').value;
+  switchPg('search');document.getElementById('sInput').value=q;doSearch(q);
+});
+document.getElementById('hSearch').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const q=e.target.value;switchPg('search');document.getElementById('sInput').value=q;doSearch(q);}
+});
+document.getElementById('nSearchBtn').addEventListener('click',()=>switchPg('search'));
+document.getElementById('heroCta').addEventListener('click',()=>switchPg('search'));
+document.getElementById('seeAll').addEventListener('click',()=>switchPg('search'));
+
+/* ── PAGES ── */
+function switchPg(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  document.querySelectorAll('.bn').forEach(b=>b.classList.toggle('active',b.dataset.pg===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.bn').forEach(b=>b.addEventListener('click',()=>switchPg(b.dataset.pg)));
+
+/* ── FLASH TIMER ── */
+(()=>{
+  let s=29,m=47,h=2;
+  setInterval(()=>{
+    s++;if(s>=60){s=0;m++;}if(m>=60){m=0;h++;}
+    const pad=n=>String(n).padStart(2,'0');
+    const th=document.getElementById('th'),tm=document.getElementById('tm'),ts=document.getElementById('ts');
+    if(th)th.textContent=pad(h);if(tm)tm.textContent=pad(m);if(ts)ts.textContent=pad(s);
+  },1000);
+})();
+
+/* ── TOAST ── */
+let tTimer;
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='show '+type;
+  clearTimeout(tTimer);tTimer=setTimeout(()=>t.className='',2800);
+}
+
+/* ── TELEGRAM ── */
+document.getElementById('tgCard').addEventListener('click',()=>showToast('✈️ Telegram qrupuna yönləndirilirsiniz…','ok'));
+
+/* ── INIT ── */
+refreshHome();updCartBadge();updWishBadge();doSearch('');
+</script>
+</body>
+</html>
