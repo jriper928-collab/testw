@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kompüter Şəbəkələri — III Kollokvium</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #ff80b0 0%, #ffb3cc 40%, #ffd6e7 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px 16px 50px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #6b0030;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.4);
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+
+  .header h1 span {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #a0305a;
+    margin-top: 3px;
+    letter-spacing: 0;
+  }
+
+  .progress-wrap {
+    background: rgba(255,255,255,0.35);
+    border-radius: 20px;
+    height: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    background: linear-gradient(90deg, #c0005a, #ff4488);
+    height: 10px;
+    border-radius: 20px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #7a0035;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px 26px 22px;
+    box-shadow: 0 8px 32px rgba(180,0,80,0.13), 0 2px 8px rgba(180,0,80,0.08);
+    margin-bottom: 16px;
+  }
+
+  .q-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: #d04070;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a0010;
+    line-height: 1.55;
+    margin-bottom: 20px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .opt {
+    padding: 13px 18px;
+    border-radius: 12px;
+    border: 2.5px solid #f0a0c0;
+    background: #fff0f6;
+    color: #3a0020;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    line-height: 1.45;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .opt:hover:not([disabled]) {
+    background: #ffe0ee;
+    border-color: #d6006e;
+    transform: translateX(3px);
+  }
+
+  .opt:active:not([disabled]) {
+    transform: scale(0.98);
+  }
+
+  .opt.correct {
+    background: #d0f5e5 !important;
+    border-color: #14a058 !important;
+    color: #073d20 !important;
+  }
+
+  .opt.wrong {
+    background: #ffd8d8 !important;
+    border-color: #d63030 !important;
+    color: #3d0a0a !important;
+  }
+
+  .opt[disabled] { cursor: default; }
+
+  .feedback {
+    margin-top: 14px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .feedback.ok {
+    display: block;
+    background: #d0f5e5;
+    color: #073d20;
+    border: 2px solid #14a058;
+  }
+
+  .feedback.fail {
+    display: block;
+    background: #ffd8d8;
+    color: #3d0a0a;
+    border: 2px solid #d63030;
+  }
+
+  .hint-btn {
+    margin-top: 14px;
+    background: transparent;
+    border: 2px dashed #f0a0c0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #c0507a;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .hint-btn:hover { background: #ffe4f0; }
+
+  .hint-box {
+    margin-top: 10px;
+    background: #fff0f6;
+    border: 2px solid #f0a0c0;
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #7a0035;
+    display: none;
+  }
+
+  .hint-box.show { display: block; }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 14px 20px;
+    box-shadow: 0 4px 16px rgba(180,0,80,0.10);
+  }
+
+  .nav-btn {
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: 2.5px solid #d6006e;
+    background: #ffffff;
+    color: #d6006e;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .nav-btn:hover:not([disabled]) { background: #ffe0ee; }
+  .nav-btn:active:not([disabled]) { transform: scale(0.97); }
+  .nav-btn[disabled] { opacity: 0.3; cursor: default; }
+
+  .nav-btn.next {
+    background: linear-gradient(135deg, #d6006e, #ff4488);
+    color: #ffffff;
+    border-color: transparent;
+  }
+
+  .nav-btn.next:hover:not([disabled]) { background: linear-gradient(135deg, #b00058, #e0306a); }
+
+  .q-counter {
+    font-size: 14px;
+    font-weight: 800;
+    color: #a0305a;
+  }
+
+  /* Result screen */
+  .result {
+    text-align: center;
+    padding: 32px 20px;
+  }
+
+  .result h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #7a0035;
+    margin-bottom: 6px;
+  }
+
+  .score-big {
+    font-size: 64px;
+    font-weight: 800;
+    color: #d6006e;
+    line-height: 1;
+    margin: 16px 0 6px;
+  }
+
+  .score-lbl {
+    font-size: 15px;
+    font-weight: 700;
+    color: #c0507a;
+    margin-bottom: 28px;
+  }
+
+  .wrong-list { text-align: left; margin-top: 10px; }
+
+  .wrong-list h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #7a0035;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2.5px solid #f0a0c0;
+  }
+
+  .wrong-item {
+    background: #ffffff;
+    border: 2px solid #f0a0c0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+
+  .wi-q { font-size: 13px; font-weight: 800; color: #1a0010; margin-bottom: 6px; line-height: 1.4; }
+  .wi-wrong { font-size: 12px; font-weight: 700; color: #c03030; margin-bottom: 4px; }
+  .wi-correct { font-size: 12px; font-weight: 700; color: #14a058; }
+
+  .all-correct {
+    font-size: 16px;
+    font-weight: 800;
+    color: #14a058;
+    background: #d0f5e5;
+    border: 2px solid #14a058;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 10px;
+  }
+
+  .restart-btn {
+    margin-top: 28px;
+    padding: 14px 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #d6006e, #ff4488);
+    color: #ffffff;
+    border: none;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 4px 16px rgba(180,0,80,0.25);
+  }
+
+  .restart-btn:hover { background: linear-gradient(135deg, #b00058, #e0306a); transform: translateY(-1px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Kompüter Şəbəkələri <span>III Kollokvium — Test</span></h1>
+    <div class="progress-wrap"><div class="progress-bar" id="pb" style="width:0%"></div></div>
+    <div class="stats">
+      <span id="sdone">1 / 60 sual</span>
+      <span id="sscore">Doğru: 0</span>
+    </div>
+  </div>
+  <div id="qa"></div>
+</div>
+
+<script>
+const QA = [
+  ["PAN nə deməkdir?","Personal Area Network (Fərdi Sahə Şəbəkəsi)","Private Access Node","Packet Analysis Network","Portable Area Node"],
+  ["Fərdi şəbəkənin əhatə dairəsi nə qədərdir?","Təxminən 10 metrə qədər","1 km-ə qədər","100 metrə qədər","50 metrə qədər"],
+  ["Bluetooth hansı tip şəbəkəyə aiddir?","PAN (Fərdi Sahə Şəbəkəsi)","WAN","LAN","MAN"],
+  ["Şəbəkə proqram təminatı nədir?","İki və ya daha çox kompüterin əlaqə saxlamasını və resursları paylaşmasını təmin edən proqramlar toplusu","Yalnız antivirus proqramı","İnternet brauzeri","Oyun proqramı"],
+  ["Server nədir?","Digər kompüterlərə xidmət və resurs təqdim edən güclü kompüter","Adi istifadəçi kompüteri","Simsiz modem","Şəbəkə kabeli"],
+  ["WAN nədir?","Wide Area Network — geniş ərazini əhatə edən şəbəkə","Wireless Access Node","Web Area Network","Wired Area Node"],
+  ["İnternet nədir?","Dünya üzrə milyonlarla kompüteri birləşdirən qlobal şəbəkə","Yalnız e-poçt xidməti","Bir şirkətin daxili şəbəkəsi","Bluetooth şəbəkəsi"],
+  ["Wi-Fi nədir?","Cihazların kabelsiz radio dalğaları vasitəsilə internetə qoşulmasını təmin edən simsiz texnologiya","Kabel internet bağlantısı","Bluetooth protokolu","Mobil şəbəkə standartı"],
+  ["GPRS nədir?","General Packet Radio Service — mobil şəbəkə üzərindən məlumat ötürmə texnologiyası","Global Positioning Radio System","General Public Radio Service","Graphics Processing Remote System"],
+  ["GPRS kim tərəfindən verilir?","Mobil operator şirkətləri tərəfindən","İnternet provayderləri tərəfindən","Hökumət tərəfindən","Universitetlər tərəfindən"],
+  ["Simsiz şəbəkə nədir?","Kabel istifadə etmədən radio dalğaları ilə qurulan şəbəkə","Yalnız optik kabellərdən ibarət şəbəkə","Fiziki kabelsiz elektrik şəbəkəsi","Peyk televiziya şəbəkəsi"],
+  ["Protokol nədir?","Şəbəkədə məlumat mübadiləsini tənzimləyən qaydalar toplusu","Şəbəkə kabeli növü","Router cihazı","Server əməliyyat sistemi"],
+  ["HTTP nə üçündür?","Veb-səhifələrin brauzer vasitəsilə ötürülməsi üçün","Fayl ötürmək üçün","E-poçt göndərmək üçün","DNS sorğuları üçün"],
+  ["FTP nə edir?","Şəbəkə üzərindən fayl ötürür (yükləyir və göndərir)","E-poçt göndərir","Veb səhifə açır","IP ünvanı verir"],
+  ["SMTP nədir?","Simple Mail Transfer Protocol — elektron poçt göndərmək üçün protokol","Secure Media Transfer Protocol","Simple Modem Transfer Protocol","Standard Mail TCP Protocol"],
+  ["DNS nə edir?","Domen adlarını IP ünvanlarına çevirir","Faylları şifrələyir","İnternet sürətini ölçür","Şəbəkəni qoruyur"],
+  ["Protokollar olmadan nə olmaz?","Şəbəkədə normal məlumat mübadiləsi olmaz","İnternet daha sürətli olar","Kompüterlər daha sürətli işlər","Fayllar daha böyük olar"],
+  ["WWW hansı xidmətə aiddir?","İnternet xidmətinə (veb xidmətinə)","Telefon xidmətinə","Peyk xidmətinə","Radio xidmətinə"],
+  ["Elektron poçtun əsas funksiyası nədir?","Məlumat, fayl və mesajları elektron şəkildə göndərmək","Veb səhifə açmaq","Fayl silmək","Şəbəkəni idarə etmək"],
+  ["Axtarış nəticələri necə göstərilir?","Əlaqəlilik dərəcəsinə görə sıralanmış siyahı şəklində","Əlifba sırası ilə","Tarix sırası ilə","Rəng sırası ilə"],
+  ["Bluetooth ilə nə etmək olar?","Yaxın məsafədə cihazlar arasında fayl, audio və məlumat ötürmək","Uzaq məsafədə internet bağlantısı qurmaq","Peyk siqnalı almaq","Simsiz televiziya izləmək"],
+  ["PAN hansı cihazlar arasında istifadə olunur?","Telefon, noutbuk, qulaqlıq, planşet kimi fərdi cihazlar arasında","Sənaye maşınları arasında","Peyk stansiyaları arasında","Şəhər şəbəkələri arasında"],
+  ["Server əməliyyat sistemi nümunəsi:","Windows Server, Linux (Ubuntu Server, CentOS)","Android, iOS","Windows 11, macOS","Chrome OS, Tizen"],
+  ["Linux nədir?","Açıq mənbəli, pulsuz Unix tipli əməliyyat sistemi","Pullu şirkət əməliyyat sistemi","Yalnız telefon üçün sistem","Microsoft məhsulu"],
+  ["Şəbəkə proqram təminatı nəyi idarə edir?","Şəbəkə bağlantılarını, trafikini, təhlükəsizliyi və resursların paylaşımını","Yalnız printer idarəsini","Yalnız e-poçtu","Kompüter oyunlarını"],
+  ["İnternet hansı tip şəbəkədir?","WAN (Geniş Sahə Şəbəkəsi) — qlobal miqyaslı şəbəkə","LAN","PAN","MAN"],
+  ["Router nə edir?","Şəbəkələr arasında məlumat paketlərini yönləndirir","Faylları saxlayır","E-poçt göndərir","Şifrəni sındırır"],
+  ["Server nə edir?","Clientlərin sorğularını qəbul edib cavab verir, xidmət göstərir","Yalnız fayl silir","İnternet sürətini azaldır","Şəbəkəni bağlayır"],
+  ["Server və client əlaqəsi nədir?","Client sorğu göndərir, server həmin sorğuya cavab verir","Server sorğu göndərir, client cavab verir","İkisi eyni işi görür","Onlar arasında əlaqə yoxdur"],
+  ["Wi-Fi hansı şəbəkəyə aiddir?","WLAN (Simsiz Lokal Şəbəkə)","WAN","PAN","MAN"],
+  ["GPRS-in üstünlüyü:","Hər yerdə mövcud mobil şəbəkə üzərindən internetə çıxış imkanı","Çox yüksək sürət","Pulsuz olmaq","Kabel tələb etməmək"],
+  ["Protokollar nəyi tənzimləyir?","Şəbəkədə məlumat formatını, ötürülmə qaydasını və kommunikasiyanı","Yalnız kompüter enerjisini","Yalnız ekran rəngini","Yalnız klaviatura girişini"],
+  ["HTTPS nədir?","HTTP-nin şifrələnmiş (SSL/TLS) təhlükəsiz versiyası","Yeni HTTP versiyası sürət üçün","Yalnız video üçün protokol","FTP-nin qısaltması"],
+  ["IP nədir?","Internet Protocol — şəbəkədəki hər cihaza verilən unikal ünvan sistemi","Image Protocol","Internal Port","İnternet Proqramı"],
+  ["TCP əsas funksiyası:","Məlumatın etibarlı, ardıcıl və tam şəkildə çatdırılmasını təmin etmək","Faylları silmək","Şifrəni açmaq","İnternet sürətini ölçmək"],
+  ["IP əsas funksiyası:","Məlumat paketlərini düzgün ünvana yönləndirmək","E-poçt göndərmək","Faylları sıxışdırmaq","Şəbəkəni bağlamaq"],
+  ["Paket nədir?","Şəbəkə üzərindən ötürülən məlumatın kiçik parçalara bölünmüş hissəsi","Bütöv fayl","Şifrəli sənəd","Router növü"],
+  ["WWW nədir?","World Wide Web — internet üzərindəki hipermətn sənədlər sistemi","World Wide Wifi","Web Work Wizard","Wireless World Web"],
+  ["E-mail üçün nə lazımdır?","E-poçt ünvanı, şifrə və internet bağlantısı","Yalnız telefon nömrəsi","Yalnız printer","Yalnız Bluetooth"],
+  ["Axtarış sistemi nə edir?","İstifadəçinin daxil etdiyi açar sözə görə internetdə axtarış aparıb nəticə göstərir","Yalnız fayl silir","Yalnız e-poçt göndərir","Şəbəkəni idarə edir"],
+  ["Bluetooth əlaqəsi üçün nə lazımdır?","Hər iki cihazda Bluetooth modulu və onun aktivləşdirilməsi","Yalnız internet bağlantısı","Kabel bağlantısı","Router cihazı"],
+  ["Bluetooth-un maksimum məsafəsi təxminən neçə metrdir?","Təxminən 10 metr (Class 2 üçün)","500 metr","1 km","1 metr"],
+  ["PAN şəbəkəsi hansı xüsusiyyətə malikdir?","Kiçik əhatə dairəsi, fərdi istifadə üçün nəzərdə tutulub","Çox böyük əhatə dairəsi","Yalnız kabel bağlantısı","Yüksək sürət tələb edir"],
+  ["Şəbəkə proqramı hansı işi görür?","Şəbəkə üzərindən kommunikasiyanı, fayl paylaşımını və bağlantı idarəsini həyata keçirir","Yalnız oyun oynamağa imkan verir","Kompüterin enerjisini idarə edir","Ekranın parlaqlığını tənzimləyir"],
+  ["Müştəri (client) kimdir?","Serverdən xidmət alan, sorğu göndərən kompüter və ya istifadəçi","Serverin özü","Router cihazı","Şəbəkə kabeli"],
+  ["WAN hansı ərazini əhatə edir?","Ölkələr və qitələr arası geniş coğrafi ərazini","Yalnız bir otağı","Yalnız bir şəhəri","Yalnız bir binanı"],
+  ["Wi-Fi nə tələb edir?","Simsiz router (access point) və Wi-Fi dəstəkli cihaz","Yalnız kabel","Yalnız Bluetooth","Peyk anteni"],
+  ["Wi-Fi məsafəsi:","Daxili mühitdə ~30–50 metr, açıq ərazidə 100 metrə qədər","1 km-dən çox","Yalnız 1 metr","Yalnız eyni otaqda"],
+  ["GPRS sürəti necədir?","Təxminən 56–114 Kbps","1 Gbps","100 Mbps","1 Tbps"],
+  ["HTTP hansı qatdadır?","OSI modelinin Tətbiq (Application) qatında","Fiziki qatda","Kanal qatında","Şəbəkə qatında"],
+  ["TCP nə edir?","Məlumatı paketlərə bölür, göndərir və alıcıda düzgün birləşdirilməsini təmin edir","Yalnız IP ünvanı verir","Faylları şifrələyir","Router-i idarə edir"],
+  ["IP nə edir?","Hər cihaza unikal ünvan verir və paketləri ünvana göndərir","Faylları silir","Şəbəkəni bağlayır","E-poçt göndərir"],
+  ["TCP/IP nədir?","İnternetin əsas protokol dəsti; TCP ötürməni, IP ünvanlamanı idarə edir","Yalnız kabel protokolu","Yalnız Bluetooth üçün protokol","Simsiz şəbəkə standartı"],
+  ["İnternet xidməti nümunəsi:","WWW, e-poçt, FTP, onlayn oyunlar, video axını","Yalnız telefon zəngi","Yalnız SMS","Yalnız televiziya"],
+  ["Bluetooth hansı tezlikdə işləyir?","2.4 GHz tezlik bandında","5 GHz","900 MHz","60 GHz"],
+  ["İnternet xidmətləri nədir?","İnternet üzərindən istifadəçilərə təqdim olunan xidmətlər (veb, e-poçt, FTP və s.)","Yalnız kabel televiziyası","Yalnız telefon xidmətləri","Yalnız radio yayımı"],
+  ["WWW nə deməkdir?","World Wide Web (Ümumdünya Hörümçək Toru)","World Wireless Web","Wide Work Web","Web World Wireless"],
+  ["E-mail vasitəsilə nə göndərmək olar?","Mətn, şəkil, sənəd, audio, video və digər fayllar","Yalnız mətn","Yalnız şəkil","Yalnız video"],
+  ["Axtarış sistemi nədir?","İnternetdə məlumat tapmaq üçün istifadə olunan proqram (Google, Bing və s.)","Fayl silmə proqramı","Şəbəkə kabeli növü","Router idarə paneli"],
+  ["Açar söz nədir?","Axtarış sisteminə daxil edilən, axtarışı ifadə edən söz və ya söz birləşməsi","Şifrə üçün istifadə olunan gizli kod","Klaviatura düyməsi","Router parol sistemi"]
+];
+
+let cur = 0, score = 0;
+let answered = [], wrongList = [];
+
+function shuffle(a) {
+  let b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function init() {
+  cur = 0; score = 0; wrongList = [];
+  answered = QA.map(q => ({
+    q: q[0],
+    correct: q[1],
+    opts: shuffle([q[1], q[2], q[3], q[4]]),
+    chosen: null
+  }));
+  render();
+}
+
+function playSound(ok) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ok) {
+      [[523, 0], [659, 0.12], [784, 0.24]].forEach(([f, t]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = f; o.type = 'sine';
+        g.gain.setValueAtTime(0.22, ctx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.28);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.28);
+      });
+    } else {
+      [[300, 0], [220, 0.2]].forEach(([f, t]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = f; o.type = 'sawtooth';
+        g.gain.setValueAtTime(0.18, ctx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.25);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.25);
+      });
+    }
+  } catch (e) {}
+}
+
+function render() {
+  const total = QA.length;
+  const pct = Math.round((cur / total) * 100);
+  document.getElementById('pb').style.width = pct + '%';
+  document.getElementById('sdone').textContent = (cur + 1) + ' / ' + total + ' sual';
+  document.getElementById('sscore').textContent = 'Doğru: ' + score;
+
+  const d = answered[cur];
+  const isAns = d.chosen !== null;
+
+  const labels = ['A', 'B', 'C', 'D'];
+  const optsHTML = d.opts.map((o, i) => {
+    let cls = 'opt';
+    if (isAns) {
+      if (o === d.correct) cls += ' correct';
+      else if (o === d.chosen && o !== d.correct) cls += ' wrong';
+    }
+    return `<button class="${cls}" ${isAns ? 'disabled' : ''} onclick="choose(${i})">
+      <strong>${labels[i]})</strong> ${o}
+    </button>`;
+  }).join('');
+
+  let fbHTML = '';
+  if (isAns) {
+    if (d.chosen === d.correct) {
+      fbHTML = `<div class="feedback ok">✓ Doğru cavab!</div>`;
+    } else {
+      fbHTML = `<div class="feedback fail">✗ Səhv! Doğru cavab: ${d.correct}</div>`;
+    }
+  }
+
+  const isLast = cur === total - 1;
+  const nextDisabled = !isAns ? 'disabled' : '';
+
+  document.getElementById('qa').innerHTML = `
+    <div class="card">
+      <div class="q-num">Sual ${cur + 1} / ${total}</div>
+      <div class="q-text">${d.q}</div>
+      <div class="options">${optsHTML}</div>
+      ${fbHTML}
+      <button class="hint-btn" onclick="this.nextElementSibling.classList.toggle('show')">
+        Ipucu göstər
+      </button>
+      <div class="hint-box ${isAns ? 'show' : ''}">Doğru cavab: ${d.correct}</div>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" onclick="go(-1)" ${cur === 0 ? 'disabled' : ''}>← Geri</button>
+      <span class="q-counter">${cur + 1} / ${total}</span>
+      <button class="nav-btn next" onclick="go(1)" ${nextDisabled}>${isLast ? 'Nəticə →' : 'Növbəti →'}</button>
+    </div>
+  `;
+}
+
+function choose(i) {
+  const d = answered[cur];
+  if (d.chosen !== null) return;
+  const sel = d.opts[i];
+  d.chosen = sel;
+  const ok = sel === d.correct;
+  if (ok) score++;
+  else wrongList.push({ q: d.q, wrong: sel, correct: d.correct });
+  playSound(ok);
+  render();
+}
+
+function go(dir) {
+  const next = cur + dir;
+  if (next < 0) return;
+  if (next >= QA.length) { showResult(); return; }
+  cur = next;
+  render();
+}
+
+function showResult() {
+  document.getElementById('pb').style.width = '100%';
+  document.getElementById('sdone').textContent = 'Tamamlandı!';
+  document.getElementById('sscore').textContent = 'Doğru: ' + score;
+  const total = QA.length;
+  const pct = Math.round((score / total) * 100);
+  const msg = pct >= 80 ? 'Əla nəticə! Bravo!' : pct >= 60 ? 'Yaxşı nəticə!' : 'Daha çox çalışın!';
+
+  let wrongHTML = '';
+  if (wrongList.length > 0) {
+    wrongHTML = `<div class="wrong-list">
+      <h3>Səhv cavablandırılan suallar (${wrongList.length} ədəd):</h3>
+      ${wrongList.map(w => `<div class="wrong-item">
+        <div class="wi-q">${w.q}</div>
+        <div class="wi-wrong">✗ Sizin cavabınız: ${w.wrong}</div>
+        <div class="wi-correct">✓ Doğru cavab: ${w.correct}</div>
+      </div>`).join('')}
+    </div>`;
+  } else {
+    wrongHTML = `<div class="all-correct">Möhtəşəm! Bütün 60 sualı doğru cavablandırdınız!</div>`;
+  }
+
+  document.getElementById('qa').innerHTML = `
+    <div class="card">
+      <div class="result">
+        <h2>${msg}</h2>
+        <div class="score-big">${score}/${total}</div>
+        <div class="score-lbl">Nəticəniz: ${pct}%</div>
+        ${wrongHTML}
+        <button class="restart-btn" onclick="init()">Yenidən başla</button>
+      </div>
+    </div>`;
+}
+
+init();
+</script>
+</body>
+</html>
