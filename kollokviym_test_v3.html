@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rəqəmsal Elektronika — II Kollokvium Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: #243050;
+    --accent: #3b82f6;
+    --accent2: #6366f1;
+    --correct: #10b981;
+    --wrong: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 20%, #1e3a5f22 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, #312e8122 0%, transparent 60%);
+  }
+  header {
+    text-align: center;
+    padding: 44px 24px 28px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0f1729 0%, transparent 100%);
+  }
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.25;
+    margin-bottom: 6px;
+  }
+  header p { color: var(--muted); font-size: 13px; }
+
+  .progress-bar-wrap {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 20px 24px 0;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .dot-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 740px;
+    margin: 14px auto 0;
+    padding: 0 24px;
+  }
+  .dot {
+    width: 30px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dot:hover { border-color: var(--accent); color: var(--accent); }
+  .dot.current { border-color: var(--accent); color: var(--accent); background: #1a2a4a; }
+  .dot.ok  { background: #052e1a; border-color: var(--correct); color: var(--correct); }
+  .dot.err { background: #2a0a0a; border-color: var(--wrong);   color: var(--wrong); }
+
+  .quiz-container { max-width: 740px; margin: 0 auto; padding: 20px 24px 80px; }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+  .question-card.active { display: block; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+  .q-num {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    min-width: 40px;
+    height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-text { font-size: 15px; font-weight: 500; line-height: 1.55; color: var(--text); }
+
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 13px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--accent); background: #1a2a4a; transform: translateX(3px); }
+  .opt-label {
+    background: var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .option-btn.correct { border-color: var(--correct); background: #052e1a; color: #6ee7b7; }
+  .option-btn.correct .opt-label { background: var(--correct); color: white; }
+  .option-btn.wrong   { border-color: var(--wrong);   background: #2a0a0a; color: #fca5a5; }
+  .option-btn.wrong   .opt-label { background: var(--wrong); color: white; }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback {
+    display: none;
+    margin-top: 14px;
+    padding: 11px 15px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    align-items: center;
+    gap: 8px;
+  }
+  .feedback.show { display: flex; }
+  .feedback.correct-fb { background: #052e1a; border: 1px solid var(--correct); color: #6ee7b7; }
+  .feedback.wrong-fb   { background: #2a0a0a; border: 1px solid var(--wrong);   color: #fca5a5; }
+
+  .hint-wrap { margin-top: 10px; }
+  .hint-btn {
+    background: transparent;
+    border: 1.5px solid #f59e0b44;
+    border-radius: 8px;
+    color: #f59e0b;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hint-btn:hover { background: #f59e0b18; border-color: #f59e0b; }
+  .hint-box {
+    display: none;
+    margin-top: 9px;
+    padding: 12px 15px;
+    background: #1a1500;
+    border: 1px solid #f59e0b55;
+    border-radius: 9px;
+    color: #fcd34d;
+    font-size: 13px;
+    line-height: 1.6;
+    animation: fadeSlide 0.25s ease;
+  }
+  .hint-box.show { display: block; }
+
+  .nav-btns { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
+  .btn {
+    padding: 11px 26px;
+    border-radius: 9px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
+  .btn-primary:hover { opacity: 0.87; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+
+  /* Result */
+  #result-screen { display: none; text-align: center; padding: 56px 24px; max-width: 740px; margin: 0 auto; }
+  .result-ring { width: 150px; height: 150px; margin: 0 auto 28px; position: relative; }
+  .result-ring svg { transform: rotate(-90deg); }
+  .ring-bg   { fill: none; stroke: var(--border); stroke-width: 10; }
+  .ring-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .result-score {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+  }
+  .result-score .big   { font-size: 38px; font-weight: 900; }
+  .result-score .small { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .result-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+  .result-sub   { color: var(--muted); font-size: 14px; margin-bottom: 36px; line-height: 1.6; }
+  .stats-row { display: flex; gap: 14px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap; }
+  .stat-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 26px; min-width: 110px;
+  }
+  .stat-box .val { font-size: 26px; font-weight: 700; font-family: 'Playfair Display', serif; }
+  .stat-box .lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .stat-box.green .val { color: var(--correct); }
+  .stat-box.red   .val { color: var(--wrong); }
+  .stat-box.blue  .val { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">II Kollokvium · 2026</div>
+  <h1>Rəqəmsal Elektronika<br>və Mikroprosessorlar</h1>
+  <p>Bakı Dövlət Rabitə və Nəqliyyat Kolleci — Test Variantı</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-info">
+    <span id="prog-label">Sual 1</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+</div>
+<div class="dot-nav" id="dot-nav"></div>
+<div class="quiz-container" id="quiz-area"></div>
+
+<div id="result-screen">
+  <div class="result-ring">
+    <svg viewBox="0 0 150 150" width="150" height="150">
+      <circle class="ring-bg" cx="75" cy="75" r="65"/>
+      <circle class="ring-fill" id="ring-fill" cx="75" cy="75" r="65"
+              stroke-dasharray="408.41" stroke-dashoffset="408.41"/>
+    </svg>
+    <div class="result-score">
+      <div class="big" id="res-pct">0%</div>
+      <div class="small">nəticə</div>
+    </div>
+  </div>
+  <div class="result-title" id="res-title"></div>
+  <div class="result-sub"   id="res-sub"></div>
+  <div class="stats-row">
+    <div class="stat-box green"><div class="val" id="res-correct">0</div><div class="lbl">Düzgün</div></div>
+    <div class="stat-box red">  <div class="val" id="res-wrong">0</div>  <div class="lbl">Yanlış</div></div>
+    <div class="stat-box blue"> <div class="val" id="res-total">0</div>  <div class="lbl">Ümumi</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="restartQuiz()">🔄 Yenidən Başla</button>
+</div>
+
+<script>
+// ── AUDIO ────────────────────────────────────────────────────────────────────
+let actx;
+const ac = () => { if (!actx) actx = new (window.AudioContext||window.webkitAudioContext)(); return actx; };
+function playOk() {
+  const c = ac();
+  [523,659,784].forEach((f,i) => {
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.frequency.value = f; o.type = 'sine';
+    const t = c.currentTime + i*0.1;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.18,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,t+0.35);
+    o.start(t); o.stop(t+0.36);
+  });
+}
+function playErr() {
+  const c = ac();
+  [280,210].forEach((f,i) => {
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.frequency.value = f; o.type = 'sawtooth';
+    const t = c.currentTime + i*0.13;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.13,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,t+0.3);
+    o.start(t); o.stop(t+0.31);
+  });
+}
+
+// ── QUESTIONS ────────────────────────────────────────────────────────────────
+// opts[0] = həmişə düzgün cavab; shuffle zamanı mövqeyi dəyişir
+const RAW = [
+  // ── 1–39 ──────────────────────────────────────────────────────────────────
+  {id:1,  q:"Rəqəm texnikasında kod sözləri hansı simvollardan qurulur?",
+   opts:["0 və 1","A-Z hərflərindən","Onluq rəqəmlərdən","Xüsusi işarələrdən"],
+   hint:"Rəqəm texnikasında (ikili sistem) yalnız iki vəziyyət var: sıfır (0) və bir (1). Hər hansı məlumat bu iki simvol vasitəsilə ifadə olunur."},
+
+  {id:2,  q:"Kod sözlərinin əsas xüsusiyyəti nədir?",
+   opts:["Eyni uzunluğa malikdir, 2 hərfdən istifadə edilir","Müxtəlif uzunluğa malikdir","8-bit formatındadır","Hər hansı simvollardan ibarətdir"],
+   hint:"Kod sözləri sabit uzunluğa malikdir və yalnız 2 simvoldan (0 və 1) istifadə edir. Bu onlara düzgün müqayisə və emal imkanı verir."},
+
+  {id:3,  q:"Kod sözündə 0 və 1 necə adlandırılır?",
+   opts:["Məntiqi 1 və məntiqi 0","Rəqəm və hərf","Elektrik siqnalı","İkili işarə"],
+   hint:"İkili sistemdə 0 → 'məntiqi 0', 1 → 'məntiqi 1' adlanır. Bu, rəqəmsal məntiqin əsas dil vahididir."},
+
+  {id:4,  q:"Uzunluğu n olan kod sözləri neçə müxtəlif kombinasiyaya malikdir?",
+   opts:["2ⁿ","n²","2×n","n+2"],
+   hint:"Hər bit 2 vəziyyət ala bilir. n bit üçün ümumi kombinasiya sayı 2ⁿ-dir. Məsələn: n=3 → 2³=8 kombinasiya (000…111)."},
+
+  {id:5,  q:"Mürəkkəb məntiqi ifadələrdə əməliyyatların yerinə yetirilmə ardıcıllığı necədir?",
+   opts:["İnversiya, konyuksiya, dizunksiya","Dizunksiya, konyuksiya, inversiya","Konyuksiya, dizunksiya, inversiya","Hamısı eyni prioritetdə"],
+   hint:"Məntiqi prioritet sırası: 1) İnversiya (NOT — ən yüksək), 2) Konyuksiya (AND — vurma), 3) Dizunksiya (OR — toplama). Riyazi analogiya: əvvəlcə mənfi işarə, sonra vurma, sonra toplama."},
+
+  {id:6,  q:"1011101 nümunəsi nədir?",
+   opts:["Kod sözü","Onluq ədəd","Hərfi ifadə","Məntiqi funksiya"],
+   hint:"Yalnız 0 və 1 simvollarından ibarət sabit uzunluqlu ardıcıllıq — bu tərif kod sözünə uyğundur."},
+
+  {id:7,  q:"Kod sözləri mürəkkəb qurğularda nə üçün istifadə olunur?",
+   opts:["Ayrı-ayrı şəbəkəyə kod ötürmək üçün","Məlumatı şifrələmək üçün","Enerji qənaəti üçün","Sürəti artırmaq üçün"],
+   hint:"Mürəkkəb rəqəmsal qurğularda ayrı-ayrı bloklar arasında məlumat mübadiləsi kod sözlərinin ötürülməsi ilə həyata keçirilir."},
+
+  {id:8,  q:"Çıxış sözü nədən asılıdır?",
+   opts:["Çıxışa daxil olan kod sözündən","Giriş gərginliyindən","Saat siqnalından","Xarici mühitdən"],
+   hint:"Rəqəmsal qurğularda çıxış sözü birbaşa girişə verilən kod sözündən asılıdır — bu rəqəmsal funksiya anlayışının əsasıdır."},
+
+  {id:9,  q:"Çıxış sözünü funksiya kimi ifadə etdikdə onun arqumenti nədir?",
+   opts:["Çıxış sözüdür","Giriş gərginliyi","Zaman","Tezlik"],
+   hint:"F(giriş sözü) = çıxış sözü. Funksiya kimi yazıldıqda arqument giriş kod sözüdür, nəticə isə çıxış sözdür."},
+
+  {id:10, q:"Məntiqi 0 və 1 qiymətlərini alan funksiyalar necə adlanır?",
+   opts:["Rəqəmli məntiqi funksiya","Analoq funksiya","Elektrik funksiyası","Xətti funksiya"],
+   hint:"Yalnız 0 ya 1 qiymət alan funksiyalar — rəqəmli (diskret) məntiqi funksiyalar adlanır. Analoq funksiyalar isə davamlı qiymətlər alır."},
+
+  {id:11, q:"RMF formalaşdıran qurğular necə adlanır?",
+   opts:["Məntiqi qurğu, rəqəmli qurğu","Analoq qurğu","Hibrid qurğu","Elektron sxem"],
+   hint:"RMF = Rəqəmli Məntiqi Funksiya. Bu funksiyaları reallaşdıran qurğular məntiqi (rəqəmli) qurğular adlanır."},
+
+  {id:12, q:"Məntiqi qurğular giriş–çıxış üsuluna görə neçə qrupa bölünür?",
+   opts:["3","2","4","5"],
+   hint:"Giriş-çıxış üsuluna görə 3 qrup: ardıcıl giriş/çıxış, paralel giriş/çıxış, qarışıq (ardıcıl giriş–paralel çıxış və ya əksi)."},
+
+  {id:15, q:"Qarışıq qurğular nə üçün istifadə olunur?",
+   opts:["Kod sözündən bir başqasına keçmək üçün","Məlumatı saxlamaq üçün","Siqnalı gücləndirmək üçün","Enerji çevirmək üçün"],
+   hint:"Qarışıq qurğular bir formatdakı (məs. ardıcıl) kod sözünü başqa formata (məs. paralel) çevirmək üçün istifadə olunur."},
+
+  {id:16, q:"Kombinasiyalı qurğular necə avtomat adlanır?",
+   opts:["Yaddaşsız avtomat","Yaddaşlı avtomat","Hibrid avtomat","Sinxron avtomat"],
+   hint:"Kombinasiyalı qurğularda çıxış yalnız cari girişdən asılıdır, keçmiş vəziyyəti yadda saxlamır → yaddaşsız avtomat."},
+
+  {id:17, q:"Kombinasiyalı qurğuda çıxış nədən asılıdır?",
+   opts:["Həmin andakı girişdəki simvollarla","Əvvəlki vəziyyətdən","Saat siqnalından","Gücləndirici koeffisientdən"],
+   hint:"Kombinasiyalı = yaddaşsız. Çıxış yalnız o anda girişdəki simvollarla müəyyən olunur, tarixi yoxdur."},
+
+  {id:18, q:"Kombinasiyalı qurğularda yaddaşın olmamasının səbəbi nədir?",
+   opts:["Çıxışdakı hər bir simvol həmin anda girişdəki simvolnan müəyyən edilir","Enerji kəsintisi olur","Sxem sadədir","Sürəti yüksək olur"],
+   hint:"Yaddaşsız olmasının tərifi: çıxış simvolu həmin an girişdəki simvolla müəyyən edilir. Bu səbəbdən keçmiş vəziyyəti saxlamağa ehtiyac yoxdur."},
+
+  {id:19, q:"Ardıcıl qurğular necə avtomat adlanır?",
+   opts:["Yaddaşlı avtomat","Yaddaşsız avtomat","Kombinasiyalı avtomat","Sadə avtomat"],
+   hint:"Ardıcıl qurğular əvvəlki vəziyyəti yadda saxlayır → yaddaşlı avtomat. Kombinasiyalı ilə əks tərəfdədir."},
+
+  {id:20, q:"Ardıcıl qurğuda çıxış siqnalı nədən asılıdır?",
+   opts:["Qurğunun daxili vəziyyətindən və bu qurğunun əvvəlki zaman anlarından olduğu simvoldan","Yalnız cari girişdən","Saat tezliyindən","Giriş gərginliyindən"],
+   hint:"Ardıcıl qurğularda çıxış = f(cari giriş + daxili vəziyyət). Daxili vəziyyət isə əvvəlki zaman anlarının tarixini özündə saxlayır."},
+
+  {id:21, q:"Ardıcıl qurğular nə saxlayır?",
+   opts:["Özündən əvvəlki informasiyanı","Yalnız cari məlumatı","Çıxış kodunu","Saat siqnalını"],
+   hint:"Ardıcıl qurğuların əsas xüsusiyyəti: keçmiş (əvvəlki) informasiyanı saxlamaq. Bu onlara 'yaddaşlı' xarakter verir."},
+
+  {id:22, q:"Ardıcıl qurğularda daxili vəziyyət nə ilə formalaşır?",
+   opts:["Əvvəlki informasiya ilə","Yalnız giriş siqnalı ilə","Saat siqnalı ilə","Gücləndirici koeffisienti ilə"],
+   hint:"Daxili vəziyyət əvvəlki zaman anlarında olan girişlərə (informasiyaya) əsasən formalaşır. Bu yaddaş funksiyasını reallaşdırır."},
+
+  {id:23, q:"Mürəkkəb məntiqi ifadələrdə əməliyyatların yerinə yetirilmə ardıcıllığı (23-cü sual)?",
+   opts:["İnversiya, konyuksiya, dizunksiya","Dizunksiya, inversiya, konyuksiya","Konyuksiya, inversiya, dizunksiya","Hamısı eyni"],
+   hint:"Prioritet: NOT (inversiya) > AND (konyuksiya) > OR (dizunksiya). Riyaziyyatdakı mənfi işarə > vurma > toplama qaydasına oxşardır."},
+
+  {id:24, q:"000, 001, 010 ifadələri hansı anlayışa aiddir?",
+   opts:["Kod sözləri, ikilik kombinasiyalar","Onluq ədədlər","Məntiqi funksiyalar","Elektrik siqnalları"],
+   hint:"000, 001, 010 — yalnız 0 və 1-dən ibarət sabit uzunluqlu ardıcıllıqlardır. Bunlar 3-bitlik kod sözləridir (ikilik kombinasiyalar)."},
+
+  {id:25, q:"Məntiqi qurğular başqa necə adlanır?",
+   opts:["Rəqəmli qurğular","Analoq qurğular","Hibrid qurğular","Elektron qurğular"],
+   hint:"Məntiqi qurğular ikili (0/1) siqnallarla işləyir → rəqəmli qurğular da adlanır. 'Analoq' isə davamlı siqnallar üçün istifadə olunur."},
+
+  {id:26, q:"Çıxışın yalnız cari girişdən asılı olması hansı qurğuya aiddir?",
+   opts:["Kombinasiyalı qurğular","Ardıcıl qurğular","Qarışıq qurğular","Yaddaşlı qurğular"],
+   hint:"Yaddaşsız = kombinasiyalı. Çıxış yalnız 'indi' girişdən asılıdırsa → kombinasiyalı qurğu."},
+
+  {id:27, q:"Ardıcıl qurğuların əsas fərqləndirici xüsusiyyəti nədir?",
+   opts:["Yaddaşdan/daxili vəziyyətdən asılı olması","Sürəti yüksək olması","Enerji sərfinin az olması","Sxeminin sadə olması"],
+   hint:"Ardıcıl qurğuları kombinasiyalıdan fərqləndirən yeganə şey: daxili vəziyyətin (yaddaşın) mövcudluğu və ona asılılıq."},
+
+  {id:28, q:"Paralel qurğuda çıxış necə formalaşır?",
+   opts:["n simvolları eyni anda təşkil olunur","Simvollar bir-bir çıxır","Saat siqnalı ilə","Ardıcıl olaraq"],
+   hint:"Paralel = eyni anda. n bit eyni vaxtda çıxışa verilir. Ardıcıl qurğuda isə bitlər bir-bir, növbə ilə çıxır."},
+
+  {id:29, q:"Giriş ardıcıl, çıxış paralel olduqda qurğu necə adlanır?",
+   opts:["Qarışıq qurğular","Kombinasiyalı qurğu","Ardıcıl qurğu","Paralel qurğu"],
+   hint:"Giriş ardıcıl + çıxış paralel = iki müxtəlif üsulun birləşməsi → qarışıq qurğu. Registrlərdə bu prinsip tez-tez tətbiq olunur."},
+
+  {id:30, q:"RMF hansı qiymətləri qəbul edir?",
+   opts:["0 və 1","0-dan 9-a","A-dan Z-ə","−1 və +1"],
+   hint:"RMF = Rəqəmli Məntiqi Funksiya. 'Rəqəmli' sözü ikili sistemi bildirir: yalnız 0 və 1."},
+
+  {id:31, q:"Kod sözünün uzunluğu artdıqca kombinasiya sayı necə dəyişir?",
+   opts:["Eksponensial artır","Xətti artır","Dəyişmir","Azalır"],
+   hint:"n artdıqca 2ⁿ eksponensial böyüyür: n=1→2, n=2→4, n=3→8, n=4→16, n=10→1024. Bu xətti artım deyil!"},
+
+  {id:32, q:"Kombinasiyalı qurğular hansı informasiyanı saxlamır?",
+   opts:["Əvvəlki, keçmiş informasiyanı","Cari informasiyanı","Çıxış kodunu","Heç nəyi saxlamır"],
+   hint:"Kombinasiyalı = yaddaşsız. Keçmiş/əvvəlki məlumatı yadda saxlamır, yalnız cari girişə reaksiya verir."},
+
+  {id:33, q:"Ardıcıl qurğuda daxili vəziyyət nəyə təsir edir?",
+   opts:["Onlar özündə qurğunun əvvəlki vəziyyəti haqqında informasiyanı saxlayır","Yalnız cari çıxışa","Saat siqnalına","Giriş siqnalına"],
+   hint:"Daxili vəziyyət = yaddaş hüceyrəsi. Qurğunun tarixini (əvvəlki vəziyyətini) özündə saxlayır ki, sonrakı çıxış ondan asılı olsun."},
+
+  {id:34, q:"Kod sözləri əsasən hansı sistemə aiddir?",
+   opts:["2-lik say sisteminə","10-luq say sisteminə","16-lıq say sisteminə","8-lik say sisteminə"],
+   hint:"Kod sözləri yalnız 0 və 1 simvollarından qurulur → bu birbaşa 2-lik (ikili/binary) say sisteminin xüsusiyyətidir."},
+
+  {id:35, q:"Məntiqi qurğuların funksiyalaşdırma üsuluna görə neçə qrupu var?",
+   opts:["2","3","4","5"],
+   hint:"Funksiyalaşdırma üsuluna görə 2 qrup: kombinasiyalı (yaddaşsız) və ardıcıl (yaddaşlı) qurğular."},
+
+  {id:36, q:"Kod sözünün uzunluğu n=4 dərəcəli olarsa, neçə kod sözü qurmaq olar? (0000÷1111)",
+   opts:["16","8","32","4"],
+   hint:"2⁴ = 2×2×2×2 = 16. 4-bitlik kodlar: 0000-dan 1111-ə qədər, cəmi 16 müxtəlif kombinasiya."},
+
+  {id:37, q:"Kod sözünün uzunluğu n=5 dərəcəli olarsa, neçə kod sözü qurmaq olar? (00000÷11111)",
+   opts:["32","16","64","8"],
+   hint:"2⁵ = 32. 5-bitlik kodlar: 00000-dan 11111-ə qədər, cəmi 32 kombinasiya."},
+
+  {id:38, q:"Kod sözünün uzunluğu n=3 dərəcəli olarsa, neçə kod sözü qurmaq olar? (000÷111)",
+   opts:["8","4","16","6"],
+   hint:"2³ = 8. 3-bitlik kodlar: 000, 001, 010, 011, 100, 101, 110, 111 — cəmi 8 kombinasiya."},
+
+  {id:39, q:"Kod sözünün uzunluğu n=2 dərəcəli olarsa, neçə kod sözü qurmaq olar? (00÷11)",
+   opts:["4","2","8","16"],
+   hint:"2² = 4. 2-bitlik kodlar: 00, 01, 10, 11 — cəmi 4 kombinasiya."},
+
+  // ── 57–58 ─────────────────────────────────────────────────────────────────
+  {id:57, q:'"VƏ YA-YOX" əməliyyatı hansı ifadəni xarakterizə edir?',
+   opts:["Vebba funksiyası","Şeffer funksiyası","OR funksiyası","AND funksiyası"],
+   hint:"'VƏ YA-YOX' (AND-OR-NOT) birləşimi Vebb (Pirs) funksiyasıdır. Şeffer isə 'VƏ-YOX' (NAND) əməliyyatıdır. Bunları qarışdırmayın!"},
+
+  {id:58, q:"Məntiqi dizyunktor elementi hansıdır?",
+   opts:["OR (YA)","AND (VƏ)","NOT (YOX)","XOR (2-lik modula görə cəm)"],
+   hint:"Dizyunksiya = OR (YA) əməliyyatı. 'Konyyunksiya' AND-dir, 'İnversiya' NOT-dur. Dizyunktor → OR elementi."},
+
+  // ── 60 ────────────────────────────────────────────────────────────────────
+  {id:60, q:'Qrafiki işarəsi verilmiş "VƏ-VƏ YA" elementi hansı məntiqi ifadəni reallaşdırır?',
+   opts:["f = x̄·x + x·x̄","f = x + x","f = x·x","f = x̄ + x̄"],
+   hint:"'VƏ-VƏ YA' sxemi: iki AND qapısının çıxışları OR qapısına verilir. Burada hər AND-ə orijinal və inversiya siqnallar verilir: x̄·x + x·x̄."},
+
+  // ── 67–68 ─────────────────────────────────────────────────────────────────
+  {id:67, q:"Triggerlər hansı məntiq elementləri üzərində yığılır?",
+   opts:["VƏ, YOX, YA-YOX","Yalnız NOT","Yalnız AND","OR, XOR"],
+   hint:"Triggerlərin standart realizasiyası VƏ (AND), YOX (NOT) və YA-YOX (NOR/NAND) elementlərindən istifadə edir."},
+
+  {id:68, q:"İnteqral sxemli triggerlərin düz və inversiya çıxışları hansı simvolla işarə olunur?",
+   opts:["Q və Q̄ (Q-bar)","S və R","D və T","J və K"],
+   hint:"Bütün triggerlərdə standart işarələmə: Q = düz çıxış, Q̄ (Q-bar) = inversiya çıxışı. S, R, D, J, K isə giriş adlarıdır."},
+
+  // ── 77–84 ─────────────────────────────────────────────────────────────────
+  {id:77, q:"Sayğaclar hansı qurğuların üzərində qurulur?",
+   opts:["Triggerlərin üzərində","Registrlərin üzərində","Multipleksorların üzərində","Kodlaşdırıcıların üzərində"],
+   hint:"Sayğaclar trigger zəncirindən ibarətdir. Hər trigger bir bit vəziyyəti saxlayır, birlikdə ikili sayma həyata keçirilir."},
+
+  {id:78, q:"Sayğacların mərtəbələrin sayı nədən asılıdır?",
+   opts:["Triggerlərin sayından","Saat tezliyindən","Giriş siqnalından","Çıxış gərginliyindən"],
+   hint:"Hər trigger 1 mərtəbəyə (1 bit) uyğundur. n trigger = n mərtəbəli sayğac = 2ⁿ-ə qədər saya bilər."},
+
+  {id:79, q:"İşləmə prinsipinə görə sayğacların neçə növü var?",
+   opts:["2 (sadə və reversiv)","3","4","5"],
+   hint:"İşləmə prinsipinə görə 2 növ: sadə (yalnız bir istiqamətdə sayan) və reversiv (həm toplama, həm çıxma rejimli)."},
+
+  {id:80, q:"Sadə sayğacların neçə növü var?",
+   opts:["2","3","4","1"],
+   hint:"Sadə sayğacların 2 növü var: cəmləyici (toplama, yukarı sayan) və çıxan (aşağı sayan) sayğaclar."},
+
+  {id:81, q:"Reversiv sayğaclar hansılardır?",
+   opts:["Həm toplama, həm də çıxma rejimində işləyir","Yalnız toplama rejimli","Yalnız çıxma rejimli","Saat siqnalsız işləyir"],
+   hint:"'Reversiv' sözü 'tərsinə çevrilə bilən' deməkdir. Reversiv sayğac idarəetmə siqnalına görə həm artıra, həm azalda bilər."},
+
+  {id:82, q:"Cəmləyici kilik sayğac 0000-dan başlayıb. 4 impuls sonra Q1,Q2,Q3,Q4 kodu nədir?",
+   opts:["0100","0010","1000","0001"],
+   hint:"4 (onluq) = 0100 (ikili: 0×8 + 1×4 + 0×2 + 0×1). Q1=LSB (az əhəmiyyətli bit), Q4=MSB. 0000→0001→0010→0011→0100."},
+
+  {id:83, q:"Üç dərəcəli ikilik sayğacın maksimum saya biləcəyi ədədin qiyməti (n=3, N=?)",
+   opts:["7","8","15","6"],
+   hint:"n=3 bitli sayğac 0-dan 2³-1 = 7-ə qədər sayır. Maksimum dəyər = 2ⁿ-1 = 7 (111 ikili kod)."},
+
+  {id:84, q:"Dörd dərəcəli ikilik sayğacın maksimum saya biləcəyi ədədin qiyməti (n=4, N=?)",
+   opts:["15","16","8","7"],
+   hint:"n=4 bitli sayğac 0-dan 2⁴-1 = 15-ə qədər sayır. Maksimum = 15 (1111 ikili kod). 2⁴=16 isə kombinasiya sayıdır."},
+
+  // ── 86–100 ────────────────────────────────────────────────────────────────
+  {id:86, q:"Reversiv ikilik sayğacın toplama rejimində işləməsi üçün hansı şərtlər ödənilməlidir?",
+   opts:["İdarəetmə toplama vəziyyətindədir","İdarəetmə sıfır vəziyyətindədir","Saat siqnalı yoxdur","Giriş sıfır vəziyyətindədir"],
+   hint:"Reversiv sayğacda 'toplama-çıxma' idarəetmə girişi: məntiqi 1 → toplama rejimi, məntiqi 0 → çıxma rejimi."},
+
+  {id:87, q:"Reversiv ikilik sayğacın çıxma rejimində işləməsi üçün hansı şərtlər ödənilməlidir?",
+   opts:['"Toplama-çıxma" idarəetmə girişi sıxma vəziyyətindədir',"İdarəetmə toplama vəziyyətindədir","Bütün girişlər 1-dir","Saat siqnalı yoxdur"],
+   hint:"Çıxma rejimi üçün 'toplama-çıxma' idarəetmə girişi 0 (sıxma/aşağı) vəziyyətinə gətirilməlidir."},
+
+  {id:88, q:"Cəmləyici kilik sayğac 0000-dan başlayıb. 8 impuls sonra Q1,Q2,Q3,Q4 kodu nədir?",
+   opts:["1000","0100","0010","0001"],
+   hint:"8 (onluq) = 1000 (ikili). Q1=0 (LSB), Q2=0, Q3=0, Q4=1 (MSB). 0000→...→0111→1000."},
+
+  {id:89, q:"Cəmləyici kilik sayğac 0000-dan başlayıb. 7 impuls sonra Q1,Q2,Q3,Q4 kodu nədir?",
+   opts:["0111","1000","0110","1001"],
+   hint:"7 (onluq) = 0111 (ikili: 0+4+2+1). Q1=1, Q2=1, Q3=1, Q4=0. Bu 4-bitli sayğacın 8-dən əvvəlki son mərhələsidir."},
+
+  {id:90, q:"Cəmləyici kilik sayğac 0000-dan başlayıb. 6 impuls sonra Q1,Q2,Q3,Q4 kodu nədir?",
+   opts:["0110","0111","1000","0101"],
+   hint:"6 (onluq) = 0110 (ikili: 0+4+2+0). Q1=0, Q2=1, Q3=1, Q4=0."},
+
+  {id:91, q:"Dörd mərtəbəli reversiv ikilik sayğac toplama rejimində neçənci impulsda 0000 yazılır?",
+   opts:["16","8","32","4"],
+   hint:"4-bitli sayğac 0000-dan başlayıb 1111-ə (15) qədər sayır. 16-cı impulsdа daşma olur və 0000-a qayıdır (çevrilmə nöqtəsi)."},
+
+  {id:92, q:"Üç mərtəbəli reversiv ikilik sayğac toplama rejimində neçənci impulsda 000 yazılır?",
+   opts:["8","4","16","6"],
+   hint:"3-bitli sayğac 000-dan 111-ə (7-ə) qədər sayır. 8-ci impulsdа daşma olur və 000-a qayıdır."},
+
+  {id:93, q:"Sayğacın çıxış kodu 0110-dır. 3 impuls sonra Q1,Q2,Q3,Q4 neçə olur?",
+   opts:["1001","0111","1010","1000"],
+   hint:"0110 = 6 (onluq). 6 + 3 = 9. 9 (onluq) = 1001 (ikili). Q1=1, Q2=0, Q3=0, Q4=1."},
+
+  {id:94, q:"Registrlər hansı funksiyanı yerinə yetirir?",
+   opts:["Məlumatın sonlanması, qəbulu, emalı, sürüşdürülməsi","Yalnız məlumat saxlama","Yalnız toplamaq","Siqnalı gücləndirmək"],
+   hint:"Registrlər çoxfunksiyalıdır: məlumat qəbul edir, saxlayır, emal edir (sürüşdürmə əməliyyatı) və ötürür."},
+
+  {id:95, q:"Registrlər hansı qurğuların üzərində qurulur?",
+   opts:["Trigger","Sayğac","Dekoder","Multipleksor"],
+   hint:"Registrlər trigger (flip-flop) elementlərindən qurulur. Hər trigger 1 bit məlumat saxlayır, n trigger = n-bitli registr."},
+
+  {id:96, q:"Registrlərin mərtəbələrin sayı nədən asılıdır?",
+   opts:["Triggerlərin sayından","Saat tezliyindən","Giriş siqnalından","Gücləndirici koeffisientdən"],
+   hint:"Hər trigger = 1 mərtəbə (1 bit). 8 trigger = 8-bitli (1 bayt) registr. Mərtəbə sayı birbaşa trigger sayına bərabərdir."},
+
+  {id:97, q:"Registrlər işləmə prinsipinə görə neçə növü var?",
+   opts:["3: paralel, ardıcıl, qarışıq","2: sadə və mürəkkəb","4 növ","5 növ"],
+   hint:"Registrlərin 3 növü: paralel (bütün bitlər eyni anda), ardıcıl (bitlər bir-bir, sürüşmə registri) və qarışıq (kombinasiyalı)."},
+
+  {id:98, q:"Ardıcıl prinsipli registrlərdə neçə takt siqnalı tələb olunur?",
+   opts:["1","2","4","8"],
+   hint:"Ardıcıl registrdə n bit üçün n takt lazımdır? Xeyr — 1 takt siqnalı ilə bütün bitlər bir mövqe sürüşür (shift register)."},
+
+  {id:99, q:"Paralel prinsipli registrlərdə neçə takt siqnalı tələb olunur?",
+   opts:["1","2","4","8"],
+   hint:"Paralel registrdə bütün bitlər eyni anda (1 takt siqnalı ilə) yüklənir. Bu onu ardıcıl registrdən sürətli edir."},
+
+  {id:100, q:"Dörd dərəcəli sağa sürüşmə registrinə 1011 yazılıb. Bir dərəcə sağa sürüşmə sonra hansı kod formalaşır?",
+   opts:["0101","1010","1101","0110"],
+   hint:"Sağa sürüşmə: hər bit bir mövqe sağa keçir, sol tərəfdən 0 daxil olur. 1011 → 0101 (MSB-dən 0 əlavə olunur, LSB itir)."},
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+const LABELS = ['A','B','C','D'];
+let questions = [], answers = [], choices = [], current = 0;
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [b[i],b[j]] = [b[j],b[i]];
+  }
+  return b;
+}
+
+function buildQuestions() {
+  questions = RAW.map(r => {
+    const sh = shuffle(r.opts);
+    return { id: r.id, q: r.q, opts: sh, correct: sh.indexOf(r.opts[0]), hint: r.hint || '' };
+  });
+  answers = new Array(questions.length).fill(null);
+  choices = new Array(questions.length).fill(null);
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function renderDots() {
+  const nav = document.getElementById('dot-nav');
+  nav.innerHTML = '';
+  questions.forEach((q, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' +
+      (i === current      ? ' current' : '') +
+      (answers[i]==='ok'  ? ' ok'      : '') +
+      (answers[i]==='err' ? ' err'     : '');
+    d.textContent = q.id;
+    d.title = `Sual ${q.id}`;
+    d.onclick = () => { current = i; render(); };
+    nav.appendChild(d);
+  });
+}
+
+function updateProgress() {
+  const done = answers.filter(Boolean).length;
+  const tot  = questions.length;
+  const pct  = Math.round(done/tot*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent   = pct+'%';
+  document.getElementById('prog-label').textContent  = `Sual ${current+1} / ${tot}`;
+}
+
+function render() {
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+
+  questions.forEach((q, i) => {
+    const answered = answers[i] !== null;
+    const card = document.createElement('div');
+    card.className = 'question-card' + (i===current ? ' active' : '');
+
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">S${q.id}</div>
+        <div class="q-text">${q.q}</div>
+      </div>
+      <div class="options">
+        ${q.opts.map((opt, oi) => {
+          let cls = '';
+          if (answered) {
+            if (oi === q.correct)                              cls = ' correct';
+            else if (answers[i]==='err' && oi===choices[i])   cls = ' wrong';
+          }
+          return `<button class="option-btn${cls}"
+                    data-qi="${i}" data-oi="${oi}"
+                    ${answered ? 'disabled' : ''}>
+                    <span class="opt-label">${LABELS[oi]}</span>${opt}
+                  </button>`;
+        }).join('')}
+      </div>
+      <div class="feedback ${answered ? 'show '+(answers[i]==='ok'?'correct-fb':'wrong-fb') : ''}">
+        ${answered
+          ? (answers[i]==='ok'
+              ? '✅ Düzgün cavabdır!'
+              : `❌ Yanlışdır. Düzgün cavab: <b>${q.opts[q.correct]}</b>`)
+          : ''}
+      </div>
+      ${q.hint ? `
+      <div class="hint-wrap">
+        <button class="hint-btn" onclick="toggleHint(this)">💡 İpucu göstər</button>
+        <div class="hint-box">${q.hint}</div>
+      </div>` : ''}
+      <div class="nav-btns">
+        ${i>0
+          ? `<button class="btn btn-ghost" onclick="goTo(${i-1})">← Əvvəlki</button>`
+          : ''}
+        ${i < questions.length-1
+          ? `<button class="btn btn-primary" onclick="goTo(${i+1})">Növbəti →</button>`
+          : `<button class="btn btn-primary" onclick="showResult()">📊 Nəticəni Gör</button>`}
+      </div>`;
+    area.appendChild(card);
+  });
+
+  // bind clicks
+  document.querySelectorAll('.option-btn:not([disabled])').forEach(btn => {
+    btn.addEventListener('click', () => handleAnswer(+btn.dataset.qi, +btn.dataset.oi));
+  });
+
+  renderDots();
+  updateProgress();
+}
+
+function handleAnswer(qi, oi) {
+  choices[qi]  = oi;
+  answers[qi]  = oi === questions[qi].correct ? 'ok' : 'err';
+  answers[qi]==='ok' ? playOk() : playErr();
+  render();
+}
+
+function goTo(i) { current = i; render(); }
+
+function toggleHint(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.classList.toggle('show');
+  btn.textContent = open ? '💡 İpucunu gizlət' : '💡 İpucu göstər';
+}
+
+// ── RESULT ───────────────────────────────────────────────────────────────────
+function showResult() {
+  document.getElementById('quiz-area').style.display           = 'none';
+  document.getElementById('dot-nav').style.display             = 'none';
+  document.querySelector('.progress-bar-wrap').style.display   = 'none';
+
+  const ok  = answers.filter(a=>a==='ok').length;
+  const err = answers.filter(a=>a==='err').length;
+  const tot = questions.length;
+  const pct = Math.round(ok/tot*100);
+
+  document.getElementById('res-correct').textContent = ok;
+  document.getElementById('res-wrong').textContent   = err;
+  document.getElementById('res-total').textContent   = tot;
+  document.getElementById('res-pct').textContent     = pct+'%';
+
+  const [title, sub] = pct>=90
+    ? ['🏆 Əla Nəticə!',   'Materialı mükəmməl bilirsiniz. Möhtəşəm iş!']
+    : pct>=70
+    ? ['👍 Yaxşı Nəticə',  'Yaxşı bilirsiniz, bir az daha çalışın!']
+    : pct>=50
+    ? ['📚 Orta Nəticə',   'Materialı yenidən nəzərdən keçirin.']
+    : ['💪 Daha Çox Çalış','Narahat olmayın! Materialı yenidən öyrənin.'];
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-sub').textContent   = sub;
+  document.getElementById('result-screen').style.display = 'block';
+
+  const circ = 408.41;
+  const ring = document.getElementById('ring-fill');
+  ring.style.stroke = pct>=70 ? '#10b981' : pct>=50 ? '#f59e0b' : '#ef4444';
+  setTimeout(() => { ring.style.strokeDashoffset = circ*(1-pct/100); }, 80);
+}
+
+function restartQuiz() {
+  buildQuestions();
+  current = 0;
+  document.getElementById('result-screen').style.display         = 'none';
+  document.getElementById('quiz-area').style.display             = 'block';
+  document.getElementById('dot-nav').style.display               = 'flex';
+  document.querySelector('.progress-bar-wrap').style.display     = 'block';
+  render();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+buildQuestions();
+render();
+</script>
+</body>
+</html>
