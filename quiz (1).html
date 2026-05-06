@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kompüter Bilikləri Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink-light: #fce4ec;
+    --pink-soft: #f8bbd0;
+    --pink-main: #e91e8c;
+    --pink-deep: #c2185b;
+    --pink-pale: #fff0f6;
+    --pink-card: #fff5fa;
+    --accent: #ff4da6;
+    --correct: #2e7d32;
+    --correct-bg: #e8f5e9;
+    --wrong: #c62828;
+    --wrong-bg: #ffebee;
+    --text: #2d0a1f;
+    --text-soft: #6b3454;
+    --shadow: 0 8px 32px rgba(233,30,140,0.13);
+    --radius: 18px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 40%, #ffd6ec 80%, #fff0f6 100%);
+    min-height: 100vh;
+    color: var(--text);
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255,77,166,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(233,30,140,0.10) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 16px 60px;
+    position: relative; z-index: 1;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+    animation: fadeDown 0.7s ease both;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--pink-deep), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  header p {
+    color: var(--text-soft);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  /* Progress Bar */
+  .progress-wrap {
+    background: rgba(255,255,255,0.6);
+    border-radius: 50px;
+    height: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(233,30,140,0.1);
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink-deep), var(--accent));
+    border-radius: 50px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.82rem; color: var(--text-soft);
+    font-weight: 600; margin-bottom: 22px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--pink-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow), 0 2px 0 var(--pink-soft);
+    padding: 36px 36px 28px;
+    margin-bottom: 22px;
+    animation: slideUp 0.45s cubic-bezier(.4,0,.2,1) both;
+    border: 1.5px solid rgba(233,30,140,0.10);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--pink-deep), var(--accent));
+  }
+  .question-num {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.32rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option-btn {
+    background: white;
+    border: 2px solid var(--pink-soft);
+    border-radius: 12px;
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.97rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(.4,0,.2,1);
+    display: flex; align-items: center; gap: 12px;
+    position: relative; overflow: hidden;
+  }
+  .option-btn .opt-letter {
+    min-width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--pink-light);
+    color: var(--pink-deep);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.22s;
+    flex-shrink: 0;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--pink-pale);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(233,30,140,0.12);
+  }
+  .option-btn:hover:not(:disabled) .opt-letter {
+    background: var(--accent);
+    color: white;
+  }
+  .option-btn.correct {
+    background: var(--correct-bg);
+    border-color: var(--correct);
+    color: var(--correct);
+    animation: popIn 0.35s cubic-bezier(.4,0,.2,1);
+  }
+  .option-btn.correct .opt-letter {
+    background: var(--correct);
+    color: white;
+  }
+  .option-btn.wrong {
+    background: var(--wrong-bg);
+    border-color: var(--wrong);
+    color: var(--wrong);
+    animation: shake 0.4s ease;
+  }
+  .option-btn.wrong .opt-letter {
+    background: var(--wrong);
+    color: white;
+  }
+  .option-btn:disabled { cursor: not-allowed; }
+
+  /* Hint */
+  .hint-wrap { margin-top: 18px; }
+  .hint-btn {
+    background: none;
+    border: 1.5px dashed var(--pink-main);
+    border-radius: 8px;
+    color: var(--pink-main);
+    padding: 7px 16px;
+    font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hint-btn:hover { background: var(--pink-light); }
+  .hint-text {
+    display: none;
+    background: linear-gradient(135deg, #fff0f6, #fce4ec);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 0.88rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+  }
+  .hint-text.visible { display: block; }
+
+  /* Navigation */
+  .nav-row {
+    display: flex; gap: 12px; justify-content: center; align-items: center;
+    margin-top: 8px;
+  }
+  .nav-btn {
+    background: white;
+    border: 2px solid var(--pink-soft);
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover:not(:disabled) {
+    border-color: var(--pink-main);
+    color: var(--pink-main);
+    background: var(--pink-pale);
+  }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--pink-deep), var(--accent));
+    border-color: transparent;
+    color: white;
+    padding: 10px 32px;
+    box-shadow: 0 4px 16px rgba(233,30,140,0.3);
+  }
+  .nav-btn.primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(233,30,140,0.38);
+    color: white;
+    background: linear-gradient(135deg, var(--pink-deep), var(--accent));
+  }
+
+  /* Feedback toast */
+  .feedback-toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
+    background: white;
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    z-index: 100;
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    display: flex; align-items: center; gap: 8px;
+    border: 2px solid transparent;
+  }
+  .feedback-toast.show { transform: translateX(-50%) translateY(0); }
+  .feedback-toast.correct-toast { border-color: var(--correct); color: var(--correct); }
+  .feedback-toast.wrong-toast { border-color: var(--wrong); color: var(--wrong); }
+
+  /* Results */
+  .results-card {
+    background: var(--pink-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px 36px;
+    text-align: center;
+    animation: slideUp 0.5s ease both;
+    border: 1.5px solid rgba(233,30,140,0.12);
+    display: none;
+  }
+  .results-card.visible { display: block; }
+  .score-circle {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-deep), var(--accent));
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 32px rgba(233,30,140,0.35);
+    color: white;
+  }
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; font-weight: 900; line-height: 1;
+  }
+  .score-label { font-size: 0.85rem; font-weight: 600; opacity: 0.85; }
+  .results-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 900;
+    color: var(--pink-deep); margin-bottom: 8px;
+  }
+  .results-sub { color: var(--text-soft); margin-bottom: 28px; font-size: 0.97rem; }
+
+  .wrong-list { text-align: left; }
+  .wrong-list h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: var(--wrong); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .wrong-item {
+    background: var(--wrong-bg);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--wrong);
+  }
+  .wrong-item .wi-q {
+    font-weight: 600; font-size: 0.88rem; color: var(--text); margin-bottom: 5px;
+  }
+  .wrong-item .wi-correct {
+    font-size: 0.85rem; color: var(--correct); font-weight: 600;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .restart-btn {
+    background: linear-gradient(135deg, var(--pink-deep), var(--accent));
+    border: none; border-radius: 14px;
+    color: white; padding: 14px 40px;
+    font-size: 1rem; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; cursor: pointer;
+    margin-top: 24px;
+    box-shadow: 0 4px 16px rgba(233,30,140,0.3);
+    transition: all 0.2s;
+  }
+  .restart-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(233,30,140,0.4); }
+
+  /* Decorative */
+  .deco { position: fixed; pointer-events: none; z-index: 0; }
+  .deco-1 { top: -60px; right: -60px; width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(233,30,140,0.15), transparent 70%);
+    border-radius: 50%; }
+  .deco-2 { bottom: -80px; left: -60px; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,77,166,0.12), transparent 70%);
+    border-radius: 50%; }
+
+  /* Animations */
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-24px); } to { opacity:1; transform:none; } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:none; } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
+  @keyframes popIn {
+    0%{transform:scale(1)}
+    50%{transform:scale(1.025)}
+    100%{transform:scale(1)}
+  }
+
+  @media(max-width:600px){
+    .card { padding: 24px 16px 20px; }
+    .results-card { padding: 28px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="deco deco-1"></div>
+<div class="deco deco-2"></div>
+
+<div class="feedback-toast" id="toast"></div>
+
+<div class="container">
+  <header>
+    <h1>💻 Kompüter Bilikləri</h1>
+    <p>Biliyin nə qədərdir? Test et!</p>
+  </header>
+
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress-label">
+    <span id="progressText">Sual 1 / 60</span>
+    <span id="scoreText">✔ 0 &nbsp;✘ 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question-num" id="qNum">SUAL 1</div>
+    <div class="question-text" id="qText"></div>
+    <div class="options" id="optionsWrap"></div>
+    <div class="hint-wrap">
+      <button class="hint-btn" id="hintBtn" onclick="toggleHint()">💡 İpucu göstər</button>
+      <div class="hint-text" id="hintBox"></div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" onclick="goTo(current-1)">← Geri</button>
+    <button class="nav-btn primary" id="nextBtn" onclick="goTo(current+1)">İrəli →</button>
+    <button class="nav-btn primary" id="finishBtn" onclick="showResults()" style="display:none">Bitir ✓</button>
+  </div>
+
+  <div class="results-card" id="resultsCard">
+    <div class="score-circle">
+      <div class="score-num" id="scoreNum"></div>
+      <div class="score-label">xal</div>
+    </div>
+    <div class="results-title" id="resultTitle"></div>
+    <div class="results-sub" id="resultSub"></div>
+    <div class="wrong-list" id="wrongList"></div>
+    <button class="restart-btn" onclick="restartQuiz()">🔄 Yenidən Başla</button>
+  </div>
+</div>
+
+<script>
+const allQuestions = [
+  // ANA PLATA
+  { q: "Ana platanın əsas funksiyası nədir?", opts: ["Enerji idarəsi", "Kompüterin bütün komponentlərini bir-birinə bağlayan əsas dövrə lövhəsi", "Məlumatı daimi saxlamaq", "Görüntü emalı"], ans: 1, hint: "Şinlər vasitəsilə prosessor, RAM, video kart, disk cihazları arasında məlumat mübadiləsini təmin edir." },
+  { q: "Ana plata üzərindəki Soket (Socket) nədir?", opts: ["RAM-ın qoşulduğu yuva", "Prosessorun ana plataya fiziki olaraq qoşulduğu yuva", "USB giriş portu", "Güc ötürücü bağlantı"], ans: 1, hint: "Intel LGA1700, AMD AM5 kimi hər soket yalnız müəyyən prosessor modellərini dəstəkləyir." },
+  { q: "ATX, Micro-ATX kimi anlayışlar nəyi ifadə edir?", opts: ["Prosessor növü", "Yaddaş standartı", "Ana platanın fiziki ölçüsünü — Form-faktor", "Şin tezliyi"], ans: 2, hint: "ATX tam ölçülü, Micro-ATX daha kiçik, Mini-ITX ən kompakt formatdır. Korpusa uyğunluq vacibdir." },
+  // ŞİNLƏR
+  { q: "Sistem şini ötürmə sürəti hansı vahidlə ölçülür?", opts: ["GHz", "MB/s və ya GT/s", "Watt", "nm"], ans: 1, hint: "MB/s — Meqabayt/saniyə, GT/s — Giqatransfer/saniyə." },
+  { q: "Ünvan şini (Address Bus) nə daşıyır?", opts: ["Məlumatın özünü", "Enerji siqnalını", "Məlumatın yaddaşda harada olduğu ünvanı", "Saat impulslarını"], ans: 2, hint: "Məlumat şini məlumatın özünü daşıyır; ünvan şini isə məlumatın yerini göstərir." },
+  { q: "64-bit şin 32-bit şindən nə ilə üstündür?", opts: ["Daha az enerji sərfiyyatı", "Hər dövrdə 2 dəfə çox bit ötürür", "Daha uzun məsafəyə ötürür", "Daha ucuzdur"], ans: 1, hint: "Bit eni nə qədər geniş olsa, şinin məhsuldarlığı bir o qədər yüksək olur." },
+  // PROSESSOR
+  { q: "Prosessorun takt tezliyi hansı vahidlə ölçülür?", opts: ["MB/s", "Watt", "GHz", "nm"], ans: 2, hint: "GHz — Giqahertz, saniyədə icra olunan əməliyyat sayını göstərir." },
+  { q: "ALU (Hesab-Məntiq Qurğusu) nə edir?", opts: ["Proqram təlimatlarını oxuyur", "Riyazi hesablamalar və məntiqi əməliyyatlar icra edir", "Məlumatı diskdə saxlayır", "Şəbəkə paketlərini idarə edir"], ans: 1, hint: "ALU: +, −, ×, ÷ və AND, OR, NOT əməliyyatları. CU isə prosessorun 'dirijoru'dur." },
+  { q: "Hyper-Threading texnologiyası nə edir?", opts: ["Nüvə sayını fiziki olaraq artırır", "Hər fiziki nüvəni 2 məntiqi nüvə kimi göstərir", "RAM-ı sürətləndirir", "Keş yaddaşını genişləndirir"], ans: 1, hint: "4 fiziki nüvəli prosessor Hyper-Threading ilə 8 məntiqi nüvə kimi çalışır." },
+  // KÖRPÜLƏR
+  { q: "Şimal körpüsü (Northbridge) hansı komponentləri idarə edir?", opts: ["USB, SATA, audio portları", "RAM, prosessor və video kart", "Klave, maus, skaner", "Printer, modem, şəbəkə"], ans: 1, hint: "Şimal körpüsü yüksək sürətli komponentləri — RAM, CPU, GPU idarə edir." },
+  { q: "Cənub körpüsü (Southbridge) hansı portlara cavabdehdir?", opts: ["PCIe, RAM, prosessor", "USB, SATA, PCI, audio, BIOS", "HDMI, DisplayPort, VGA", "L1, L2, L3 keş"], ans: 1, hint: "Cənub körpüsü daha yavaş, daxiletmə-xaricetmə portlarına cavabdehdir." },
+  { q: "Müasir prosessorlarda Şimal körpüsü funksiyaları hara köçürülüb?", opts: ["Cənub körpüsünə", "Prosessorun daxilinə", "Ana platanın ayrıca çipinə", "RAM moduluna"], ans: 1, hint: "Bunun nəticəsində gecikmə azalır, sürət artır, enerji sərfiyyatı aşağı düşür." },
+  // PORTLAR
+  { q: "USB 3.0 portunun sürəti nə qədərdir və hansı rəngdədir?", opts: ["480 Mbit/s, qara", "5 Gbit/s, mavi", "10 Gbit/s, qırmızı", "20 Gbit/s, sarı"], ans: 1, hint: "USB 2.0: 480 Mbit/s, ağ/qara; USB 3.0: 5 Gbit/s, mavi; USB 3.1 Gen 2: 10 Gbit/s." },
+  { q: "HDMI portu hansı tip siqnal daşıyır?", opts: ["Yalnız analoq video", "Həm video həm audio daşıyan rəqəmsal siqnal", "Yalnız audio", "Şəbəkə siqnalı"], ans: 1, hint: "VGA analoq, HDMI və DisplayPort rəqəmsaldır. HDMI TV və monitorlar üçün geniş istifadə olunur." },
+  { q: "RJ-45 portunun funksiyası nədir?", opts: ["Audio çıxışı", "Video ötürücü", "Ethernet (kabel şəbəkəsi) qoşulması", "USB uzatma"], ans: 2, hint: "RJ-45 LAN şəbəkəsi vasitəsilə 100 Mbit/s-dən 10 Gbit/s-ə qədər dəstəkləyir." },
+  // RAM
+  { q: "RAM niyə 'müvəqqəti' yaddaş hesab olunur?", opts: ["Kiçik tutumlu olduğu üçün", "Kompüter söndürüldükdə məlumatlar tamamilə silindiyi üçün", "Yavaş oxuma sürəti olduğu üçün", "Yalnız oxumaq üçün olduğu üçün"], ans: 1, hint: "RAM yalnız elektrik enerjisi olduğu müddətdə məlumatı saxlayır — volatile yaddaşdır." },
+  { q: "DDR5 RAM standartının sürəti necədir?", opts: ["800–2133 MT/s", "2133–5333 MT/s", "4800–8400+ MT/s", "100–400 MT/s"], ans: 2, hint: "DDR3: 800–2133; DDR4: 2133–5333; DDR5: 4800–8400+ MT/s." },
+  { q: "RAM az olduqda sistemdə nə baş verir?", opts: ["Ekran parlaqlaşır", "Əməliyyat sistemi HDD/SSD-dən virtual yaddaş kimi istifadə edir, sistem yavaşlayır", "Prosessor tezliyi artır", "İnternet sürəti azalır"], ans: 1, hint: "Swap/paging əməliyyatı sistemi əhəmiyyətli dərəcədə yavaşladır, donmalar baş verir." },
+  // ROM
+  { q: "ROM yaddaşında hansı proqram saxlanılır?", opts: ["Microsoft Word", "BIOS/UEFI proqramı", "İnternet brauzeri", "Oyun faylları"], ans: 1, hint: "Kompüter yandırıldığında əvvəlcə ROM oxunur, BIOS işə düşür, POST aparılır." },
+  { q: "POST (Power-On Self-Test) nədir?", opts: ["Kompüteri söndürmə prosesi", "ROM-dakı BIOS-un kompüter açılışında apardığı özü-özünü yoxlama", "RAM-ın formatlanması", "Disk bölgüsü əməliyyatı"], ans: 1, hint: "POST prosessor, RAM, klaviatura kimi komponentləri yoxlayır. Xəta olsa beep kodu verir." },
+  { q: "EEPROM nədir?", opts: ["Köhnə ROM növü, yazılamaz", "Elektrik siqnalı ilə silinib yenidən yazıla bilən ROM növü", "Yalnız audio saxlayan yaddaş", "Prosessor daxilindəki registr"], ans: 1, hint: "Müasir BIOS/UEFI çipləri EEPROM əsasında hazırlanır. Flash yaddaş da EEPROM növüdür." },
+  // KAŞ YADDAŞ
+  { q: "L1 keş yaddaşı harda yerləşir?", opts: ["Ana platada ayrıca çipdə", "Prosessor nüvəsinin daxilində", "RAM modulunda", "HDD-nin buffer yaddaşında"], ans: 1, hint: "L1 ən sürətli və kiçikdir (KB). L2 nüvəyə yaxın, L3 bütün nüvələr tərəfindən paylaşılır." },
+  { q: "Keş yaddaş hansı texnologiyadan istifadə edir?", opts: ["DRAM", "NAND Flash", "SRAM", "EEPROM"], ans: 2, hint: "SRAM hər bit üçün 6 tranzistor tələb edir — bahalı, sürətli. DRAM 1T+1C — ucuz, yavaş." },
+  { q: "CMOS yaddaşı enerjisini haradan alır?", opts: ["USB portundan", "Ana platadakı CR2032 düymə batareyasından", "Prosessordakı kondansatordan", "Şəbəkə kartından"], ans: 1, hint: "Batareya çıxarılsa BIOS tənzimləmələri və sistem saatı sıfırlanır." },
+  // HDD
+  { q: "HDD-də məlumat necə yazılır?", opts: ["Lazer ilə optik üzərə", "Maqnit sahəsini dəyişdirərək fırlanan disklərin üzərinə", "Elektrik yükü ilə flash hüceyrələrə", "Rəqəmsal siqnal ilə keramik üzərə"], ans: 1, hint: "Oxuma/yazma başlığı diskə toxunmur, çox yaxın məsafədə üzərindən keçir." },
+  { q: "HDD-nin 7200 rpm-i nəyi göstərir?", opts: ["Məlumat ötürmə sürəti", "Diskin dəqiqəlik fırlanma sayı", "Buffer yaddaşının ölçüsü", "SATA sürəti"], ans: 1, hint: "RPM nə qədər yüksək olsa, məlumata çatma sürəti bir o qədər yüksəkdir." },
+  { q: "HDD-nin Sektoru nədir?", opts: ["Bütün diskin ümumi sahəsi", "Cığırın bölündüyü hissəciklər (adətən 512 bayt/4 KB)", "Fayl sisteminin idarə etdiyi klaster", "Diskin fiziki lövhəsi"], ans: 1, hint: "Cığır → Sektor → Klaster. Klaster bir neçə sektorun birləşməsidir." },
+  // SSD
+  { q: "M.2 NVMe SSD SATA SSD-dən nə ilə üstündür?", opts: ["Daha ucuzdur", "PCIe şini üzərindən işləyib 3000–7000+ MB/s sürət verir", "Daha böyük tutumludur", "Daha az enerji sərfiyyatı var"], ans: 1, hint: "SATA SSD max ~550 MB/s; M.2 NVMe SSD 3000–7000+ MB/s sürətə çatır." },
+  { q: "SSD-nin HDD-yə nisbətən əsas çatışmazlığı nədir?", opts: ["Daha yavaş sürət", "Daha böyük fiziki ölçü", "Eyni tutum üçün daha bahalı olması", "Mexaniki hissə olması"], ans: 2, hint: "SSD yazma əməliyyatlarının sayı limitlidir (ömür) və eyni tutum üçün HDD-dən bahalıdır." },
+  { q: "Flash yaddaş hansı texnologiya əsasında işləyir?", opts: ["Maqnit disk texnologiyası", "NAND Flash — floating-gate tranzistorları", "Optik lazer texnologiyası", "Elektromaqnit induksiya"], ans: 1, hint: "USB fləşlər, SSD-lər və yaddaş kartları NAND Flash texnologiyasından istifadə edir." },
+  // OPTİK DİSKLƏR
+  { q: "CD diskinin tutumu nə qədərdir?", opts: ["4.7 GB", "700 MB", "25 GB", "8.5 GB"], ans: 1, hint: "CD: ~700 MB; DVD: 4.7 GB; Blu-ray: 25 GB (tək lay)." },
+  { q: "Blu-ray disk DVD-dən çox məlumat saxlaya bilir, çünki:", opts: ["Daha böyük fiziki ölçüdədir", "Daha qısa dalğa uzunluqlu mavi lazer istifadə edir", "İki tərəflidir", "Daha yavaş fırlanır"], ans: 1, hint: "Mavi lazer daha sıx məlumat yazmağa imkan verir — buna görə Blu-ray adlanır." },
+  { q: "Optik disklərin istifadəsini azaldan əsas amil nədir?", opts: ["Yüksək qiymət", "İnternet sürətinin artması, bulud xidmətlər və USB/SSD-lərin yayılması", "Tutumun artması", "Lazer texnologiyasının köhnəlməsi"], ans: 1, hint: "Spotify, Netflix, Steam, bulud xidmətlər optik diskləri əvəz etdi." },
+  // PERİFERİYA
+  { q: "Mausun qoşulma üsulları hansılardır?", opts: ["Yalnız PS/2", "USB, Bluetooth, 2.4 GHz radio (nano-dongle)", "Yalnız USB", "HDMI və USB"], ans: 1, hint: "USB ən geniş yayılmış, PS/2 köhnə, Bluetooth simsiz qoşulma üsullarıdır." },
+  { q: "Skanerin DPI göstəricisi nəyi ifadə edir?", opts: ["Saniyəlik skanlama sürəti", "Hər düymdəki nöqtə sayı — görüntü keyfiyyəti", "Skanerin ölçüsü", "USB sürəti"], ans: 1, hint: "DPI nə qədər yüksək olsa, görüntü bir o qədər ətraflı və keyfiyyətli olur." },
+  { q: "Qrafik planşetin siçandan əsas fərqi nədir?", opts: ["Kompüterə USB ilə qoşulur", "Təzyiq həssaslığı və qələm bucağını tanıma imkanı var", "Daha ucuzdur", "Simsiz işləyir"], ans: 1, hint: "Qrafik planşet rəssamlar, dizaynerlər üçündür; stilusun təzyiz həssaslığı var." },
+  { q: "Lazer printer şırnaqlı printerdən nə ilə fərqlənir?", opts: ["Lazer mürəkkəb, şırnaqlı toner işlədır", "Lazer toner tozu işlədir, sürətlidir; şırnaqlı mürəkkəb işlədır, foto çapda üstündür", "Lazer rəngli çap edə bilmir", "Şırnaqlı daha sürətlidir"], ans: 1, hint: "Lazer ofis üçün, şırnaqlı ev/foto üçün, matrisli anbar/kassa üçündür." },
+  { q: "Plotter printerdən nə ilə fərqlənir?", opts: ["Daha az toner işlədir", "Böyük formatda (A1, A0) vektor çizimləri çap edir", "Daha sürətli çap edir", "Yalnız qara-ağ çap edir"], ans: 1, hint: "Plotter memarlar, mühəndislər üçündür; standart kağız yerinə böyük vərəqlərə çap edir." },
+  { q: "IPS matrisli monitor TN matrisindən nə ilə üstündür?", opts: ["Daha sürətli cavab vaxtı var", "Geniş görüş bucağı və dəqiq rəng göstərməsi", "Daha ucuzdur", "Daha yüksək yenilənmə tezliyi"], ans: 1, hint: "IPS — dəqiq rəng, geniş görüş; VA — yüksək kontrast; TN — ən sürətli cavab." },
+  { q: "Monitor yenilənmə tezliyi nə üçün vacibdir?", opts: ["Rəng dəqiqliyini artırır", "Saniyədə neçə kərə ekranın yeniləndiğini göstərir; yüksək Hz oyunlarda hamar görüntü verir", "Enerji sərfiyyatını azaldır", "Ekran ölçüsünü böyüdür"], ans: 1, hint: "60 Hz standart, 144–360 Hz oyun monitorları üçündür." },
+  { q: "Modem niyə həm daxiletmə, həm xaricetmə qurğusudur?", opts: ["Yalnız internet alır", "Şəbəkədən siqnal alır (daxiletmə) və şəbəkəyə məlumat göndərir (xaricetmə)", "Yalnız şəbəkəyə göndərir", "Klaviatura kimi işləyir"], ans: 1, hint: "Modem bidirectional qurğudur: həm qəbul edir, həm göndərir." },
+  { q: "TV-tuner qurğusu kompüteri nəyə çevirir?", opts: ["Skaner cihazına", "Televizora; kanalları izləmək və yazmaq imkanı verir", "Projektora", "Oyun konsoluna"], ans: 1, hint: "TV-tuner USB və ya PCIe vasitəsilə qoşulur, time-shift imkanı verir." },
+  { q: "Touchpad və Touchscreen arasındakı fərq nədir?", opts: ["Hər ikisi birbaşa ekrana toxunur", "Touchpad kursoru idarə edir, ekrana toxunmur; Touchscreen ekranın özüdür", "Touchscreen yalnız telefonlarda olur", "Touchpad daha dəqiqdir"], ans: 1, hint: "Touchpad noutbukda barmaq hərəkəti ilə kursoru idarə edir." },
+  { q: "Drayver (Driver) nədir?", opts: ["Qurğunun daxili güc mənbəyi", "Əməliyyat sistemi ilə periferiya qurğusu arasında tərcüman proqramı", "RAM-ın idarə proqramı", "BIOS-un bir hissəsi"], ans: 1, hint: "Drayver olmadan əməliyyat sistemi qurğunu tanımır və idarə edə bilmir." },
+  // YADDAŞ NÖVLƏRİ
+  { q: "SRAM (Statik RAM) DRAM-dan nə ilə fərqlənir?", opts: ["SRAM daha ucuz və böyük tutumludur", "SRAM yeniləmə tələb etmir, sürətlidir, bahalıdır; keş üçün istifadə olunur", "SRAM disklərdə istifadə olunur", "SRAM enerjidən asılıdır"], ans: 1, hint: "SRAM keş, DRAM operativ yaddaş üçün istifadə olunur." },
+  { q: "Registr yaddaş harda yerləşir?", opts: ["Ana platada", "HDD-nin daxilində", "Prosessorun ən daxilindəki ən sürətli yaddaş", "RAM modulunda"], ans: 2, hint: "ALU hesablamalar apararkən verilənləri müvəqqəti olaraq registrlərdə saxlayır." },
+  { q: "Kompüter söndürüldükdə hansı yaddaş məlumatlarını saxlayır?", opts: ["Yalnız RAM", "HDD, SSD, ROM və CMOS saxlayır; RAM silinir", "Yalnız registrlər", "Yalnız keş yaddaş"], ans: 1, hint: "RAM və registrlər volatile (enerjidən asılı) yaddaşdır — söndürüldükdə silinir." },
+  { q: "HDD-nin Buffer (Keş) yaddaşının funksiyası nədir?", opts: ["Sistemin açılış fayllarını saxlamaq", "Tez-tez oxunan məlumatları müvəqqəti saxlayaraq disk başlığına müraciəti azaltmaq", "BIOS tənzimləmələrini saxlamaq", "Şəbəkə paketlərini buferlərə bölmək"], ans: 1, hint: "HDD-nin daxilindəki kiçik DRAM yaddaşıdır (8–256 MB)." },
+  // ÖLÇÜ VAHİDLƏRİ
+  { q: "Tutum vahidlərini kiçikdən böyüyə düzün:", opts: ["TB → GB → MB → KB", "KB → MB → GB → TB → PB", "PB → TB → GB → MB", "MB → GB → KB → TB"], ans: 1, hint: "Bit → Bayt → KB → MB → GB → TB → PB → EB." },
+  // BULUD VƏ XARİCİ YADDAş
+  { q: "Bulud yaddaşın fiziki yaddaşdan ən böyük üstünlüyü nədir?", opts: ["Daha sürətlidir", "İnternet olan hər yerdən, istənilən cihazdan əlçatanlıq", "Daha ucuzdur", "Daha böyük tutumludur"], ans: 1, hint: "İtirmə, oğurlanma, yanğın risklərindən qorunur; avtomatik sinxronlaşdırılır." },
+  { q: "MicroSD kartın əsas məqsədi nədir?", opts: ["Telefonu şarj etmək", "Cihazın daxili yaddaşını artırmaq; foto, video, proqram saxlamaq", "İnternet qoşulması", "Batareya ömrünü uzatmaq"], ans: 1, hint: "MicroSD tutumu 2 GB-dan 1 TB-a qədər olur." },
+  { q: "SSD-li kompüter HDD-ə nisbətən niyə daha tez açılır?", opts: ["Prosessor daha sürətlidir", "SSD-nin oxuma sürəti HDD-dən 5-10 dəfə yüksəkdir", "RAM daha böyükdür", "BIOS daha yeni versiyadadır"], ans: 1, hint: "SSD ilə 10-20 saniyə, HDD ilə 1-2 dəqiqə çəkə bilər." },
+  { q: "Xarici disk (External Drive) hansı portla qoşulur?", opts: ["HDMI", "VGA", "USB 3.0", "RJ-45"], ans: 2, hint: "Xarici disk portativ saxlama qurğusudur, backup və böyük fayl daşıma üçündür." },
+  { q: "DisplayPort HDMI-dan nə ilə fərqlənir?", opts: ["DisplayPort yalnız analoqdur", "DisplayPort daha yüksək sürət, çox monitor (daisy-chain) dəstəkləyir", "HDMI daha yüksək keyfiyyət verir", "Fərq yoxdur"], ans: 1, hint: "DisplayPort professional istifadə üçündür, HDMI TV/monitorlar üçün geniş yayılmışdır." },
+  // ƏLAVƏ SUALLAR
+  { q: "Prosessorun litografiyası (nm) nəyi göstərir?", opts: ["Prosessorun fiziki ölçüsünü sm-lə", "Tranzistor ölçüsünü — nm nə qədər kiçik olsa texnologiya o qədər inkişaflıdır", "İşçi tezliyini", "Keş ölçüsünü"], ans: 1, hint: "TDP — istilik qoyma gücü; litografiya — tranzistor ölçüsü (nm)." },
+  { q: "HDD fırlanarkən 'klik-klik' səsi nəyin əlamətidir?", opts: ["Normal iş səsi", "Disk xətası əlaməti", "Oxuma sürəti artanda çıxan səs", "Buffer yaddaşının dolma səsi"], ans: 1, hint: "Xırıltı/vızıltı normaldır, lakin klik-klik/qaşıma səsi ciddi xəta əlamətidir." },
+  { q: "Mini-ITX form-faktoru nədir?", opts: ["ATX-dən böyük format", "Micro-ATX ilə eyni ölçü", "Ən kompakt ana plata formatı", "Yalnız server ana platası üçündür"], ans: 2, hint: "ATX tam ölçülü → Micro-ATX kiçik → Mini-ITX ən kompakt." },
+  { q: "Kompüterə eyni anda birdən çox disk qoşmaq olurmu?", opts: ["Xeyr, yalnız bir disk dəstəklənir", "Bəli; SSD-yə OS/proqramlar, HDD-yə media faylları yerləşdirilə bilər", "Yalnız eyni markadan iki disk", "Yalnız iki SSD birlikdə işləyə bilər"], ans: 1, hint: "Əksər kompüterlərdə eyni anda birdən çox disk qoşmaq mümkündür." },
+  { q: "Məntiqi disklər (C:, D:) nə üçün yaradılır?", opts: ["Disk sürətini artırmaq üçün", "OS-i məlumatlardan ayırmaq, müxtəlif fayl sistemləri, məlumat qoruması üçün", "RAM-ı artırmaq üçün", "Virus qoruması üçün"], ans: 1, hint: "Bölmə (partition) bir fiziki diskin bölündüyü virtual hissədir." },
+  { q: "Mikrofon hansı növ çevirmə əməliyyatı edir?", opts: ["Rəqəmsalı analoqa", "Görüntünü rəqəmsala", "Analoq səs siqnalını rəqəmsal formaya", "Video siqnalını audio siqnalına"], ans: 2, hint: "Mikrofon və veb-kamera hər ikisi analoq məlumatı rəqəmsala çevirən daxiletmə qurğularıdır." },
+  { q: "Matrisli (dot matrix) printer hansı sahədə istifadə olunur?", opts: ["Foto studiyasında", "Ev istifadəsində", "Kassa, anbar və bank sistemlərində çox nüsxəli çap üçün", "3D çap üçün"], ans: 2, hint: "Matrisli printer lent və iynə mexanizmi ilə işləyir, karbon kağız ilə çox nüsxə çapa bilir." },
+  { q: "CU (İdarəetmə Qurğusu) prosessorda nə edir?", opts: ["Riyazi hesablamalar aparır", "Məntiqi əməliyyatlar icra edir", "Proqram təlimatlarını oxuyur, şərh edir, komponentlərə tapşırıq verir", "RAM-a məlumat yazır"], ans: 2, hint: "CU prosessorun 'dirijoru'dur; ALU isə hesablamalar icra edir." },
+];
+
+let current = 0;
+let userAnswers = Array(allQuestions.length).fill(null);
+let correctCount = 0;
+let wrongCount = 0;
+
+function shuffleOptions(q) {
+  // Returns shuffled options with correct index tracked
+  const indices = [0,1,2,3];
+  for(let i=indices.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [indices[i],indices[j]]=[indices[j],indices[i]];
+  }
+  const newOpts = indices.map(i=>q.opts[i]);
+  const newAns = indices.indexOf(q.ans);
+  return {opts: newOpts, ans: newAns};
+}
+
+// Precompute shuffled options per question (once)
+const shuffled = allQuestions.map(q => shuffleOptions(q));
+
+function render() {
+  const q = allQuestions[current];
+  const sh = shuffled[current];
+  const total = allQuestions.length;
+
+  document.getElementById('qNum').textContent = `SUAL ${current+1}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressBar').style.width = `${((current+1)/total)*100}%`;
+  document.getElementById('progressText').textContent = `Sual ${current+1} / ${total}`;
+  document.getElementById('scoreText').innerHTML = `✔ ${correctCount} &nbsp;✘ ${wrongCount}`;
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  sh.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.disabled = userAnswers[current] !== null;
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    if(userAnswers[current] !== null) {
+      if(i === sh.ans) btn.classList.add('correct');
+      else if(i === userAnswers[current] && userAnswers[current] !== sh.ans) btn.classList.add('wrong');
+    }
+    btn.onclick = () => selectAnswer(i, sh.ans);
+    wrap.appendChild(btn);
+  });
+
+  // Hint
+  document.getElementById('hintBox').textContent = q.hint;
+  document.getElementById('hintBox').classList.remove('visible');
+  document.getElementById('hintBtn').textContent = '💡 İpucu göstər';
+
+  // Nav
+  document.getElementById('prevBtn').disabled = current === 0;
+  const isLast = current === total-1;
+  document.getElementById('nextBtn').style.display = isLast ? 'none' : '';
+  document.getElementById('finishBtn').style.display = isLast ? '' : 'none';
+
+  // Card animation
+  const card = document.getElementById('quizCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'slideUp 0.38s cubic-bezier(.4,0,.2,1) both';
+}
+
+function selectAnswer(chosen, correct) {
+  if(userAnswers[current] !== null) return;
+  userAnswers[current] = chosen;
+  
+  const isCorrect = chosen === correct;
+  if(isCorrect) correctCount++; else wrongCount++;
+  
+  // Sound
+  playSound(isCorrect);
+
+  // Toast
+  showToast(isCorrect);
+
+  // Re-render to show highlight
+  render();
+  document.getElementById('scoreText').innerHTML = `✔ ${correctCount} &nbsp;✘ ${wrongCount}`;
+}
+
+function playSound(isCorrect) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(isCorrect) {
+      // Happy ding
+      [523,659,784].forEach((freq,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.frequency.value=freq;
+        o.type='sine';
+        g.gain.setValueAtTime(0.18,ctx.currentTime+i*0.1);
+        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.1+0.3);
+        o.start(ctx.currentTime+i*0.1);
+        o.stop(ctx.currentTime+i*0.1+0.3);
+      });
+    } else {
+      // Wrong buzz
+      [200,180].forEach((freq,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.frequency.value=freq;
+        o.type='sawtooth';
+        g.gain.setValueAtTime(0.1,ctx.currentTime+i*0.15);
+        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.25);
+        o.start(ctx.currentTime+i*0.15);
+        o.stop(ctx.currentTime+i*0.15+0.3);
+      });
+    }
+  } catch(e){}
+}
+
+function showToast(isCorrect) {
+  const t = document.getElementById('toast');
+  t.className = 'feedback-toast ' + (isCorrect ? 'correct-toast' : 'wrong-toast');
+  t.innerHTML = isCorrect ? '✅ Düzgün cavab!' : '❌ Səhv cavab!';
+  t.classList.add('show');
+  setTimeout(()=>{ t.classList.remove('show'); }, 1800);
+}
+
+function toggleHint() {
+  const box = document.getElementById('hintBox');
+  const btn = document.getElementById('hintBtn');
+  box.classList.toggle('visible');
+  btn.textContent = box.classList.contains('visible') ? '🙈 İpucunu gizlət' : '💡 İpucu göstər';
+}
+
+function goTo(idx) {
+  if(idx < 0 || idx >= allQuestions.length) return;
+  current = idx;
+  render();
+}
+
+function showResults() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.querySelector('.nav-row').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.querySelector('.progress-label').style.display = 'none';
+
+  const res = document.getElementById('resultsCard');
+  res.classList.add('visible');
+
+  const total = allQuestions.length;
+  const pct = Math.round((correctCount/total)*100);
+  document.getElementById('scoreNum').textContent = `${correctCount}/${total}`;
+
+  let title, sub;
+  if(pct>=90){title='🌟 Əla!';sub='Sən kompüter bilikləri ustasısan!';}
+  else if(pct>=70){title='👍 Yaxşı!';sub='Çox yaxşı nəticə, bir az daha çalış!';}
+  else if(pct>=50){title='📚 Orta';sub='Bilikləri daha da möhkəmlətmək lazımdır.';}
+  else{title='💪 Çalış!';sub='Mövzuları yenidən oxu və yenidən cəhd et!';}
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent = sub;
+
+  // Wrong answers
+  const wrongItems = [];
+  allQuestions.forEach((q,i)=>{
+    const sh = shuffled[i];
+    if(userAnswers[i] !== null && userAnswers[i] !== sh.ans) {
+      wrongItems.push({q: q.q, correct: sh.opts[sh.ans]});
+    } else if(userAnswers[i] === null) {
+      wrongItems.push({q: q.q, correct: sh.opts[sh.ans], skipped: true});
+    }
+  });
+
+  const wl = document.getElementById('wrongList');
+  if(wrongItems.length===0){
+    wl.innerHTML='<p style="color:var(--correct);font-weight:700;text-align:center;font-size:1.1rem">🎉 Bütün sualları doğru cavablandırdın!</p>';
+  } else {
+    wl.innerHTML = `<h3>❌ Səhv / Cavabsız Suallar (${wrongItems.length})</h3>` +
+      wrongItems.map(w=>`<div class="wrong-item">
+        <div class="wi-q">${w.skipped?'⏭ Keçildi: ':''}${w.q}</div>
+        <div class="wi-correct">✅ Doğru cavab: ${w.correct}</div>
+      </div>`).join('');
+  }
+}
+
+function restartQuiz() {
+  current = 0;
+  userAnswers = Array(allQuestions.length).fill(null);
+  correctCount = 0;
+  wrongCount = 0;
+
+  document.getElementById('resultsCard').classList.remove('visible');
+  document.getElementById('quizCard').style.display = '';
+  document.querySelector('.nav-row').style.display = '';
+  document.querySelector('.progress-wrap').style.display = '';
+  document.querySelector('.progress-label').style.display = '';
+
+  render();
+}
+
+// Init
+render();
+</script>
+</body>
+</html>
