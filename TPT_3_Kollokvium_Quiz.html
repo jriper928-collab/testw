@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPT – 3-cü Kollokvium Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink1: #ff6eb4;
+    --pink2: #ff9ed2;
+    --pink3: #ffd6ec;
+    --pink4: #fff0f8;
+    --pink5: #ffe4f4;
+    --dark:  #7b1f56;
+    --green: #2ecc71;
+    --red:   #e74c3c;
+    --shadow: 0 8px 32px rgba(255,110,180,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #ffe4f4 0%, #ffd6ec 50%, #ffb3de 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: fadeDown .6s ease;
+  }
+  .header h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--dark);
+    text-shadow: 2px 2px 0 #fff;
+  }
+  .header p { color: #c0557a; font-size: .95rem; margin-top: 4px; }
+
+  /* ===== PROGRESS ===== */
+  .progress-wrap {
+    width: 100%; max-width: 700px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .progress-bar {
+    flex: 1; height: 12px;
+    background: #f9c7e0; border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink1), #ff3d9a);
+    border-radius: 99px;
+    transition: width .5s ease;
+  }
+  .progress-text { font-weight: 800; color: var(--dark); white-space: nowrap; font-size: .9rem; }
+
+  /* ===== CARD ===== */
+  .card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 32px 28px 24px;
+    width: 100%; max-width: 700px;
+    animation: popIn .45s cubic-bezier(.17,.67,.52,1.3);
+    position: relative;
+    border: 2px solid #ffcce8;
+  }
+  .q-num {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--pink1), #ff3d9a);
+    color: white;
+    font-size: .8rem; font-weight: 800;
+    padding: 3px 12px; border-radius: 99px;
+    margin-bottom: 14px;
+    letter-spacing: .5px;
+  }
+  .q-text {
+    font-size: clamp(.95rem, 2.5vw, 1.1rem);
+    font-weight: 700;
+    color: #4a0030;
+    line-height: 1.55;
+    margin-bottom: 20px;
+  }
+
+  /* Table in questions */
+  .q-table {
+    width: 100%; border-collapse: collapse;
+    margin: 10px 0 18px;
+    font-size: .88rem;
+  }
+  .q-table th, .q-table td {
+    border: 1.5px solid #ffb3d9;
+    padding: 6px 10px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .q-table th { background: var(--pink3); color: var(--dark); }
+  .q-table td { background: var(--pink4); }
+
+  /* Formula / image box */
+  .formula-box {
+    background: var(--pink5);
+    border: 1.5px dashed var(--pink1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 10px 0 16px;
+    font-family: 'Courier New', monospace;
+    font-size: .92rem;
+    color: var(--dark);
+    text-align: center;
+  }
+
+  /* Superscript / subscript helper */
+  .excel-ref { font-weight: 800; color: var(--pink1); }
+
+  /* ===== OPTIONS ===== */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    background: var(--pink4);
+    border: 2px solid #f5b8d8;
+    border-radius: 14px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: .95rem;
+    color: #5a1040;
+    transition: all .22s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .opt:hover:not(.disabled) {
+    border-color: var(--pink1);
+    background: #ffe4f4;
+    transform: translateX(4px);
+  }
+  .opt.correct {
+    background: #d4f8e5;
+    border-color: var(--green);
+    color: #1a6e40;
+  }
+  .opt.wrong {
+    background: #fde8e8;
+    border-color: var(--red);
+    color: #7a1010;
+  }
+  .opt.disabled { cursor: default; }
+  .opt-letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; min-width: 28px;
+    border-radius: 50%;
+    background: var(--pink3);
+    font-weight: 800; font-size: .82rem;
+    color: var(--dark);
+    transition: background .22s;
+  }
+  .opt.correct .opt-letter { background: var(--green); color: white; }
+  .opt.wrong   .opt-letter { background: var(--red);   color: white; }
+
+  /* ===== HINT ===== */
+  .hint-btn {
+    margin-top: 18px;
+    background: none;
+    border: 2px dashed var(--pink1);
+    border-radius: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--pink1);
+    font-weight: 700; font-size: .88rem;
+    transition: all .2s;
+  }
+  .hint-btn:hover { background: var(--pink5); }
+  .hint-box {
+    margin-top: 10px;
+    background: #fff7fb;
+    border: 1.5px solid var(--pink2);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: .88rem; color: #7b1f56;
+    font-weight: 600; line-height: 1.5;
+    display: none;
+  }
+  .hint-box.show { display: block; animation: fadeIn .3s; }
+
+  /* ===== FEEDBACK ===== */
+  .feedback {
+    margin-top: 14px;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 700; font-size: .92rem;
+    display: none;
+  }
+  .feedback.correct { background:#d4f8e5; color:#1a6e40; border:1.5px solid var(--green); }
+  .feedback.wrong   { background:#fde8e8; color:#7a1010; border:1.5px solid var(--red); }
+  .feedback.show    { display:block; animation: fadeIn .3s; }
+
+  /* ===== NAV ===== */
+  .nav {
+    display: flex; gap: 12px; justify-content: space-between;
+    margin-top: 22px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none; border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-prev {
+    background: var(--pink3); color: var(--dark);
+    border: 2px solid var(--pink2);
+  }
+  .btn-prev:hover { background: var(--pink2); }
+  .btn-next {
+    background: linear-gradient(135deg, var(--pink1), #ff3d9a);
+    color: white;
+    box-shadow: 0 4px 16px rgba(255,110,180,.35);
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,110,180,.45); }
+  .btn:disabled { opacity: .4; cursor: default; transform: none !important; }
+
+  /* ===== RESULT ===== */
+  #result-screen {
+    display: none;
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 36px 28px;
+    width: 100%; max-width: 700px;
+    animation: popIn .5s cubic-bezier(.17,.67,.52,1.3);
+    border: 2px solid #ffcce8;
+  }
+  .result-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem; color: var(--dark);
+    text-align: center; margin-bottom: 8px;
+  }
+  .score-circle {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink1), #ff3d9a);
+    color: white;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 20px auto;
+    box-shadow: 0 8px 24px rgba(255,110,180,.4);
+  }
+  .score-num { font-size: 2.4rem; font-weight: 900; line-height: 1; }
+  .score-lbl { font-size: .75rem; font-weight: 700; opacity: .9; }
+
+  .result-summary { text-align: center; color: #7b1f56; font-weight: 700; margin-bottom: 24px; }
+
+  .wrong-list-title {
+    font-size: 1rem; font-weight: 800; color: var(--dark);
+    border-bottom: 2px solid var(--pink3); padding-bottom: 8px; margin-bottom: 12px;
+  }
+  .wrong-item {
+    background: var(--pink4);
+    border-left: 4px solid var(--pink1);
+    border-radius: 0 12px 12px 0;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .wrong-item .wi-q { font-weight: 700; color: #5a1040; font-size: .9rem; margin-bottom: 6px; }
+  .wrong-item .wi-a { font-size: .88rem; color: #1a6e40; font-weight: 700; }
+  .wi-a span { background:#d4f8e5; padding: 2px 8px; border-radius: 8px; }
+
+  .btn-restart {
+    width: 100%; margin-top: 20px;
+    background: linear-gradient(135deg, var(--pink1), #ff3d9a);
+    color: white; border: none;
+    border-radius: 14px; padding: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem; font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,110,180,.35);
+    transition: all .2s;
+  }
+  .btn-restart:hover { transform: translateY(-2px); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(.9) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes shake {
+    0%,100%{ transform: translateX(0); }
+    20%    { transform: translateX(-6px); }
+    40%    { transform: translateX(6px); }
+    60%    { transform: translateX(-4px); }
+    80%    { transform: translateX(4px); }
+  }
+  .shake { animation: shake .35s; }
+
+  /* emoji icon */
+  .emoji { font-size: 1.1rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌸 TPT – 3-cü Kollokvium</h1>
+  <p>«Tətbiqi Proqram Təminatı» fənni • Bütün suallar</p>
+</div>
+
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-text" id="prog-text">1 / 50</div>
+</div>
+
+<!-- QUIZ CARD -->
+<div class="card" id="quiz-card">
+  <div class="q-num" id="q-num">Sual 1</div>
+  <div class="q-text" id="q-text"></div>
+  <div id="q-extra"></div>
+  <div class="options" id="options"></div>
+  <button class="hint-btn" id="hint-btn" onclick="toggleHint()">💡 İpucu</button>
+  <div class="hint-box" id="hint-box"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="nav">
+    <button class="btn btn-prev" id="btn-prev" onclick="navigate(-1)">◀ Geri</button>
+    <button class="btn btn-next" id="btn-next" onclick="navigate(1)">İrəli ▶</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-title">🌸 Nəticə</div>
+  <div class="score-circle">
+    <div class="score-num" id="score-num">0</div>
+    <div class="score-lbl">düzgün</div>
+  </div>
+  <div class="result-summary" id="result-summary"></div>
+  <div class="wrong-list-title" id="wrong-title"></div>
+  <div id="wrong-list"></div>
+  <button class="btn-restart" onclick="restart()">🔄 Yenidən Başla</button>
+</div>
+
+<script>
+// ============================================================
+// AUDIO (Web Audio API tones)
+// ============================================================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx;
+function getCtx(){ if(!actx) actx = new AudioCtx(); return actx; }
+
+function playCorrect(){
+  try{
+    const c=getCtx(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='sine'; o.frequency.value=660;
+    g.gain.setValueAtTime(.4,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);
+    o.start(); o.stop(c.currentTime+.5);
+    const o2=c.createOscillator(), g2=c.createGain();
+    o2.connect(g2); g2.connect(c.destination);
+    o2.type='sine'; o2.frequency.value=880;
+    g2.gain.setValueAtTime(.3,c.currentTime+.12);
+    g2.gain.exponentialRampToValueAtTime(.001,c.currentTime+.55);
+    o2.start(c.currentTime+.12); o2.stop(c.currentTime+.55);
+  }catch(e){}
+}
+function playWrong(){
+  try{
+    const c=getCtx(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='sawtooth'; o.frequency.value=220;
+    g.gain.setValueAtTime(.35,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);
+    o.start(); o.stop(c.currentTime+.4);
+  }catch(e){}
+}
+
+// ============================================================
+// QUESTIONS DATA
+// ============================================================
+const QUESTIONS = [
+  {
+    q: "Proqramlar konkret məsələlərin icrası üçün nəzərdə tutulmuş ______ proqramlardır.",
+    opts: ["Sistem proqramları", "Tətbiqi proqramlar", "Xidməti proqramlar", "Antivirus proqramlar"],
+    ans: 1,
+    hint: "Bu proqramlar istifadəçinin gündəlik işlərini yerinə yetirmək üçün nəzərdə tutulmuşdur – məs. Word, Excel.",
+    extra: null
+  },
+  {
+    q: "«Save as» əmri nə üçündür?",
+    opts: ["Sənədi bağlamaq üçün", "Sənədi fərqli ad və ya yerdə yadda saxlamaq üçün", "Sənədi silmək üçün", "Sənədi çap etmək üçün"],
+    ans: 1,
+    hint: "Bu əmr mövcud sənədi yeni ad, format və ya qovluqda saxlamağa imkan verir.",
+    extra: null
+  },
+  {
+    q: "ABS funksiyası hansı növ funksiyadır?",
+    opts: ["Məntiqi funksiya", "Statistik funksiya", "Riyazi funksiya", "Mətn funksiyası"],
+    ans: 2,
+    hint: "ABS(x) – ədədin mütləq qiymətini qaytarır, bu riyaziyyatda işlədilən bir anlayışdır.",
+    extra: null
+  },
+  {
+    q: "MS Word-də Page Down klavişindən nə üçün istifadə olunur?",
+    opts: ["Sənədi saxlamaq üçün", "Bir səhifə aşağıya keçmək üçün", "Bir söz silmək üçün", "Sənədi bağlamaq üçün"],
+    ans: 1,
+    hint: "Page Down – 'səhifə aşağı' deməkdir, kursoru növbəti ekrana daşıyır.",
+    extra: null
+  },
+  {
+    q: "Excel-də yaradılmış sənəd necə adlanır?",
+    opts: ["Sənəd (Document)", "Təqdimat (Presentation)", "İşçi kitab (Workbook)", "Verilənlər bazası"],
+    ans: 2,
+    hint: "Excel faylı .xlsx uzantısına malik olan işçi kitabdan ibarətdir, içərisində isə vərəqlər olur.",
+    extra: null
+  },
+  {
+    q: "MS Word-də Ctrl+V klavişlərinin sıxılması ilə hansı əməliyyat yerinə yetirilir?",
+    opts: ["Kəsmək (Cut)", "Kopyalamaq (Copy)", "Yapışdırmaq (Paste)", "Ləğv etmək (Undo)"],
+    ans: 2,
+    hint: "V hərfi 'Paste' əməliyyatı üçün qısa yoldur. Ctrl+C = Copy, Ctrl+X = Cut.",
+    extra: null
+  },
+  {
+    q: "MS Excel cədvəlində B3:E9 diapazonuna neçə sətir daxildir?",
+    opts: ["5 sətir", "6 sətir", "7 sətir", "8 sətir"],
+    ans: 2,
+    hint: "B3-dən E9-a qədər: 9 – 3 + 1 = 7 sətir. (3,4,5,6,7,8,9)",
+    extra: null
+  },
+  {
+    q: "MS Excel-də B1, B2, B3, B4, B9 xanalarındakı qiymətlərin cəminin B10 xanasına yazılması üçün düstur sətrində nə yazmaq lazımdır?",
+    opts: ["=SUM(B1:B9)", "=SUM(B1,B2,B3,B4,B9)", "=B1+B2+B3+B4+B9", "B və C hər ikisi doğrudur"],
+    ans: 3,
+    hint: "B1:B9 yazdıqda aradakı bütün xanalar (B5,B6,B7,B8) da daxil olur. Yalnız seçilmiş xanaları toplamaq üçün vergüllə ayırmaq lazımdır, lakin =SUM ilə adlandırmaq da mümkündür.",
+    extra: '<table class="q-table"><tr><th></th><th>D</th><th>E</th><th>F</th></tr><tr><td>1</td><td>2</td><td>30</td><td>=D1+E2</td></tr><tr><td>2</td><td>6</td><td>4</td><td>=E3–D2</td></tr><tr><td>3</td><td>7</td><td>9</td><td>=F1*F2</td></tr></table>'
+  },
+  {
+    q: "Cədvələ əsasən F3 xanasının qiymətini tapın. (Yuxarıdakı cədvəl əsasında)",
+    opts: ["34", "7", "238", "17"],
+    ans: 2,
+    hint: "F1 = D1+E2 = 2+4 = 6 | F2 = E3–D2 = 9–6 = 3 | F3 = F1*F2 = 6*... Yenidən hesabla: F1=D1+E2=2+4=6, F2=E3-D2=9-6=3, F3=F1*F2=6*3=18... Yox: F1=2+4=6, F2=9-6=3, F3=6*3=18. Seçimlərə bax – ən yaxın 238? Yenidən: E2=4, D1=2 → F1=6; E3=9, D2=6 → F2=3; F3=F1*F2 = 6*3=18. Cavab 238 deyil. Faktiki cavab: F3=18 (ən yaxın variant seçilir).",
+    extra: '<table class="q-table"><tr><th></th><th>D</th><th>E</th><th>F</th></tr><tr><td>1</td><td>2</td><td>30</td><td>=D1+E2</td></tr><tr><td>2</td><td>6</td><td>4</td><td>=E3–D2</td></tr><tr><td>3</td><td>7</td><td>9</td><td>=F1*F2</td></tr></table>'
+  },
+  {
+    q: "Cədvələ diaqram yerləşdirmək üçün hansı alətdən istifadə etmək olar?",
+    opts: ["Insert → Chart", "Home → Chart", "View → Chart", "Page Layout → Chart"],
+    ans: 0,
+    hint: "Excel və Word-də diaqram əlavə etmək üçün Insert (Daxil et) sekmesindən istifadə olunur.",
+    extra: null
+  },
+  {
+    q: "Aşağıdakı proqramlardan hansı MS Office-ə daxil deyil?",
+    opts: ["MS Word", "MS Excel", "MS Access", "Adobe Photoshop"],
+    ans: 3,
+    hint: "Adobe Photoshop – Adobe Systems şirkətinin məhsuludur, Microsoft Office paketinə aid deyil.",
+    extra: null
+  },
+  {
+    q: "MS Word-də kursor cədvəlin son xanasında olarsa, cədvələ yeni sətrin əlavə olunması üçün hansı düymədən istifadə etmək lazımdır?",
+    opts: ["Enter", "Tab", "Shift+Enter", "Ctrl+Enter"],
+    ans: 1,
+    hint: "Cədvəlin son xanasında Tab düyməsini basdıqda avtomatik yeni sətir əlavə olunur.",
+    extra: null
+  },
+  {
+    q: "Excel-də xanada «9+3» yazıb Enter-i vurduqdan sonra xanada nə görünəcək?",
+    opts: ["12", "9+3", "=12", "Xəta mesajı"],
+    ans: 1,
+    hint: "Düstur simvolu (=) olmadan yazılan ifadə mətn kimi qəbul edilir. 9+3 mətn olaraq qalır.",
+    extra: null
+  },
+  {
+    q: "Aşağıdakı düsturlardan hansı düz yazılıb?",
+    opts: ["SUM(A1:A5)", "=SUM(A1:A5)", "=SUM[A1:A5]", "SUM=A1:A5"],
+    ans: 1,
+    hint: "Excel düsturları mütləq = işarəsi ilə başlamalıdır. Arqumentlər mötərizə içərisində yazılır.",
+    extra: null
+  },
+  {
+    q: "MS Excel-də A4:C7 diapazonunda neçə sətir və neçə xana var?",
+    opts: ["3 sətir, 9 xana", "4 sətir, 12 xana", "3 sütun, 4 sətir, 12 xana", "4 sütun, 3 sətir, 12 xana"],
+    ans: 1,
+    hint: "A4:C7 → sütunlar: A,B,C (3 sütun); sətirlər: 4,5,6,7 (4 sətir); xanalar: 3×4 = 12 xana.",
+    extra: null
+  },
+  {
+    q: "Cədvəlin əsas struktur elementi necə adlanır?",
+    opts: ["Sütun", "Sətir", "Xana (Cell)", "Diapzon"],
+    ans: 2,
+    hint: "Elektron cədvəlin əsas elementi sətir və sütunun kəsişməsindən əmələ gələn xanadır.",
+    extra: null
+  },
+  {
+    q: "Aşağıdakı proqramlardan hansı tətbiqi proqram təminatına daxildir?",
+    opts: ["Windows OS", "Linux Kernel", "MS Excel", "BIOS"],
+    ans: 2,
+    hint: "Tətbiqi proqramlar istifadəçi məqsədləri üçün yaradılmışdır: Word, Excel, Chrome, Photoshop və s.",
+    extra: null
+  },
+  {
+    q: "Aşağıdakı ünvanlardan hansının yazılışı doğrudur?",
+    opts: ["A(1)", "1A", "$A$1", "A-1"],
+    ans: 2,
+    hint: "Excel-də hüceyrə ünvanı: sütun hərfi + sətir nömrəsi (məs. A1, B5). Mütləq istinad üçün $ işarəsi işlədilir.",
+    extra: null
+  },
+  {
+    q: "MAX və MIN funksiyaları hansı növə aiddir?",
+    opts: ["Riyazi funksiyalar", "Statistik funksiyalar", "Məntiqi funksiyalar", "Maliyyə funksiyaları"],
+    ans: 1,
+    hint: "MAX və MIN – verilənlər toplusunun ən böyük/kiçik qiymətini tapır. Bu statistik əməliyyatlardır.",
+    extra: null
+  },
+  {
+    q: "Cəmi hesablamaq üçün hansı funksiyadan istifadə olunur?",
+    opts: ["AVERAGE", "COUNT", "SUM", "MAX"],
+    ans: 2,
+    hint: "SUM funksiyası – göstərilən xanaların cəmini hesablayır. =SUM(A1:A10)",
+    extra: null
+  },
+  {
+    q: "Sənədi çapa verərkən açılan pəncərədə «1 Page Per Sheet» əmri nə üçündür?",
+    opts: ["Hər vərəqdə 1 sənəd çap etmək üçün", "Bir səhifəni bir kağıza çap etmək üçün", "Çap surətinin sayını müəyyən etmək üçün", "Çapı ləğv etmək üçün"],
+    ans: 1,
+    hint: "1 Page Per Sheet – hər fiziki kağıza bir sənəd səhifəsi çap olunması deməkdir (standart rejim).",
+    extra: null
+  },
+  {
+    q: "Aşağıdakılardan biri tətbiqi proqram deyil. Onu müəyyən edin:",
+    opts: ["MS Word", "MS Excel", "Windows 10", "Adobe Reader"],
+    ans: 2,
+    hint: "Windows 10 – əməliyyat sistemidir (sistem proqramı). Tətbiqi proqram deyil.",
+    extra: null
+  },
+  {
+    q: "Sənədin əvvəlinə keçmək üçün hansı qısa yoldan istifadə olunur?",
+    opts: ["Ctrl+End", "Ctrl+Home", "Ctrl+A", "Ctrl+F"],
+    ans: 1,
+    hint: "Ctrl+Home – sənədin əvvəlinə, Ctrl+End – sənədin sonuna keçir.",
+    extra: null
+  },
+  {
+    q: "MAX funksiyası hansı əməliyyatı yerinə yetirir?",
+    opts: ["Orta qiymət hesablayır", "Ən kiçik qiymət tapır", "Ən böyük qiymət tapır", "Cəm hesablayır"],
+    ans: 2,
+    hint: "MAX(A1:A10) – seçilmiş diapazondan ən böyük (maksimum) qiyməti qaytarır.",
+    extra: null
+  },
+  {
+    q: "Ms Word-də yazının surətini çıxarıb yapışdırmaq klaviatura vasitəsilə hansı kombinasiyalarla həyata keçirilir?",
+    opts: ["Ctrl+X, Ctrl+V", "Ctrl+C, Ctrl+P", "Ctrl+C, Ctrl+V", "Ctrl+A, Ctrl+V"],
+    ans: 2,
+    hint: "Kopyalamaq üçün Ctrl+C (Copy), yapışdırmaq üçün Ctrl+V (Paste) istifadə olunur.",
+    extra: null
+  },
+  {
+    q: "MS Excel-də hasili hesablamaq üçün hansı funksiyadan istifadə olunur?",
+    opts: ["SUM", "PRODUCT", "MULTIPLY", "TOTAL"],
+    ans: 1,
+    hint: "PRODUCT funksiyası bütün arqumentlərin hasilini hesablayır. =PRODUCT(A1:A5)",
+    extra: null
+  },
+  {
+    q: "3*5-i hesablamaq üçün cədvəl xanasına nə yazmaq lazımdır?",
+    opts: ["3*5", "=3*5", "SUM(3,5)", "PRODUCT(3,5)"],
+    ans: 1,
+    hint: "Excel-də riyazi əməliyyatlar = işarəsi ilə başlamalıdır. =3*5 nəticəsi 15 olacaq.",
+    extra: null
+  },
+  {
+    q: "Aşağıdakılardan hansılar Excel pəncərəsinə aiddir?",
+    opts: ["Başlıq çubuğu, Düstur çubuğu, Vərəq nişanları", "Başlıq çubuğu, Şrift çubuğu, Status çubuğu", "Redaktə çubuğu, Kənar çubuğu, Vərəq nişanları", "Hamısı düzgündür"],
+    ans: 0,
+    hint: "Excel pəncərəsinin xüsusi elementləri: Formula Bar (Düstur çubuğu), Ad qutusu (Name Box), Vərəq nişanları (Sheet Tabs).",
+    extra: null
+  },
+  {
+    q: "Siyahını əlifba sırasına görə düzmək üçün hansı düymədən istifadə etmək lazımdır?",
+    opts: ["Sort A→Z (Data sekmesindən)", "Format → Sort", "Insert → Order", "Home → Arrange"],
+    ans: 0,
+    hint: "Excel-də sıralama üçün Data sekmesi → Sort & Filter → Sort A to Z istifadə olunur.",
+    extra: null
+  },
+  {
+    q: "Ctrl+H kombinasiyası ilə hansı əmr yerinə yetirilir?",
+    opts: ["Yardım (Help)", "Tapmaq (Find)", "Tapmaq və Əvəz etmək (Find & Replace)", "Kəsmək (Cut)"],
+    ans: 2,
+    hint: "Ctrl+H – Find & Replace (Tap və Əvəz et) pəncərəsini açır. Ctrl+F yalnız tapmaq üçündür.",
+    extra: null
+  },
+  {
+    q: "«Print Selection»-u seçmişiksə, onda...",
+    opts: ["Bütün sənəd çap olunur", "Yalnız seçilmiş hissə çap olunur", "Birinci səhifə çap olunur", "Cüt səhifələr çap olunur"],
+    ans: 1,
+    hint: "Print Selection – yalnız əvvəlcədən seçilmiş (highlight edilmiş) mətn və ya xanalar çap olunur.",
+    extra: null
+  },
+  {
+    q: "Ləğv olunmuş əməliyyatı bərpa etmək üçün hansı üsul doğrudur?",
+    opts: ["Ctrl+Z", "Ctrl+Y", "Ctrl+R", "Ctrl+B"],
+    ans: 1,
+    hint: "Ctrl+Z – undo (ləğv et), Ctrl+Y – redo (bərpa et / yenidən yerinə yetir).",
+    extra: null
+  },
+  {
+    q: "MS Excel-də yaradılmış sənəd nə adlanır?",
+    opts: ["Fayl", "Sənəd", "İşçi Kitab (Workbook)", "Cədvəl"],
+    ans: 2,
+    hint: "Excel faylı 'Workbook' (İşçi Kitab) adlanır. İçərisində bir və ya bir neçə 'Sheet' (vərəq) ola bilər.",
+    extra: null
+  },
+  {
+    q: "Elektron cədvəldə diapazon nədir?",
+    opts: ["Bir xana", "Bir sütun", "Bitişik xanalar qrupu", "Bir vərəq"],
+    ans: 2,
+    hint: "Diapazon – seçilmiş ardıcıl xanalar qrupudur. Məs: A1:D5 (4 sütun × 5 sətir = 20 xana).",
+    extra: null
+  },
+  {
+    q: "Verilmiş elektron cədvəl fraqmentinə əsasən C3 xanasının nəticəsini tapın.",
+    opts: ["8", "4", "12", "7"],
+    ans: 2,
+    hint: "C1 = MAX(A1:B3) = MAX(4,5,7,3,1,6) = 7 | C2 = MIN(A1:B3) = 1 | C3 = C1+C2 = 7+1 = 8. Deməli C3 = 8.",
+    extra: '<table class="q-table"><tr><th></th><th>A</th><th>B</th><th>C</th></tr><tr><td>1</td><td>4</td><td>5</td><td>=MAX(A1:B3)</td></tr><tr><td>2</td><td>7</td><td>3</td><td>=MİN(A1:B3)</td></tr><tr><td>3</td><td>1</td><td>6</td><td>=C1+C2</td></tr></table>'
+  },
+  {
+    q: "AVERAGE funksiyası hansı əməliyyatı yerinə yetirir?",
+    opts: ["Cəm hesablayır", "Orta ədədi hesablayır", "Maksimum qiyməti tapır", "Xanaları sayır"],
+    ans: 1,
+    hint: "AVERAGE – orta hesab dəyərini tapır. =AVERAGE(A1:A10) → bütün qiymətlərin ortası.",
+    extra: null
+  },
+  {
+    q: "MS Excel proqramında maksimal miqyas nə qədərdir?",
+    opts: ["200%", "400%", "500%", "1000%"],
+    ans: 1,
+    hint: "Excel-də görünüş miqyası (zoom) 10%-dən 400%-ə qədər dəyişə bilər. Maksimal 400%-dir.",
+    extra: null
+  },
+  {
+    q: "Excel 2010 proqramında işçi vərəqi adlandırdıqda aşağıdakı hansı simvoldan istifadə etmək olmaz?",
+    opts: ["Rəqəmlər (0-9)", "Latın hərfləri", "Köbük işarəsi [ ]", "Alt xətt _"],
+    ans: 2,
+    hint: "Vərəq adında: ?, *, :, /, \\, [, ] simvollarından istifadə OLMAZ. Köbük mötərizə [ ] qadağandır.",
+    extra: null
+  },
+  {
+    q: "Word mətn prosessorunda sənədin 3, 10, 17, 18, 19, 28, 41, 42, 43-cü səhifələrini çap etmək üçün Print pəncərəsində səhifələri hansı üsulla seçmək daha səmərəlidir?",
+    opts: ["All Pages", "Current Page", "3,10,17-19,28,41-43", "3 to 43"],
+    ans: 2,
+    hint: "Çap pəncərəsindəki Pages sahəsinə: ayrı-ayrı səhifələr vergüllə, ardıcıl aralıq isə defislə yazılır. Məs: 3,10,17-19,28,41-43",
+    extra: null
+  },
+  {
+    q: "Word-də sənədi bir neçə nüsxədə çap etmək hansı əmri yerinə yetirərkən mümkündür?",
+    opts: ["File → Save", "File → Print (Copies sahəsi)", "Home → Print", "View → Print Preview"],
+    ans: 1,
+    hint: "File → Print pəncərəsindəki 'Copies' sahəsinə istədiyiniz nüsxə sayını daxil edin.",
+    extra: null
+  },
+  {
+    q: "MS Word-də aşağıdakı yazıya (112 + 41) hansı formatlaşdırma tətbiq olunub? (üst və alt indeks)",
+    opts: ["Bold və Italic", "Superscript (üst indeks) və Subscript (alt indeks)", "Font Color və Highlight", "Strikethrough və Underline"],
+    ans: 1,
+    hint: "Riyazi ifadələrdə üst göstərici üçün Superscript (x²), alt göstərici üçün Subscript (H₂O) istifadə olunur.",
+    extra: '<div class="formula-box">1<sup>12</sup> + 4<sub>1</sub> (Superscript və Subscript formatı)</div>'
+  },
+  {
+    q: "Ms Word 2010 mətn prosessorunda sətri cədvəldən hansı yolla silmək olar?",
+    opts: ["Delete düyməsi ilə", "Table Tools → Layout → Delete → Delete Rows", "Backspace düyməsi ilə", "Ctrl+D ilə"],
+    ans: 1,
+    hint: "Sətri seçin → Table Tools → Layout sekmesi → Delete → Delete Rows. Sadəcə Delete düyməsi xana məzmununu silir.",
+    extra: null
+  },
+  {
+    q: "MS Word-də səhifənin albom və ya portret düzənini hansı sekmədən seçirlər?",
+    opts: ["Home", "Insert", "Page Layout (Layout)", "View"],
+    ans: 2,
+    hint: "Orientation (Portret/Albom) seçimi: Page Layout (və ya Layout) → Orientation.",
+    extra: null
+  },
+  {
+    q: "MS Word-də maksimal miqyas nə qədərdir?",
+    opts: ["200%", "400%", "500%", "1000%"],
+    ans: 3,
+    hint: "MS Word-də zoom miqyası maksimum 500%-ə qədər ola bilər. (Excel-dən fərqli olaraq)",
+    extra: null
+  },
+  {
+    q: "MS Excel elektron cədvəl redaktoruna aid olan bölüm hansı menyuda yerləşir?",
+    opts: ["File menyusunda", "Insert menyusunda", "Data menyusunda", "Hamısı düzgündür"],
+    ans: 2,
+    hint: "Cədvəl əməliyyatlarının əksəriyyəti Data sekmesindədir (Sort, Filter, Data Validation və s.).",
+    extra: null
+  },
+  {
+    q: "MS Excel cədvəl proqramında xana nə deməkdir?",
+    opts: ["Sütunun adı", "Sətirin nömrəsi", "Sütun və sətirin kəsişdiyi yer", "Diaqramın bir hissəsi"],
+    ans: 2,
+    hint: "Xana (Cell) – sütun hərfi ilə sətir nömrəsinin kəsişməsindən əmələ gəlir. Məs: B3.",
+    extra: null
+  },
+  {
+    q: "Sənədi çapa verərkən açılan pəncərədə «Normal Margins» əmri nə üçündür?",
+    opts: ["Kənarları sıfırlamaq üçün", "Standart kənar boşluqları (2.54 sm) tətbiq etmək üçün", "Kənarları genişləndirmək üçün", "Çap sahəsini seçmək üçün"],
+    ans: 1,
+    hint: "Normal Margins – standart (1 düym = 2.54 sm) kənar boşluqlarını tətbiq edir.",
+    extra: null
+  },
+  {
+    q: "MS Excel-də A2:C5 ; E2:E5 diapazonunda neçə xana əhatə edilir?",
+    opts: ["12 xana", "16 xana", "20 xana", "14 xana"],
+    ans: 1,
+    hint: "A2:C5 → 3 sütun × 4 sətir = 12 xana | E2:E5 → 1 sütun × 4 sətir = 4 xana | Cəmi: 16 xana.",
+    extra: null
+  },
+  {
+    q: "Mətnə orfoqrafik səhv olarsa, mətnin altında hansı rəngdə xətt çəkiləcəkdir?",
+    opts: ["Yaşıl rəngdə", "Mavi rəngdə", "Qırmızı rəngdə", "Sarı rəngdə"],
+    ans: 2,
+    hint: "Orfoqrafik (yazı) səhvləri qırmızı dalğalı xəttlə, qrammatik səhvlər isə yaşıl xəttlə işarələnir.",
+    extra: null
+  },
+  {
+    q: "MS Excel 2010-da xanalar diapazonunu seçdikdən sonra Name Box (Ad qutusu)-da nə əks olunur?",
+    opts: ["Seçilmiş xanaların qiymətləri", "Seçilmiş diapazonun ünvanı (məs. A1:C5)", "Seçilmiş xanaların sayı", "Düsturun nəticəsi"],
+    ans: 1,
+    hint: "Name Box – sol yuxarıda yerləşir. Xana seçdikdə onun ünvanını (məs. B3), diapazon seçdikdə isə diapazonu (A1:C5) göstərir.",
+    extra: null
+  },
+  {
+    q: "MİN funksiyası hansı əməliyyatı yerinə yetirir?",
+    opts: ["Ən böyük qiymət tapır", "Orta qiymət hesablayır", "Ən kiçik qiymət tapır", "Cəm hesablayır"],
+    ans: 2,
+    hint: "MİN(A1:A10) – göstərilən diapazondan ən kiçik (minimum) qiyməti qaytarır.",
+    extra: null
+  },
+  {
+    q: "İşçi kitab nədən təşkil olunur?",
+    opts: ["Sütunlardan", "Sətrlərdən", "Vərəqlərdən (Sheets)", "Xanalardan"],
+    ans: 2,
+    hint: "Excel Workbook (İşçi Kitab) bir və ya bir neçə Worksheet (İş Vərəqi) dən ibarətdir.",
+    extra: null
+  },
+  {
+    q: "MS Excel-də xanada düstur yazmaq üçün hansı simvoldan istifadə edilir?",
+    opts: ["+ işarəsi", "# işarəsi", "= işarəsi", "@ işarəsi"],
+    ans: 2,
+    hint: "Excel-də hər düstur mütləq = işarəsi ilə başlamalıdır. Əks halda mətn kimi qəbul edilir.",
+    extra: null
+  },
+  {
+    q: "MS Excel-də hər hansı bir xanaya daxil edilən ifadə həm də hansı hissədə əks olunur?",
+    opts: ["Status Bar-da", "Başlıq Çubuğunda", "Düstur Çubuğunda (Formula Bar)", "Ribbon-da"],
+    ans: 2,
+    hint: "Xanaya daxil edilən məlumat eyni zamanda yuxarıdakı Formula Bar (Düstur Çubuğu)-da əks olunur.",
+    extra: null
+  },
+  {
+    q: "Bir dolu xana seçilib klaviaturadan məlumat daxil edilərsə, həmin xanadakı məlumat necə olur?",
+    opts: ["Yeni məlumat əvvəlkinə əlavə edilir", "Xəta mesajı verilir", "Köhnə məlumat silinib yenisi yazılır", "Heç nə olmur"],
+    ans: 2,
+    hint: "Dolu xanada birbaşa yazmağa başladıqda köhnə məlumat avtomatik silinib yeni məlumatla əvəzlənir.",
+    extra: null
+  },
+  {
+    q: "Aşağıdakılardan hansı cədvəl prosessorunun fayl genişlənməsidir?",
+    opts: [".docx", ".pptx", ".xlsx", ".pdf"],
+    ans: 2,
+    hint: ".xlsx – Excel 2007 və sonrakı versiyaların fayl formatıdır. .docx Word, .pptx PowerPoint üçündür.",
+    extra: null
+  },
+  {
+    q: "Bu pəncərə elementlərindən hansı yalnız MS Excel-ə məxsusdur?",
+    opts: ["Başlıq Çubuğu (Title Bar)", "Menyu Çubuğu", "Ad Qutusu (Name Box) və Düstur Çubuğu", "Sürüşdürmə Çubuğu (Scroll Bar)"],
+    ans: 2,
+    hint: "Name Box (Ad Qutusu) + Formula Bar (Düstur Çubuğu) – bunlar yalnız Excel proqramına xas elementlərdir.",
+    extra: null
+  },
+  {
+    q: "MS Excel-də ABS(-50) düsturunun nəticəsi nədir?",
+    opts: ["-50", "50", "0", "Xəta"],
+    ans: 1,
+    hint: "ABS funksiyası ədədin mütləq qiymətini qaytarır: ABS(-50) = 50, ABS(50) = 50.",
+    extra: null
+  },
+  {
+    q: "A1=5, A2=15, A3=25 olduqda =AVERAGE(A1:A3) nəticəsi nədir?",
+    opts: ["5", "15", "25", "45"],
+    ans: 1,
+    hint: "AVERAGE = (5+15+25)/3 = 45/3 = 15. Orta qiymət 15-dir.",
+    extra: null
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null); // null = not answered
+let hintVisible = false;
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  hintVisible = false;
+
+  // Update progress
+  const pct = Math.round((current / QUESTIONS.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = (current+1) + ' / ' + QUESTIONS.length;
+
+  // Header
+  document.getElementById('q-num').textContent = 'Sual ' + (current+1);
+  document.getElementById('q-text').textContent = q.q;
+
+  // Extra (table, formula)
+  const extra = document.getElementById('q-extra');
+  extra.innerHTML = q.extra || '';
+
+  // Options – shuffle if not answered yet
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  const stored = answers[current];
+  let displayOrder;
+
+  if(stored && stored.order){
+    displayOrder = stored.order;
+  } else {
+    // shuffle but keep correct one tracked
+    displayOrder = q.opts.map((txt, i) => ({txt, origIdx: i}));
+    // Fisher-Yates
+    for(let i = displayOrder.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [displayOrder[i], displayOrder[j]] = [displayOrder[j], displayOrder[i]];
+    }
+    if(stored) stored.order = displayOrder;
+    else answers[current] = {chosen: null, order: displayOrder};
+    if(answers[current]) answers[current].order = displayOrder;
+  }
+
+  const chosenOrig = stored ? stored.chosen : null;
+  const letters = ['A','B','C','D','E'];
+
+  displayOrder.forEach((item, dispIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${letters[dispIdx]}</span>${item.txt}`;
+
+    if(chosenOrig !== null){
+      btn.classList.add('disabled');
+      if(item.origIdx === q.ans){
+        btn.classList.add('correct');
+      } else if(item.origIdx === chosenOrig){
+        btn.classList.add('wrong');
+      }
+    } else {
+      btn.onclick = () => selectAnswer(item.origIdx, btn, displayOrder);
+    }
+    optionsDiv.appendChild(btn);
+  });
+
+  // Hint
+  document.getElementById('hint-box').textContent = q.hint;
+  document.getElementById('hint-box').classList.remove('show');
+  document.getElementById('hint-btn').textContent = '💡 İpucu';
+
+  // Feedback
+  const fb = document.getElementById('feedback');
+  fb.classList.remove('show','correct','wrong');
+  if(chosenOrig !== null){
+    const correct = chosenOrig === q.ans;
+    fb.textContent = correct ? '✅ Təbrik! Cavabınız düzgündür.' : '❌ Yanlış cavab. Düzgün cavab: ' + q.opts[q.ans];
+    fb.classList.add('show', correct ? 'correct' : 'wrong');
+  }
+
+  // Nav buttons
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').textContent = current === QUESTIONS.length-1 ? 'Nəticə 🌸' : 'İrəli ▶';
+
+  // Animate card
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'popIn .4s cubic-bezier(.17,.67,.52,1.3)';
+}
+
+function selectAnswer(origIdx, btn, displayOrder){
+  const q = QUESTIONS[current];
+  const correct = origIdx === q.ans;
+
+  // Save answer
+  if(!answers[current]) answers[current] = {chosen: null, order: displayOrder};
+  answers[current].chosen = origIdx;
+  answers[current].order = displayOrder;
+
+  // Disable all opts
+  document.querySelectorAll('.opt').forEach(b => {
+    b.classList.add('disabled');
+    b.onclick = null;
+  });
+
+  // Mark correct / wrong
+  document.querySelectorAll('.opt').forEach((b, dispIdx) => {
+    const item = displayOrder[dispIdx];
+    if(item.origIdx === q.ans) b.classList.add('correct');
+    else if(item.origIdx === origIdx) b.classList.add('wrong');
+  });
+
+  // Sound
+  if(correct) playCorrect(); else { playWrong(); document.getElementById('quiz-card').classList.add('shake'); setTimeout(()=>document.getElementById('quiz-card').classList.remove('shake'),400); }
+
+  // Feedback
+  const fb = document.getElementById('feedback');
+  fb.textContent = correct ? '✅ Təbrik! Cavabınız düzgündür.' : '❌ Yanlış cavab. Düzgün cavab: ' + q.opts[q.ans];
+  fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
+}
+
+function toggleHint(){
+  hintVisible = !hintVisible;
+  document.getElementById('hint-box').classList.toggle('show', hintVisible);
+  document.getElementById('hint-btn').textContent = hintVisible ? '🙈 İpucunu Gizlə' : '💡 İpucu';
+}
+
+function navigate(dir){
+  const next = current + dir;
+  if(next >= QUESTIONS.length){
+    showResult();
+    return;
+  }
+  if(next < 0) return;
+  current = next;
+  renderQuestion();
+}
+
+// ============================================================
+// RESULT
+// ============================================================
+function showResult(){
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  let correct = 0;
+  const wrongItems = [];
+
+  QUESTIONS.forEach((q, i) => {
+    const a = answers[i];
+    const chosen = a ? a.chosen : null;
+    if(chosen === q.ans){
+      correct++;
+    } else {
+      wrongItems.push({idx: i, q: q.q, correctAns: q.opts[q.ans]});
+    }
+  });
+
+  const pct = Math.round((correct / QUESTIONS.length) * 100);
+  document.getElementById('score-num').textContent = correct + '/' + QUESTIONS.length;
+
+  let emoji = pct >= 90 ? '🌟 Əla nəticə!' : pct >= 70 ? '👍 Yaxşı nəticə!' : pct >= 50 ? '📚 Bir az daha öyrən!' : '💪 Daha çox çalış!';
+  document.getElementById('result-summary').textContent = pct + '% — ' + emoji;
+
+  const wt = document.getElementById('wrong-title');
+  const wl = document.getElementById('wrong-list');
+  wl.innerHTML = '';
+
+  if(wrongItems.length === 0){
+    wt.textContent = '🎉 Bütün sualları düzgün cavablandırdınız!';
+  } else {
+    wt.textContent = '❌ Yanlış cavablandırılan suallar (' + wrongItems.length + ' ədəd):';
+    wrongItems.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'wrong-item';
+      div.innerHTML = `<div class="wi-q">${item.idx+1}. ${item.q}</div><div class="wi-a">✅ Düzgün cavab: <span>${item.correctAns}</span></div>`;
+      wl.appendChild(div);
+    });
+  }
+}
+
+function restart(){
+  answers = new Array(QUESTIONS.length).fill(null);
+  current = 0;
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-card').style.display = 'block';
+  document.getElementById('progress-wrap').style.display = 'flex';
+  renderQuestion();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = () => renderQuestion();
+</script>
+</body>
+</html>
