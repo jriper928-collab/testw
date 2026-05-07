@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telekommunikasiya Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(99,179,237,0.12);
+    --accent: #63b3ed;
+    --accent2: #4fd1c5;
+    --green: #68d391;
+    --red: #fc8181;
+    --amber: #f6ad55;
+    --text: #e2e8f0;
+    --muted: #718096;
+    --card-r: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,179,237,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 90% 80%, rgba(79,209,197,0.05) 0%, transparent 60%);
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+
+  /* HEADER */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .logo span { color: var(--accent2); }
+  .q-counter {
+    font-size: 0.8rem; color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 999px;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* PROGRESS */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-labels {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; color: var(--muted); margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-r);
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+    animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-num {
+    font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em;
+    font-family: 'Syne', sans-serif; font-weight: 600; margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+  .q-text {
+    font-size: 1.05rem; font-weight: 500; line-height: 1.65;
+    color: #f0f4f8;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-top: 1.5rem; }
+  .opt {
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    display: flex; align-items: flex-start; gap: 12px;
+    line-height: 1.5;
+  }
+  .opt:hover:not(.disabled) {
+    border-color: rgba(99,179,237,0.4);
+    background: rgba(99,179,237,0.05);
+    transform: translateX(3px);
+  }
+  .opt .badge {
+    min-width: 26px; height: 26px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-family: 'Syne', sans-serif; font-weight: 700;
+    color: var(--muted); flex-shrink: 0; margin-top: 1px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .opt.correct {
+    border-color: var(--green);
+    background: rgba(104,211,145,0.08);
+    color: #c6f6d5;
+  }
+  .opt.correct .badge { background: var(--green); color: #1a2235; border-color: var(--green); }
+  .opt.wrong {
+    border-color: var(--red);
+    background: rgba(252,129,129,0.08);
+    color: #fed7d7;
+  }
+  .opt.wrong .badge { background: var(--red); color: #1a2235; border-color: var(--red); }
+  .opt.disabled { cursor: default; pointer-events: none; }
+
+  /* HINT */
+  .hint-btn {
+    margin-top: 1rem;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--muted);
+    background: none; border: 1px solid var(--border);
+    padding: 8px 16px; border-radius: 999px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .hint-btn:hover { color: var(--amber); border-color: rgba(246,173,85,0.4); }
+  .hint-icon { font-size: 1rem; }
+  .hint-box {
+    margin-top: 10px;
+    padding: 14px 16px;
+    background: rgba(246,173,85,0.07);
+    border: 1px solid rgba(246,173,85,0.25);
+    border-radius: 12px;
+    font-size: 0.85rem; color: #fbd38d; line-height: 1.6;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* NAV */
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.5rem; gap: 12px;
+  }
+  .nav-btn {
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  .nav-btn:hover:not(:disabled) {
+    background: var(--surface2);
+    border-color: rgba(99,179,237,0.35);
+    transform: translateY(-1px);
+  }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a0e1a; border-color: transparent; font-weight: 500;
+  }
+  .nav-btn.primary:hover { opacity: 0.9; }
+
+  /* RESULTS */
+  .results { animation: slideIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .results-header {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .results-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; }
+  .score-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--card-r);
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .score-card .num { font-size: 2rem; font-weight: 700; font-family: 'Syne', sans-serif; }
+  .score-card .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .score-card.c-green .num { color: var(--green); }
+  .score-card.c-red .num { color: var(--red); }
+  .score-card.c-amber .num { color: var(--amber); }
+  .score-card.c-accent .num { color: var(--accent); }
+  .wrong-section-title {
+    font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .wrong-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem; }
+  .wrong-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    font-size: 0.85rem;
+  }
+  .wrong-item .wi-num { color: var(--accent); font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; margin-bottom: 4px; }
+  .wrong-item .wi-q { color: #cbd5e0; line-height: 1.5; margin-bottom: 8px; }
+  .wrong-item .wi-given { color: var(--red); font-size: 0.8rem; margin-bottom: 4px; }
+  .wrong-item .wi-correct {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(104,211,145,0.1); border: 1px solid rgba(104,211,145,0.3);
+    color: #c6f6d5; padding: 4px 12px; border-radius: 999px; font-size: 0.78rem;
+    margin-top: 4px;
+  }
+  .restart-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a0e1a; border: none; border-radius: 12px;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .restart-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  /* STATUS FLASH */
+  .status-badge {
+    font-size: 0.75rem; font-family: 'Syne', sans-serif; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px; letter-spacing: 0.05em;
+  }
+  .status-badge.ok { background: rgba(104,211,145,0.15); color: var(--green); border: 1px solid rgba(104,211,145,0.3); }
+  .status-badge.err { background: rgba(252,129,129,0.15); color: var(--red); border: 1px solid rgba(252,129,129,0.3); }
+
+  @media (max-width: 500px) {
+    .score-grid { grid-template-columns: repeat(2, 1fr); }
+    .q-card { padding: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">TELE<span>COMM</span> TEST</div>
+    <div class="q-counter" id="hdr-counter">1 / 75</div>
+  </div>
+  <div id="view"></div>
+</div>
+
+<script>
+const RAW=[
+{q:"SDH texnologiyası nədir?",a:"Sinxron rəqəm iyerarxiyası (interfeys texnologiyası)",opts:["Sinxron rəqəm iyerarxiyası (interfeys texnologiyası)","Avtomatik şəhərlərarası telefon stansiyası","Virtual özəl şəbəkə","Çoxprotokol kommutasiya şəbəkəsi"]},
+{q:"AŞATS nədir?",a:"Avtomatik şəhərlərarası telefon stansiyası",opts:["Sinxron rəqəm iyerarxiyası","Avtomatik şəhərlərarası telefon stansiyası","İnteqral xidmətli rəqəm şəbəkəsi","Çevik kommutator"]},
+{q:"İP şəbəkəsində nəzərdə tutulmuş veriliş sürəti nə qədərdir?",a:"10 Gbit/san",opts:["10 Gbit/san","2048 kbit/san","100 Mbit/san","1 Gbit/san"]},
+{q:"NGN şəbəkəsində şlüzlər hansı səviyyədə qoşulur?",a:"Nəqliyyat səviyyəsi",opts:["Nəqliyyat səviyyəsi","Xidmət səviyyəsi","Abunəçi səviyyəsi","İdarəetmə səviyyəsi"]},
+{q:"C&C08 sistemi ümumilikdə 7 saylı siqnallaşmanın neçə manqasını emal edir?",a:"3072",opts:["3072","1024","2048","4096"]},
+{q:"Bakı ŞTŞ-də 2005-ci ildə neçə stansiya və qovşaq NGN əsasında rekonstruksiya edildi?",a:"46 qovşaq və stansiya",opts:["46 qovşaq və stansiya","32 qovşaq","58 stansiya","24 qovşaq"]},
+{q:"Səsin kompressiyası nədir?",a:"Səs siqnalının sıxlaşdırılması",opts:["Səs siqnalının sıxlaşdırılması","Siqnalın gücləndirilməsi","Siqnalın şifrələnməsi","Siqnalın modulyasiyası"]},
+{q:"Qəza vaxtı NGN şəbəkəsinin işinin dayanmasına səbəb olan amil hansıdır?",a:null,opts:["Elektrik kəsilməsi","Proqram təminatı xətası","Şəbəkə həddinin aşılması","Avadanlıq xətası"]},
+{q:"Tranzit qovşaqlar nəyin əsasında qurulur?",a:"Çoxlu sayda güclü kommutasiya avadanlığı əsasında",opts:["Çoxlu sayda güclü kommutasiya avadanlığı əsasında","Yalnız proqram təminatı əsasında","Bir neçə kiçik server əsasında","Modem infrastrukturu əsasında"]},
+{q:"Analoq abunəçi xətlərini paket kommutasiya şəbəkəsinə qoşmaq üçün hansı şlüzdən istifadə olunur?",a:"Siqnal şlüzü",opts:["Siqnal şlüzü","Rezident şlüzü","Virtual şlüz","IP şlüzü"]},
+{q:"Tranzit qovşaq nədir?",a:"İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirən qovşaq",opts:["İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirən qovşaq","Abunəçi xətlərini birləşdirən qovşaq","Yalnız siqnallaşma qovşağı","İnternet bağlantı qovşağı"]},
+{q:"NGN şəbəkəsində tariflləndirməni hansı qurğu aparır?",a:"Softswitch",opts:["Softswitch","SCP","SSP","MEM"]},
+{q:"Videokonfransda mübadilə rejimi necədir?",a:"İkitərəfli",opts:["İkitərəfli","Birtərəfli","Yarımipleks","Multipleks"]},
+{q:"VPN nədir?",a:"Virtual Private Network (virtual özəl şəbəkə)",opts:["Virtual Private Network (virtual özəl şəbəkə)","Video Processing Network","Voice Protocol Node","Verified Public Network"]},
+{q:"IM-idarəetmə moduludur, RM-rabitə moduludur, bəs KM nədir?",a:"Kommutasiya modulu",opts:["Kommutasiya modulu","Konfiqurasiya modulu","Kanal modulu","Kodlaşdırma modulu"]},
+{q:"NGN şəbəkəsinə V5 interfeysi ilə hansı abunəçilər qoşulur?",a:"VPN və ATM abunəçiləri",opts:["VPN və ATM abunəçiləri","Yalnız analoq abunəçilər","IP abunəçiləri","Mobil abunəçilər"]},
+{q:"Videomüşahidə zamanı mübadilə rejimi necə olur?",a:"Birtərəfli",opts:["Birtərəfli","İkitərəfli","Simpleks","Dupleks"]},
+{q:"İP TV-də birləşmənin konfiqurasiyası necədir?",a:"Nöqtə-nöqtə",opts:["Nöqtə-nöqtə","Nöqtə-çoxnöqtəli","Halqa","Ulduz"]},
+{q:"Mərkəzi kommutasiya sahəsi nələrdən təşkil olunmuşdur?",a:"C&C08 kommutasiyalı sistem boyunca standart fiziki interfeys və böyük şəbəkələşmədən",opts:["C&C08 kommutasiyalı sistem boyunca standart fiziki interfeys və böyük şəbəkələşmədən","Yalnız optik kabellərdən","Yalnız proqram modullarından","Marşrutlaşdırıcılar toplusundan"]},
+{q:"Tranzit qovşaqda trafikLər kanal kommutasiyası şəbəkəsi istiqamətində hansı şlüz vasitəsilə ötürülür?",a:null,opts:["Siqnal şlüzü","Rezident şlüzü","Media şlüzü","IP şlüzü"]},
+{q:"SCP nədir?",a:"Server xidmət modulu",opts:["Server xidmət modulu","Şəbəkə nəzarət protokolu","Sinxron kommunikasiya platforması","Siqnallaşma çevirmə prosessoru"]},
+{q:"MEM-da hansı prosessordan istifadə edilir?",a:"MPU 860 növlü prosessor",opts:["MPU 860 növlü prosessor","Intel Core i7","ARM Cortex-A9","MIPS R4000"]},
+{q:"MKS-nin kommutasiya matrisası neçə xəttin qoşulmasını təmin edir?",a:"512 giriş, 512 çıxış",opts:["512 giriş, 512 çıxış","256 giriş, 256 çıxış","1024 giriş, 1024 çıxış","128 giriş, 128 çıxış"]},
+{q:"C&C08-in proqram təminatı nəyin əsasında qurulmuşdur?",a:"Modul prinsipi əsasında",opts:["Modul prinsipi əsasında","Mərkəzləşdirilmiş prinsip əsasında","Monolitik prinsip əsasında","Açıq mənbə prinsipi əsasında"]},
+{q:"C&C08 avadanlığı neçə moduldan təşkil edilmişdir?",a:"4",opts:["4","3","6","8"]},
+{q:"C&C08 avadanlığının modullarına aid olmayan hansılardır?",a:"IM, RM, kommutasiya modulu (bunlar modullarına aiddir)",opts:["IM, RM, kommutasiya modulu (bunlar modullarına aiddir)","BAM, XIM, NEM","MKS, SSM, MEM","RIM, SIM, DIM"]},
+{q:"E1 portunun veriliş sürəti nə qədərdir?",a:"2048 kbit/san",opts:["2048 kbit/san","10 Gbit/san","155 Mbit/san","622 Mbit/san"]},
+{q:"C&C08 stansiyasında birləşdirici xətlərin sayı nə qədərdir?",a:"180 000",opts:["180 000","100 000","500 000","50 000"]},
+{q:"C&C08 tipli ATS-də hansı mikrosxemlərdən istifadə olunur?",a:"0,18 mkm – 0,35 mkm texnologiyalı mikrosxemlər",opts:["0,18 mkm – 0,35 mkm texnologiyalı mikrosxemlər","1 mkm texnologiyalı mikrosxemlər","5 nm texnologiyalı mikrosxemlər","0,5 mkm texnologiyalı mikrosxemlər"]},
+{q:"C&C08-in ATS avadanlığı hansı siqnallaşma sistemlərinin birgə işləməsinə imkan verir?",a:"R2, TUP, ISUP, TCAP, SCCP, INAP",opts:["R2, TUP, ISUP, TCAP, SCCP, INAP","Yalnız SS7","Yalnız SIP","H.323, SIP, MGCP"]},
+{q:"C&C08 tipli sistem necə sistemdir?",a:"Abunəçilər tərəfindən telekom xidmətlərinə olan tələbatı qarşılayan sistem",opts:["Abunəçilər tərəfindən telekom xidmətlərinə olan tələbatı qarşılayan sistem","Yalnız hərbi rabitə sistemi","Yalnız internet marşrutlaşdırma sistemi","Köhnə analoq kommutasiya sistemi"]},
+{q:"C&C08 sistemi nəyi təmin edir?",a:"Yeni telekommunikasiya xidmətlərinə olan tələbatı ödəmək və sektorun sürətli inkişafını",opts:["Yeni telekommunikasiya xidmətlərinə olan tələbatı ödəmək və sektorun sürətli inkişafını","Yalnız danışıq xidmətlərini","Yalnız data ötürülməsini","İnternetə çıxışı"]},
+{q:"C&C08 stansiyası neçə abunəçi xəttinə qədər artırıla bilər?",a:"800 000",opts:["800 000","200 000","1 000 000","500 000"]},
+{q:"C&C-in açılışı nədir?",a:"Computer and Communication",opts:["Computer and Communication","Circuit and Connection","Channel and Control","Core and Configuration"]},
+{q:"C&C08 sistemi hansı ölkənin istehsalıdır?",a:"Çin Xalq Respublikası",opts:["Çin Xalq Respublikası","ABŞ","Almaniya","Yaponiya"]},
+{q:"C&C08 sistemi hansı şirkət tərəfindən istehsal olunub?",a:"Huawei",opts:["Huawei","Ericsson","Nokia","ZTE"]},
+{q:"Telematik xidmət qovşaqları nə üçün qurulur?",a:"İnternet şəbəkəsinə, IP şəbəkəsinə qoşulma və sorğu məlumatlarına çıxış üçün",opts:["İnternet şəbəkəsinə, IP şəbəkəsinə qoşulma və sorğu məlumatlarına çıxış üçün","Yalnız video müşahidə üçün","Yalnız telefon danışıqları üçün","Enerji idarəetməsi üçün"]},
+{q:"Telematik xidmətlər göstərən şəbəkənin tərkibinə nələr daxildir?",a:"Modem server",opts:["Modem server","Yalnız optik kabel infrastrukturu","Yalnız simsiz baza stansiyaları","Yalnız kommutatorlar"]},
+{q:"İXRŞ nədir?",a:"İnteqral xidmətli rəqəm şəbəkəsi",opts:["İnteqral xidmətli rəqəm şəbəkəsi","İntelektual xidmət rabitə şəbəkəsi","İdarəolunan xüsusi rabitə sistemi","İnteraktiv xidmət rəqəm sistemi"]},
+{q:"Multimedia xidmətlərinə aid olmayan hansıdır?",a:"Sadə telefon danışığı (analoq)",opts:["Sadə telefon danışığı (analoq)","Video xidmətlər","Qrafik məlumatlar","Multimedia konfransı"]},
+{q:"C&C08 ATS-in adi vaxtlarda enerji sərfiyyatı nə qədərdir?",a:"0,3 Vt",opts:["0,3 Vt","3 Vt","30 Vt","300 Vt"]},
+{q:"Telematik xidmət növlərinə aid olmayan hansıdır?",a:"Sadə telefon (telematik deyil)",opts:["Sadə telefon (telematik deyil)","Faksimil xidməti","Konfrans rabitəsi","Diskret məlumat xidməti"]},
+{q:"Əvvəlcədən ödənişli kartla danışıq xidmətinin kodu hansıdır?",a:"181",opts:["181","182","180","199"]},
+{q:"NGN şəbəkəsində intellektual xidmətlər platforması nəyin əsasında yaradılır?",a:"Paket şəbəkəsi resursları əsasında",opts:["Paket şəbəkəsi resursları əsasında","Kanal kommutasiyası əsasında","Analoq infrastruktur əsasında","Tezlik bölgüsü əsasında"]},
+{q:"Multimedia nədir?",a:"Müxtəlif növ məlumatların bir mühitdə birləşdirilməsi",opts:["Müxtəlif növ məlumatların bir mühitdə birləşdirilməsi","Yalnız video siqnalların ötürülməsi","Yalnız audio siqnalların emalı","Kompüter şəbəkəsinin bir növü"]},
+{q:"İntelektual xidmətlərə aid olmayanı göstərin.",a:"Adi kanal kommutasiyası",opts:["Adi kanal kommutasiyası","Xidmət serveri","Tele-səs vermə","SCP tərəfindən çağırış sellərinin istiqamətini dəyişməsi"]},
+{q:"NGN-də istismar xərclərinin azalması faktoru hansıdır?",a:"Şəbəkədə idarəetmə sisteminin bir yerdə olması",opts:["Şəbəkədə idarəetmə sisteminin bir yerdə olması","Əlavə avadanlıq alınması","Texniki personalın artırılması","Paralel şəbəkə yaradılması"]},
+{q:"181 xidməti nədir?",a:"Əvvəlcədən ödənişli kartla danışıq xidməti",opts:["Əvvəlcədən ödənişli kartla danışıq xidməti","Beynəlxalq zəng xidməti","Sorğu məlumat xidməti","Faks ötürmə xidməti"]},
+{q:"İntelektual şəbəkədə xidmətlər nəyin vasitəsilə həyata keçirilir?",a:"SSP — server xidmət qovşağı vasitəsilə",opts:["SSP — server xidmət qovşağı vasitəsilə","Yalnız optik şəbəkə vasitəsilə","Analoq kommutator vasitəsilə","SIP protokolu vasitəsilə"]},
+{q:"SSP nədir?",a:"Server xidmət qovşağı",opts:["Server xidmət qovşağı","Sinxron siqnallaşma protokolu","Standart sistem platforması","Şəbəkə siqnal prosessoru"]},
+{q:"İntelektual xidmətlərə aid olanı göstərin.",a:"İntelektual xidmət serveri, tele-səs vermə, SCP tərəfindən çağırış seli istiqamətini dəyişmə",opts:["İntelektual xidmət serveri, tele-səs vermə, SCP tərəfindən çağırış seli istiqamətini dəyişmə","Adi PSTN kommutasiyası","Analoq abunəçi xətti","Kanal multiplikasiyası"]},
+{q:"MPLS nədir?",a:"Çoxprotokol etiketli kommutasiya (şəbəkəsi)",opts:["Çoxprotokol etiketli kommutasiya (şəbəkəsi)","Multimediya paket ötürmə sistemi","Mobil protokol link server","Mərkəzləşdirilmiş paket linklər sistemi"]},
+{q:"Çevik kommutator hansı səviyyədə yerləşir?",a:"Softswitch (idarəetmə səviyyəsi)",opts:["Softswitch (idarəetmə səviyyəsi)","Nəqliyyat səviyyəsi","Fiziki səviyyə","Abunəçi səviyyəsi"]},
+{q:"Bakı ŞTS-də NGN-in tətbiqi hansı variantda qurulmuşdur?",a:"Giriş məlumat prinsipi",opts:["Giriş məlumat prinsipi","Kombinə edilmiş variant","Tam yeni quruluş","Hibrid variant"]},
+{q:"Kombinə edilmiş variantda nə nəzərdə tutulur?",a:"ÜİTŞ-nin qismən və ya mərhələli edilməsi",opts:["ÜİTŞ-nin qismən və ya mərhələli edilməsi","Tam yeni şəbəkə qurmaq","Yalnız tranzit qovşaqları ləğv etmək","Mövcud şəbəkəni saxlamaq"]},
+{q:"1995-ci ilə kimi Bakı ŞTS hansı prinsip əsasında fəaliyyət göstərmişdir?",a:"Giriş məlumat qovşaq prinsipi",opts:["Giriş məlumat qovşaq prinsipi","Tranzit kommutasiya prinsipi","NGN prinsipi","Paket kommutasiyası prinsipi"]},
+{q:"MSAN nədir?",a:"Multi-servis abunəçi konsentratoru",opts:["Multi-servis abunəçi konsentratoru","Mərkəzi siqnal analizatoru","Mobil şəbəkə abunəçi nodu","Multiprotokol siqnallaşma analizatoru"]},
+{q:"Klassik şəbəkələrə qoşulmaq üçün hansı şlüzlərdən istifadə edilir?",a:"Rezident şlüzü",opts:["Rezident şlüzü","Siqnal şlüzü","IP şlüzü","Media şlüzü"]},
+{q:"Korporativ şəbəkələrə qoşulmaq üçün hansı interfeysdən istifadə edilir?",a:"V5 interfeysi",opts:["V5 interfeysi","E1 interfeysi","SDH interfeysi","ATM interfeysi"]},
+{q:"Mövcud şəbəkənin NGN tətbiqi ilə rekonstruksiyası üçün nəyin ləğvi nəzərdə tutulmuşdur?",a:"Tranzit qovşaqların ləğvi",opts:["Tranzit qovşaqların ləğvi","Abunəçi xətlərinin ləğvi","Kommutasiya avadanlığının ləğvi","Bütün infrastrukturun ləğvi"]},
+{q:"Multiservis şəbəkəsinin nəqliyyat səviyyəsində rabitə qovşağı necə adlanır?",a:"Access node",opts:["Access node","Transit node","Core node","Edge node"]},
+{q:"Access node nədir?",a:"ATM nəqliyyat şəbəkəsinin rabitə qovşağı",opts:["ATM nəqliyyat şəbəkəsinin rabitə qovşağı","İnternet giriş qovşağı","Abunəçi xətti qovşağı","Tranzit kommutasiya qovşağı"]},
+{q:"Access node qovşağında şlüz avadanlığı hansı vəzifəni yerinə yetirir?",a:null,opts:["Protokol çevirmə və siqnallaşma","Yalnız güclənmə","Yalnız sinxronizasiya","Yalnız şifrələmə"]},
+{q:"Tranzit səviyyəsini yaratmaqda məqsəd nə olmuşdur?",a:"Müxtəlif ATS-lər arasında informasiya və siqnallaşma sellərini marşrutlamaq",opts:["Müxtəlif ATS-lər arasında informasiya və siqnallaşma sellərini marşrutlamaq","Abunəçiləri birbaşa qoşmaq","Yalnız beynəlxalq zəngləri ötürmək","Şəbəkə sürətini artırmaq"]},
+{q:"Mövcud telefon şəbəkələrində NGN texnologiyasının tətbiqi üçün neçə variant təklif edilmişdir?",a:"2",opts:["2","3","4","5"]},
+{q:"Rekonstruksiya sözünün mənası nədir?",a:"Yenidən qurma",opts:["Yenidən qurma","Genişləndirmə","Ləğvetmə","Standartlaşdırma"]},
+{q:"Bakıda ilk dəfə NGN texnologiyası neçənci ildə tətbiq edilmişdir?",a:"2005",opts:["2005","2000","2010","1999"]},
+{q:"Bakıda ilk dəfə NGN texnologiyası hansı ATS-də qurulmuşdur?",a:"464 saylı dekad-addım ATS",opts:["464 saylı dekad-addım ATS","100 saylı ATS","202 saylı ATS","512 saylı ATS"]},
+{q:"464 saylı ATS rekonstruksiyaya qədər hansı tip ATS olmuşdur?",a:"Dekad-addım tipi",opts:["Dekad-addım tipi","Elektron tipi","Rəqəmli tipi","Analoq koordinat tipi"]},
+{q:"NGN texnologiyası əsasında abunəçi xətləri şəbəkəyə necə qoşulur?",a:null,opts:["MSAN vasitəsilə paket şəbəkəsinə","Birbaşa tranzit qovşağa","Ənənəvi kommutator vasitəsilə","Peyk əlaqəsi ilə"]},
+{q:"Bunlardan hansı NGN-in üstün cəhətlərinə aid deyil?",a:null,opts:["Yüksək avadanlıq xərci","Genişmiqyaslılıq","Xidmət inteqrasiyası","İdarəetmənin mərkəzləşdirilməsi"]},
+{q:"Bunlardan hansı C&C08 ATS-in struktur sxeminə aid deyil?",a:null,opts:["QSİB","E1","MKS","ƏİM"]},
+{q:"Bunlardan hansı NGN avadanlığının tətbiqi aspektlərinə daxil deyil?",a:null,opts:["Köhnə avadanlığın saxlanması","ÜTŞ infrastrukturuna qoşulma","Son istifadəçi qoşulması","İntelektual xidmətlərin təşkili"]},
+{q:"ÜİTŞ abunəçilərinə aid olmayanı göstərin.",a:null,opts:["Yalnız mobil abunəçilər","Şəbəkəyə qoşulan analoq abunəçi xətləri","Baza ISDN kanallarından istifadə edən abunəçilər","V5 interfeysi vasitəsilə qoşulan abunəçilər"]},
+{q:"Kanal kommutasiyası ilə qurulmuş obyektlərdə tutum artımı üçün nə etmək lazımdır?",a:"Mərkəzləşdirilmiş üsuldan istifadə etmək",opts:["Mərkəzləşdirilmiş üsuldan istifadə etmək","Yeni optik kabel çəkmək","Tranzit qovşaqları ləğv etmək","Abunəçi xətlərini azaltmaq"]}
+];
+
+const LABELS = ['A','B','C','D'];
+function shuffle(arr){return arr.map(v=>({v,s:Math.random()})).sort((a,b)=>a.s-b.s).map(x=>x.v);}
+const questions = RAW.map(q=>({...q, shuffled: shuffle(q.opts)}));
+let current=0, answers=Array(questions.length).fill(null), hintShown=Array(questions.length).fill(false);
+
+const okSound=()=>{try{const c=new AudioContext();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(523,c.currentTime);o.frequency.setValueAtTime(659,c.currentTime+0.1);o.frequency.setValueAtTime(784,c.currentTime+0.2);g.gain.setValueAtTime(0.3,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.5);o.start();o.stop(c.currentTime+0.5);}catch(e){}};
+const errSound=()=>{try{const c=new AudioContext();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(220,c.currentTime);o.frequency.setValueAtTime(160,c.currentTime+0.18);g.gain.setValueAtTime(0.3,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.4);o.start();o.stop(c.currentTime+0.4);}catch(e){}};
+
+function renderQuestion(){
+  const q=questions[current];
+  const answered=answers[current]!==null;
+  const noAnswer=q.a===null;
+  const pct=Math.round((current/questions.length)*100);
+  document.getElementById('hdr-counter').textContent=`${current+1} / ${questions.length}`;
+
+  let statusBadge='';
+  if(answered){
+    if(noAnswer) statusBadge=`<span class="status-badge ok">Qeyd edildi</span>`;
+    else if(answers[current]===q.a) statusBadge=`<span class="status-badge ok">✓ Düzgün</span>`;
+    else statusBadge=`<span class="status-badge err">✗ Səhv</span>`;
+  }
+
+  const optsHtml=q.shuffled.map((o,i)=>{
+    let cls='opt';
+    if(answered){
+      cls+=' disabled';
+      if(noAnswer){cls+=' correct';}
+      else if(o===q.a){cls+=' correct';}
+      else if(o===answers[current]&&o!==q.a){cls+=' wrong';}
+    }
+    const safeO=o.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    return `<button class="${cls}" onclick="pick('${safeO}')">
+      <span class="badge">${LABELS[i]}</span>
+      <span>${o}</span>
+    </button>`;
+  }).join('');
+
+  const hintText=q.a?`Doğru cavab: <strong>${q.a}</strong>`:'Bu sualın cavabı mənbədə qeyd edilməyib.';
+  const isLast=current===questions.length-1;
+
+  document.getElementById('view').innerHTML=`
+    <div class="progress-wrap">
+      <div class="progress-labels"><span>${pct}% tamamlandı</span><span>${current+1} / ${questions.length} sual</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="q-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+        <div class="q-num">SUAL ${current+1}</div>
+        ${statusBadge}
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optsHtml}</div>
+    </div>
+    <button class="hint-btn" onclick="toggleHint()">
+      <span class="hint-icon">💡</span>
+      ${hintShown[current]?'İpucunu gizlət':'İpucunu göstər'}
+    </button>
+    ${hintShown[current]?`<div class="hint-box">${hintText}</div>`:''}
+    <div class="nav">
+      <button class="nav-btn" onclick="go(-1)" ${current===0?'disabled':''}>← Geri</button>
+      ${isLast
+        ? `<button class="nav-btn primary" onclick="showResults()">Nəticəni Gör →</button>`
+        : `<button class="nav-btn" onclick="go(1)">İrəli →</button>`
+      }
+    </div>`;
+}
+
+function pick(opt){
+  if(answers[current]!==null)return;
+  const q=questions[current];
+  answers[current]=opt;
+  if(q.a===null||opt===q.a) okSound(); else errSound();
+  renderQuestion();
+}
+function toggleHint(){hintShown[current]=!hintShown[current];renderQuestion();}
+function go(d){current=Math.max(0,Math.min(questions.length-1,current+d));renderQuestion();}
+
+function showResults(){
+  let correct=0,wrong=[],skipped=0;
+  questions.forEach((q,i)=>{
+    if(q.a===null){skipped++;return;}
+    if(answers[i]===q.a)correct++;
+    else wrong.push({q,i,given:answers[i]});
+  });
+  const total=questions.length-skipped;
+  const pct=total>0?Math.round(correct/total*100):0;
+  let grade='', gc='var(--green)';
+  if(pct>=85){grade='Əla ✦';}
+  else if(pct>=70){grade='Yaxşı';}
+  else if(pct>=50){grade='Kafi';gc='var(--amber)';}
+  else{grade='Zəif';gc='var(--red)';}
+
+  const wrongHtml=wrong.length?wrong.map(w=>`
+    <div class="wrong-item">
+      <div class="wi-num">SUAL ${w.i+1}</div>
+      <div class="wi-q">${w.q.q}</div>
+      <div class="wi-given">✗ Sizin cavab: ${w.given||'—'}</div>
+      <span class="wi-correct">✓ ${w.q.a}</span>
+    </div>`).join(''):`<div style="color:var(--green);font-size:0.9rem;padding:1rem 0">🎉 Heç bir səhv yoxdur! Mükəmməl nəticə!</div>`;
+
+  document.getElementById('hdr-counter').textContent='Nəticə';
+  document.getElementById('view').innerHTML=`
+    <div class="results">
+      <div class="results-header">Test Tamamlandı</div>
+      <div class="results-sub">Bütün ${questions.length} sualı keçdiniz</div>
+      <div class="score-grid">
+        <div class="score-card c-accent"><div class="num">${pct}%</div><div class="lbl">Ümumi</div></div>
+        <div class="score-card c-green"><div class="num">${correct}</div><div class="lbl">Düzgün</div></div>
+        <div class="score-card c-red"><div class="num">${wrong.length}</div><div class="lbl">Səhv</div></div>
+        <div class="score-card c-amber"><div class="num">${skipped}</div><div class="lbl">Cavabsız</div></div>
+      </div>
+      <div style="margin-bottom:2rem;padding:1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--card-r);text-align:center">
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;font-family:'Syne',sans-serif">Qiymətləndirmə</div>
+        <div style="font-size:2rem;font-weight:800;font-family:'Syne',sans-serif;color:${gc}">${grade}</div>
+      </div>
+      ${wrong.length?`<div class="wrong-section-title">Səhv cavablar (${wrong.length})</div>`:''}
+      <div class="wrong-list">${wrongHtml}</div>
+      <button class="restart-btn" onclick="restart()">↺ Yenidən Başla</button>
+    </div>`;
+}
+
+function restart(){
+  current=0;
+  answers=Array(questions.length).fill(null);
+  hintShown=Array(questions.length).fill(false);
+  questions.forEach(q=>{ q.shuffled=shuffle(q.opts); });
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
