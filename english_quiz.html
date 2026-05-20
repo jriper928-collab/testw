@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Quiz – 80 Sual</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --card: #151827;
+    --card2: #1c2033;
+    --border: #2a2f4a;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --green: #22d87a;
+    --red: #ff4d6d;
+    --yellow: #ffd166;
+    --text: #e8eaf6;
+    --muted: #8892b0;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  .header p { color: var(--muted); margin-top: 6px; font-size: 0.9rem; }
+
+  /* PROGRESS */
+  .progress-wrap {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 28px;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* CARD */
+  .card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    animation: fadeIn 0.35s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* Reading text box */
+  .reading-box {
+    background: var(--card2);
+    border-left: 3px solid var(--accent2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #c3c8e0;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .q-text {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    white-space: pre-line;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  /* HINT */
+  .hint-wrap {
+    margin-bottom: 20px;
+  }
+  .hint-toggle {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-family: 'Sora', sans-serif;
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hint-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .hint-box {
+    margin-top: 10px;
+    background: #1a1f38;
+    border: 1px solid var(--accent2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    color: var(--yellow);
+    font-family: 'JetBrains Mono', monospace;
+    display: none;
+  }
+  .hint-box.visible { display: block; animation: fadeIn 0.2s ease; }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: var(--card2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .option:hover { border-color: var(--accent); background: #1e2440; transform: translateX(2px); }
+  .option .opt-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .option:hover .opt-letter { background: var(--accent); color: #fff; }
+  .option.correct {
+    border-color: var(--green);
+    background: rgba(34, 216, 122, 0.1);
+    pointer-events: none;
+  }
+  .option.correct .opt-letter { background: var(--green); color: #000; }
+  .option.wrong {
+    border-color: var(--red);
+    background: rgba(255, 77, 109, 0.1);
+    pointer-events: none;
+    animation: shake 0.4s ease;
+  }
+  .option.wrong .opt-letter { background: var(--red); color: #fff; }
+  .option.disabled { pointer-events: none; opacity: 0.5; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  /* FEEDBACK */
+  .feedback {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: none;
+    animation: fadeIn 0.25s ease;
+    align-items: center;
+    gap: 8px;
+  }
+  .feedback.show { display: flex; }
+  .feedback.ok { background: rgba(34, 216, 122, 0.15); color: var(--green); border: 1px solid rgba(34,216,122,0.3); }
+  .feedback.fail { background: rgba(255, 77, 109, 0.12); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-prev { background: var(--card2); color: var(--muted); border: 1px solid var(--border); }
+  .btn-prev:hover { color: var(--text); border-color: var(--accent); }
+  .btn-next { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .btn-next:hover { opacity: 0.9; transform: scale(1.02); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+
+  /* SCORE */
+  .score-card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 48px 32px;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  .score-card h2 { font-size: 2.2rem; margin-bottom: 8px; }
+  .score-big {
+    font-size: 5rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin: 20px 0;
+  }
+  .score-sub { color: var(--muted); margin-bottom: 32px; }
+  .wrong-list { text-align: left; margin-top: 32px; }
+  .wrong-list h3 { font-size: 1rem; color: var(--red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .wrong-item {
+    background: var(--card2);
+    border: 1px solid rgba(255,77,109,0.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+  }
+  .wrong-item .wq { color: var(--muted); margin-bottom: 4px; font-size: 0.8rem; }
+  .wrong-item .wa { color: var(--green); font-weight: 600; }
+  .wrong-item .wu { color: var(--red); text-decoration: line-through; opacity: 0.7; }
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 32px;
+    font-size: 1rem;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-restart:hover { opacity: 0.9; transform: scale(1.02); }
+
+  /* SCORE RING */
+  .ring-wrap { position: relative; display: inline-block; }
+  svg.ring { transform: rotate(-90deg); }
+  .ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📚 English Quiz</h1>
+  <p>Kollektiv 3 · 80 sual · İmtahan rejimi</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="prog-label">Sual 1 / 80</span>
+    <span id="score-label">✅ 0 &nbsp; ❌ 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:1.25%"></div></div>
+</div>
+
+<div class="card" id="quiz-card">
+  <div class="q-num" id="q-num">SUAL 1</div>
+  <div class="reading-box" id="reading-box" style="display:none"></div>
+  <div class="q-text" id="q-text"></div>
+
+  <div class="hint-wrap">
+    <button class="hint-toggle" id="hint-btn" onclick="toggleHint()">💡 İpucu göstər</button>
+    <div class="hint-box" id="hint-box"></div>
+  </div>
+
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+
+  <div class="nav">
+    <button class="btn btn-prev" id="btn-prev" onclick="goTo(current-1)">← Əvvəl</button>
+    <button class="btn btn-next" id="btn-next" onclick="goNext()" disabled>Növbəti →</button>
+  </div>
+</div>
+
+<div class="score-card" id="score-card">
+  <h2>🎉 Bitdi!</h2>
+  <div class="score-big" id="final-score"></div>
+  <div class="score-sub" id="final-sub"></div>
+  <div class="wrong-list" id="wrong-list"></div>
+  <button class="btn-restart" onclick="restart()">🔄 Yenidən başla</button>
+</div>
+
+<script>
+const QUESTIONS = [{"id": 1, "q": "Choose the correct pronouns.\nLarisa's sisters are waiting for ___ dad.", "correct": "their", "options": ["their", "her", "his", "its"]}, {"id": 2, "q": "Choose correct variant.\nMy uncle has a dog. His name is Max. Max never leaves him. He was a very ___ dog.", "correct": "faithful", "options": ["faithful", "dangerous", "wild", "boring"]}, {"id": 3, "q": "Choose the correct variant (correct ones):\n1. much water   2. many water   3. the girl's idea   4. the girls's ideas   5. many book", "correct": "1, 3", "options": ["1, 3", "2, 4", "1, 5", "3, 4"]}, {"id": 4, "q": "Choose the correct tense form.\nLast year Mr. Black ___ a millionaire, but now he ___ a poor man.", "correct": "was, is", "options": ["was, is", "is, was", "was, was", "is, is"]}, {"id": 5, "q": "Choose the line of the nouns:\na) watch, cinema, interesting\nb) bookcase, pizza, hard\nc) cut, screen, wear\nd) animal, hunt, easy\ne) water, danger, litter", "correct": "water, danger, litter", "options": ["water, danger, litter", "watch, cinema, interesting", "bookcase, pizza, hard", "animal, hunt, easy"]}, {"id": 6, "q": "Choose the correct variant.\nHow many delicious meals ___ ___ for dinner?", "correct": "are there", "options": ["are there", "there are", "is there", "there is"]}, {"id": 7, "q": "Choose the correct pair of antonyms:\na) close-near   b) empty-full   c) fat-heavy   d) honest-reliable", "correct": "empty-full", "options": ["empty-full", "close-near", "fat-heavy", "honest-reliable"]}, {"id": 8, "q": "Make up a sentence from these words:\n1.quite  2.building  3.that  4.was  5.ancient", "correct": "That building was quite ancient.", "options": ["That building was quite ancient.", "That quite building was ancient.", "Was that building quite ancient?", "Ancient that building was quite."]}, {"id": 9, "q": "Choose the correct variant.\nWe have very ___ money left.", "correct": "little", "options": ["little", "few", "much", "many"]}, {"id": 10, "q": "Choose the correct tense form.\nNick will write his essay as soon as he ___ his work.", "correct": "finishes", "options": ["finishes", "will finish", "finished", "has finished"]}, {"id": 11, "q": "Choose the correct variant.\n___ you ___ see an action movie tomorrow night?", "correct": "Will / you", "options": ["Will / you", "Do / you", "Did / you", "Are / you"]}, {"id": 12, "q": "Choose the correct variant.\nShe will ___ the gym every morning.", "correct": "go to", "options": ["go to", "goes to", "going to", "went to"]}, {"id": 13, "q": "Choose the correct modal verb.\nSam ___ go to the party because he was too busy.", "correct": "couldn't", "options": ["couldn't", "mustn't", "shouldn't", "won't"]}, {"id": 14, "q": "Change the sentence into Passive.\n\"She cooked the dinner in the afternoon.\"", "correct": "The dinner was cooked in the afternoon.", "options": ["The dinner was cooked in the afternoon.", "The dinner is cooked in the afternoon.", "The dinner has been cooked in the afternoon.", "The dinner had cooked in the afternoon."]}, {"id": 15, "q": "Choose the correct preposition.\nA lot of boys are interested ___ cars.", "correct": "in", "options": ["in", "at", "on", "about"]}, {"id": 16, "q": "Read the text about English tea habits.\nChoose the WRONG variant about English people:", "correct": "don't drink much tea", "options": ["don't drink much tea", "don't like a lemon in their tea", "like to have tea with milk", "drink a lot of tea"], "text": "Tea is the English national drink. English people like tea very much, they like to begin their morning with black tea. They drink a lot of tea. They have tea for breakfast, lunch and dinner. Some English families have tea five or seven times a day. English people like to drink tea from cups. They like to have tea with milk, not with lemon."}, {"id": 17, "q": "Choose the antonym to the word \"begin\"", "correct": "finish", "options": ["finish", "start", "continue", "stop"]}, {"id": 18, "q": "The passage is about…", "correct": "English tea drinking habits", "options": ["English tea drinking habits", "English breakfast traditions", "How to make tea", "English national food"], "text": "Tea is the English national drink. English people like tea very much, they like to begin their morning with black tea. They drink a lot of tea. They have tea for breakfast, lunch and dinner. Some English families have tea five or seven times a day. English people like to drink tea from cups. They like to have tea with milk, not with lemon."}, {"id": 19, "q": "Complete the sentence.\nThe English ___", "correct": "like to have tea with milk", "options": ["like to have tea with milk", "don't like to drink tea from cups", "always drink tea with lemon", "always drink tea from glasses"], "text": "Tea is the English national drink. English people like tea very much, they like to begin their morning with black tea. They drink a lot of tea. They have tea for breakfast, lunch and dinner. Some English families have tea five or seven times a day. English people like to drink tea from cups. They like to have tea with milk, not with lemon."}, {"id": 20, "q": "Choose the synonym to the word \"a lot of\" in the text.", "correct": "much", "options": ["much", "few", "little", "some"]}, {"id": 21, "q": "Choose the correct pronoun.\nThe children organized the party all by ___.", "correct": "themselves", "options": ["themselves", "yourself", "ourselves", "itself"]}, {"id": 22, "q": "Choose the correct option.\nHow much grass ___ for this cow?", "correct": "is there", "options": ["is there", "are there", "there is", "there are"]}, {"id": 23, "q": "Choose the correct modal verbs.\nMy brother ___ play the guitar very well, but my sister ___.", "correct": "can, can't", "options": ["can, can't", "could, couldn't", "must, mustn't", "will, won't"]}, {"id": 24, "q": "Make up a sentence:\n1.breakfast  2.my brother  3.at 7 a.m.  4.eats  5.always  6.in the dining room", "correct": "My brother always eats breakfast in the dining room at 7 a.m.", "options": ["My brother always eats breakfast in the dining room at 7 a.m.", "Always my brother eats breakfast at 7 a.m. in the dining room.", "My brother eats always breakfast in the dining room at 7 a.m.", "At 7 a.m. my brother always eats in the dining room breakfast."]}, {"id": 25, "q": "Choose the correct pair of derivative nouns:", "correct": "freedom, imagination", "options": ["freedom, imagination", "workspace, sadness", "bookstore, sunflower", "composer, headache"]}, {"id": 26, "q": "Choose the correct sentence in the Passive Voice.\n\"They built the station many years ago.\"", "correct": "The station was built many years ago.", "options": ["The station was built many years ago.", "They have been built the station many years ago.", "The station built many years ago.", "The station was built them many years ago."]}, {"id": 27, "q": "Choose the antonym of the underlined word.\nThe weather today is very cold.", "correct": "hot", "options": ["hot", "cool", "warm", "mild"]}, {"id": 28, "q": "Choose the correct variant.\n– Who ___ some apple pie?\n– We would.", "correct": "would like", "options": ["would like", "will like", "likes", "would want"]}, {"id": 29, "q": "___ is the study of the world's surface, physical features and countries.", "correct": "Geography", "options": ["Geography", "History", "Biology", "Physics"]}, {"id": 30, "q": "Choose the words with the close meaning:", "correct": "huge-big", "options": ["huge-big", "difficult-easy", "expensive-cheap", "modern-old"]}, {"id": 31, "q": "Choose the correct tense forms.\nThe ice ___ when the sun ___ out.", "correct": "melted, came", "options": ["melted, came", "will melt, came", "will be melted, came", "will melt, will come"]}, {"id": 32, "q": "Choose the correct preposition.\nJack is good ___ sports.", "correct": "at", "options": ["at", "in", "on", "for"]}, {"id": 33, "q": "Choose the correct pronouns.\nThis black car is ___ but not ___.", "correct": "mine, yours", "options": ["mine, yours", "my, your", "mine, your", "my, yours"]}, {"id": 34, "q": "Choose the nouns in the plural:\n1.paste  2.goose  3.oxen  4.people  5.news  6.stairs  7.tooth", "correct": "oxen, people, stairs", "options": ["oxen, people, stairs", "paste, goose, tooth", "goose, news, tooth", "paste, news, stairs"]}, {"id": 35, "q": "Choose the correct variant.\nLast week I ___ in the museum. There ___ many famous pictures.", "correct": "was, were", "options": ["was, were", "were, was", "was, was", "were, were"]}, {"id": 36, "q": "Choose the best title for the text:", "correct": "Farm animals", "options": ["Farm animals", "My grandparents", "My summer holidays", "Wild animals"], "text": "My parents and I live in a big city. My grandma and grandpa live on a farm. There are many different animals there. There are sheep, horses, hens, cows, cats and dogs. I love animals very much. I go there every summer, during my summer holidays. I help my grandparents to look after the farm animals. They are very lovely and friendly. They give us food to eat."}, {"id": 37, "q": "Choose the synonym to the word \"look after\":\nlook at / look for / look in / take care of / have fun", "correct": "take care of", "options": ["take care of", "look at", "look for", "have fun"]}, {"id": 38, "q": "Complete the sentence.\nSheep, horses, cows are ___.", "correct": "domestic animals", "options": ["domestic animals", "wild animals", "dangerous animals", "not friendly"]}, {"id": 39, "q": "Choose the correct sentence according to the text:", "correct": "I go to the farm, when I have no lessons.", "options": ["I go to the farm, when I have no lessons.", "My grandparents live in a city.", "I don't like farm animals.", "I stay in the city every summer."], "text": "My parents and I live in a big city. My grandma and grandpa live on a farm. There are many different animals there. There are sheep, horses, hens, cows, cats and dogs. I love animals very much. I go there every summer, during my summer holidays. I help my grandparents to look after the farm animals. They are very lovely and friendly. They give us food to eat."}, {"id": 40, "q": "Which question has NO answer in the text?", "correct": "What do I give farm animals to eat?", "options": ["What do I give farm animals to eat?", "Where does my family live?", "Where do I spend my summer holidays?", "Which animals are there on the farm?"], "text": "My parents and I live in a big city. My grandma and grandpa live on a farm. There are many different animals there. There are sheep, horses, hens, cows, cats and dogs. I love animals very much. I go there every summer, during my summer holidays. I help my grandparents to look after the farm animals. They are very lovely and friendly. They give us food to eat."}, {"id": 41, "q": "Choose the correct variant.\n– ___ there a lot of mistakes in this text?\n– Yes, ___.", "correct": "Are, there are", "options": ["Are, there are", "Is, there is", "Are, there is", "Is, there are"]}, {"id": 42, "q": "Choose the correct article.\nThis is ___ best Mexican restaurant in ___ country.", "correct": "the, the", "options": ["the, the", "a, the", "the, a", "a, a"]}, {"id": 43, "q": "Choose the correct pronoun.\nYou'll love the place with ___ sunny weather and beaches.", "correct": "its", "options": ["its", "their", "his", "our"]}, {"id": 44, "q": "Choose the correct variant.\nHe ___ reading poetry.", "correct": "likes", "options": ["likes", "like", "liked", "is like"]}, {"id": 45, "q": "Choose the correct pronouns (to be successful):\n1. you, yourself   2. she, yourself   3. he, himself   4. you, yourselves   5. they, ourselves", "correct": "1, 3", "options": ["1, 3", "2, 4", "3, 5", "1, 5"]}, {"id": 46, "q": "Choose the correct tense form.\nWhen Ben ___ the room, he ___ your present.", "correct": "enters, will see", "options": ["enters, will see", "entered, will see", "will enter, sees", "entered, has seen"]}, {"id": 47, "q": "Change the sentence into the Passive Voice.\n\"The government changed some laws last year.\"", "correct": "Some laws were changed by the government last year.", "options": ["Some laws were changed by the government last year.", "Some laws are changed by the government last year.", "The government was changed some laws last year.", "Some laws changed by the government last year."]}, {"id": 48, "q": "Choose the correct modal verb.\nThese animals ___ live without nature.", "correct": "can't", "options": ["can't", "mustn't", "shouldn't", "won't"]}, {"id": 49, "q": "Choose the correct variant.\nThe coat ___ he bought was expensive.\n1.which  2.where  3.that  4.who", "correct": "that", "options": ["that", "which", "where", "who"]}, {"id": 50, "q": "Choose the correct tense form.\nSome new furniture factories ___ built in the suburbs of the city.", "correct": "have been", "options": ["have been", "were", "was", "has been"]}, {"id": 51, "q": "Choose the correct preposition.\nThe Whites arrived in London ___ plane yesterday.", "correct": "by", "options": ["by", "on", "in", "with"]}, {"id": 52, "q": "Choose the correct variant.\nOur teacher want ___ hard.", "correct": "us to work", "options": ["us to work", "we to work", "we working", "us work"]}, {"id": 53, "q": "Make up a sentence:\n1.Azerbaijani  2.is  3.the  4.writer  5.famous  6.Chingiz Abdullayev", "correct": "Chingiz Abdullayev is the famous Azerbaijani writer.", "options": ["Chingiz Abdullayev is the famous Azerbaijani writer.", "The famous writer is Azerbaijani Chingiz Abdullayev.", "Chingiz Abdullayev the famous Azerbaijani writer is.", "Is Chingiz Abdullayev the famous Azerbaijani writer."]}, {"id": 54, "q": "Choose the correct variant.\nHave you got a cat?\nYes, ___.", "correct": "Yes, I have.", "options": ["Yes, I have.", "Yes, I do.", "Yes, I am.", "Yes, I had."]}, {"id": 55, "q": "Choose the correct conjunction.\nTom is upset ___ he has broken his mom's favorite vase.", "correct": "because", "options": ["because", "although", "but", "so"]}, {"id": 56, "q": "Choose the title for the text:", "correct": "Children in the village", "options": ["Children in the village", "My cousins", "Children's weekend", "Colorful stones"], "text": "We spend our summer holidays at my uncle's in the village. The nature wonderful there. Every weekend we go to the river, catch fish and my aunt cooks them for us. The fish tastes delicious on the bank of the river. Then we play different games, swim in the cool water and sunbathe with my cousins. We have a good time. We can play with the stones, too. We find colorful stones and take them with us. Life is wonderful in the village in summer."}, {"id": 57, "q": "Complete the sentence.\n\"Wonderful\" means ___.", "correct": "very good / excellent", "options": ["very good / excellent", "boring / dull", "terrible / awful", "strange / unusual"]}, {"id": 58, "q": "Choose the INCORRECT sentence:", "correct": "Summer is boring in the village.", "options": ["Summer is boring in the village.", "My uncle lives in the village.", "There is a river near the village.", "We play different games."], "text": "We spend our summer holidays at my uncle's in the village. The nature wonderful there. Every weekend we go to the river, catch fish and my aunt cooks them for us. The fish tastes delicious on the bank of the river. Then we play different games, swim in the cool water and sunbathe with my cousins. We have a good time. We can play with the stones, too. We find colorful stones and take them with us. Life is wonderful in the village in summer."}, {"id": 59, "q": "Choose the antonym to the word \"cool\"", "correct": "warm", "options": ["warm", "cold", "hot", "mild"]}, {"id": 60, "q": "Complete the sentence.\nMy uncle's children are my ___.", "correct": "cousins", "options": ["cousins", "siblings", "nephews", "relatives"]}, {"id": 61, "q": "Choose the correct variant.\n___ makes you different from other students.", "correct": "Your personality", "options": ["Your personality", "Your teacher", "Your school", "Your uniform"]}, {"id": 62, "q": "Choose the line of plural nouns:", "correct": "umbrellas, cattle, women", "options": ["umbrellas, cattle, women", "trousers, soldiers, princess", "questions, boxes, mouse", "envelops, clothes, phonetics"]}, {"id": 63, "q": "Choose the correct variant.\n___ ___ red and yellow flowers in the park.", "correct": "There are", "options": ["There are", "There is", "Are there", "Is there"]}, {"id": 64, "q": "Choose the correct article.\nThe Browns stayed at ___ hotel near ___ airport.", "correct": "a, the", "options": ["a, the", "the, the", "a, a", "the, a"]}, {"id": 65, "q": "Choose the correct prepositions.\nThe song was written ___ a famous singer ___ 2010.", "correct": "by, in", "options": ["by, in", "by, at", "from, in", "with, in"]}, {"id": 66, "q": "Choose the correct modal verb.\nJane ___ finish her homework after dinner.", "correct": "must", "options": ["must", "can", "might", "would"]}, {"id": 67, "q": "Choose the correct tense form.\n– Have you finished the project?\n– Yes, I ___ it last week.", "correct": "finished", "options": ["finished", "have finished", "finish", "had finished"]}, {"id": 68, "q": "Choose the correct variant.\nI have lived in this town ___ I was born.", "correct": "since", "options": ["since", "for", "when", "after"]}, {"id": 69, "q": "Choose the correct variant.\n___ are you thinking about?\n1.Who  2.When  3.What  4.Why", "correct": "What", "options": ["What", "Who", "When", "Why"]}, {"id": 70, "q": "Choose the correct variant.\nForeign language courses ___ popular among students.\n1.is  2.are  3.was  4.were", "correct": "are", "options": ["are", "is", "was", "were"]}, {"id": 71, "q": "Choose the correct Passive Voice version:\n\"The teacher explained the rules clearly.\"", "correct": "The rules were explained clearly.", "options": ["The rules were explained clearly.", "The rules are explained clearly.", "The rules were been explained clearly.", "The teacher was explained the rules clearly."]}, {"id": 72, "q": "Choose the words with close meaning:", "correct": "tired – exhausted", "options": ["tired – exhausted", "to spoil – to clear", "to repair – to destroy", "strange – ordinary"]}, {"id": 73, "q": "Choose the correct variant.\nThe box of pencils ___ on the desk.\n1.are  2.was  3.is  4.were", "correct": "is", "options": ["is", "are", "was", "were"]}, {"id": 74, "q": "Choose the correct option.\nYou will enter the university if you ___ hard.", "correct": "study", "options": ["study", "will study", "studied", "studies"]}, {"id": 75, "q": "Make up a sentence:\n1.'Please'  2.say  3.forget  4.to  5.don't", "correct": "Don't forget to say \"Please\".", "options": ["Don't forget to say \"Please\".", "Forget don't to say Please.", "Don't say to forget Please.", "Please don't forget to say."]}, {"id": 76, "q": "Choose the best title:", "correct": "A babysitter", "options": ["A babysitter", "A tailor", "A baby", "Playground"], "text": "The Aliyevs have two daughters and a kind babysitter. She is not very old. She loves children very much. She takes care of Mehriban's baby till the evening. In the morning she takes her to the playground, sings songs for her and cooks delicious meals. Her family respects her very much."}, {"id": 77, "q": "Choose the synonym to the word \"kind\".", "correct": "friendly", "options": ["friendly", "rude", "strict", "boring"]}, {"id": 78, "q": "\"Delicious\" means ___.", "correct": "very tasty", "options": ["very tasty", "very bad", "very cheap", "very cold"]}, {"id": 79, "q": "\"Respect\" means ___.", "correct": "admire", "options": ["admire", "ignore", "dislike", "avoid"]}, {"id": 80, "q": "Which question has NO answer in the text?", "correct": "Does the babysitter have grandparents?", "options": ["Does the babysitter have grandparents?", "Is the babysitter friendly?", "When does the babysitter take the kid to play?", "Can the babysitter cook?"], "text": "The Aliyevs have two daughters and a kind babysitter. She is not very old. She loves children very much. She takes care of Mehriban's baby till the evening. In the morning she takes her to the playground, sings songs for her and cooks delicious meals. Her family respects her very much."}];
+
+// Shuffle options for each question (keep correct answer trackable)
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Prepare shuffled options once
+const prepared = QUESTIONS.map(q => ({
+  ...q,
+  shuffled: shuffleArray(q.options)
+}));
+
+let current = 0;
+let answers = new Array(80).fill(null); // null = unanswered, string = chosen
+let correct_count = 0;
+let wrong_count = 0;
+let hintVisible = false;
+
+// Audio
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+function playTone(freq, type, duration, vol=0.3) {
+  try {
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playCorrect() {
+  playTone(523, 'sine', 0.12);
+  setTimeout(() => playTone(659, 'sine', 0.15), 80);
+  setTimeout(() => playTone(784, 'sine', 0.2), 170);
+}
+
+function playWrong() {
+  playTone(200, 'sawtooth', 0.15, 0.2);
+  setTimeout(() => playTone(150, 'sawtooth', 0.2, 0.2), 120);
+}
+
+function render(idx) {
+  const q = prepared[idx];
+  hintVisible = false;
+
+  document.getElementById('q-num').textContent = `SUAL ${idx + 1}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Reading text
+  const rb = document.getElementById('reading-box');
+  if (q.text) { rb.textContent = q.text; rb.style.display = 'block'; }
+  else { rb.style.display = 'none'; }
+
+  // Hint
+  document.getElementById('hint-box').textContent = '✅ Cavab: ' + q.correct;
+  document.getElementById('hint-box').classList.remove('visible');
+  document.getElementById('hint-btn').textContent = '💡 İpucu göstər';
+
+  // Options
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const chosen = answers[idx];
+
+  q.shuffled.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    if (chosen !== null) {
+      if (opt === q.correct) div.classList.add('correct');
+      else if (opt === chosen && opt !== q.correct) div.classList.add('wrong');
+      else div.classList.add('disabled');
+    }
+    div.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    if (chosen === null) {
+      div.addEventListener('click', () => choose(idx, opt));
+    }
+    opts.appendChild(div);
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  if (chosen !== null) {
+    if (chosen === q.correct) {
+      fb.className = 'feedback show ok';
+      fb.innerHTML = '✅ Düzdür! Əla cavab!';
+    } else {
+      fb.className = 'feedback show fail';
+      fb.innerHTML = `❌ Yanlış! Düzgün cavab: <strong style="margin-left:6px">${q.correct}</strong>`;
+    }
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = chosen === null;
+  document.getElementById('btn-next').textContent = idx === QUESTIONS.length - 1 ? 'Bitir 🏁' : 'Növbəti →';
+
+  updateProgress();
+}
+
+function choose(idx, opt) {
+  if (answers[idx] !== null) return;
+  answers[idx] = opt;
+  const q = prepared[idx];
+  if (opt === q.correct) { correct_count++; playCorrect(); }
+  else { wrong_count++; playWrong(); }
+  render(idx);
+}
+
+function goNext() {
+  if (current === QUESTIONS.length - 1) {
+    showScore();
+  } else {
+    goTo(current + 1);
+  }
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= QUESTIONS.length) return;
+  current = idx;
+  render(idx);
+}
+
+function toggleHint() {
+  hintVisible = !hintVisible;
+  const box = document.getElementById('hint-box');
+  const btn = document.getElementById('hint-btn');
+  if (hintVisible) {
+    box.classList.add('visible');
+    btn.textContent = '🙈 İpucunu gizlət';
+  } else {
+    box.classList.remove('visible');
+    btn.textContent = '💡 İpucu göstər';
+  }
+}
+
+function updateProgress() {
+  const pct = ((current + 1) / 80 * 100).toFixed(1);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `Sual ${current + 1} / 80`;
+  document.getElementById('score-label').innerHTML = `✅ ${correct_count} &nbsp; ❌ ${wrong_count}`;
+}
+
+function showScore() {
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('progress-wrap');
+  const sc = document.getElementById('score-card');
+  sc.style.display = 'block';
+
+  const total = correct_count + wrong_count;
+  const pct = Math.round(correct_count / 80 * 100);
+  document.getElementById('final-score').textContent = correct_count + ' / 80';
+
+  let grade = pct >= 90 ? '🏆 Əla!' : pct >= 75 ? '🎯 Yaxşı!' : pct >= 60 ? '📘 Orta' : '📖 Daha çox çalış';
+  document.getElementById('final-sub').textContent = `${pct}% düzgün · ${grade}`;
+
+  // Wrong answers list
+  const wl = document.getElementById('wrong-list');
+  const wrongs = prepared.filter((q, i) => answers[i] !== null && answers[i] !== q.correct);
+  if (wrongs.length === 0) {
+    wl.innerHTML = '<p style="color:var(--green);text-align:center;font-weight:600">🎉 Bütün suallar düzgün cavablandırıldı!</p>';
+  } else {
+    wl.innerHTML = `<h3>❌ Yanlış cavablar (${wrongs.length})</h3>` +
+      wrongs.map((q, _) => {
+        const i = prepared.indexOf(q);
+        return `<div class="wrong-item">
+          <div class="wq">Sual ${q.id}: ${q.q.split('\n')[0]}</div>
+          <div class="wu">Sizin: ${answers[i]}</div>
+          <div class="wa">Düzgün: ${q.correct}</div>
+        </div>`;
+      }).join('');
+  }
+}
+
+function restart() {
+  answers = new Array(80).fill(null);
+  correct_count = 0;
+  wrong_count = 0;
+  current = 0;
+  document.getElementById('score-card').style.display = 'none';
+  document.getElementById('quiz-card').style.display = 'block';
+  render(0);
+}
+
+// Init
+render(0);
+</script>
+</body>
+</html>
