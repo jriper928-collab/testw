@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rəqəmli Qurğular — Mock İmtahan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #FDF6EC;
+    --card:     #FFFAF4;
+    --border:   #EDD9B8;
+    --primary:  #B5651D;
+    --primary-light: #E8956D;
+    --accent:   #D4956A;
+    --text:     #3D2314;
+    --sub:      #7A5C42;
+    --green:    #5A8F5A;
+    --green-bg: #EAF4EA;
+    --red:      #B54040;
+    --red-bg:   #FBEAEA;
+    --hint-bg:  #FFF3DC;
+    --hint-border: #F0C98A;
+    --shadow:   rgba(100,50,0,0.10);
+    --radius:   18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px 60px;
+    background-image:
+      radial-gradient(ellipse at 10% 0%, #F5DDB5 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 100%, #EDD9B8 0%, transparent 55%);
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .header .badge {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 5vw, 36px);
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .header p {
+    color: var(--sub);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 22px;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sub);
+    margin-bottom: 7px;
+  }
+  .progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 28px var(--shadow);
+    width: 100%;
+    max-width: 680px;
+    padding: 34px 36px 28px;
+    animation: slideIn 0.35s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-num {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: clamp(15px, 2.2vw, 18px);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  /* ── Options ── */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: #FFF5E8;
+    transform: translateX(3px);
+    box-shadow: 0 3px 12px rgba(181,101,29,0.12);
+  }
+  .opt-letter {
+    min-width: 30px;
+    height: 30px;
+    background: var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--sub);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  /* States */
+  .opt-btn.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+  .opt-btn.correct .opt-letter {
+    background: var(--green);
+    color: #fff;
+  }
+  .opt-btn.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+  }
+  .opt-btn.wrong .opt-letter {
+    background: var(--red);
+    color: #fff;
+  }
+  .opt-btn.reveal-correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+    opacity: 0.85;
+  }
+  .opt-btn.reveal-correct .opt-letter {
+    background: var(--green);
+    color: #fff;
+  }
+  .opt-btn:disabled { cursor: default; transform: none !important; }
+
+  /* ── Hint ── */
+  .hint-area {
+    margin-top: 20px;
+    background: var(--hint-bg);
+    border: 1.5px solid var(--hint-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: #7A5000;
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+  .hint-area.show { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hint-area strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #B5651D; }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 26px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--hint-bg);
+    border: 1.5px solid var(--hint-border);
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #B5651D;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-hint:hover { background: #FDEEC8; box-shadow: 0 2px 8px rgba(181,101,29,0.15); }
+
+  .nav-btns { display: flex; gap: 10px; margin-left: auto; }
+
+  .btn-nav {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--sub);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-nav:hover { border-color: var(--accent); color: var(--primary); background: #FFF5E8; }
+  .btn-nav:disabled { opacity: 0.35; cursor: default; }
+
+  .btn-finish {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+  }
+  .btn-finish:hover { background: var(--accent); color: #fff; }
+
+  /* ── Status icons ── */
+  .status-dots {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+  .dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+  }
+  .dot.answered-ok  { background: var(--green); }
+  .dot.answered-err { background: var(--red); }
+  .dot.current      { background: var(--primary); box-shadow: 0 0 0 3px rgba(181,101,29,0.25); }
+
+  /* ── Result Screen ── */
+  #result-screen { display: none; width: 100%; max-width: 680px; }
+
+  .result-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 28px var(--shadow);
+    padding: 36px 36px 30px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(181,101,29,0.3);
+  }
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-total {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+  }
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .result-sub { font-size: 14px; color: var(--sub); margin-bottom: 24px; }
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 10px;
+  }
+  .stat-box {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 24px;
+    text-align: center;
+  }
+  .stat-box .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+  }
+  .stat-box .stat-lbl { font-size: 12px; color: var(--sub); font-weight: 600; }
+  .stat-box.ok .stat-val { color: var(--green); }
+  .stat-box.err .stat-val { color: var(--red); }
+
+  /* Wrong answers list */
+  .wrong-list-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 18px var(--shadow);
+    padding: 28px 30px;
+  }
+  .wrong-list-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wrong-item {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+  }
+  .wrong-item:last-child { border-bottom: none; }
+  .wi-q { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .wi-your { font-size: 13px; color: var(--red); margin-bottom: 4px; }
+  .wi-correct { font-size: 13px; color: var(--green); }
+  .wi-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-right: 5px; }
+  .wi-tag.y { background: var(--red-bg); color: var(--red); }
+  .wi-tag.c { background: var(--green-bg); color: var(--green); }
+
+  .btn-restart {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 13px 28px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 22px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(181,101,29,0.3);
+  }
+  .btn-restart:hover { background: var(--accent); transform: translateY(-2px); }
+
+  @media (max-width: 500px) {
+    .card, .result-card, .wrong-list-card { padding: 22px 18px; }
+    .stats-row { gap: 12px; }
+    .stat-box { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">📚 Mock İmtahan</div>
+  <h1>Rəqəmli Qurğular & Mikroprosessor</h1>
+  <p>38 sual · Hər sual üçün ipucu mövcuddur</p>
+</div>
+
+<!-- Status dots -->
+<div class="status-dots" id="dots"></div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="prog-text">Sual 1 / 38</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<!-- Quiz Card -->
+<div class="card" id="quiz-card">
+  <div class="q-num" id="q-num">Sual 1</div>
+  <div class="q-text" id="q-text"></div>
+  <div class="options" id="options"></div>
+
+  <div class="hint-area" id="hint-area">
+    <strong>💡 İpucu — Düzgün cavab:</strong>
+    <span id="hint-text"></span>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-hint" onclick="showHint()" id="btn-hint">💡 İpucu</button>
+    <div class="nav-btns">
+      <button class="btn-nav" id="btn-prev" onclick="navigate(-1)" disabled>← Geri</button>
+      <button class="btn-nav" id="btn-next" onclick="navigate(1)">İrəli →</button>
+      <button class="btn-nav btn-finish" id="btn-finish" onclick="showResults()" style="display:none">Bitir ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- Result Screen -->
+<div id="result-screen">
+  <div class="result-card">
+    <div class="score-circle">
+      <div class="score-num" id="res-score">0</div>
+      <div class="score-total" id="res-total">/ 38</div>
+    </div>
+    <div class="result-title" id="res-title">Nəticə</div>
+    <div class="result-sub" id="res-sub"></div>
+    <div class="stats-row">
+      <div class="stat-box ok">
+        <div class="stat-val" id="res-ok">0</div>
+        <div class="stat-lbl">✅ Düzgün</div>
+      </div>
+      <div class="stat-box err">
+        <div class="stat-val" id="res-err">0</div>
+        <div class="stat-lbl">❌ Səhv</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="res-skip" style="color:var(--sub)">0</div>
+        <div class="stat-lbl">⬜ Cavabsız</div>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Yenidən başla</button>
+  </div>
+
+  <div class="wrong-list-card" id="wrong-list-card" style="display:none">
+    <div class="wrong-list-title">❌ Səhv cavablar</div>
+    <div id="wrong-items"></div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    num: "S-102",
+    q: "Şifrator (encoder) qurğusu hansı funksiyanı yerinə yetirir?",
+    opts: [
+      "Onluq rəqəmi 2-lik rəqəmə çevirir",
+      "2-lik rəqəmi 10-luq rəqəmə çevirir",
+      "Rəqəmləri şifrələyir və gizlədir",
+      "Onaltılıq rəqəmi ikiliyə çevirir"
+    ],
+    ans: 0,
+    hint: "Şifrator = encoder: onluq → ikilik çevrilməsi"
+  },
+  {
+    num: "S-106",
+    q: "Deşifrator (decoder) qurğusu hansı funksiyanı yerinə yetirir?",
+    opts: [
+      "Onluq rəqəmi 2-lik rəqəmə çevirir",
+      "2-lik rəqəmi 10-luq rəqəmə çevirir",
+      "Onaltılıq rəqəmi onluğa çevirir",
+      "Rəqəmləri deşifrə edib gizlədir"
+    ],
+    ans: 1,
+    hint: "Deşifrator = decoder: ikilik → onluq çevrilməsi (şifratorun əksi)"
+  },
+  {
+    num: "S-107",
+    q: "Deşifrator qurğusu hansı məntiqi elementlər üzərində qurulur?",
+    opts: [
+      "OR (VƏ YA) qapıları",
+      "NOT (YOX) qapıları",
+      "AND (VƏ) qapıları",
+      "XOR (Eksklüziv VƏ YA) qapıları"
+    ],
+    ans: 2,
+    hint: "Deşifratorlar əsasən AND (VƏ) qapıları üzərində qurulur"
+  },
+  {
+    num: "S-108",
+    q: "Tam deşifratorun giriş və çıxışları necə olur?",
+    opts: [
+      "2 giriş, 4 çıxış",
+      "3 giriş, 8 çıxış",
+      "4 giriş, 16 çıxış",
+      "8 giriş, 64 çıxış"
+    ],
+    ans: 2,
+    hint: "Tam deşifrator: 4 giriş → 2⁴ = 16 çıxış"
+  },
+  {
+    num: "S-113",
+    q: "Say sistemindən asılı olaraq iki ədədin cəmlənməsi zamanı hansı rəqəmlərin toplanması həyata keçirilir?",
+    opts: [
+      "Yalnız 1-ci cəmlənənin rəqəmləri",
+      "1-ci, 2-ci cəmlənənin mərtəbə rəqəmləri VƏ qonşu mərtəbənin keçid rəqəmi",
+      "Yalnız keçid (köçüm) rəqəmləri",
+      "Yalnız 2-ci cəmlənənin rəqəmləri"
+    ],
+    ans: 1,
+    hint: "3 rəqəm toplanır: 1-ci mərtəbə + 2-ci mərtəbə + qonşu mərtəbənin keçid rəqəmi"
+  },
+  {
+    num: "S-115",
+    q: "Yarım cəmləyicinin (half adder) neçə girişi və çıxışı var?",
+    opts: [
+      "2 giriş, 2 çıxış",
+      "3 giriş, 2 çıxış",
+      "2 giriş, 3 çıxış",
+      "1 giriş, 2 çıxış"
+    ],
+    ans: 0,
+    hint: "Yarım cəmləyici: 2 giriş (A, B) → 2 çıxış (Sum, Carry)"
+  },
+  {
+    num: "S-117",
+    q: "Bir mərtəbəli (tam) cəmləyicinin neçə girişi və çıxışı var?",
+    opts: [
+      "2 giriş, 2 çıxış",
+      "4 giriş, 2 çıxış",
+      "3 giriş, 3 çıxış",
+      "3 giriş, 2 çıxış"
+    ],
+    ans: 3,
+    hint: "Tam cəmləyici: 3 giriş (A, B, Cin) → 2 çıxış (Sum, Cout)"
+  },
+  {
+    num: "S-119",
+    q: "Ardıcıl cəmləmə üsulunda məlumatlar necə verilir?",
+    opts: [
+      "Paralel olaraq",
+      "Sinxron olaraq",
+      "Ardıcıl olaraq",
+      "Asinxron olaraq"
+    ],
+    ans: 2,
+    hint: "Ardıcıl (serial) cəmləmə → məlumatlar ardıcıl (bit-by-bit) verilir"
+  },
+  {
+    num: "S-120",
+    q: "Yaddaşsız cəmləyicilər hansı elementlər üzərində qurulur?",
+    opts: [
+      "Triggerlər",
+      "Kondensatorlar",
+      "Rezistorlar",
+      "Məntiqi elementlər"
+    ],
+    ans: 3,
+    hint: "Yaddaşsız (kombinasion) cəmləyicilər → sadə məntiqi elementlər üzərində"
+  },
+  {
+    num: "S-121",
+    q: "Yaddaşlı cəmləyicilər hansı elementi istifadə edir?",
+    opts: [
+      "Trigger",
+      "Məntiqi element",
+      "Kondensator",
+      "Rezistor"
+    ],
+    ans: 0,
+    hint: "Yaddaşlı (ardıcıl) cəmləyicilər → trigger (flip-flop) istifadə edir"
+  },
+  {
+    num: "S-122",
+    q: "Cəmləyicilər qurulmasına görə əsasən neçə növə bölünür?",
+    opts: [
+      "3 növ",
+      "4 növ",
+      "5 növ",
+      "2 növ"
+    ],
+    ans: 3,
+    hint: "Cəmləyicilər 2 növdür: yaddaşsız (kombinasion) və yaddaşlı (ardıcıl)"
+  },
+  {
+    num: "S-123",
+    q: "2-lik cəmləyicilər hansı say sistemində işləyir?",
+    opts: [
+      "10-luq (decimal)",
+      "16-lıq (hexadecimal)",
+      "8-lik (octal)",
+      "2-lik (binary)"
+    ],
+    ans: 3,
+    hint: "2-lik cəmləyici → ikili (binary) say sistemindədir"
+  },
+  {
+    num: "S-124",
+    q: "Kombinasion cəmləyicilər hansı növdür?",
+    opts: [
+      "Yaddaşlı",
+      "Ardıcıl",
+      "Paralel",
+      "Yaddaşsız"
+    ],
+    ans: 3,
+    hint: "Kombinasion = yaddaşsız; ardıcıl = yaddaşlı"
+  },
+  {
+    num: "S-125",
+    q: "Ardıcıl cəmləyicilər üçün əsas xüsusiyyət nədir?",
+    opts: [
+      "Paralel şəkildə işləyir, bütün bitlər eyni anda toplanır",
+      "Yalnız məntiqi elementlər üzərində qurulur, trigger istifadə edilmir",
+      "Y/Y-dən tələb olunan verilənlərə uyğun qurulur; hər takt erzinde müvafiq mərtəbələr cəmlənir",
+      "Hər taktda bütün mərtəbələr eyni vaxtda toplanır"
+    ],
+    ans: 2,
+    hint: "Ardıcıl cəmləyici: y/y-dən tələb olunan verilənlər, takt erzinde müvafiq qruplar üzrə cəmlənir"
+  },
+  {
+    num: "S-126",
+    q: "Mikroprosessor (MP) əsas neçə blokdan ibarətdir?",
+    opts: [
+      "2 blok",
+      "4 blok",
+      "5 blok",
+      "3 blok"
+    ],
+    ans: 3,
+    hint: "MP → 3 blok: HMQ, daxili registrlər, idarəetmə bloku"
+  },
+  {
+    num: "S-127",
+    q: "MP hansı qurğuları özündə birləşdirir?",
+    opts: [
+      "RAM, ROM və HMQ",
+      "CPU, GPU və RAM",
+      "HMQ, daxili registrlər və idarəetmə qurğusu",
+      "Trigger, şifrator və deşifrator"
+    ],
+    ans: 2,
+    hint: "MP = HMQ (ALU) + daxili registrlər + idarəetmə qurğusu"
+  },
+  {
+    num: "S-128",
+    q: "HMQ-nun (Hesab-Məntiq Qurğusunun) əsas vəzifəsi nədir?",
+    opts: [
+      "Məlumatları yaddaşda saxlamaq",
+      "Proqramı icraya vermək",
+      "Kəsilmələri idarə etmək",
+      "Takt siqnallarına sinxron olaraq sayğacın vəziyyətinə əsaslanaraq yaddaşdan əmrlər oxumaq"
+    ],
+    ans: 3,
+    hint: "HMQ → takt siqnallarına sinxron, sayğac vəziyyətinə əsaslanaraq işləyir"
+  },
+  {
+    num: "S-130",
+    q: "Akkumulyator nə üçün istifadə olunur?",
+    opts: [
+      "Yalnız məlumatları saxlamaq üçün",
+      "Proqramların icrasını idarə etmək üçün",
+      "Mikroprosessorda müxtəlif hesab və məntiq əməliyyatlarını yerinə yetirmək üçün",
+      "Kəsilmə siqnallarını emal etmək üçün"
+    ],
+    ans: 2,
+    hint: "Akkumulyator → müxtəlif emallar zamanı hesab-məntiq əməliyyatlarını icra edən registr"
+  },
+  {
+    num: "S-131",
+    q: "Əmr sayğacının (Program Counter — PC) funksiyası nədir?",
+    opts: [
+      "Hesab əməliyyatları yerinə yetirir",
+      "Məlumatları müvəqqəti saxlayır",
+      "Kəsilmələri idarə edir",
+      "Növbəti icra olunacaq əmrin ünvanını saxlayır; proqram icrası zamanı ardıcıl əmrləri göstərir"
+    ],
+    ans: 3,
+    hint: "PC (Proqram Sayğacı) → növbəti əmrin yaddaş ünvanını saxlayır"
+  },
+  {
+    num: "S-132",
+    q: "Əmr registri nəyi saxlayır?",
+    opts: [
+      "Proqram sayğacını saxlayır",
+      "Akkumulyatoru saxlayır",
+      "İcra olunacaq əmri saxlayır",
+      "Ünvan göstəricisini saxlayır"
+    ],
+    ans: 2,
+    hint: "Əmr registri → hazırda icra olunacaq əmri saxlayır"
+  },
+  {
+    num: "S-133",
+    q: "Mikrokontroller nədir?",
+    opts: [
+      "Böyük kompüterlərin işləməsi üçün nəzərdə tutulmuş cihaz",
+      "Müxtəlif funksiyanı yerinə yetirmək üçün nəzərdə tutulmuş mini kompüter / elektron cihazları idarə etmək üçün xüsusi çip",
+      "Yalnız hesab əməliyyatları üçün istifadə edilən qurğu",
+      "Xarici yaddaş idarəetmə qurğusu"
+    ],
+    ans: 1,
+    hint: "Mikrokontroller = bir çipdə tam sistem: CPU + RAM + ROM + periferiya"
+  },
+  {
+    num: "S-134",
+    q: "Mikrokontroller əsasən hansı qurğuları özündə birləşdirir?",
+    opts: [
+      "GPU, RAM və SSD",
+      "ALU, şifrator və deşifrator",
+      "Trigger, sayğac və kondensator",
+      "Prosessor (CPU), yaddaş (RAM) və ROM"
+    ],
+    ans: 3,
+    hint: "Mikrokontroller = prosessor + RAM + ROM (+ I/O, timer vs.)"
+  },
+  {
+    num: "S-135",
+    q: "Mikrokontrollerin 'beyni' hansıdır?",
+    opts: [
+      "RAM",
+      "ROM",
+      "CPU",
+      "ALU"
+    ],
+    ans: 2,
+    hint: "CPU (Mərkəzi İşləmə Qurğusu) → mikrokontrollerin 'beyni'"
+  },
+  {
+    num: "S-136",
+    q: "HMQ (ALU — Arithmetic Logic Unit) nə üçün istifadə olunur?",
+    opts: [
+      "Yaddaşı idarə edir",
+      "Proqramı saxlayır",
+      "Kəsilmələri emal edir",
+      "Hesab-məntiq əməliyyatlarını (toplama, çıxma, AND, OR, vs.) yerinə yetirir"
+    ],
+    ans: 3,
+    hint: "ALU = Arithmetic Logic Unit → bütün hesab və məntiqi əməliyyatlar burada icra olunur"
+  },
+  {
+    num: "S-137",
+    q: "FLASH yaddaşın əsas xüsusiyyəti nədir?",
+    opts: [
+      "Məlumatları qida mənbəyi olmadan daimi saxlayır (EEPROM kimi)",
+      "Yalnız oxunan yaddaşdır, dəyişdirilə bilməz",
+      "Proqram kodunu elektrik yolu ilə silmək, dəyişmək və çipi təkrar yazmaq mümkündür",
+      "Operativ yaddaş növüdür, qida kəsildikdə silinir"
+    ],
+    ans: 2,
+    hint: "Flash → ISP/ICSP ilə proqram kodunu təkrar yaza bilərsiniz"
+  },
+  {
+    num: "S-138",
+    q: "Flash yaddaşda nə saxlanılır?",
+    opts: [
+      "İstifadəçi tərəfindən daxil edilən məlumatlar",
+      "Sistem iş parametrləri",
+      "Kəsilmə vektoru cədvəli",
+      "Mikrokontrollerin icra edəcəyi proqram kodu"
+    ],
+    ans: 3,
+    hint: "Flash yaddaş → mikrokontrollerin proqram kodunu (firmware) saxlayır"
+  },
+  {
+    num: "S-139",
+    q: "FLASH yaddaş proqramı nədir?",
+    opts: [
+      "Operativ (RAM) yaddaş növü",
+      "Silinə bilməyən tam sabit yaddaş",
+      "Flash texnologiyasıyla hazırlanan, elektrik yolu ilə silinib-yazıla bilən sabit yaddaş qurğusu",
+      "Maqnit lövhəli yaddaş növü"
+    ],
+    ans: 2,
+    hint: "Flash = elektrik yolu ilə silinib-yazıla bilən NVM (non-volatile memory)"
+  },
+  {
+    num: "S-140",
+    q: "EEPROM nə üçündür?",
+    opts: [
+      "Proqramı icra etmək üçün",
+      "Əməliyyat sürətini artırmaq üçün",
+      "Mikrokontrolleri qida mənbəyindən ayırdıqda belə verilənlər, parametrlər və cihaz məlumatlarını saxlamaq üçün",
+      "Kəsilmələri emal etmək üçün"
+    ],
+    ans: 2,
+    hint: "EEPROM → qida kəsilsə belə parametrləri yadda saxlayan NVM növü"
+  },
+  {
+    num: "S-141",
+    q: "RAM hansı yaddaş növüdür?",
+    opts: [
+      "Sabit (NVM) yaddaşdır",
+      "Flash yaddaşdır",
+      "EEPROM yaddaşdır",
+      "Operativ (müvəqqəti) yaddaşdır"
+    ],
+    ans: 3,
+    hint: "RAM = Random Access Memory → operativ, müvəqqəti yaddaş (qida kəsiləndə silinir)"
+  },
+  {
+    num: "S-142",
+    q: "Kəsilmə (Interrupt) nədir?",
+    opts: [
+      "Proqramın tamamilə dayandırılması",
+      "Yaddaşın silinməsi əməliyyatı",
+      "Siqnalın gücləndirilmə prosesi",
+      "Cari proqramın icrasının müvəqqəti dayandırılması və kəsilmə xidmət proqramına keçid"
+    ],
+    ans: 3,
+    hint: "Interrupt → cari proqram dayanır, ISR (xidmət rutini) icra edilir, sonra geri qayıdılır"
+  },
+  {
+    num: "S-143",
+    q: "Onluq korreksiya sxemi nə üçündür?",
+    opts: [
+      "İkilik rəqəmləri onluğa çevirmək üçün",
+      "Onluq rəqəmləri ikiliyə çevirmək üçün",
+      "HMQ əməllərinin BCD (ikilik-onluq) kodlaşdırmaya uyğun düzgün cəmlənməsini həyata keçirmək üçün",
+      "Yaddaşdakı bit xətalarını düzəltmək üçün"
+    ],
+    ans: 2,
+    hint: "Onluq korreksiya sxemi → BCD (Binary Coded Decimal) əməliyyatlarını düzgün aparmaq üçün"
+  },
+  {
+    num: "S-144",
+    q: "Ümumi Vəzifəli Registrlərin (ÜVR) vəzifəsi nədir?",
+    opts: [
+      "Yalnız proqram sayğacını saxlamaq",
+      "Kəsilmələri idarə etmək",
+      "Hesab əməliyyatlarını birbaşa yerinə yetirmək",
+      "Verilənlərin müvəqqəti saxlanılması və ya 16 bitli ünvan göstəricisi kimi istifadə"
+    ],
+    ans: 3,
+    hint: "ÜVR → müvəqqəti data saxlama VƏ/YAXUD 16-bit pointer (X, Y, Z registrləri)"
+  },
+  {
+    num: "S-145",
+    q: "Bufer (aralıq) registri hansı funksiyanı yerinə yetirir?",
+    opts: [
+      "Hesab əməliyyatları yerinə yetirmək",
+      "Proqramı yaddaşda saxlamaq",
+      "Kəsilmələri emal etmək",
+      "Mərkəzi prosessorla xarici verilənlər şini (data bus) və ünvan şini (address bus) arasında əlaqəni təmin etmək"
+    ],
+    ans: 3,
+    hint: "Bufer registri → MP ilə xarici şin arasında siqnal uyğunlaşması (impedance matching + timing)"
+  },
+  {
+    num: "S-146",
+    q: "Stek göstəricisi (Stack Pointer) hansı registrlərə aid edilir?",
+    opts: [
+      "8 bitli registrlara",
+      "32 bitli registrlara",
+      "4 bitli registrlara",
+      "16 bitli registrlara"
+    ],
+    ans: 3,
+    hint: "Stack Pointer → 16 bitli registrdir (AVR-də SP = SPH:SPL)"
+  },
+  {
+    num: "S-147",
+    q: "Stekin ünvanını yadda saxlamaq üçün neçə bitli registr tələb olunur?",
+    opts: [
+      "8 bitli registr",
+      "32 bitli registr",
+      "64 bitli registr",
+      "16 bitli registr"
+    ],
+    ans: 3,
+    hint: "Stek ünvanı üçün 16 bitli registr tələb olunur"
+  },
+  {
+    num: "S-148",
+    q: "8 və 16 bitli registrin tərkibini qorumaq üçün stekin neçə baytı istifadə olunur?",
+    opts: [
+      "8 bit → 2 bayt, 16 bit → 4 bayt",
+      "8 bit → 1 bayt, 16 bit → 4 bayt",
+      "8 bit → 4 bayt, 16 bit → 8 bayt",
+      "8 bit → 1 bayt, 16 bit → 2 bayt"
+    ],
+    ans: 3,
+    hint: "8 bit = 1 bayt, 16 bit = 2 bayt (1 bayt = 8 bit)"
+  },
+  {
+    num: "S-149",
+    q: "İdarəetmə qurğusu (Control Unit) nə işi görür?",
+    opts: [
+      "Hesab əməliyyatlarını yerinə yetirir",
+      "Proqramı yaddaşda saxlayır",
+      "Kəsilmələri emal edir",
+      "Alınmış əmrə uyğun idarəetmə siqnallarını formalaşdırır"
+    ],
+    ans: 3,
+    hint: "CU → hər əmri deşifrə edib müvafiq idarəetmə siqnalları (enable, load, store) yaradır"
+  },
+  {
+    num: "S-150",
+    q: "MP-nin idarəetmə hissəsinə nə daxildir?",
+    opts: [
+      "RAM, ROM və Flash yaddaş",
+      "HMQ, trigger və şifrator",
+      "Akkumulyator, bufer registri və ALU",
+      "Əmr registri, deşifrator və proqram sayğacı (PC)"
+    ],
+    ans: 3,
+    hint: "İdarəetmə bloku = Əmr registri + Deşifrator + Proqram sayğacı (PC)"
+  }
+];
+
+// Shuffle options for each question once
+function shuffleQuestion(q) {
+  const indices = [0, 1, 2, 3];
+  // Fisher-Yates
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  const newOpts = indices.map(i => q.opts[i]);
+  const newAns = indices.indexOf(q.ans);
+  return { ...q, opts: newOpts, ans: newAns, origIdx: indices };
+}
+
+let questions = [];
+let current = 0;
+let answers = []; // null = unanswered, index = chosen
+
+function init() {
+  questions = QUESTIONS.map(shuffleQuestion);
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  buildDots();
+  renderQuestion();
+}
+
+function buildDots() {
+  const wrap = document.getElementById('dots');
+  wrap.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = `dot-${i}`;
+    d.title = `Sual ${i + 1}`;
+    d.textContent = i + 1;
+    d.style.cursor = 'pointer';
+    d.onclick = () => { current = i; renderQuestion(); };
+    wrap.appendChild(d);
+  });
+}
+
+function updateDots() {
+  questions.forEach((q, i) => {
+    const d = document.getElementById(`dot-${i}`);
+    d.className = 'dot';
+    if (i === current) { d.classList.add('current'); return; }
+    if (answers[i] === null) return;
+    if (answers[i] === q.ans) d.classList.add('answered-ok');
+    else d.classList.add('answered-err');
+  });
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('q-num').textContent = `${q.num} · Sual ${current + 1} / ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('hint-area').classList.remove('show');
+  const letters = ['A', 'B', 'C', 'D'];
+  document.getElementById('hint-text').textContent = `${letters[q.ans]}) ${q.opts[q.ans]}`;
+  document.getElementById('btn-hint').disabled = false;
+
+  const optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+
+    // restore state
+    if (answers[current] !== null) {
+      btn.disabled = true;
+      if (i === q.ans) btn.classList.add('correct');
+      else if (i === answers[current]) btn.classList.add('wrong');
+    }
+
+    btn.onclick = () => selectOption(i);
+    optWrap.appendChild(btn);
+  });
+
+  updateProgress();
+  updateDots();
+  updateNav();
+  // Animate card
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'slideIn 0.35s cubic-bezier(.4,0,.2,1)';
+}
+
+function selectOption(idx) {
+  if (answers[current] !== null) return;
+  answers[current] = idx;
+
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === idx) btn.classList.add('wrong');
+  });
+  updateDots();
+  updateNav();
+}
+
+function showHint() {
+  document.getElementById('hint-area').classList.add('show');
+}
+
+function updateProgress() {
+  const pct = Math.round(((current + 1) / questions.length) * 100);
+  document.getElementById('prog-text').textContent = `Sual ${current + 1} / ${questions.length}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = current === 0;
+  const isLast = current === questions.length - 1;
+  document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-flex';
+  document.getElementById('btn-finish').style.display = isLast ? 'inline-flex' : 'none';
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= questions.length) return;
+  current = next;
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('dots').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  let correct = 0, wrong = 0, skipped = 0;
+  const wrongItems = [];
+
+  questions.forEach((q, i) => {
+    if (answers[i] === null) { skipped++; return; }
+    if (answers[i] === q.ans) { correct++; }
+    else {
+      wrong++;
+      wrongItems.push({ q, userAns: answers[i] });
+    }
+  });
+
+  document.getElementById('res-score').textContent = correct;
+  document.getElementById('res-total').textContent = `/ ${questions.length}`;
+  document.getElementById('res-ok').textContent = correct;
+  document.getElementById('res-err').textContent = wrong;
+  document.getElementById('res-skip').textContent = skipped;
+
+  const pct = Math.round((correct / questions.length) * 100);
+  let title, sub;
+  if (pct >= 90) { title = '🌟 Əla nəticə!'; sub = 'Mükəmməlsiniz! Davam edin!'; }
+  else if (pct >= 70) { title = '👏 Yaxşı iş!'; sub = 'Bir az daha çalışın, əla olacaq!'; }
+  else if (pct >= 50) { title = '📖 Orta nəticə'; sub = 'Mövzuları bir daha nəzərdən keçirin.'; }
+  else { title = '💪 Çalışmaq lazımdır'; sub = 'Qeydlərinizi yenidən oxuyun və yenidən cəhd edin!'; }
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-sub').textContent = sub;
+
+  if (wrongItems.length > 0) {
+    document.getElementById('wrong-list-card').style.display = 'block';
+    const wi = document.getElementById('wrong-items');
+    wi.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    wrongItems.forEach(({ q, userAns }) => {
+      const el = document.createElement('div');
+      el.className = 'wrong-item';
+      el.innerHTML = `
+        <div class="wi-q">${q.num} · ${q.q}</div>
+        <div class="wi-your"><span class="wi-tag y">Sizin</span>${letters[userAns]}) ${q.opts[userAns]}</div>
+        <div class="wi-correct"><span class="wi-tag c">Düzgün</span>${letters[q.ans]}) ${q.opts[q.ans]}</div>
+      `;
+      wi.appendChild(el);
+    });
+  }
+}
+
+function restart() {
+  document.getElementById('quiz-card').style.display = 'block';
+  document.getElementById('dots').style.display = 'flex';
+  document.querySelector('.progress-wrap').style.display = 'block';
+  document.getElementById('result-screen').style.display = 'none';
+  init();
+}
+
+// Start
+init();
+</script>
+</body>
+</html>
