@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telekommunikasiya Testi 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FEF8EE;--card:#FFFDF7;--border:#E8D5B8;--pri:#C87B50;--pri-dk:#A86240;--pri-lt:#FAEBD7;--txt:#3D2B1E;--muted:#9B7B5E;--ok:#4A8C5C;--ok-bg:#EDF7F0;--ok-bd:#A8D9B9;--bad:#B85959;--bad-bg:#FDF0F0;--bad-bd:#F0C0C0;--hint:#7B6FA0;--hint-bg:#F4F1FA;--hint-bd:#C8BFEA;--shadow:rgba(160,80,20,0.10)}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 10%,rgba(200,123,80,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 90% 90%,rgba(123,111,160,.07) 0%,transparent 60%);pointer-events:none}
+.wrap{width:100%;max-width:700px;position:relative;z-index:1}
+.qcard{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.qhead{padding:20px 28px 0;display:flex;align-items:center;justify-content:space-between}
+.q-counter{font-size:.85rem;font-weight:700;color:var(--muted)}
+.q-score{background:var(--pri-lt);color:var(--pri-dk);padding:4px 13px;border-radius:20px;font-size:.82rem;font-weight:800}
+.prog-wrap{padding:12px 28px 0}
+.prog-track{height:6px;background:#EDE0CC;border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pri),#E8A07A);border-radius:10px;transition:width .4s ease}
+.qbody{padding:24px 28px}
+.q-num{font-size:.78rem;font-weight:800;color:var(--pri);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.q-text{font-family:'Lora',serif;font-size:1.12rem;font-weight:600;line-height:1.65;color:var(--txt);margin-bottom:22px}
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.opt{width:100%;text-align:left;padding:13px 16px;border-radius:14px;border:1.5px solid var(--border);background:#FFFDF7;color:var(--txt);font-family:'Nunito',sans-serif;font-size:.93rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:11px}
+.opt:hover:not(:disabled){border-color:var(--pri);background:#FEF5EC;transform:translateX(4px)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);animation:okPop .3s ease}
+.opt.bad{border-color:var(--bad-bd);background:var(--bad-bg);color:var(--bad);animation:badShake .4s ease}
+.opt.ok-dim{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+@keyframes okPop{0%{transform:scale(1)}50%{transform:scale(1.015)}100%{transform:scale(1)}}
+@keyframes badShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.lbl{min-width:26px;height:26px;border-radius:50%;background:#EDE0CC;color:var(--muted);font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt.ok .lbl,.opt.ok-dim .lbl{background:var(--ok);color:#fff}
+.opt.bad .lbl{background:var(--bad);color:#fff}
+.opt-txt{flex:1;line-height:1.45}
+.hint-row{margin-bottom:18px}
+.hint-btn{background:none;border:1.5px solid var(--hint-bd);color:var(--hint);padding:7px 16px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.hint-btn:hover{background:var(--hint-bg);transform:translateY(-1px)}
+.hint-box{margin-top:9px;padding:13px 15px;background:var(--hint-bg);border:1.5px solid var(--hint-bd);border-radius:13px;color:var(--hint);font-size:.9rem;font-weight:600;line-height:1.5;display:none;animation:fadeIn .2s ease}
+.hint-box.vis{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.qnav{padding:0 28px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nav-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;border-radius:50px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .18s}
+.nav-btn:hover:not(:disabled){border-color:var(--pri);color:var(--pri);background:#FEF5EC}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.nav-btn.primary{background:var(--pri);color:#fff;border-color:var(--pri)}
+.nav-btn.primary:hover:not(:disabled){background:var(--pri-dk);border-color:var(--pri-dk);color:#fff}
+.nav-center{font-size:.82rem;font-weight:700;color:var(--muted)}
+.results{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+.res-head{background:linear-gradient(135deg,#C87B50,#E8A07A);padding:38px 28px;text-align:center;color:#fff}
+.res-emoji{font-size:50px;display:block;margin-bottom:10px}
+.res-title{font-family:'Lora',serif;font-size:1.7rem;font-weight:700;margin-bottom:6px}
+.res-sub{font-size:.95rem;opacity:.88}
+.res-stats{display:flex;justify-content:center;gap:36px;margin-top:22px}
+.stat{text-align:center}
+.stat-n{font-size:2.4rem;font-weight:800}
+.stat-l{font-size:.78rem;opacity:.82;font-weight:700;margin-top:2px}
+.stat-div{width:1px;height:44px;background:rgba(255,255,255,.3);align-self:center}
+.res-body{padding:24px 28px}
+.wrongs-title{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;margin-bottom:14px}
+.wi{background:var(--bad-bg);border:1.5px solid var(--bad-bd);border-radius:15px;padding:14px 16px;margin-bottom:10px}
+.wi-tag{font-size:.75rem;font-weight:800;color:var(--bad);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.wi-q{font-family:'Lora',serif;font-size:.93rem;color:var(--txt);margin-bottom:8px;line-height:1.45}
+.wi-al{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.wi-a{font-size:.9rem;font-weight:700;color:var(--ok)}
+.all-ok{text-align:center;padding:18px;font-size:1.05rem;font-weight:700;color:var(--ok)}
+.btn-retry{width:100%;padding:13px;background:var(--pri);color:#fff;border:none;border-radius:15px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:18px;transition:all .18s}
+.btn-retry:hover{background:var(--pri-dk);transform:translateY(-2px)}
+@media(max-width:480px){.qhead,.qbody,.qnav,.prog-wrap{padding-left:18px;padding-right:18px}.q-text{font-size:1rem}.res-head{padding:28px 18px}.res-body{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const Qs=[
+{q:"NGN sözünün mənası nədir?",a:"Next Generation Network (Yeni nəsil şəbəkə)",o:["Next Generation Network (Yeni nəsil şəbəkə)","Network Generation Node (Şəbəkə nəsil nodu)","Next Global Network (Növbəti qlobal şəbəkə)","New Gateway Node (Yeni keçid nodu)"]},
+{q:"Kommutasiya sözünün mənası nədir?",a:"Əlaqə birləşmə",o:["Əlaqə birləşmə","Məlumat ötürmə","Siqnal gücləndirilməsi","Şəbəkə idarəetmə"]},
+{q:"İnfokommunikasiya anlayışı nədir?",a:"İnformatika, komputer, telekommunikasiya sözlərinin birləşməsi nəticəsində yaranır",o:["İnformatika, komputer, telekommunikasiya sözlərinin birləşməsi nəticəsində yaranır","İnternet və rabitənin birləşməsindən yaranır","Rəqəm və analoq sistemlərin inteqrasiyasıdır","Məlumat texnologiyaları ilə rabitənin vəhdətidir"]},
+{q:"NGN şəbəkəsi nəyi təmin edir?",a:"Telefon və qeyri-telefon telekommunikasiya trafiklərdə tələb olunan xidmət keyfiyyətini təmin edir",o:["Telefon və qeyri-telefon telekommunikasiya trafiklərdə tələb olunan xidmət keyfiyyətini təmin edir","Yalnız telefon trafikinin ötürülməsini təmin edir","Yalnız internet xidmətlərinin keyfiyyətini təmin edir","Kanal kommutasiyası şəbəkəsinin idarəsini təmin edir"]},
+{q:"Hansı NGN prinsiplərinə aid deyil?",a:"Nöqtə-nöqtə prinsipindən biri hər birinə keçirilmə, müxtəlif cəsidli xidmətlərin universal xarakterindən istifadə, çoxsaylı xidmətlərin keyfiyyətli olması, xidmət göstərən və alanlar arasında qarşılıqlılıq",o:["Nöqtə-nöqtə prinsipindən biri hər birinə keçirilmə, müxtəlif cəsidli xidmətlərin universal xarakterindən istifadə, çoxsaylı xidmətlərin keyfiyyətli olması, xidmət göstərən və alanlar arasında qarşılıqlılıq","Yalnız sabit telefon xidmətlərinin ötürülməsi, kanal kommutasiyasından istifadə, mərkəzləşdirilmiş idarəetmə","Nöqtə-nöqtə prinsipi, yalnız bir növ xidmət, mərkəzləşdirilmiş kommutasiya","Universal xarakter, yalnız müəyyən xidmətlər, birtərəfli əlaqə"]},
+{q:"NGN şəbəkəsinin xidmətlərinə aid deyil?",a:"Müxtəlif növ informasiyalara, diskret məlumatların selinə paket kommutasiyasının rejiminə aid olur",o:["Müxtəlif növ informasiyalara, diskret məlumatların selinə paket kommutasiyasının rejiminə aid olur","Yalnız sabit bit sürətli kanal kommutasiyasına aid olur","Yalnız analoq səs ötürülməsinə aid olur","TDM əsaslı ənənəvi xidmətlərə aid olur"]},
+{q:"NGN şəbəkəsi hansı kommutasiya texnologiyaları əsasında işləyir?",a:"İP və ATM paket kommutasiya",o:["İP və ATM paket kommutasiya","Yalnız kanal kommutasiyası","SDH və PDH texnologiyaları","TDM və SONET texnologiyaları"]},
+{q:"NGN şəbəkəsi necə şəbəkənin birləşməsi əsasında yaradılmışdır?",a:"3 şəbəkənin (kanal kommutasiya, paket kommutasiya, nəqliyyat paket) birləşməsi",o:["3 şəbəkənin (kanal kommutasiya, paket kommutasiya, nəqliyyat paket) birləşməsi","2 şəbəkənin (kanal kommutasiya, paket kommutasiya) birləşməsi","4 şəbəkənin birləşməsi əsasında","5 şəbəkənin birləşməsi əsasında"]},
+{q:"Hansı şəbəkə NGN şəbəkəsinə aid deyil?",a:"Cavab verilməmişdir",o:["Cavab verilməmişdir","İP şəbəkəsi","ATM şəbəkəsi","Nəqliyyat paket şəbəkəsi"]},
+{q:"NGN şəbəkəsi neçə səviyyəlidir?",a:"3 səviyyəli",o:["3 səviyyəli","2 səviyyəli","4 səviyyəli","5 səviyyəli"]},
+{q:"NGN-in səviyyələri hansılardır?",a:"Nəqliyyat, Softswitch proqram kommutasiya, Abunə və xidmətlərin idarə olunması",o:["Nəqliyyat, Softswitch proqram kommutasiya, Abunə və xidmətlərin idarə olunması","Fiziki, Məlumat, Tətbiq","Nəqliyyat, Kommutasiya, Tətbiq","İnterfeys, Nəqliyyat, Xidmət"]},
+{q:"Şlüzlər hansı səviyyədə yerləşir?",a:"Nəqliyyat səviyyəsi",o:["Nəqliyyat səviyyəsi","İdarəetmə səviyyəsi","Xidmət səviyyəsi","Tətbiq səviyyəsi"]},
+{q:"Adi şlüzlərin vəzifəsi nədir?",a:"İP xidmətlərinin qoşulmasını təmin edir",o:["İP xidmətlərinin qoşulmasını təmin edir","Şəbəkəni mərkəzləşdirilmiş idarə edir","Siqnalı gücləndirib ötürür","Tarifikasiya aparır"]},
+{q:"Billinq nədir?",a:"Hesablama aparmaq üçün qurğu",o:["Hesablama aparmaq üçün qurğu","Şəbəkəni idarə edən sistem","Siqnalı emal edən prosessor","Trafik ötürmə qurğusu"]},
+{q:"Bakı ŞTŞ-də nəqliyyat səviyyəsinin avadanlığı nədir?",a:"Çinin Huawei NE 40",o:["Çinin Huawei NE 40","Cisco CRS-1","ZTE ZXUN U200","Nokia Siemens BSC"]},
+{q:"Softswitch nədir?",a:"Proqram kommutatoru, telefon serveri, siqnallaşma selinin emalı, çağırışların marşrutlanması",o:["Proqram kommutatoru, telefon serveri, siqnallaşma selinin emalı, çağırışların marşrutlanması","Aparat kommutator, fiziki bağlantı yaradan qurğu","ATM şəbəkəsinin idarəetmə sistemi","Tarifikasiya serveri"]},
+{q:"Nəqliyyat səviyyəsinin vəzifəsi nədir?",a:"İnformasiya selinin ötürülməsi",o:["İnformasiya selinin ötürülməsi","Siqnallaşma selinin emalı","Abunəçilərin idarəsi","Tarifikasiya aparmaq"]},
+{q:"Softswitch səviyyəsinin vəzifəsi nədir?",a:"Siqnallaşma selinin emalı, çağırışların marşrutlanması",o:["Siqnallaşma selinin emalı, çağırışların marşrutlanması","İnformasiya selinin ötürülməsi","Abunəçi terminallarının idarəsi","Fiziki kanalların idarəsi"]},
+{q:"Abunə və xidmətlərin idarə edilməsi səviyyəsinin vəzifəsi nədir?",a:"Müxtəlif növ abunəçi terminallardan NGN şəbəkəsinə qoşulması",o:["Müxtəlif növ abunəçi terminallardan NGN şəbəkəsinə qoşulması","İnformasiya selinin ötürülməsi","Siqnallaşma selinin emalı","Fiziki avadanlığın idarəsi"]},
+{q:"Bunlardan hansı NGN avadanlığının tərkibinə daxil deyil?",a:"SIP terminali, H.323 terminali, MEGACO, IAD qurğusu — bunlar aid olanlardır; aid olmayan bunlardan başqasıdır",o:["SIP terminali, H.323 terminali, MEGACO, IAD qurğusu — bunlar aid olanlardır; aid olmayan bunlardan başqasıdır","SIP terminali, H.323 terminali, ATM multipleksoru, IAD qurğusu — bunlar aid olanlardır","SIP terminali, MGCP, MEGACO, IAD qurğusu — bunlar aid olanlardır","SIP terminali, H.323 terminali, MEGACO, SDH qurğusu — bunlar aid olanlardır"]},
+{q:"NGN-in nəqliyyat səviyyəsi hansı texnologiyalar əsasında qurulmuşdur?",a:"İP və ATM",o:["İP və ATM","SDH və PDH","TDM və ATM","SDH və ATM"]},
+{q:"Bakı ŞTŞ-də nəqliyyat səviyyəsinin veriliş sürəti nə qədərdir?",a:"10 Gbit/san",o:["10 Gbit/san","2,4 Gbit/san","1 Gbit/san","155 Mbit/san"]},
+{q:"Softswitchin əsas texniki xarakteristikaları hansılardır?",a:"Yük buraxma, Etibarlılıq",o:["Yük buraxma, Etibarlılıq","Güc sərfiyyatı, Ölçü","Sürət, Tutum","Giriş sayı, Çıxış sayı"]},
+{q:"Yükburaxma qabiliyyəti nədir?",a:"Vahid zamanda Softswitch xidmət edə biləcəyi çağırışların maksimum sayı ilə müəyyən olunur",o:["Vahid zamanda Softswitch xidmət edə biləcəyi çağırışların maksimum sayı ilə müəyyən olunur","Şəbəkənin ümumi bant genişliyi ilə müəyyən olunur","Paketlərin ötürmə sürəti ilə müəyyən olunur","Avadanlığın fiziki çəkisi ilə müəyyən olunur"]},
+{q:"Etibarlılıq nədir?",a:"Obyektin tətbiq olunduğu şərait nəzərə alınaraq onun özünün bütün normal funksiyası adlanır və tam parametrlərin saxlandığı müddət həddidir",o:["Obyektin tətbiq olunduğu şərait nəzərə alınaraq onun özünün bütün normal funksiyası adlanır və tam parametrlərin saxlandığı müddət həddidir","Avadanlığın maksimum işləmə sürətidir","Şəbəkənin bant genişliyidir","İstifadə olunan protokolların sayıdır"]},
+{q:"Bunlardan hansı Softswitchin vəzifələrinə aid deyil?",a:"Domendən istifadə",o:["Domendən istifadə","Çağırışları emal etmək","Serverlərdə qoşulmanı təmin etmək","Tarifikasiya aparmaq"]},
+{q:"İAD qurğusu nədir?",a:"İnteqrasiya imkanlı giriş qurğusu",o:["İnteqrasiya imkanlı giriş qurğusu","İnterfeysli ötürmə qurğusu","İnternetlə əlaqə qurğusu","İdarəetmə şəbəkə qurğusu"]},
+{q:"MEGACO nədir?",a:"Nəqliyyat şlüzünün kontrolleri",o:["Nəqliyyat şlüzünün kontrolleri","Marşrutlaşma protokolu","Rabitə seansi protokolu","Siqnallaşma protokolu"]},
+{q:"Siqnallaşma nədir?",a:"Siqnal mübadiləsi",o:["Siqnal mübadiləsi","Məlumat ötürülməsi","Paket kommutasiyası","Kanal birləşməsi"]},
+{q:"QoS nədir?",a:"Quality of Services (Xidmətin keyfiyyəti) — multi-servis şəbəkələrində eyni tipli serverlərə QoS xidmət keyfiyyətini qiymətləndirən serverdə uyğun xidmətləri reallaşdırmaq imkanı yaradır",o:["Quality of Services (Xidmətin keyfiyyəti) — multi-servis şəbəkələrində eyni tipli serverlərə QoS xidmət keyfiyyətini qiymətləndirən serverdə uyğun xidmətləri reallaşdırmaq imkanı yaradır","Quantity of Services (Xidmət sayı) — şəbəkədə xidmət sayını artırmaq üçün protokol","Quality of Signals (Siqnal keyfiyyəti) — siqnal gücünü ölçən standart","Queue of Systems (Sistem növbəsi) — sistemlər arasında növbə idarəetməsi"]},
+{q:"Çevik kommutatorun vəzifəsi nədir?",a:"Çağırışları emal etmək, serverlərdə qoşulmanı təmin etmək, şəbəkəyə qoşulmanı yaratmaq, tarifikasiya",o:["Çağırışları emal etmək, serverlərdə qoşulmanı təmin etmək, şəbəkəyə qoşulmanı yaratmaq, tarifikasiya","Yalnız siqnalı gücləndirir","Yalnız fiziki bağlantı yaradır","Yalnız tarifikasiya aparır"]},
+{q:"Çevik kommutator nə qurğusudur?",a:"İnformasiyanın idarə olunması və verilməsi üçün idarəetmə səviyyəsi funksiyasını reallaşdıran əsas qurğudur",o:["İnformasiyanın idarə olunması və verilməsi üçün idarəetmə səviyyəsi funksiyasını reallaşdıran əsas qurğudur","Yalnız fiziki bağlantı qurğusu","ATM multipleksoru","SDH nəqliyyat qurğusu"]},
+{q:"Bunlardan hansı çevik kommutatora aid deyil?",a:"Cavab verilməmişdir",o:["Cavab verilməmişdir","Çağırış emalı","Siqnallaşma işlənməsi","Marşrutlaşma"]},
+{q:"Çevik kommutatorların işi nə ilə xarakterizə edilir?",a:"Çevik buraxma qabiliyyəti, vahid zamanda xidmət olunan çağırışların maksimum sayı",o:["Çevik buraxma qabiliyyəti, vahid zamanda xidmət olunan çağırışların maksimum sayı","Fiziki ölçüsü","Güc sərfiyyatı","Qurğunun çəkisi"]},
+{q:"Çevik kommutatorların siqnal şlüzləri ilə əlaqəsi üçün hansı protokol istifadə edilir?",a:"M2UA, M3UA, M2PA",o:["M2UA, M3UA, M2PA","SIP-T, H.323","RTP, RTCP","H.248, BICC"]},
+{q:"Çevik kommutatorların digər kommutatorlarla əlaqə üçün hansı protokol istifadə edilir?",a:"SIP-T",o:["SIP-T","H.323","MGCP","BICC"]},
+{q:"ATM nəqliyyatını təmin edən şlüzlər üçün hansı protokol istifadə edilir?",a:"BICC",o:["BICC","SIP-T","H.323","MGCP"]},
+{q:"E1 interfeysində veriliş sürəti nə qədərdir?",a:"2048 kbit/san",o:["2048 kbit/san","1024 kbit/san","4096 kbit/san","155 Mbit/san"]},
+{q:"Çevik kommutatorların interfeyslərinə aiddir?",a:"E1, Ethernet",o:["E1, Ethernet","E1, SDH","ATM, Ethernet","ISDN, Ethernet"]},
+{q:"Şlüz nədir?",a:"Şlüz şəbəkəyə qoşulma qurğusu olub mövcud şəbəkələrin razılaşdırma funksiyalarını yerinə yetirir",o:["Şlüz şəbəkəyə qoşulma qurğusu olub mövcud şəbəkələrin razılaşdırma funksiyalarını yerinə yetirir","Siqnalı gücləndirib ötürən qurğu","Yalnız fiziki bağlantı qurğusu","Tarifikasiya aparan qurğu"]},
+{q:"Şlüzlərin növləri hansılardır?",a:"Nəqliyyat şlüzü, Siqnal şlüzü, Trankinq şlüzü, Qoşulma şlüzü, Rezident qoşulma şlüzü",o:["Nəqliyyat şlüzü, Siqnal şlüzü, Trankinq şlüzü, Qoşulma şlüzü, Rezident qoşulma şlüzü","Nəqliyyat şlüzü, Siqnal şlüzü, Fiziki şlüz, Analoq şlüzü","Nəqliyyat şlüzü, Siqnal şlüzü, Media şlüzü, Tranzit şlüzü","Media şlüzü, Siqnal şlüzü, ATM şlüzü, İP şlüzü"]},
+{q:"Bunlardan hansı şlüzlərə aid deyil?",a:"Nəqliyyat şlüzü, Siqnal şlüzü, Trankinq şlüzü, Qoşulma şlüzü, Rezident qoşulma şlüzü — bunlardan başqası aid deyil",o:["Nəqliyyat şlüzü, Siqnal şlüzü, Trankinq şlüzü, Qoşulma şlüzü, Rezident qoşulma şlüzü — bunlardan başqası aid deyil","Nəqliyyat şlüzü, Siqnal şlüzü, Trankinq şlüzü, Kommutasiya şlüzü, Rezident şlüzü — bunlardan başqası aid deyil","Nəqliyyat şlüzü, Siqnal şlüzü, Fiziki şlüz, Qoşulma şlüzü, Rezident şlüzü — bunlardan başqası aid deyil","Media şlüzü, Siqnal şlüzü, Trankinq şlüzü, Qoşulma şlüzü, Rezident şlüzü — bunlardan başqası aid deyil"]},
+{q:"Nəqliyyat şlüzünün vəzifəsi nədir?",a:"Danışıq informasiyalarının İP paketlərinə, ATM yuvacıqlarına çevrilməsi və marşrutlanması",o:["Danışıq informasiyalarının İP paketlərinə, ATM yuvacıqlarına çevrilməsi və marşrutlanması","ÜKS-7 siqnallaşma sistemini paket siqnallaşmasına çevirmək","Abunəçiləri şəbəkəyə qeydiyyata almaq","Tarifikasiya aparmaq"]},
+{q:"Siqnal şlüzünün vəzifəsi nədir?",a:"Şəbəkənin stansiyalararası siqnallaşma sistemini, ÜKS-7 ümumi kanal siqnallaşma sistemini paket şəbəkəsinin siqnallaşmasına çevirmək",o:["Şəbəkənin stansiyalararası siqnallaşma sistemini, ÜKS-7 ümumi kanal siqnallaşma sistemini paket şəbəkəsinin siqnallaşmasına çevirmək","Danışıq informasiyalarını İP paketlərinə çevirmək","Abunəçiləri şəbəkəyə qoşmaq","Nəqliyyat şlüzünün funksiyalarını yerinə yetirmək"]},
+{q:"Trankinq şlüzünün vəzifəsi nədir?",a:"Eyni zamanda nəqliyyat şlüzünün və siqnal şlüzünün funksiyalarını yerinə yetirir",o:["Eyni zamanda nəqliyyat şlüzünün və siqnal şlüzünün funksiyalarını yerinə yetirir","Yalnız nəqliyyat şlüzünün funksiyasını yerinə yetirir","Yalnız siqnal şlüzünün funksiyasını yerinə yetirir","V5 interfeysi vasitəsilə qoşulan abunəçilərə xidmət edir"]},
+{q:"Qoşulma şlüzünün vəzifəsi nədir?",a:"V5 interfeysi vasitəsilə qoşulan abunəçilərin nəqliyyat şlüzünün və siqnal şlüzünün funksiyalarını yerinə yetirir",o:["V5 interfeysi vasitəsilə qoşulan abunəçilərin nəqliyyat şlüzünün və siqnal şlüzünün funksiyalarını yerinə yetirir","ÜKS-7 siqnallaşmanı paket siqnallaşmasına çevirir","Danışıq informasiyalarını İP paketlərinə çevirir","ÜİTŞ istifadəçilərini multi-servis şəbəkəsinə qoşur"]},
+{q:"Rezident şlüzünün vəzifəsi nədir?",a:"ÜİTŞ və İXRŞ inteqral xidmətli rəqəm şəbəkələri istifadəçilərini multi-servis şəbəkələrinə qoşulması",o:["ÜİTŞ və İXRŞ inteqral xidmətli rəqəm şəbəkələri istifadəçilərini multi-servis şəbəkələrinə qoşulması","V5 interfeysi vasitəsilə qoşulan abunəçilərə xidmət edir","ÜKS-7 siqnallaşmanı paket siqnallaşmasına çevirir","ATM yuvacıqlarını İP paketlərinə çevirir"]},
+{q:"Bunlardan hansı nəqliyyat şlüzünün funksiyalarına aid deyil?",a:"Ünvanlaşma, kanal məxfiliyi, təminat və daşıma — bunlar aiddir, aid olmayanı seçərsiniz",o:["Ünvanlaşma, kanal məxfiliyi, təminat və daşıma — bunlar aiddir, aid olmayanı seçərsiniz","Ünvanlaşma, kanal məxfiliyi, siqnallaşma çevrilməsi, daşıma — bunlar aiddir","Ünvanlaşma, tarifikasiya, təminat, daşıma — bunlar aiddir","Ünvanlaşma, kanal məxfiliyi, abunəçi qeydiyyatı, daşıma — bunlar aiddir"]},
+{q:"Bunlardan hansı siqnal şlüzlərinin funksiyalarına aid deyil?",a:"Məlumat məxfiliyi, çağırışların idarə olunması, menecment — bunlar aiddir, aid olmayanı seçərsiniz",o:["Məlumat məxfiliyi, çağırışların idarə olunması, menecment — bunlar aiddir, aid olmayanı seçərsiniz","Məlumat məxfiliyi, çağırışların idarə olunması, İP paket çevrilməsi — bunlar aiddir","Məlumat məxfiliyi, tarifikasiya, menecment — bunlar aiddir","Məlumat ötürülməsi, çağırışların idarə olunması, menecment — bunlar aiddir"]},
+{q:"Ünvanlaşma funksiyası hansı şlüzə aiddir?",a:"Nəqliyyat şlüzü",o:["Nəqliyyat şlüzü","Siqnal şlüzü","Trankinq şlüzü","Rezident şlüzü"]},
+{q:"Şlüzün tutumu nədir?",a:"Kanal və paket kommutasiyaların müxtəlif istiqamətdə interfeyslərinin qoşulan rabitə kanallarının sayı ilə müəyyən olunur",o:["Kanal və paket kommutasiyaların müxtəlif istiqamətdə interfeyslərinin qoşulan rabitə kanallarının sayı ilə müəyyən olunur","Şlüzün fiziki ölçüsü ilə müəyyən olunur","Şlüzün maksimum güc sərfiyyatı ilə müəyyən olunur","Eyni anda işlənən protokolların sayı ilə müəyyən olunur"]},
+{q:"Şlüzün ötürmə qabiliyyəti nədir?",a:"Şlüz üzərindəki kanal və paket şəbəkələrinin maksimum ötürə biləcəyi resurslardan asılıdır",o:["Şlüz üzərindəki kanal və paket şəbəkələrinin maksimum ötürə biləcəyi resurslardan asılıdır","Şlüzün fiziki port sayından asılıdır","Qoşulan abunəçi sayından asılıdır","İstifadə olunan protokol növündən asılıdır"]},
+{q:"Nəqliyyat şlüzündə istifadə olunan protokollar hansılardır?",a:"Çevik kommutasiya: H.248, IPDC, BICC; Paket şəbəkəsi: RTP, RTCP, DNNI, UNI",o:["Çevik kommutasiya: H.248, IPDC, BICC; Paket şəbəkəsi: RTP, RTCP, DNNI, UNI","SIP, H.323, MGCP","M2UA, M3UA, M2PA","FTP, HTTP, SMTP"]},
+{q:"Siqnal şlüzündə istifadə olunan protokollar hansılardır?",a:"ÜİTŞ istiqamətində: MTP2, MTP3; Çevik kommutasiya: M2UA, M3UA, M2PA",o:["ÜİTŞ istiqamətində: MTP2, MTP3; Çevik kommutasiya: M2UA, M3UA, M2PA","RTP, RTCP, DNNI","H.248, BICC, IPDC","SIP, H.323, MEGACO"]},
+{q:"Qoşulma şlüzündə istifadə olunan protokollar hansılardır?",a:"Analoq xətlər, MEGACO",o:["Analoq xətlər, MEGACO","RTP, RTCP","H.248, BICC","M2UA, M3UA"]},
+{q:"Hansı şlüzlərdə interfeyslər istifadə edilir?",a:"Nəqliyyat şlüzü, Siqnal şlüzü, Qoşulma şlüzü",o:["Nəqliyyat şlüzü, Siqnal şlüzü, Qoşulma şlüzü","Yalnız Nəqliyyat şlüzü","Nəqliyyat şlüzü, Rezident şlüzü","Trankinq şlüzü, Rezident şlüzü"]},
+{q:"Nəqliyyat şlüzündə istifadə edilməyən interfeys hansıdır?",a:"PDH (E1), SDH (STM) — bunlar istifadə edilir, başqası istifadə edilmir",o:["PDH (E1), SDH (STM) — bunlar istifadə edilir, başqası istifadə edilmir","PDH (E1), ATM UNI — bunlar istifadə edilir","SDH (STM), Ethernet — bunlar istifadə edilir","PDH (E1), Koaksial — bunlar istifadə edilir"]},
+{q:"Siqnal şlüzündə istifadə edilən interfeyslər hansılardır?",a:"PDH (E1), Base Ethernet",o:["PDH (E1), Base Ethernet","SDH (STM), ATM","PDH (E1), SDH (STM)","ATM UNI, Ethernet"]},
+{q:"Qoşulma şlüzündə istifadə edilməyən interfeys hansıdır?",a:"Ethernet E1, PDH (E1) — bunlar istifadə edilir, başqası istifadə edilmir",o:["Ethernet E1, PDH (E1) — bunlar istifadə edilir, başqası istifadə edilmir","Ethernet, SDH (STM) — bunlar istifadə edilir","PDH (E1), ATM — bunlar istifadə edilir","Base Ethernet, SDH — bunlar istifadə edilir"]},
+{q:"NGN-in şəbəkə protokollarına aid olmayan hansıdır?",a:"1) İnternet şəbəkə baza protokolu 2) Nəqliyyat protokolu 3) Siqnal protokolu 4) Marşrutlama protokolu 5) İnformasiya xidmətli idarəetmə protokolu 6) Xidmət protokolu — bunlar aiddir",o:["1) İnternet şəbəkə baza protokolu 2) Nəqliyyat protokolu 3) Siqnal protokolu 4) Marşrutlama protokolu 5) İnformasiya xidmətli idarəetmə protokolu 6) Xidmət protokolu — bunlar aiddir","1) İnternet baza 2) Nəqliyyat 3) Siqnal 4) Fiziki ötürmə 5) İdarəetmə 6) Xidmət — bunlar aiddir","1) İnternet baza 2) Nəqliyyat 3) Siqnal 4) Marşrutlama 5) Aparat 6) Xidmət — bunlar aiddir","1) İnternet baza 2) Nəqliyyat 3) Siqnal 4) Marşrutlama 5) İdarəetmə 6) Tarifikasiya — bunlar aiddir"]},
+{q:"Bunlardan hansı internetin baza protokollarına aid deyil?",a:"RTP, RTCP — bunlar aiddir",o:["RTP, RTCP — bunlar aiddir","SIP, H.323 — bunlar aiddir","FTP, HTTP — bunlar aiddir","RIP, OSPF — bunlar aiddir"]},
+{q:"Bunlardan hansı nəqliyyat protokollarına aiddir?",a:"RTP, RTCP",o:["RTP, RTCP","SIP, H.323","FTP, HTTP","M2UA, M3UA"]},
+{q:"Bunlardan hansı siqnal protokollarına aiddir?",a:"SIP, H.323, MEGACO, MGCP, RSVP, SIP-T, BICC, IWAP",o:["SIP, H.323, MEGACO, MGCP, RSVP, SIP-T, BICC, IWAP","RTP, RTCP, DNNI","FTP, HTTP, SMTP","RIP, IGRP, IS-IS"]},
+{q:"Bunlardan hansı marşrutlama protokollarına aiddir?",a:"RIP, IGRP, IS-IS, TRiR, IDRP",o:["RIP, IGRP, IS-IS, TRiR, IDRP","FTP, HTTP","SIP, H.323","RTP, RTCP"]},
+{q:"Bunlardan hansı xidmət protokollarına aiddir?",a:"FTP, HTTP, IMTP, NNTP",o:["FTP, HTTP, IMTP, NNTP","RTP, RTCP","SIP, H.323","RIP, OSPF"]},
+{q:"Bunlardan hansı informasiya və idarəetmə protokollarına aiddir?",a:"ILP, OSP, LDAP, SWMP",o:["ILP, OSP, LDAP, SWMP","RTP, RTCP","FTP, HTTP","SIP, H.323"]},
+{q:"İCMP protokolu nədir?",a:"İnternet şəbəkəsindəki məlumatların idarəetməsidir",o:["İnternet şəbəkəsindəki məlumatların idarəetməsidir","Fayl ötürmə protokoludur","Real vaxtda veriliş protokoludur","Marşrutlama protokoludur"]},
+{q:"TCP protokolu nədir?",a:"Veriliş idarəetmə protokoludur",o:["Veriliş idarəetmə protokoludur","İnternet idarəetmə protokoludur","Fayl ötürmə protokoludur","Real vaxtda veriliş protokoludur"]},
+{q:"FTP protokolu nədir?",a:"Faylların ötürülmə protokoludur",o:["Faylların ötürülmə protokoludur","Veriliş idarəetmə protokoludur","Mətnlərin veriliş protokoludur","Real vaxtda veriliş protokoludur"]},
+{q:"HTTP protokolu nədir?",a:"Mətnlərin verilişi protokolu",o:["Mətnlərin verilişi protokolu","Faylların ötürülmə protokolu","Veriliş idarəetmə protokolu","Real vaxtda veriliş protokolu"]},
+{q:"UDP protokolu nədir?",a:"İstifadəçi dataqram protokolu olub paketlərin yerindəliyini yoxlamaq üçün istifadə olunur",o:["İstifadəçi dataqram protokolu olub paketlərin yerindəliyini yoxlamaq üçün istifadə olunur","Veriliş idarəetmə protokoludur","Fayl ötürmə protokoludur","İnternet idarəetmə protokoludur"]},
+{q:"SİP protokolu nədir?",a:"Rabitə seansi protokolu",o:["Rabitə seansi protokolu","Real vaxtda veriliş protokolu","Fayl ötürmə protokolu","Nəqliyyat şlüzü idarəetmə protokolu"]},
+{q:"MGCP protokolu nədir?",a:"Nəqliyyat şlüzünü idarə etmək protokolu olub paylanmış, multimedia şlüzünün elementləri arasında istifadə olunur",o:["Nəqliyyat şlüzünü idarə etmək protokolu olub paylanmış, multimedia şlüzünün elementləri arasında istifadə olunur","Real vaxtda veriliş protokolu","Rabitə seansi protokolu","İnternet idarəetmə protokolu"]},
+{q:"RTP protokolu nədir?",a:"Real vaxtda veriliş protokolu olub internet şəbəkəsi ilə paketlərin ünvanlara çatdırılması",o:["Real vaxtda veriliş protokolu olub internet şəbəkəsi ilə paketlərin ünvanlara çatdırılması","Veriliş idarəetmə protokolu","Rabitə seansi protokolu","Nəqliyyat şlüzü idarəetmə protokolu"]},
+{q:"RTCP protokolu nədir?",a:"Real vaxtda idarəetmə protokolu",o:["Real vaxtda idarəetmə protokolu","Real vaxtda veriliş protokolu","Veriliş idarəetmə protokolu","Rabitə seansi protokolu"]}
+];
+
+let S={finished:false,idx:0,ans:[],hint:[],sq:[]};
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function init(){S.sq=Qs.map(q=>{const so=shuffle(q.o);return{...q,so,ci:so.indexOf(q.a)}});S.ans=new Array(Qs.length).fill(null);S.hint=new Array(Qs.length).fill(false);S.idx=0;S.finished=false;render()}
+function score(){return S.ans.filter((a,i)=>a===S.sq[i].ci).length}
+function render(){const app=document.getElementById('app');if(S.finished){app.innerHTML=tplResults();bindRes();return}app.innerHTML=tplQuiz();bindQuiz()}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function tplQuiz(){
+  const i=S.idx,q=S.sq[i],ans=S.ans[i],tot=Qs.length;
+  const pct=Math.round(((i+1)/tot)*100);
+  const lbls=['A','B','C','D'];
+  let opts='';
+  q.so.forEach((o,oi)=>{
+    let cls='opt',lbl=lbls[oi];
+    if(ans!==null){if(oi===ans&&oi===q.ci){cls+=' ok';lbl='✓'}else if(oi===ans&&oi!==q.ci){cls+=' bad';lbl='✗'}else if(oi!==ans&&oi===q.ci){cls+=' ok-dim';lbl='✓'}}
+    opts+=`<button class="${cls}" ${ans!==null?'disabled':''} data-i="${oi}"><span class="lbl">${lbl}</span><span class="opt-txt">${esc(o)}</span></button>`;
+  });
+  const isLast=i===tot-1;const sc=score();
+  return`<div class="qcard"><div class="qhead"><span class="q-counter">Sual ${i+1} / ${tot}</span><span class="q-score">✓ ${sc} düzgün</span></div><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div></div><div class="qbody"><div class="q-num">Sual ${i+1}</div><div class="q-text">${esc(q.q)}</div><div class="opts">${opts}</div><div class="hint-row"><button class="hint-btn" onclick="toggleHint()">💡 İpucu ${S.hint[i]?'▲':'▼'}</button><div class="hint-box ${S.hint[i]?'vis':''}">✅ Düzgün cavab: <strong>${esc(q.a)}</strong></div></div></div><div class="qnav"><button class="nav-btn" ${i===0?'disabled':''} onclick="goDir(-1)">← Geri</button><span class="nav-center">${i+1} / ${tot}</span>${isLast?`<button class="nav-btn primary" onclick="finish()">Nəticə 🏁</button>`:`<button class="nav-btn" onclick="goDir(1)">Növbəti →</button>`}</div></div>`
+}
+function tplResults(){
+  const tot=Qs.length,sc=score(),wr=tot-sc,pct=Math.round((sc/tot)*100);
+  let em='📚',grade='Daha çox məşq lazımdır';
+  if(pct>=90){em='🏆';grade='Əla nəticə!'}else if(pct>=75){em='🌟';grade='Yaxşı nəticə!'}else if(pct>=60){em='👍';grade='Orta nəticə'}
+  let wl='';
+  S.ans.forEach((a,i)=>{if(a!==S.sq[i].ci)wl+=`<div class="wi"><div class="wi-tag">Sual ${i+1}</div><div class="wi-q">${esc(S.sq[i].q)}</div><div class="wi-al">Düzgün cavab</div><div class="wi-a">✓ ${esc(S.sq[i].a)}</div></div>`});
+  return`<div class="results"><div class="res-head"><span class="res-emoji">${em}</span><div class="res-title">${grade}</div><div class="res-sub">${pct}% — ${sc} düzgün, ${wr} səhv</div><div class="res-stats"><div class="stat"><div class="stat-n">${sc}</div><div class="stat-l">Düzgün</div></div><div class="stat-div"></div><div class="stat"><div class="stat-n">${wr}</div><div class="stat-l">Səhv</div></div><div class="stat-div"></div><div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Bal</div></div></div></div><div class="res-body">${wr>0?`<div class="wrongs-title">📌 Səhv cavablar (${wr} sual)</div>${wl}`:`<div class="all-ok">🎉 Bütün sualları düzgün cavablandırdınız!</div>`}<button class="btn-retry" id="rbtn">↺ Yenidən Başla</button></div></div>`
+}
+function bindQuiz(){document.querySelectorAll('.opt').forEach(b=>{b.addEventListener('click',()=>{const i=S.idx,oi=+b.dataset.i;if(S.ans[i]!==null)return;S.ans[i]=oi;if(oi===S.sq[i].ci)playOk();else playErr();render()})})}
+function bindRes(){const rb=document.getElementById('rbtn');if(rb)rb.addEventListener('click',()=>{init()})}
+function toggleHint(){S.hint[S.idx]=!S.hint[S.idx];render()}
+function goDir(d){S.idx=Math.max(0,Math.min(Qs.length-1,S.idx+d));render()}
+function finish(){S.finished=true;render()}
+let _actx=null;
+function actx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx}
+function playOk(){try{const c=actx(),t=c.currentTime;[523.25,659.25,783.99].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.08);g.gain.linearRampToValueAtTime(.28,t+i*.08+.03);g.gain.exponentialRampToValueAtTime(.001,t+i*.08+.45);o.connect(g);g.connect(c.destination);o.start(t+i*.08);o.stop(t+i*.08+.5)})}catch(e){}}
+function playErr(){try{const c=actx(),t=c.currentTime;const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.frequency.setValueAtTime(220,t);o.frequency.exponentialRampToValueAtTime(110,t+.3);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.4)}catch(e){}}
+init();
+</script>
+</body>
+</html>
