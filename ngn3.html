@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telekommunikasiya Testi 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FEF8EE;--card:#FFFDF7;--border:#E8D5B8;
+  --pri:#C87B50;--pri-dk:#A86240;--pri-lt:#FAEBD7;
+  --txt:#3D2B1E;--muted:#9B7B5E;
+  --ok:#4A8C5C;--ok-bg:#EDF7F0;--ok-bd:#A8D9B9;
+  --bad:#B85959;--bad-bg:#FDF0F0;--bad-bd:#F0C0C0;
+  --hint:#7B6FA0;--hint-bg:#F4F1FA;--hint-bd:#C8BFEA;
+  --shadow:rgba(160,80,20,0.10);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 10%,rgba(200,123,80,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 90% 90%,rgba(123,111,160,.07) 0%,transparent 60%);pointer-events:none}
+.wrap{width:100%;max-width:700px;position:relative;z-index:1}
+.qcard{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.qhead{padding:20px 28px 0;display:flex;align-items:center;justify-content:space-between}
+.q-counter{font-size:.85rem;font-weight:700;color:var(--muted)}
+.q-score{background:var(--pri-lt);color:var(--pri-dk);padding:4px 13px;border-radius:20px;font-size:.82rem;font-weight:800}
+.prog-wrap{padding:12px 28px 0}
+.prog-track{height:6px;background:#EDE0CC;border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pri),#E8A07A);border-radius:10px;transition:width .4s ease}
+.qbody{padding:24px 28px}
+.q-num{font-size:.78rem;font-weight:800;color:var(--pri);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.q-text{font-family:'Lora',serif;font-size:1.12rem;font-weight:600;line-height:1.65;color:var(--txt);margin-bottom:22px}
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.opt{width:100%;text-align:left;padding:13px 16px;border-radius:14px;border:1.5px solid var(--border);background:#FFFDF7;color:var(--txt);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:11px}
+.opt:hover:not(:disabled){border-color:var(--pri);background:#FEF5EC;transform:translateX(4px)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);animation:okPop .3s ease}
+.opt.bad{border-color:var(--bad-bd);background:var(--bad-bg);color:var(--bad);animation:badShake .4s ease}
+.opt.ok-dim{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+@keyframes okPop{0%{transform:scale(1)}50%{transform:scale(1.015)}100%{transform:scale(1)}}
+@keyframes badShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.lbl{min-width:26px;height:26px;border-radius:50%;background:#EDE0CC;color:var(--muted);font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .18s}
+.opt.ok .lbl,.opt.ok-dim .lbl{background:var(--ok);color:#fff}
+.opt.bad .lbl{background:var(--bad);color:#fff}
+.opt-txt{flex:1;line-height:1.45}
+.hint-row{margin-bottom:18px}
+.hint-btn{background:none;border:1.5px solid var(--hint-bd);color:var(--hint);padding:7px 16px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.hint-btn:hover{background:var(--hint-bg);transform:translateY(-1px)}
+.hint-box{margin-top:9px;padding:13px 15px;background:var(--hint-bg);border:1.5px solid var(--hint-bd);border-radius:13px;color:var(--hint);font-size:.9rem;font-weight:600;line-height:1.5;display:none;animation:fadeIn .2s ease}
+.hint-box.vis{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.qnav{padding:0 28px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nav-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;border-radius:50px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .18s}
+.nav-btn:hover:not(:disabled){border-color:var(--pri);color:var(--pri);background:#FEF5EC}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.nav-btn.primary{background:var(--pri);color:#fff;border-color:var(--pri)}
+.nav-btn.primary:hover:not(:disabled){background:var(--pri-dk);border-color:var(--pri-dk);color:#fff}
+.nav-center{font-size:.82rem;font-weight:700;color:var(--muted)}
+.results{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+.res-head{background:linear-gradient(135deg,#C87B50,#E8A07A);padding:38px 28px;text-align:center;color:#fff}
+.res-emoji{font-size:50px;display:block;margin-bottom:10px}
+.res-title{font-family:'Lora',serif;font-size:1.7rem;font-weight:700;margin-bottom:6px}
+.res-sub{font-size:.95rem;opacity:.88}
+.res-stats{display:flex;justify-content:center;gap:36px;margin-top:22px}
+.stat{text-align:center}
+.stat-n{font-size:2.4rem;font-weight:800}
+.stat-l{font-size:.78rem;opacity:.82;font-weight:700;margin-top:2px}
+.stat-div{width:1px;height:44px;background:rgba(255,255,255,.3);align-self:center}
+.res-body{padding:24px 28px}
+.wrongs-title{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.wi{background:var(--bad-bg);border:1.5px solid var(--bad-bd);border-radius:15px;padding:14px 16px;margin-bottom:10px}
+.wi-tag{font-size:.75rem;font-weight:800;color:var(--bad);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.wi-q{font-family:'Lora',serif;font-size:.93rem;color:var(--txt);margin-bottom:8px;line-height:1.45}
+.wi-al{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.wi-a{font-size:.9rem;font-weight:700;color:var(--ok)}
+.all-ok{text-align:center;padding:18px;font-size:1.05rem;font-weight:700;color:var(--ok)}
+.btn-retry{width:100%;padding:13px;background:var(--pri);color:#fff;border:none;border-radius:15px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:18px;transition:all .18s}
+.btn-retry:hover{background:var(--pri-dk);transform:translateY(-2px)}
+@media(max-width:480px){
+  .qhead,.qbody,.qnav,.prog-wrap{padding-left:18px;padding-right:18px}
+  .q-text{font-size:1rem}
+  .res-head{padding:28px 18px}
+  .res-body{padding:18px}
+  .res-stats{gap:22px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const Qs=[
+{q:"SDH texnologiyası nədir?",a:"Sinxron rəqəm iyerarxiyası (interfeys texnologiyası)",o:["Sinxron rəqəm iyerarxiyası (interfeys texnologiyası)","Asinxron rəqəm iyerarxiyası","Sinxron rabitə protokolu","Rəqəm ötürmə multipleks sistemi"]},
+{q:"AŞATS nədir?",a:"Avtomatik şəhərlərarası telefon stansiyası",o:["Avtomatik şəhərlərarası telefon stansiyası","Avtomatik şəhər telefon stansiyası","Analoq şəhərlərarası telefon stansiyası","Avtomatik şəhərlərarası tranzit stansiyası"]},
+{q:"İP şəbəkəsində nəzərdə tutulmuş veriliş sürəti nə qədərdir?",a:"10 Gbit/san",o:["10 Gbit/san","2,4 Gbit/san","1 Gbit/san","100 Mbit/san"]},
+{q:"NGN şəbəkəsində şlüzlər hansı səviyyədə qoşulur?",a:"Nəqliyyat səviyyəsi",o:["Nəqliyyat səviyyəsi","İdarəetmə səviyyəsi","Tətbiq səviyyəsi","Xidmət səviyyəsi"]},
+{q:"C&C08 sistemi ümumilikdə 7 saylı siqnallaşmanın neçə manqasını emal edir?",a:"3072",o:["3072","1024","2048","4096"]},
+{q:"Bakı ŞTŞ-də 2005-ci ildə neçə stansiya və qovşaq NGN əsasında rekonstruksiya edildi?",a:"46 qovşaq və stansiya",o:["46 qovşaq və stansiya","32 qovşaq və stansiya","58 qovşaq və stansiya","24 qovşaq və stansiya"]},
+{q:"Səsin kompressiyası nədir?",a:"Səs siqnalının sıxlaşdırılması",o:["Səs siqnalının sıxlaşdırılması","Səsin gücləndirilməsi","Səsin rəqəmə çevrilməsi","Səsin şifrələnməsi"]},
+{q:"Qəza vaxtı NGN şəbəkəsinin işinin dayanmasına əsas səbəb olan amil hansıdır?",a:"Rabitə kanalının dayanması",o:["Rabitə kanalının dayanması","Elektrik enerjisinin kəsilməsi","Avadanlığın fiziki aşınması","Proqram xətası"]},
+{q:"Tranzit qovşaqlar nəyin əsasında qurulur?",a:"ATM avadanlığı əsasında qurulur",o:["ATM avadanlığı əsasında qurulur","İP avadanlığı əsasında qurulur","SDH avadanlığı əsasında qurulur","MPLS avadanlığı əsasında qurulur"]},
+{q:"Analoq abunəçi xətlərini paket kommutasiya şəbəkəsinə qoşmaq üçün hansı şlüzdən istifadə olunur?",a:"Siqnal şlüzü",o:["Siqnal şlüzü","Rezident şlüzü","Tranzit şlüzü","Media şlüzü"]},
+{q:"Tranzit qovşaq nədir?",a:"İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirən qovşaq",o:["İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirən qovşaq","Abunəçilərə şəbəkə qoşulmasını təmin edən qovşaq","Şəbəkəni mərkəzləşdirilmiş idarə edən qovşaq","Xidmətlər göstərən intellektual qovşaq"]},
+{q:"NGN şəbəkəsində tariflləndirməni hansı qurğu aparır?",a:"Softswitch",o:["Softswitch","SCP","SSP","Media Gateway"]},
+{q:"Videokonfransda mübadilə rejimi necədir?",a:"İkitərəfli",o:["İkitərəfli","Birtərəfli","Çoxtərəfli","Yarım-ikitərəfli"]},
+{q:"VPN nədir?",a:"Virtual özəl şəbəkə (Virtual Private Network)",o:["Virtual özəl şəbəkə (Virtual Private Network)","Virtual Public Network","Voice Protocol Network","Virtual Packet Node"]},
+{q:"IM — idarəetmə modulu, RM — rabitə modulu, bəs KM nədir?",a:"Kommutasiya modulu",o:["Kommutasiya modulu","Kontrol modulu","Konfiqurasiya modulu","Kanal modulu"]},
+{q:"NGN şəbəkəsinə V5 interfeysi ilə hansı abunəçilər qoşulur?",a:"VPN və ATM abunəçiləri",o:["VPN və ATM abunəçiləri","Yalnız analoq abunəçilər","İXRŞ abunəçiləri","Multimediya abunəçiləri"]},
+{q:"Videomüşahidə zamanı mübadilə rejimi necə olur?",a:"Birtərəfli",o:["Birtərəfli","İkitərəfli","Çoxtərəfli","Yarım-ikitərəfli"]},
+{q:"İP TV-də birləşmənin konfiqurasiyası necədir?",a:"Nöqtə-nöqtə",o:["Nöqtə-nöqtə","Nöqtə-çoxnöqtə","Çoxnöqtə-çoxnöqtə","Yayım konfiqurasiyası"]},
+{q:"Mərkəzi kommutasiya sahəsi nələrdən təşkil olunmuşdur?",a:"Standart fiziki interfeys və böyük şəbəkələşmə",o:["Standart fiziki interfeys və böyük şəbəkələşmə","ATM hüceyrələri və virtual kanallar","SDH çərçivələri və ötürmə kanalları","Paket kommutasiya elementləri və marşrutlayıcılar"]},
+{q:"Tranzit qovşaqda trafikLər kanal kommutasiyası şəbəkəsi istiqamətinde hansı şlüz vasitəsilə ötürülür?",a:"Tranzit şlüzü",o:["Tranzit şlüzü","Media şlüzü","Siqnal şlüzü","Rezident şlüzü"]},
+{q:"SCP nədir?",a:"Xidmət idarəetmə nöqtəsi (Service Control Point)",o:["Xidmət idarəetmə nöqtəsi (Service Control Point)","Softswitch kontrol protokolu","Sinxron kommunikasiya prosessoru","Siqnal çevirmə prosessoru"]},
+{q:"MEM-da hansı prosessordan istifadə edilir?",a:"MPU 860 növlü prosessor",o:["MPU 860 növlü prosessor","MPU 486 növlü prosessor","MPU 960 növlü prosessor","MPU 720 növlü prosessor"]},
+{q:"MKS-nin kommutasiya matrisası neçə xəttin qoşulmasını təmin edir?",a:"512 giriş, 512 çıxış",o:["512 giriş, 512 çıxış","256 giriş, 256 çıxış","1024 giriş, 1024 çıxış","512 giriş, 256 çıxış"]},
+{q:"C&C08-in proqram təminatı nəyin əsasında qurulmuşdur?",a:"Modul prinsipi əsasında",o:["Modul prinsipi əsasında","Layihə prinsipi əsasında","İyerarxik prinsipi əsasında","Funksional blok prinsipi əsasında"]},
+{q:"C&C08 avadanlığı neçə moduldan təşkil edilmişdir?",a:"4",o:["4","3","5","6"]},
+{q:"C&C08 avadanlığının modullarına aid olmayan hansıdır?",a:"BAM (Hesablaşma Modulu)",o:["BAM (Hesablaşma Modulu)","IM (İdarəetmə Modulu)","RM (Rabitə Modulu)","KM (Kommutasiya Modulu)"]},
+{q:"E1 portunun veriliş sürəti nə qədərdir?",a:"2048 kbit/san",o:["2048 kbit/san","1024 kbit/san","4096 kbit/san","155 Mbit/san"]},
+{q:"C&C08 stansiyasında birləşdirici xətlərin sayı nə qədərdir?",a:"180 000",o:["180 000","100 000","250 000","80 000"]},
+{q:"C&C08 tipli ATS-də hansı mikrosxemlərdən istifadə olunur?",a:"0,18 mkm – 0,35 mkm texnologiyalı mikrosxemlər",o:["0,18 mkm – 0,35 mkm texnologiyalı mikrosxemlər","0,5 mkm – 1 mkm texnologiyalı mikrosxemlər","0,09 mkm – 0,18 mkm texnologiyalı mikrosxemlər","0,35 mkm – 0,5 mkm texnologiyalı mikrosxemlər"]},
+{q:"C&C08-in ATS avadanlığı hansı siqnallaşma sistemlərinin birgə işləməsinə imkan verir?",a:"R2, TUP, ISUP, TCAP, SCCP, INAP",o:["R2, TUP, ISUP, TCAP, SCCP, INAP","R2, TUP, ISUP, SS7, BRI","H.323, SIP, MGCP, H.248","R2, TUP, ISDN, TCAP, SS7"]},
+{q:"C&C08 tipli sistem necə sistemdir?",a:"Abunəçilər tərəfindən telekom xidmətlərinə olan tələbatı qarşılayan sistem",o:["Abunəçilər tərəfindən telekom xidmətlərinə olan tələbatı qarşılayan sistem","Yalnız rəqəm rabitəsini dəstəkləyən sistem","ATM texnologiyası əsasında işləyən sistem","SDH standartlarına uyğun qurulmuş sistem"]},
+{q:"C&C08 sistemi nəyi təmin edir?",a:"Yeni telekommunikasiya xidmətlərinə olan tələbatı ödəmək və sektorun sürətli inkişafını",o:["Yeni telekommunikasiya xidmətlərinə olan tələbatı ödəmək və sektorun sürətli inkişafını","Yalnız analoq xidmətlər göstərmək","Ənənəvi PSTN xidmətlərini saxlamaq","Telefon şəbəkəsinin fiziki genişləndirilməsi"]},
+{q:"C&C08 stansiyası neçə abunəçi xəttinə qədər artırıla bilər?",a:"800 000",o:["800 000","500 000","1 000 000","200 000"]},
+{q:"C&C-in açılışı nədir?",a:"Computer and Communication",o:["Computer and Communication","Control and Communication","Computer and Connectivity","Channel and Communication"]},
+{q:"C&C08 sistemi hansı ölkənin istehsalıdır?",a:"Çin Xalq Respublikası",o:["Çin Xalq Respublikası","Yaponiya","Cənubi Koreya","ABŞ"]},
+{q:"C&C08 sistemi hansı şirkət tərəfindən istehsal olunub?",a:"Huawei",o:["Huawei","ZTE","Cisco","Nokia"]},
+{q:"Telematik xidmət qovşaqları nə üçün qurulur?",a:"İnternet şəbəkəsinə, İP şəbəkəsinə qoşulma və sorğu məlumatlarına çıxış üçün",o:["İnternet şəbəkəsinə, İP şəbəkəsinə qoşulma və sorğu məlumatlarına çıxış üçün","Yalnız telefon danışıqları üçün","ATM şəbəkəsinin idarə edilməsi üçün","Abunəçilərin qeydiyyatı üçün"]},
+{q:"Telematik xidmətlər göstərən şəbəkənin tərkibinə nələr daxildir?",a:"Modem server",o:["Modem server","Kommutasiya serveri","Video server","Softswitch serveri"]},
+{q:"İXRŞ nədir?",a:"İnteqral xidmətli rəqəm şəbəkəsi",o:["İnteqral xidmətli rəqəm şəbəkəsi","İdarəolunan xidmət rabitə şəbəkəsi","İnterfeysli xidmət rəqəm sistemi","İntellektual xidmət rəqəm şəbəkəsi"]},
+{q:"Multimedia xidmətlərinə aid olmayan hansıdır?",a:"Sadə analoq telefon danışığı",o:["Sadə analoq telefon danışığı","Video konfrans","İP televiziya","Çox ortamlı məlumat ötürülməsi"]},
+{q:"C&C08 ATS-in adi vaxtlarda enerji sərfiyyatı nə qədərdir?",a:"0,3 Vt",o:["0,3 Vt","1,5 Vt","0,8 Vt","3 Vt"]},
+{q:"Telematik xidmət növlərinə aid olmayan hansıdır?",a:"Adi telefon danışığı",o:["Adi telefon danışığı","İnternet xidməti","E-poçt göndərmə","Məlumat bazasına müraciət"]},
+{q:"Əvvəlcədən ödənişli kartla danışıq xidmətinin kodu hansıdır?",a:"181",o:["181","182","191","171"]},
+{q:"NGN şəbəkəsində intellektual xidmətlər platforması nəyin əsasında yaradılır?",a:"Paket şəbəkəsi resursları əsasında",o:["Paket şəbəkəsi resursları əsasında","Kanal kommutasiyası resursları əsasında","ATM şəbəkəsi resursları əsasında","SDH şəbəkəsi resursları əsasında"]},
+{q:"Multimedia nədir?",a:"Müxtəlif növ məlumatların bir mühitdə birləşdirilməsi",o:["Müxtəlif növ məlumatların bir mühitdə birləşdirilməsi","Yalnız audio və video ötürülməsi","Çoxlu protokollardan istifadə edilməsi","Rəqəm siqnalının analoqa çevrilməsi"]},
+{q:"İntelektual xidmətlərə aid olmayanı göstərin.",a:"Adi telefon danışığı xidməti",o:["Adi telefon danışığı xidməti","Tele-səs vermə xidməti","SCP tərəfindən çağırış seli istiqamətləndirilməsi","İntellektual xidmət serveri"]},
+{q:"NGN-də istismar xərclərinin azalması üçün əsas faktor hansıdır?",a:"İdarəetmə sisteminin mərkəzləşdirilməsi və texniki heyətin azalması",o:["İdarəetmə sisteminin mərkəzləşdirilməsi və texniki heyətin azalması","Abunəçi sayının azalması","Köhnə avadanlığın saxlanması","Tranzit qovşaqların artırılması"]},
+{q:"181 xidməti nədir?",a:"Əvvəlcədən ödənişli kartla danışıq xidməti",o:["Əvvəlcədən ödənişli kartla danışıq xidməti","Beynəlxalq çağırış xidməti","Məlumat sorğu xidməti","Ödənişsiz çağırış xidməti"]},
+{q:"İntelektual şəbəkədə xidmətlər nəyin vasitəsilə həyata keçirilir?",a:"SSP — server xidmət qovşağı vasitəsilə",o:["SSP — server xidmət qovşağı vasitəsilə","SCP — xidmət idarəetmə nöqtəsi vasitəsilə","Softswitch vasitəsilə","Media Gateway vasitəsilə"]},
+{q:"SSP nədir?",a:"Server xidmət qovşağı",o:["Server xidmət qovşağı","Siqnallaşma şlüzü prosessoru","Sinxron signal protokolu","Sistem siqnal portu"]},
+{q:"İntelektual xidmətlərə aid olanı göstərin.",a:"İntellektual xidmət serveri, tele-səs vermə, SCP çağırış seli istiqamətləndirilməsi",o:["İntellektual xidmət serveri, tele-səs vermə, SCP çağırış seli istiqamətləndirilməsi","Adi telefon danışığı","ADSL internet xidməti","SMS göndərmə xidməti"]},
+{q:"MPLS nədir?",a:"Çoxprotokollu etiketli kommutasiya şəbəkəsi",o:["Çoxprotokollu etiketli kommutasiya şəbəkəsi","Çoxnöqtəli protokol layihə sistemi","Modul paket ləğvetmə sistemi","Multipleks protokol linklər sistemi"]},
+{q:"Çevik kommutator (Softswitch) hansı səviyyədə yerləşir?",a:"İdarəetmə səviyyəsi",o:["İdarəetmə səviyyəsi","Nəqliyyat səviyyəsi","Xidmət səviyyəsi","Tətbiq səviyyəsi"]},
+{q:"Bakı ŞTS-də NGN-in tətbiqi hansı variantda qurulmuşdur?",a:"Giriş məlumat prinsipi",o:["Giriş məlumat prinsipi","Kombinə edilmiş variant","Tranzit variant","Mərkəzləşdirilmiş variant"]},
+{q:"Kombinə edilmiş variantda nə nəzərdə tutulur?",a:"ÜİTŞ-nin qismən və ya mərhələli ləğv edilməsi",o:["ÜİTŞ-nin qismən və ya mərhələli ləğv edilməsi","ÜİTŞ-nin tam ləğv edilməsi","Yalnız yeni avadanlığın qurulması","ATM şəbəkəsinin genişləndirilməsi"]},
+{q:"1995-ci ilə kimi Bakı ŞTS hansı prinsip əsasında fəaliyyət göstərmişdir?",a:"Giriş məlumat qovşaq prinsipi",o:["Giriş məlumat qovşaq prinsipi","Tranzit qovşaq prinsipi","Paket kommutasiyası prinsipi","Mərkəzləşdirilmiş idarəetmə prinsipi"]},
+{q:"MSAN nədir?",a:"Multi-servis abunəçi konsentratoru",o:["Multi-servis abunəçi konsentratoru","Müştəri sorğu arxivləmə nodu","Multi-sistem abunəçi nodu","Modul siqnal arxivləmə nodu"]},
+{q:"Klassik şəbəkələrə qoşulmaq üçün hansı şlüzlərdən istifadə edilir?",a:"Rezident şlüzü",o:["Rezident şlüzü","Siqnal şlüzü","Tranzit şlüzü","Media şlüzü"]},
+{q:"Korporativ şəbəkələrə qoşulmaq üçün hansı interfeysdən istifadə edilir?",a:"V5 interfeysi",o:["V5 interfeysi","E1 interfeysi","ISDN interfeysi","İP interfeysi"]},
+{q:"Mövcud şəbəkənin NGN tətbiqi ilə rekonstruksiyası üçün nəyin ləğvi nəzərdə tutulmuşdur?",a:"Tranzit qovşaqların ləğvi",o:["Tranzit qovşaqların ləğvi","Son qovşaqların ləğvi","Kommutasiya mərkəzlərinin ləğvi","Abunəçi portlarının ləğvi"]},
+{q:"Multiservis şəbəkəsinin nəqliyyat səviyyəsində rabitə qovşağı necə adlanır?",a:"Access node",o:["Access node","Transit node","Core node","Border node"]},
+{q:"Access node nədir?",a:"ATM nəqliyyat şəbəkəsinin rabitə qovşağı",o:["ATM nəqliyyat şəbəkəsinin rabitə qovşağı","İP şəbəkəsinin marşrutlaşdırıcısı","Telefon şəbəkəsinin kommutasiya mərkəzi","SDH nəqliyyat şəbəkəsinin multipleksoru"]},
+{q:"Access node qovşağında şlüz avadanlığı hansı vəzifəni yerinə yetirir?",a:"İstifadəçi trafikini paket İP şəbəkəsi siqnallarına çevirmək",o:["İstifadəçi trafikini paket İP şəbəkəsi siqnallarına çevirmək","Trafiki sadəcə gücləndirib ötürmək","Abunəçilərin qeydiyyatını aparmaq","Tarifikasiya prosesini həyata keçirmək"]},
+{q:"Tranzit səviyyəsini yaratmaqda məqsəd nə olmuşdur?",a:"Müxtəlif ATS-lər arasında informasiya və siqnallaşma sellərini marşrutlamaq",o:["Müxtəlif ATS-lər arasında informasiya və siqnallaşma sellərini marşrutlamaq","Abunəçilərə birbaşa xidmət göstərmək","Tarifikasiya sistemi qurmaq","İntellektual xidmətlər platforması yaratmaq"]},
+{q:"Mövcud telefon şəbəkələrində NGN texnologiyasının tətbiqi üçün neçə variant təklif edilmişdir?",a:"2",o:["2","3","4","5"]},
+{q:"Rekonstruksiya sözünün mənası nədir?",a:"Yenidən qurma",o:["Yenidən qurma","Genişləndirmə","Modernizasiya","Texniki xidmət"]},
+{q:"Bakıda ilk dəfə NGN texnologiyası neçənci ildə tətbiq edilmişdir?",a:"2005",o:["2005","2003","2007","2000"]},
+{q:"Bakıda ilk dəfə NGN texnologiyası hansı ATS-də qurulmuşdur?",a:"464 saylı dekad-addım ATS",o:["464 saylı dekad-addım ATS","423 saylı ATS","501 saylı ATS","311 saylı ATS"]},
+{q:"464 saylı ATS rekonstruksiyaya qədər hansı tip ATS olmuşdur?",a:"Dekad-addım tipi",o:["Dekad-addım tipi","Koordinat tipi","Rəqəm tipi","Elektron tipi"]},
+{q:"NGN texnologiyası əsasında abunəçi xətləri şəbəkəyə necə qoşulur?",a:"Müxtəlif giriş texnologiyaları, Access node gateway şlüzü vasitəsilə",o:["Müxtəlif giriş texnologiyaları, Access node gateway şlüzü vasitəsilə","Birbaşa kommutasiya matrisasına qoşulur","Yalnız optik kabel vasitəsilə qoşulur","Ənənəvi PSTN prinsipi ilə qoşulur"]},
+{q:"Bunlardan hansı NGN-in üstün cəhətlərinə aid DEYİL?",a:"Şəbəkə resurslarından qeyri-səmərəli istifadə",o:["Şəbəkə resurslarından qeyri-səmərəli istifadə","İstismar xərclərinin azalması","Çevik tarif siyasəti","Multimediya xidmətlərinin təqdimi"]},
+{q:"Bunlardan hansı C&C08 ATS-in struktur sxeminə aid DEYİL?",a:"ATM hüceyrə kommutasiya bloku",o:["ATM hüceyrə kommutasiya bloku","MKS (Mərkəzi Kommutasiya Sahəsi)","RM (Rabitə Modulu)","E1 portu"]},
+{q:"Bunlardan hansı NGN avadanlığının tətbiqi aspektlərinə daxil DEYİL?",a:"Köhnə kanal kommutasiya avadanlığının dəyişdirilmədən saxlanması",o:["Köhnə kanal kommutasiya avadanlığının dəyişdirilmədən saxlanması","Son istifadəçi qoşulması","İntellektual xidmətlərin təşkili","ÜİTŞ infrastrukturunun qurulması"]},
+{q:"ÜİTŞ abunəçilərinə aid olmayanı göstərin.",a:"Peyk rabitəsi abunəçisi",o:["Peyk rabitəsi abunəçisi","Şəbəkəyə qoşulan analoq abunəçi xətlər","Baza İXRŞ kanalları vasitəsilə qoşulan xətlər","Multimediya xidmətlərindən istifadə edən abunəçilər"]},
+{q:"Kanal kommutasiyası ilə qurulmuş obyektlərdə tutum artımı üçün nə etmək lazımdır?",a:"Mərkəzləşdirilmiş üsuldan istifadə etmək",o:["Mərkəzləşdirilmiş üsuldan istifadə etmək","Yeni fiziki kabel xətlər çəkmək","Avadanlığı tamamilə dəyişmək","ATM texnologiyasını tətbiq etmək"]}
+];
+
+let S={started:true,finished:false,idx:0,ans:[],hint:[],sq:[]};
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+
+function init(){
+  S.sq=Qs.map(q=>{const so=shuffle(q.o);return{...q,so,ci:so.indexOf(q.a)}});
+  S.ans=new Array(Qs.length).fill(null);
+  S.hint=new Array(Qs.length).fill(false);
+  S.idx=0;S.started=true;S.finished=false;
+  render();
+}
+
+function score(){return S.ans.filter((a,i)=>a===S.sq[i].ci).length}
+
+function render(){
+  const app=document.getElementById('app');
+  if(S.finished){app.innerHTML=tplResults();bindRes();return}
+  app.innerHTML=tplQuiz();bindQuiz();
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function tplQuiz(){
+  const i=S.idx,q=S.sq[i],ans=S.ans[i],tot=Qs.length;
+  const pct=Math.round(((i+1)/tot)*100);
+  const lbls=['A','B','C','D'];
+  let opts='';
+  q.so.forEach((o,oi)=>{
+    let cls='opt';let lbl=lbls[oi];
+    if(ans!==null){
+      if(oi===ans&&oi===q.ci){cls+=' ok';lbl='✓'}
+      else if(oi===ans&&oi!==q.ci){cls+=' bad';lbl='✗'}
+      else if(oi!==ans&&oi===q.ci){cls+=' ok-dim';lbl='✓'}
+    }
+    opts+=`<button class="${cls}" ${ans!==null?'disabled':''} data-i="${oi}">
+      <span class="lbl">${lbl}</span><span class="opt-txt">${esc(o)}</span></button>`;
+  });
+  const isLast=i===tot-1;
+  const sc=score();
+  return`<div class="qcard">
+  <div class="qhead">
+    <span class="q-counter">Sual ${i+1} / ${tot}</span>
+    <span class="q-score">✓ ${sc} düzgün</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+  <div class="qbody">
+    <div class="q-num">Sual ${i+1}</div>
+    <div class="q-text">${esc(q.q)}</div>
+    <div class="opts">${opts}</div>
+    <div class="hint-row">
+      <button class="hint-btn" id="hbtn" onclick="toggleHint()">💡 İpucu ${S.hint[i]?'▲':'▼'}</button>
+      <div class="hint-box ${S.hint[i]?'vis':''}" id="hbox">✅ Düzgün cavab: <strong>${esc(q.a)}</strong></div>
+    </div>
+  </div>
+  <div class="qnav">
+    <button class="nav-btn" ${i===0?'disabled':''} onclick="goDir(-1)">← Geri</button>
+    <span class="nav-center">${i+1} / ${tot}</span>
+    ${isLast?`<button class="nav-btn primary" onclick="finish()">Nəticə 🏁</button>`:`<button class="nav-btn" onclick="goDir(1)">Növbəti →</button>`}
+  </div>
+</div>`}
+
+function tplResults(){
+  const tot=Qs.length,sc=score(),wr=tot-sc;
+  const pct=Math.round((sc/tot)*100);
+  let em='📚',grade='Daha çox məşq lazımdır';
+  if(pct>=90){em='🏆';grade='Əla nəticə!'}
+  else if(pct>=75){em='🌟';grade='Yaxşı nəticə!'}
+  else if(pct>=60){em='👍';grade='Orta nəticə'}
+  let wrongList='';
+  S.ans.forEach((a,i)=>{
+    if(a!==S.sq[i].ci){
+      wrongList+=`<div class="wi">
+        <div class="wi-tag">Sual ${i+1}</div>
+        <div class="wi-q">${esc(S.sq[i].q)}</div>
+        <div class="wi-al">Düzgün cavab</div>
+        <div class="wi-a">✓ ${esc(S.sq[i].a)}</div>
+      </div>`;
+    }
+  });
+  return`<div class="results">
+  <div class="res-head">
+    <span class="res-emoji">${em}</span>
+    <div class="res-title">${grade}</div>
+    <div class="res-sub">${pct}% — ${sc} düzgün, ${wr} səhv</div>
+    <div class="res-stats">
+      <div class="stat"><div class="stat-n">${sc}</div><div class="stat-l">Düzgün</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-n">${wr}</div><div class="stat-l">Səhv</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Bal</div></div>
+    </div>
+  </div>
+  <div class="res-body">
+    ${wr>0?`<div class="wrongs-title">📌 Səhv cavablar (${wr} sual)</div>${wrongList}`:`<div class="all-ok">🎉 Bütün sualları düzgün cavablandırdınız!</div>`}
+    <button class="btn-retry" id="rbtn">↺ Yenidən Başla</button>
+  </div>
+</div>`}
+
+function bindQuiz(){
+  document.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const i=S.idx,oi=+b.dataset.i;
+      if(S.ans[i]!==null)return;
+      S.ans[i]=oi;
+      if(oi===S.sq[i].ci)playOk();else playErr();
+      render();
+    });
+  });
+}
+function bindRes(){
+  const rb=document.getElementById('rbtn');
+  if(rb)rb.addEventListener('click',()=>{init()});
+}
+function toggleHint(){S.hint[S.idx]=!S.hint[S.idx];render()}
+function goDir(d){S.idx=Math.max(0,Math.min(Qs.length-1,S.idx+d));render()}
+function finish(){S.finished=true;render()}
+
+let _actx=null;
+function actx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx}
+function playOk(){
+  try{
+    const c=actx(),t=c.currentTime;
+    [523.25,659.25,783.99].forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0,t+i*.08);
+      g.gain.linearRampToValueAtTime(.28,t+i*.08+.03);
+      g.gain.exponentialRampToValueAtTime(.001,t+i*.08+.45);
+      o.connect(g);g.connect(c.destination);
+      o.start(t+i*.08);o.stop(t+i*.08+.5);
+    });
+  }catch(e){}
+}
+function playErr(){
+  try{
+    const c=actx(),t=c.currentTime;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(220,t);
+    o.frequency.exponentialRampToValueAtTime(110,t+.3);
+    g.gain.setValueAtTime(.25,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+.35);
+    o.connect(g);g.connect(c.destination);
+    o.start(t);o.stop(t+.4);
+  }catch(e){}
+}
+
+init();
+</script>
+</body>
+</html>
