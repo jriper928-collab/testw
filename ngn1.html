@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telekommunikasiya Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FEF8EE;--card:#FFFDF7;--border:#E8D5B8;
+  --pri:#C87B50;--pri-dk:#A86240;--pri-lt:#FAEBD7;
+  --txt:#3D2B1E;--muted:#9B7B5E;
+  --ok:#4A8C5C;--ok-bg:#EDF7F0;--ok-bd:#A8D9B9;
+  --bad:#B85959;--bad-bg:#FDF0F0;--bad-bd:#F0C0C0;
+  --hint:#7B6FA0;--hint-bg:#F4F1FA;--hint-bd:#C8BFEA;
+  --shadow:rgba(160,80,20,0.10);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 10%,rgba(200,123,80,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 90% 90%,rgba(123,111,160,.07) 0%,transparent 60%);pointer-events:none}
+.wrap{width:100%;max-width:700px;position:relative;z-index:1}
+
+/* ── WELCOME ── */
+.welcome{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);padding:56px 40px;text-align:center}
+.w-icon{font-size:60px;margin-bottom:18px;display:block}
+.w-title{font-family:'Lora',serif;font-size:2rem;font-weight:700;margin-bottom:10px}
+.w-sub{font-size:1rem;color:var(--muted);margin-bottom:10px}
+.w-badge{display:inline-block;background:var(--pri-lt);color:var(--pri-dk);border-radius:20px;padding:5px 16px;font-weight:800;font-size:.88rem;margin-bottom:32px}
+.btn-start{background:var(--pri);color:#fff;border:none;padding:15px 48px;border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(200,123,80,.42);transition:all .2s}
+.btn-start:hover{background:var(--pri-dk);transform:translateY(-2px)}
+
+/* ── QUIZ CARD ── */
+.qcard{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.qhead{padding:20px 28px 0;display:flex;align-items:center;justify-content:space-between}
+.q-counter{font-size:.85rem;font-weight:700;color:var(--muted)}
+.q-score{background:var(--pri-lt);color:var(--pri-dk);padding:4px 13px;border-radius:20px;font-size:.82rem;font-weight:800}
+
+.prog-wrap{padding:12px 28px 0}
+.prog-track{height:6px;background:#EDE0CC;border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pri),#E8A07A);border-radius:10px;transition:width .4s ease}
+
+.qbody{padding:24px 28px}
+.q-num{font-size:.78rem;font-weight:800;color:var(--pri);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.q-text{font-family:'Lora',serif;font-size:1.12rem;font-weight:600;line-height:1.65;color:var(--txt);margin-bottom:22px}
+
+/* ── OPTIONS ── */
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.opt{width:100%;text-align:left;padding:13px 16px;border-radius:14px;border:1.5px solid var(--border);background:#FFFDF7;color:var(--txt);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:11px}
+.opt:hover:not(:disabled){border-color:var(--pri);background:#FEF5EC;transform:translateX(4px)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);animation:okPop .3s ease}
+.opt.bad{border-color:var(--bad-bd);background:var(--bad-bg);color:var(--bad);animation:badShake .4s ease}
+.opt.ok-dim{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+@keyframes okPop{0%{transform:scale(1)}50%{transform:scale(1.015)}100%{transform:scale(1)}}
+@keyframes badShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.lbl{min-width:26px;height:26px;border-radius:50%;background:#EDE0CC;color:var(--muted);font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .18s}
+.opt.ok .lbl,.opt.ok-dim .lbl{background:var(--ok);color:#fff}
+.opt.bad .lbl{background:var(--bad);color:#fff}
+.opt-txt{flex:1;line-height:1.45}
+
+/* ── HINT ── */
+.hint-row{margin-bottom:18px}
+.hint-btn{background:none;border:1.5px solid var(--hint-bd);color:var(--hint);padding:7px 16px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.hint-btn:hover{background:var(--hint-bg);transform:translateY(-1px)}
+.hint-box{margin-top:9px;padding:13px 15px;background:var(--hint-bg);border:1.5px solid var(--hint-bd);border-radius:13px;color:var(--hint);font-size:.9rem;font-weight:600;line-height:1.5;display:none;animation:fadeIn .2s ease}
+.hint-box.vis{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAV ── */
+.qnav{padding:0 28px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nav-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;border-radius:50px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .18s}
+.nav-btn:hover:not(:disabled){border-color:var(--pri);color:var(--pri);background:#FEF5EC}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.nav-btn.primary{background:var(--pri);color:#fff;border-color:var(--pri)}
+.nav-btn.primary:hover:not(:disabled){background:var(--pri-dk);border-color:var(--pri-dk);color:#fff}
+.nav-center{font-size:.82rem;font-weight:700;color:var(--muted)}
+
+/* ── RESULTS ── */
+.results{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+.res-head{background:linear-gradient(135deg,#C87B50,#E8A07A);padding:38px 28px;text-align:center;color:#fff}
+.res-emoji{font-size:50px;display:block;margin-bottom:10px}
+.res-title{font-family:'Lora',serif;font-size:1.7rem;font-weight:700;margin-bottom:6px}
+.res-sub{font-size:.95rem;opacity:.88}
+.res-stats{display:flex;justify-content:center;gap:36px;margin-top:22px}
+.stat{text-align:center}
+.stat-n{font-size:2.4rem;font-weight:800}
+.stat-l{font-size:.78rem;opacity:.82;font-weight:700;margin-top:2px}
+.stat-div{width:1px;height:44px;background:rgba(255,255,255,.3);align-self:center}
+
+.res-body{padding:24px 28px}
+.wrongs-title{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.wi{background:var(--bad-bg);border:1.5px solid var(--bad-bd);border-radius:15px;padding:14px 16px;margin-bottom:10px}
+.wi-tag{font-size:.75rem;font-weight:800;color:var(--bad);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.wi-q{font-family:'Lora',serif;font-size:.93rem;color:var(--txt);margin-bottom:8px;line-height:1.45}
+.wi-al{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.wi-a{font-size:.9rem;font-weight:700;color:var(--ok)}
+.all-ok{text-align:center;padding:18px;font-size:1.05rem;font-weight:700;color:var(--ok)}
+.btn-retry{width:100%;padding:13px;background:var(--pri);color:#fff;border:none;border-radius:15px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:18px;transition:all .18s}
+.btn-retry:hover{background:var(--pri-dk);transform:translateY(-2px)}
+
+@media(max-width:480px){
+  .welcome{padding:40px 22px}
+  .w-title{font-size:1.55rem}
+  .qhead,.qbody,.qnav,.prog-wrap{padding-left:18px;padding-right:18px}
+  .q-text{font-size:1rem}
+  .res-head{padding:28px 18px}
+  .res-body{padding:18px}
+  .res-stats{gap:22px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const Qs=[
+{q:"Nəqliyyat paket şəbəkəsinin funksiyası nədir?",a:"NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir",o:["NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","Analoq şəbəkəsi ilə NGN arasında birləşmə ara bağlantısı həyata keçirir"]},
+{q:"Tranzit qovşağın funksiyası nədir?",a:"İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir",o:["İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","Siqnallaşma selinin idarəsi və çağırışların emalını yerinə yetirir"]},
+{q:"Son sərhəd qovşağın funksiyası nədir?",a:"Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir",o:["Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","Analoq şəbəkəsi ilə NGN arasında birləşmə ara bağlantısı həyata keçirir"]},
+{q:"Nəqliyyat paket şəbəkəsində şlüzlər hansı funksiyanı həyata keçirir?",a:"Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı",o:["Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir"]},
+{q:"Siqnallaşma selinin idarəedici qurğularının funksiyası nədir?",a:"İnformasiya seli emal olunaraq birləşmələr, çağırışlar idarə olunur",o:["İnformasiya seli emal olunaraq birləşmələr, çağırışlar idarə olunur","Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir"]},
+{q:"ATM sözünün mənası nədir?",a:"Asinxron veriş rejimi",o:["Asinxron veriş rejimi","Sinxron veriş rejimi","Avtomatik ötürmə metodu","Asinxron tranzit multipleksoru"]},
+{q:"ATM paketinin uzunluğu nə qədərdir?",a:"53 bayt",o:["53 bayt","48 bayt","64 bayt","56 bayt"]},
+{q:"ATM paketində başlığın ölçüsü neçə baytdır?",a:"5 bayt",o:["5 bayt","8 bayt","3 bayt","6 bayt"]},
+{q:"ATM paketində informasiya həcmi neçə baytdır?",a:"48 bayt",o:["48 bayt","53 bayt","45 bayt","64 bayt"]},
+{q:"Bunlardan hansı ATM trafiklərin ötürülmə üsulu DEYİL?",a:"GBR (Garantlı bit sürəti)",o:["GBR (Garantlı bit sürəti)","CBR (Sabit bit sürətli)","VBR (Dəyişən bit sürətli)","ABR (Sərbəst bit sürətli)"]},
+{q:"CBR hansı tipli trafikdir?",a:"Sabit bit sürətli, sinxron rejimdə xidmət olunur",o:["Sabit bit sürətli, sinxron rejimdə xidmət olunur","Dəyişən bit sürətli trafik","Sərbəst bit sürətli, gecikməyə yol verilir","Spesifik olmayan bit sürətli trafik"]},
+{q:"UBR hansı tipli trafikdir?",a:"Spesifik olmayan bit sürətli, etibarlılığı yoxdur",o:["Spesifik olmayan bit sürətli, etibarlılığı yoxdur","Sabit bit sürətli sinxron trafik","Dəyişən bit sürətli trafik","Sərbəst bit sürətli trafik"]},
+{q:"VBR hansı tipli trafikdir?",a:"Dəyişən bit sürətli trafik",o:["Dəyişən bit sürətli trafik","Sabit bit sürətli sinxron trafik","Sərbəst bit sürətli trafik","Spesifik olmayan bit sürətli trafik"]},
+{q:"ABR hansı tipli trafikdir?",a:"Sərbəst bit sürətli, gecikməyə yol verilir",o:["Sərbəst bit sürətli, gecikməyə yol verilir","Sabit bit sürətli sinxron trafik","Dəyişən bit sürətli trafik","Spesifik olmayan bit sürətli trafik"]},
+{q:"Dəyişən bit sürətli trafik hansıdır?",a:"VBR",o:["VBR","CBR","ABR","UBR"]},
+{q:"Hansılar ATM səviyyələridir?",a:"Fiziki səviyyə, ATM səviyyəsi, ATM uyğunlaşma səviyyəsi",o:["Fiziki səviyyə, ATM səviyyəsi, ATM uyğunlaşma səviyyəsi","Fiziki səviyyə, Kanal səviyyəsi, Şəbəkə səviyyəsi","ATM səviyyəsi, İP səviyyəsi, Tətbiq səviyyəsi","Fiziki səviyyə, Məlumat səviyyəsi, Nəqliyyat səviyyəsi"]},
+{q:"ATM texnologiyası neçə səviyyəlidir?",a:"3",o:["3","4","2","5"]},
+{q:"Fiziki səviyyənin vəzifəsi nədir?",a:"ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi təşkil olunur",o:["ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi təşkil olunur","Fiziki səviyyədə elementar siqnal selinin ATM uyğunlaşma səviyyəsinə verilişi","ATM səviyyəsi ilə daha yüksək səviyyəli protokol arasında uyğunlaşma","Virtual kanallar arasında kommutasiya prosesi həyata keçirilir"]},
+{q:"ATM səviyyəsinin vəzifəsi nədir?",a:"Fiziki səviyyədə elementar siqnal selinin ATM ilə uyğunlaşma səviyyəsi arasında verilişi",o:["Fiziki səviyyədə elementar siqnal selinin ATM ilə uyğunlaşma səviyyəsi arasında verilişi","ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi","ATM səviyyəsi ilə daha yüksək səviyyəli protokol arasında uyğunlaşma","Virtual kanalların kommutasiyası və idarəsi"]},
+{q:"ATM uyğunlaşma səviyyəsinin vəzifəsi nədir?",a:"ATM səviyyəsi ilə daha yüksək səviyyəli protokol interfeysi arasında uyğunlaşma prosesi",o:["ATM səviyyəsi ilə daha yüksək səviyyəli protokol interfeysi arasında uyğunlaşma prosesi","ATM şəbəkəsi ilə informasiya selinin fiziki ötürülməsi","Fiziki səviyyədə siqnal selinin ATM uyğunlaşma səviyyəsinə verilişi","Virtual kanalların daimi olaraq idarə edilməsi"]},
+{q:"Hansılar virtual kanalın növləridir?",a:"Daimi (PVC), Kommutasiyalı (SVC), İntellektual (SPVC)",o:["Daimi (PVC), Kommutasiyalı (SVC), İntellektual (SPVC)","Daimi (PVC), Sinxron (SVC), İntellektual (SPVC)","Ötürücü (TVC), Kommutasiyalı (SVC), Daimi (PVC)","Daimi (PVC), Adaptiv (AVC), İntellektual (SPVC)"]},
+{q:"ATM nəqliyyat şəbəkəsinin əsas elementi nədir?",a:"Məntiqi virtual kanal",o:["Məntiqi virtual kanal","Fiziki ötürmə mühiti","Kommutasiya bloku","ATM çərçivəsi"]},
+{q:"Virtual kanal neçə istiqamətli təşkil edilir?",a:"2 istiqamətli",o:["2 istiqamətli","1 istiqamətli","3 istiqamətli","4 istiqamətli"]},
+{q:"PVC hansı növ virtual kanaldır?",a:"Daimi virtual kanal",o:["Daimi virtual kanal","Kommutasiyalı virtual kanal","İntellektual daimi virtual kanal","Sinxron virtual kanal"]},
+{q:"SVC hansı növ virtual kanaldır?",a:"Kommutasiyalı virtual kanal",o:["Kommutasiyalı virtual kanal","Daimi virtual kanal","İntellektual daimi virtual kanal","Ötürücü virtual kanal"]},
+{q:"SPVC hansı növ virtual kanaldır?",a:"İntellektual daimi virtual kanal",o:["İntellektual daimi virtual kanal","Daimi virtual kanal","Kommutasiyalı virtual kanal","Sinxron daimi virtual kanal"]},
+{q:"ATM multipleksoru ilk dəfə Bakıda neçənci ildə quraşdırılmışdır?",a:"2005-ci il",o:["2005-ci il","2000-ci il","2003-cü il","2008-ci il"]},
+{q:"ATM şəbəkəsində istifadə olunan interfeys tipləri hansıdır?",a:"UNI, NNI",o:["UNI, NNI","UNI, SNI","NNI, ANI","UNI, NNI, ENI"]},
+{q:"ATM multipleksoru Bakıda ilk dəfə hansı ATS-də quraşdırılmışdır?",a:"Bakı Şts ATS 423/498",o:["Bakı Şts ATS 423/498","Bakı Şts ATS 501/502","Bakı Şts ATS 311/312","Bakı Şts ATS 215/216"]},
+{q:"ATM şəbəkəsində maksimum veriLiş sürəti nə qədərdir?",a:"2,4 Gbit/san",o:["2,4 Gbit/san","1,5 Gbit/san","10 Gbit/san","622 Mbit/san"]},
+{q:"ATM-in xüsusiyyətlərinə aid olmayanı göstərin.",a:"Dar zolaqlı sistemlər üçün nəzərdə tutulmuşdur",o:["Dar zolaqlı sistemlər üçün nəzərdə tutulmuşdur","Geniş zolaqlı multiservice sistemlər üçün istifadə edilir","Sabit ölçülü 53 baytlıq paketlərdən istifadə edir","Müxtəlif trafik növlərini (CBR, VBR, ABR, UBR) dəstəkləyir"]},
+{q:"ATM texnologiyası ilə NGN şəbəkəsində uzaq məsafəyə rabitə üçün hansı kabeldən istifadə olunur?",a:"Optik kabel",o:["Optik kabel","Mis kabel","Koaksial kabel","Radiorele xətti"]},
+{q:"İP telefonun kəşfi hansı ölkəyə məxsusdur?",a:"İsrail",o:["İsrail","ABŞ","Yaponiya","Böyük Britaniya"]},
+{q:"Vokatel şirkəti neçənci ildə internet şəbəkəsilə danışıq ötürməyə nail olmuşdur?",a:"1995",o:["1995","1993","1997","2000"]},
+{q:"Ənənəvi diskret məlumat şəbəkələri hansı prinsipə əsaslanır?",a:"Kanal kommutasiyası prinsipi",o:["Kanal kommutasiyası prinsipi","Paket kommutasiyası prinsipi","Hüceyrə kommutasiyası prinsipi","Mesaj kommutasiyası prinsipi"]},
+{q:"İP şəbəkəsi hansı kommutasiya prinsipi əsasında işləyir?",a:"Paket kommutasiyası",o:["Paket kommutasiyası","Kanal kommutasiyası","Hüceyrə kommutasiyası","Mesaj kommutasiyası"]},
+{q:"İP şəbəkəsindən veriLiş sürəti nə qədər nəzərdə tutulmuşdur?",a:"10 Gbit/san",o:["10 Gbit/san","2,4 Gbit/san","1 Gbit/san","100 Mbit/san"]},
+{q:"İP-nin xüsusiyyətlərinə aid olmayanı göstərin.",a:"Kanal kommutasiyası prinsipinə əsaslanır",o:["Kanal kommutasiyası prinsipinə əsaslanır","Paket kommutasiyası prinsipinə əsaslanır","Yaddaş qurğuların olması tələb edir","Minimum gecikməyə malikdir"]},
+{q:"Paketlərin gecikməsi nədir?",a:"İki istifadəçi arasında bir nöqtədən digər nöqtəyə ötürülməsinə sərf olunan vaxt",o:["İki istifadəçi arasında bir nöqtədən digər nöqtəyə ötürülməsinə sərf olunan vaxt","Paketlər arasında vaxt fərqinin yaranması","Şəbəkədə məlumatların itirilmə hadisəsi","Siqnalın gücləndirilməsi müddəti"]},
+{q:"Paketlərin gecikməsi səbəblərinə aid olmayan hansıdır?",a:"Abunəlik planından asılı texniki gecikmə",o:["Abunəlik planından asılı texniki gecikmə","Şəbəkəylə bağlı gecikmə","Əməliyyat sistemi ilə bağlı gecikmə","Kodekin növündən asılı gecikmə"]},
+{q:"Ən yaxşı danışıq keyfiyyəti üçün gecikmə müddəti nə qədər ola bilər?",a:"150 ms-dən çox ola bilməz",o:["150 ms-dən çox ola bilməz","100 ms-dən çox ola bilməz","200 ms-dən çox ola bilməz","300 ms-dən çox ola bilməz"]},
+{q:"Jitter nədir?",a:"Paketlərin verilmə ardıcıllığının pozulmasından yaranan paketlərarası vaxt fərqi",o:["Paketlərin verilmə ardıcıllığının pozulmasından yaranan paketlərarası vaxt fərqi","İki nöqtə arasında ötürmə müddəti","Paketlərin şəbəkədə itirilmə hadisəsi","Siqnal sürətinin azalma prosesi"]},
+{q:"Kosmik peyk rabitəsindən siqnalın gedib qayıtma müddəti nə qədərdir?",a:"250–300 ms/san",o:["250–300 ms/san","100–150 ms/san","50–100 ms/san","400–500 ms/san"]},
+{q:"Əks-səda nədir?",a:"Danışan insanın müəyyən gecikməylə öz səsini eşitməsi",o:["Danışan insanın müəyyən gecikməylə öz səsini eşitməsi","Siqnalın bir xəttdən digərinə keçməsi","Paketlər arasında vaxt fərqinin yaranması","Şəbəkədə trafik yüklənməsinin artması"]},
+{q:"Gecikimlərin ən dözülməz müddəti hansıdır?",a:"300 ms/san",o:["300 ms/san","150 ms/san","250 ms/san","500 ms/san"]},
+{q:"Boş otaq effekti nə vaxt yaranır?",a:"Hər siqnalin gecikməsi 15–20 ms/san olarsa",o:["Hər siqnalin gecikməsi 15–20 ms/san olarsa","Hər siqnalin gecikməsi 50–100 ms/san olarsa","Hər siqnalin gecikməsi 5–10 ms/san olarsa","Hər siqnalin gecikməsi 100–150 ms/san olarsa"]},
+{q:"Akustik formalı əks-səda effekti nəyin hesabına yaranır?",a:"Ucadan danışan qurğulardan terminallar hesabına",o:["Ucadan danışan qurğulardan terminallar hesabına","Şəbəkə avadanlıqlarındakı siqnal çevrilməsi hesabına","Optik kabeldəki siqnal əksi hesabına","Kommutator avadanlığının səviyyə fərqi hesabına"]},
+{q:"Peyk rabitəsindən İP şəbəkəsilə yaxşı danışıq üçün gecikmə vaxtı nə qədərdir?",a:"250–300 ms/san",o:["250–300 ms/san","100–150 ms/san","50 ms/san-dan az","400–500 ms/san"]},
+{q:"Abunəçi neçə millisaniyəyə qədər gecikimərə ciddi reaksiya vermir?",a:"50 ms/san",o:["50 ms/san","100 ms/san","20 ms/san","150 ms/san"]},
+{q:"Əks-səda effektini aradan qaldıran qurğular hansılardır?",a:"Əks-səda məhdudlaşdırıcı, əks-səda kompensatoru",o:["Əks-səda məhdudlaşdırıcı, əks-səda kompensatoru","Əks-səda kompensatoru, siqnal gücləndiricisi","Səs filtrəsi, ekvalayzır","Gücləndiricilər, filtrlər"]},
+{q:"Əks-səda məhdudlaşdırıcısı nə vaxtdan tətbiq edilməyə başlayıb?",a:"20-ci əsrin 70-ci illərindən",o:["20-ci əsrin 70-ci illərindən","20-ci əsrin 60-cı illərindən","20-ci əsrin 80-ci illərindən","20-ci əsrin 50-ci illərindən"]},
+{q:"Əks-səda kompensatorları hansı siqnalları ləğv edir?",a:"32–64 ms/san arasında olan siqnalları",o:["32–64 ms/san arasında olan siqnalları","10–20 ms/san arasındakı siqnalları","100–150 ms/san arasındakı siqnalları","50–100 ms/san arasındakı siqnalları"]},
+{q:"Uzun kadrlı protokolların tətbiqi nəyə təsir edir?",a:"İnformasiyanın emalı prosesindən gecikməyə",o:["İnformasiyanın emalı prosesindən gecikməyə","Şəbəkə bant genişliyinin azalmasına","Paket itkisinin artmasına","Trafik sürətinin birbaşa azalmasına"]},
+{q:"Yerli şəbəkədə gecikimənin maksimal qiyməti nə qədər olmalıdır?",a:"250 ms",o:["250 ms","150 ms","100 ms","500 ms"]},
+{q:"Kodek nədir?",a:"Kodlama və dekodlama prosesini yerinə yetirən qurğu",o:["Kodlama və dekodlama prosesini yerinə yetirən qurğu","Siqnalı gücləndirib ötürən qurğu","Paketləri sıxışdıran proqram","Şəbəkə trafikini idarə edən sistem"]},
+{q:"G.711 seriyalı kodek hansı növ kodeklərə aiddir?",a:"İKM tipli",o:["İKM tipli","ADIKM tipli","KSKM tipli","PCM-LPC tipli"]},
+{q:"G.711 seriyalı kodekdə veriLiş sürəti nə qədərdir?",a:"64 kbit/san",o:["64 kbit/san","32 kbit/san","8 kbit/san","16 kbit/san"]},
+{q:"Ənənəvi telefon şəbəkəsindən hansı kodek istifadə edilir?",a:"G.711",o:["G.711","G.726","G.729","G.728"]},
+{q:"G.711 seriyalı kodek nə vaxtdan tətbiq edilir?",a:"1984-cü ildən",o:["1984-cü ildən","1990-cı ildən","1978-ci ildən","1995-ci ildən"]},
+{q:"G.711 seriyalı kodeklər harada istifadə edilir?",a:"Ənənəvi telefon şəbəkəsində",o:["Ənənəvi telefon şəbəkəsində","Video konfrans rabitəsində","İnternet telefon şəbəkəsində","Sıxlaşdırılmış rabitə kanalında"]},
+{q:"G.726 seriyalı kodekdə veriLiş sürəti nə qədərdir?",a:"16, 24, 32 kbit/san",o:["16, 24, 32 kbit/san","8, 16, 32 kbit/san","32, 48, 64 kbit/san","16, 32, 64 kbit/san"]},
+{q:"G.726 seriyalı kodek neçə veriLiş sürətinə malikdir?",a:"3",o:["3","2","4","5"]},
+{q:"G.726 seriyalı kodek harada tətbiq edilir?",a:"Video konfrans rabitəsində",o:["Video konfrans rabitəsində","Ənənəvi telefon şəbəkəsində","Sıxlaşdırılmış rabitə kanalında","Peyk rabitə sistemlərində"]},
+{q:"G.726 seriyalı kodek hansı tip kodekdir?",a:"ADIKM",o:["ADIKM","İKM","KSKM","PCM"]},
+{q:"G.726 seriyalı kodekdə 1 saniyədə aparılan əməliyyatların sayı nə qədərdir?",a:"8 milyon",o:["8 milyon","16 milyon","30 milyon","20 milyon"]},
+{q:"G.723.1 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?",a:"16 milyon",o:["16 milyon","8 milyon","30 milyon","20 milyon"]},
+{q:"G.723.1 seriyalı kodekdə gecikmə nə qədərdir?",a:"30 ms/san",o:["30 ms/san","10 ms/san","3–5 ms/san","50 ms/san"]},
+{q:"G.729a seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?",a:"20 milyon",o:["20 milyon","16 milyon","30 milyon","40 milyon"]},
+{q:"G.729a seriyalı kodekdə veriLiş sürəti nə qədərdir?",a:"8 kbit/san",o:["8 kbit/san","16 kbit/san","32 kbit/san","64 kbit/san"]},
+{q:"G.729 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?",a:"30 milyon",o:["30 milyon","20 milyon","40 milyon","16 milyon"]},
+{q:"G.728 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?",a:"40 milyon",o:["40 milyon","30 milyon","20 milyon","16 milyon"]},
+{q:"G.729a seriyalı kodekdə gecikmə nə qədərdir?",a:"10 ms/san",o:["10 ms/san","30 ms/san","3–5 ms/san","20 ms/san"]},
+{q:"G.728 seriyalı kodekdə veriLiş sürəti nə qədərdir?",a:"16 kbit/san",o:["16 kbit/san","8 kbit/san","32 kbit/san","64 kbit/san"]},
+{q:"G.728 seriyalı kodekdə gecikmə nə qədərdir?",a:"3–5 ms/san",o:["3–5 ms/san","10 ms/san","30 ms/san","15–20 ms/san"]},
+{q:"G.728 seriyalı kodek harada istifadə olunur?",a:"Sıxlaşdırılmış rabitə kanalında",o:["Sıxlaşdırılmış rabitə kanalında","Ənənəvi telefon şəbəkəsində","Video konfrans rabitəsində","İnternet telefon şəbəkəsində"]}
+];
+
+let S={started:true,finished:false,idx:0,ans:[],hint:[],sq:[]};
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+
+function init(){
+  S.sq=Qs.map(q=>{const so=shuffle(q.o);return{...q,so,ci:so.indexOf(q.a)}});
+  S.ans=new Array(Qs.length).fill(null);
+  S.hint=new Array(Qs.length).fill(false);
+  S.idx=0;S.started=true;S.finished=false;
+  render();
+}
+
+function score(){return S.ans.filter((a,i)=>a===S.sq[i].ci).length}
+
+function render(){
+  const app=document.getElementById('app');
+  if(!S.started){app.innerHTML=tplWelcome();return}
+  if(S.finished){app.innerHTML=tplResults();bindRes();return}
+  app.innerHTML=tplQuiz();bindQuiz();
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function tplWelcome(){return`<div class="welcome">
+<span class="w-icon">📡</span>
+<h1 class="w-title">Telekommunikasiya Testi</h1>
+<p class="w-sub">NGN, ATM, VoIP, Kodeklər</p>
+<span class="w-badge">75 Sual</span>
+<br><button class="btn-start" onclick="init()">Testi Başlat →</button>
+</div>`}
+
+function tplQuiz(){
+  const i=S.idx,q=S.sq[i],ans=S.ans[i],tot=Qs.length;
+  const pct=Math.round(((i+1)/tot)*100);
+  const lbls=['A','B','C','D'];
+  let opts='';
+  q.so.forEach((o,oi)=>{
+    let cls='opt';let lbl=lbls[oi];
+    if(ans!==null){
+      if(oi===ans&&oi===q.ci){cls+=' ok';lbl='✓'}
+      else if(oi===ans&&oi!==q.ci){cls+=' bad';lbl='✗'}
+      else if(oi!==ans&&oi===q.ci){cls+=' ok-dim';lbl='✓'}
+    }
+    opts+=`<button class="${cls}" ${ans!==null?'disabled':''} data-i="${oi}">
+      <span class="lbl">${lbl}</span><span class="opt-txt">${esc(o)}</span></button>`;
+  });
+  const isLast=i===tot-1;
+  const sc=score();
+  return`<div class="qcard">
+  <div class="qhead">
+    <span class="q-counter">Sual ${i+1} / ${tot}</span>
+    <span class="q-score">✓ ${sc} düzgün</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+  <div class="qbody">
+    <div class="q-num">Sual ${i+1}</div>
+    <div class="q-text">${esc(q.q)}</div>
+    <div class="opts">${opts}</div>
+    <div class="hint-row">
+      <button class="hint-btn" id="hbtn" onclick="toggleHint()">💡 İpucu ${S.hint[i]?'▲':'▼'}</button>
+      <div class="hint-box ${S.hint[i]?'vis':''}" id="hbox">✅ Düzgün cavab: <strong>${esc(q.a)}</strong></div>
+    </div>
+  </div>
+  <div class="qnav">
+    <button class="nav-btn" ${i===0?'disabled':''} onclick="goDir(-1)">← Geri</button>
+    <span class="nav-center">${i+1} / ${tot}</span>
+    ${isLast?`<button class="nav-btn primary" onclick="finish()">Nəticə 🏁</button>`:`<button class="nav-btn" onclick="goDir(1)">Növbəti →</button>`}
+  </div>
+</div>`}
+
+function tplResults(){
+  const tot=Qs.length,sc=score(),wr=tot-sc;
+  const pct=Math.round((sc/tot)*100);
+  let em='📚',grade='Daha çox məşq lazımdır';
+  if(pct>=90){em='🏆';grade='Əla nəticə!'}
+  else if(pct>=75){em='🌟';grade='Yaxşı nəticə!'}
+  else if(pct>=60){em='👍';grade='Orta nəticə'}
+  let wrongList='';
+  S.ans.forEach((a,i)=>{
+    if(a!==S.sq[i].ci){
+      wrongList+=`<div class="wi">
+        <div class="wi-tag">Sual ${i+1}</div>
+        <div class="wi-q">${esc(S.sq[i].q)}</div>
+        <div class="wi-al">Düzgün cavab</div>
+        <div class="wi-a">✓ ${esc(S.sq[i].a)}</div>
+      </div>`;
+    }
+  });
+  return`<div class="results">
+  <div class="res-head">
+    <span class="res-emoji">${em}</span>
+    <div class="res-title">${grade}</div>
+    <div class="res-sub">${pct}% — ${sc} düzgün, ${wr} səhv</div>
+    <div class="res-stats">
+      <div class="stat"><div class="stat-n">${sc}</div><div class="stat-l">Düzgün</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-n">${wr}</div><div class="stat-l">Səhv</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Bal</div></div>
+    </div>
+  </div>
+  <div class="res-body">
+    ${wr>0?`<div class="wrongs-title">📌 Səhv cavablar (${wr} sual)</div>${wrongList}`:`<div class="all-ok">🎉 Bütün sualları düzgün cavablandırdınız!</div>`}
+    <button class="btn-retry" id="rbtn">↺ Yenidən Başla</button>
+  </div>
+</div>`}
+
+function bindQuiz(){
+  document.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const i=S.idx,oi=+b.dataset.i;
+      if(S.ans[i]!==null)return;
+      S.ans[i]=oi;
+      if(oi===S.sq[i].ci)playOk();else playErr();
+      render();
+    });
+  });
+}
+function bindRes(){
+  const rb=document.getElementById('rbtn');
+  if(rb)rb.addEventListener('click',()=>{init()});
+}
+
+function toggleHint(){S.hint[S.idx]=!S.hint[S.idx];render()}
+function goDir(d){S.idx=Math.max(0,Math.min(Qs.length-1,S.idx+d));render()}
+function finish(){S.finished=true;render()}
+
+let _actx=null;
+function actx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx}
+
+function playOk(){
+  try{
+    const c=actx(),t=c.currentTime;
+    [523.25,659.25,783.99].forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0,t+i*.08);
+      g.gain.linearRampToValueAtTime(.28,t+i*.08+.03);
+      g.gain.exponentialRampToValueAtTime(.001,t+i*.08+.45);
+      o.connect(g);g.connect(c.destination);
+      o.start(t+i*.08);o.stop(t+i*.08+.5);
+    });
+  }catch(e){}
+}
+function playErr(){
+  try{
+    const c=actx(),t=c.currentTime;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(220,t);
+    o.frequency.exponentialRampToValueAtTime(110,t+.3);
+    g.gain.setValueAtTime(.25,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+.35);
+    o.connect(g);g.connect(c.destination);
+    o.start(t);o.stop(t+.4);
+  }catch(e){}
+}
+
+init();
+</script>
+</body>
+</html>
