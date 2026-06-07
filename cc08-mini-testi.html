@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C&C08 Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FEF8EE;--card:#FFFDF7;--border:#E8D5B8;
+  --pri:#C87B50;--pri-dk:#A86240;--pri-lt:#FAEBD7;
+  --txt:#3D2B1E;--muted:#9B7B5E;
+  --ok:#4A8C5C;--ok-bg:#EDF7F0;--ok-bd:#A8D9B9;
+  --bad:#B85959;--bad-bg:#FDF0F0;--bad-bd:#F0C0C0;
+  --hint:#7B6FA0;--hint-bg:#F4F1FA;--hint-bd:#C8BFEA;
+  --shadow:rgba(160,80,20,0.10);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 10%,rgba(200,123,80,.08) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 90% 90%,rgba(123,111,160,.07) 0%,transparent 60%);pointer-events:none}
+.wrap{width:100%;max-width:700px;position:relative;z-index:1}
+.qcard{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.qhead{padding:20px 28px 0;display:flex;align-items:center;justify-content:space-between}
+.q-counter{font-size:.85rem;font-weight:700;color:var(--muted)}
+.q-score{background:var(--pri-lt);color:var(--pri-dk);padding:4px 13px;border-radius:20px;font-size:.82rem;font-weight:800}
+.prog-wrap{padding:12px 28px 0}
+.prog-track{height:6px;background:#EDE0CC;border-radius:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pri),#E8A07A);border-radius:10px;transition:width .4s ease}
+.qbody{padding:24px 28px}
+.q-num{font-size:.78rem;font-weight:800;color:var(--pri);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.q-text{font-family:'Lora',serif;font-size:1.12rem;font-weight:600;line-height:1.65;color:var(--txt);margin-bottom:22px}
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.opt{width:100%;text-align:left;padding:13px 16px;border-radius:14px;border:1.5px solid var(--border);background:#FFFDF7;color:var(--txt);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:11px}
+.opt:hover:not(:disabled){border-color:var(--pri);background:#FEF5EC;transform:translateX(4px)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);animation:okPop .3s ease}
+.opt.bad{border-color:var(--bad-bd);background:var(--bad-bg);color:var(--bad);animation:badShake .4s ease}
+.opt.ok-dim{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+@keyframes okPop{0%{transform:scale(1)}50%{transform:scale(1.015)}100%{transform:scale(1)}}
+@keyframes badShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.lbl{min-width:26px;height:26px;border-radius:50%;background:#EDE0CC;color:var(--muted);font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt.ok .lbl,.opt.ok-dim .lbl{background:var(--ok);color:#fff}
+.opt.bad .lbl{background:var(--bad);color:#fff}
+.opt-txt{flex:1;line-height:1.45}
+.hint-row{margin-bottom:18px}
+.hint-btn{background:none;border:1.5px solid var(--hint-bd);color:var(--hint);padding:7px 16px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.hint-btn:hover{background:var(--hint-bg);transform:translateY(-1px)}
+.hint-box{margin-top:9px;padding:13px 15px;background:var(--hint-bg);border:1.5px solid var(--hint-bd);border-radius:13px;color:var(--hint);font-size:.9rem;font-weight:600;line-height:1.5;display:none;animation:fadeIn .2s ease}
+.hint-box.vis{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.qnav{padding:0 28px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nav-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;border-radius:50px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .18s}
+.nav-btn:hover:not(:disabled){border-color:var(--pri);color:var(--pri);background:#FEF5EC}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.nav-btn.primary{background:var(--pri);color:#fff;border-color:var(--pri)}
+.nav-btn.primary:hover:not(:disabled){background:var(--pri-dk);border-color:var(--pri-dk);color:#fff}
+.nav-center{font-size:.82rem;font-weight:700;color:var(--muted)}
+.results{background:var(--card);border:1.5px solid var(--border);border-radius:28px;box-shadow:0 8px 40px var(--shadow);overflow:hidden;animation:slideUp .3s ease}
+.res-head{background:linear-gradient(135deg,#C87B50,#E8A07A);padding:38px 28px;text-align:center;color:#fff}
+.res-emoji{font-size:52px;display:block;margin-bottom:10px}
+.res-title{font-family:'Lora',serif;font-size:1.7rem;font-weight:700;margin-bottom:6px}
+.res-sub{font-size:.95rem;opacity:.88}
+.res-stats{display:flex;justify-content:center;gap:36px;margin-top:22px}
+.stat{text-align:center}
+.stat-n{font-size:2.4rem;font-weight:800}
+.stat-l{font-size:.78rem;opacity:.82;font-weight:700;margin-top:2px}
+.stat-div{width:1px;height:44px;background:rgba(255,255,255,.3);align-self:center}
+.res-body{padding:24px 28px}
+.wrongs-title{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;margin-bottom:14px}
+.wi{background:var(--bad-bg);border:1.5px solid var(--bad-bd);border-radius:15px;padding:14px 16px;margin-bottom:10px}
+.wi-tag{font-size:.75rem;font-weight:800;color:var(--bad);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.wi-q{font-family:'Lora',serif;font-size:.93rem;color:var(--txt);margin-bottom:8px;line-height:1.45}
+.wi-al{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.wi-a{font-size:.9rem;font-weight:700;color:var(--ok)}
+.all-ok{text-align:center;padding:20px;font-size:1.05rem;font-weight:700;color:var(--ok)}
+.btn-retry{width:100%;padding:13px;background:var(--pri);color:#fff;border:none;border-radius:15px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:18px;transition:all .18s}
+.btn-retry:hover{background:var(--pri-dk);transform:translateY(-2px)}
+@media(max-width:480px){
+  .qhead,.qbody,.qnav,.prog-wrap{padding-left:18px;padding-right:18px}
+  .q-text{font-size:1rem}
+  .res-head{padding:28px 18px}
+  .res-body{padding:18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const Qs=[
+  {
+    q:"RIM Modulu neçə səviyyəlidir?",
+    a:"2",
+    o:["2","3","4","5"]
+  },
+  {
+    q:"C&C08 tipli ATS-də stansiya daxili rabitə yaradılması prosesi neçə mərhələdə həyata keçirilir?",
+    a:"5 mərhələ",
+    o:["5 mərhələ","3 mərhələ","4 mərhələ","7 mərhələ"]
+  },
+  {
+    q:"Bunlardan hansı C&C08 128 strukturuna sxeminə aid deyil?",
+    a:"E1, MKS, QSIB, XIM, RIM, MEN, BAM, XNEM, SSM",
+    o:[
+      "E1, MKS, QSIB, XIM, RIM, MEN, BAM, XNEM, SSM",
+      "E1, MKS, QSIB, XIM, RIM, NEM, BAM, XNEM, SSM",
+      "E1, MKS, QSIB, XIM, RIM, MEN, BAM, XNEM, ATM",
+      "E1, MKS, QSIB, TIM, RIM, MEN, BAM, XNEM, SSM"
+    ]
+  },
+  {
+    q:"RIM modulunun hər səviyyəsi neçə giriş və neçə çıxış xəttinə malikdir?",
+    a:"56 giriş, 56 çıxış",
+    o:["56 giriş, 56 çıxış","32 giriş, 32 çıxış","64 giriş, 64 çıxış","128 giriş, 128 çıxış"]
+  },
+  {
+    q:"Kommutasiya modulunun vəzifəsi nədir?",
+    a:"Çağırışları emal etmək, C&C08 platalarına xidmət etmək",
+    o:[
+      "Çağırışları emal etmək, C&C08 platalarına xidmət etmək",
+      "Yalnız siqnalı gücləndirib ötürmək",
+      "ATM yuvacıqlarını İP paketlərinə çevirmək",
+      "Abunəçi qeydiyyatını aparmaq"
+    ]
+  },
+  {
+    q:"Çağırışlara xidmət etmə sistemi C&C08 tipli ATS-də hansı modullardan istifadə etməklə təmin olunur?",
+    a:"RIB, RIM, SSM",
+    o:["RIB, RIM, SSM","IM, RM, KM","BAM, XIM, MEM","MKS, QSIB, MEN"]
+  },
+  {
+    q:"BAM modulu hansı platalardan ibarətdir?",
+    a:"CRC",
+    o:["CRC","MPU","SIG","PWX"]
+  },
+  {
+    q:"MHM nədir?",
+    a:"Məlumat hesablama mərkəzi",
+    o:["Məlumat hesablama mərkəzi","Modul həcm modulatoru","Mərkəzi hesablama maşını","Modul idarəetmə matrisi"]
+  },
+  {
+    q:"Stansiya daxili rabitənin yaradılmasında 3-cü mərhələ hansıdır?",
+    a:"Çağırılan abunəçiyə çağırış siqnallarının göndərilməsi",
+    o:[
+      "Çağırılan abunəçiyə çağırış siqnallarının göndərilməsi",
+      "Çağıran abunəçinin xəttinin tutulması",
+      "Marşrutun müəyyən edilməsi",
+      "Birləşmənin tam qurulması"
+    ]
+  },
+  {
+    q:"Əlavə növ rabitə xidmətinə aid olmayanı göstərin.",
+    a:"1) Çağırılan xəttin identifikasiyası  2) Çağırılan xəttin identifikasiyasına qadağa qoyulması  3) Qoşulmuş xətlərə identifikasiya olunma imkanı verilməsi  4) Giriş çağırışlarının qeyri-şərtsiz istifadəçi tərəfindən digər ünvanlara göndərilməsi",
+    o:[
+      "1) Çağırılan xəttin identifikasiyası  2) Çağırılan xəttin identifikasiyasına qadağa qoyulması  3) Qoşulmuş xətlərə identifikasiya olunma imkanı verilməsi  4) Giriş çağırışlarının qeyri-şərtsiz istifadəçi tərəfindən digər ünvanlara göndərilməsi",
+      "1) Çağıran xəttin identifikasiyası  2) Çağırılan xəttə qadağa  3) Qoşulmuş xətlərə tarifikasiya  4) Çıxış çağırışlarının ünvanlara göndərilməsi",
+      "1) Şəbəkə resurslarının bölüşdürülməsi  2) Çağırılan xəttə qadağa  3) Qoşulmuş xətlərə identifikasiya  4) Giriş çağırışlarının göndərilməsi",
+      "1) Çağırılan xəttin identifikasiyası  2) Tarifikasiya xidməti  3) Qoşulmuş xətlərə identifikasiya  4) Çıxış çağırışlarının istiqamətləndirilməsi"
+    ]
+  }
+];
+
+let S={finished:false,idx:0,ans:[],hint:[],sq:[]};
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+
+function init(){
+  S.sq=Qs.map(q=>{const so=shuffle(q.o);return{...q,so,ci:so.indexOf(q.a)}});
+  S.ans=new Array(Qs.length).fill(null);
+  S.hint=new Array(Qs.length).fill(false);
+  S.idx=0;S.finished=false;
+  render();
+}
+
+function score(){return S.ans.filter((a,i)=>a===S.sq[i].ci).length}
+
+function render(){
+  const app=document.getElementById('app');
+  if(S.finished){app.innerHTML=tplResults();bindRes();return}
+  app.innerHTML=tplQuiz();bindQuiz();
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function tplQuiz(){
+  const i=S.idx,q=S.sq[i],ans=S.ans[i],tot=Qs.length;
+  const pct=Math.round(((i+1)/tot)*100);
+  const lbls=['A','B','C','D'];
+  let opts='';
+  q.so.forEach((o,oi)=>{
+    let cls='opt',lbl=lbls[oi];
+    if(ans!==null){
+      if(oi===ans&&oi===q.ci){cls+=' ok';lbl='✓'}
+      else if(oi===ans&&oi!==q.ci){cls+=' bad';lbl='✗'}
+      else if(oi!==ans&&oi===q.ci){cls+=' ok-dim';lbl='✓'}
+    }
+    opts+=`<button class="${cls}" ${ans!==null?'disabled':''} data-i="${oi}">
+      <span class="lbl">${lbl}</span><span class="opt-txt">${esc(o)}</span></button>`;
+  });
+  const isLast=i===tot-1;
+  const sc=score();
+  return`<div class="qcard">
+  <div class="qhead">
+    <span class="q-counter">Sual ${i+1} / ${tot}</span>
+    <span class="q-score">✓ ${sc} düzgün</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+  <div class="qbody">
+    <div class="q-num">Sual ${i+1}</div>
+    <div class="q-text">${esc(q.q)}</div>
+    <div class="opts">${opts}</div>
+    <div class="hint-row">
+      <button class="hint-btn" onclick="toggleHint()">💡 İpucu ${S.hint[i]?'▲':'▼'}</button>
+      <div class="hint-box ${S.hint[i]?'vis':''}">✅ Düzgün cavab: <strong>${esc(q.a)}</strong></div>
+    </div>
+  </div>
+  <div class="qnav">
+    <button class="nav-btn" ${i===0?'disabled':''} onclick="goDir(-1)">← Geri</button>
+    <span class="nav-center">${i+1} / ${tot}</span>
+    ${isLast?`<button class="nav-btn primary" onclick="finish()">Nəticə 🏁</button>`:`<button class="nav-btn" onclick="goDir(1)">Növbəti →</button>`}
+  </div>
+</div>`}
+
+function tplResults(){
+  const tot=Qs.length,sc=score(),wr=tot-sc;
+  const pct=Math.round((sc/tot)*100);
+  let em='📚',grade='Daha çox məşq lazımdır';
+  if(pct>=90){em='🏆';grade='Əla nəticə!'}
+  else if(pct>=70){em='🌟';grade='Yaxşı nəticə!'}
+  else if(pct>=50){em='👍';grade='Orta nəticə'}
+  let wrongList='';
+  S.ans.forEach((a,i)=>{
+    if(a!==S.sq[i].ci){
+      wrongList+=`<div class="wi">
+        <div class="wi-tag">Sual ${i+1}</div>
+        <div class="wi-q">${esc(S.sq[i].q)}</div>
+        <div class="wi-al">Düzgün cavab</div>
+        <div class="wi-a">✓ ${esc(S.sq[i].a)}</div>
+      </div>`;
+    }
+  });
+  return`<div class="results">
+  <div class="res-head">
+    <span class="res-emoji">${em}</span>
+    <div class="res-title">${grade}</div>
+    <div class="res-sub">${pct}% — ${sc} düzgün, ${wr} səhv / ${tot} sualdan</div>
+    <div class="res-stats">
+      <div class="stat"><div class="stat-n">${sc}</div><div class="stat-l">Düzgün</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-n">${wr}</div><div class="stat-l">Səhv</div></div>
+      <div class="stat-div"></div>
+      <div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Bal</div></div>
+    </div>
+  </div>
+  <div class="res-body">
+    ${wr>0?`<div class="wrongs-title">📌 Səhv cavablar (${wr} sual)</div>${wrongList}`:`<div class="all-ok">🎉 Bütün sualları düzgün cavablandırdınız!</div>`}
+    <button class="btn-retry" id="rbtn">↺ Yenidən Başla</button>
+  </div>
+</div>`}
+
+function bindQuiz(){
+  document.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const i=S.idx,oi=+b.dataset.i;
+      if(S.ans[i]!==null)return;
+      S.ans[i]=oi;
+      if(oi===S.sq[i].ci)playOk();else playErr();
+      render();
+    });
+  });
+}
+function bindRes(){
+  const rb=document.getElementById('rbtn');
+  if(rb)rb.addEventListener('click',()=>{init()});
+}
+function toggleHint(){S.hint[S.idx]=!S.hint[S.idx];render()}
+function goDir(d){S.idx=Math.max(0,Math.min(Qs.length-1,S.idx+d));render()}
+function finish(){S.finished=true;render()}
+
+let _actx=null;
+function actx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx}
+function playOk(){
+  try{
+    const c=actx(),t=c.currentTime;
+    [523.25,659.25,783.99].forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0,t+i*.08);
+      g.gain.linearRampToValueAtTime(.28,t+i*.08+.03);
+      g.gain.exponentialRampToValueAtTime(.001,t+i*.08+.45);
+      o.connect(g);g.connect(c.destination);
+      o.start(t+i*.08);o.stop(t+i*.08+.5);
+    });
+  }catch(e){}
+}
+function playErr(){
+  try{
+    const c=actx(),t=c.currentTime;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(220,t);
+    o.frequency.exponentialRampToValueAtTime(110,t+.3);
+    g.gain.setValueAtTime(.25,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+.35);
+    o.connect(g);g.connect(c.destination);
+    o.start(t);o.stop(t+.4);
+  }catch(e){}
+}
+
+init();
+</script>
+</body>
+</html>
