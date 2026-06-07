@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İmtahana Hazırlıq</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:#0a0f1e;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;}
+#app{max-width:760px;margin:0 auto;padding:20px 16px;}
+.home-title{font-size:2.2rem;font-weight:800;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,#00d4ff,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.home-sub{text-align:center;color:#64748b;margin-bottom:36px;font-size:.95rem;}
+.sec-card{background:#111827;border:2px solid #1e293b;border-radius:16px;padding:22px 24px;margin-bottom:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:18px;}
+.sec-card:hover{transform:translateY(-2px);}
+.sec-icon{font-size:2rem;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#1e293b;flex-shrink:0;}
+.sec-label{font-weight:700;font-size:1.1rem;margin-bottom:3px;}
+.sec-sub{color:#64748b;font-size:.83rem;margin-bottom:6px;}
+.sec-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;border:1px solid;}
+.sec-arrow{color:#475569;font-size:1.4rem;}
+/* quiz */
+.top-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.back-btn{background:transparent;border:1px solid #1e293b;color:#94a3b8;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:.85rem;transition:all .2s;white-space:nowrap;}
+.back-btn:hover{border-color:#00d4ff;color:#00d4ff;}
+.prog-track{flex:1;height:6px;background:#1e293b;border-radius:10px;overflow:hidden;}
+.prog-bar{height:100%;border-radius:10px;transition:width .5s ease;}
+.counter{color:#64748b;font-size:.85rem;white-space:nowrap;}
+.q-card{background:#111827;border:2px solid #1e293b;border-radius:18px;padding:28px 24px;margin-bottom:18px;transition:border-color .3s;}
+.q-num{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.65;color:#f1f5f9;}
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.opt{padding:14px 18px;border-radius:12px;border:2px solid #1e293b;background:#0f172a;cursor:pointer;font-size:.93rem;transition:all .18s;text-align:left;color:#cbd5e1;line-height:1.5;font-family:inherit;}
+.opt:hover:not(.locked){background:#1e293b;}
+.opt.correct{background:#0f2d1a!important;border-color:#166534!important;color:#4ade80!important;}
+.opt.wrong{background:#2d0f0f!important;border-color:#7f1d1d!important;color:#f87171!important;}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.nav-btn{padding:12px 26px;border-radius:10px;border:none;font-size:.93rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+.hint-btn{padding:10px 16px;border-radius:10px;border:1px solid #334155;background:transparent;color:#94a3b8;font-size:.83rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+.hint-btn:hover{border-color:#00d4ff;color:#00d4ff;}
+.hint-box{background:#0f2d1a;border:1px solid #166534;border-radius:10px;padding:12px 16px;margin-bottom:14px;color:#4ade80;font-size:.88rem;line-height:1.5;}
+/* results */
+.results{text-align:center;padding:40px 20px;}
+.big-score{font-size:5rem;font-weight:900;line-height:1.1;margin:14px 0;}
+.grade{font-size:1.6rem;font-weight:700;margin-bottom:24px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;}
+.stat-card{background:#111827;border:1px solid #1e293b;border-radius:12px;padding:16px;}
+.stat-num{font-size:1.8rem;font-weight:800;}
+.stat-lbl{font-size:.75rem;color:#64748b;margin-top:4px;}
+.res-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <div id="home">
+    <div style="padding:40px 0 0">
+      <div class="home-title">📶 İmtahana Hazırlıq</div>
+      <div class="home-sub">NGN, ATM, IP Telefon, C&C08 · Bölmə seçin</div>
+      <div id="sec-list"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="hidden">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()">← Çıx</button>
+      <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
+      <div class="counter"><span id="q-cur" style="font-weight:700"></span>/<span id="q-tot"></span></div>
+    </div>
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="hint-box hidden" id="hint-box"></div>
+    <div class="opts" id="opts"></div>
+    <div class="nav">
+      <button class="nav-btn" id="btn-prev" style="background:#1e293b;color:#94a3b8" onclick="goPrev()">← Geri</button>
+      <button class="hint-btn" onclick="toggleHint()">💡 İpucu</button>
+      <button class="nav-btn" id="btn-next" onclick="goNext()">İrəli →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="hidden results">
+    <div style="font-size:3rem">🎓</div>
+    <div style="font-size:1.4rem;font-weight:700;color:#f1f5f9;margin-top:8px">İmtahan Tamamlandı</div>
+    <div class="big-score" id="res-score"></div>
+    <div class="grade" id="res-grade"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" style="color:#22c55e" id="res-ok"></div><div class="stat-lbl">Doğru</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#ef4444" id="res-wrong"></div><div class="stat-lbl">Səhv</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#94a3b8" id="res-total"></div><div class="stat-lbl">Cəmi</div></div>
+    </div>
+    <div class="res-btns">
+      <button class="nav-btn" id="res-retry" onclick="retryQuiz()">🔄 Yenidən</button>
+      <button class="nav-btn" style="background:#1e293b;color:#94a3b8" onclick="goHome()">🏠 Ana Səhifə</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SECTION_META = [
+  {key:"k1",label:"1-ci Kollekvum",sub:"Nəqliyyat şəbəkəsi, ATM, IP Telefon, Kodeklər",color:"#00d4ff",icon:"📡",count:75},
+  {key:"k2",label:"2-ci Kollekvum",sub:"C&C08, SDH, NGN tətbiqi, Bakı ŞTŞ",color:"#ff6b35",icon:"🏗️",count:75},
+  {key:"k3",label:"3-cü Kollekvum",sub:"NGN prinsipləri, Şlüzlər, Protokollar",color:"#a855f7",icon:"🔗",count:75},
+  {key:"elave",label:"Əlavə Suallar",sub:"C&C08 modulları, Stansiya daxili rabitə",color:"#22c55e",icon:"⭐",count:10}
+];
+
+const RAW = {
+k1:[
+["Nəqliyyat paket şəbəkəsinin funksiyası nədir?","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","Siqnallaşma selinin emal olunaraq birləşmələrin idarə edilməsi"],
+["Tranzit qovşağın funksiyası nədir?","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı"],
+["Son sərhəd qovşağın funksiyası nədir?","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","NGN-in əsas tərkib hissəsi olub məlumatların nəqli funksiyasını yerinə yetirir","Siqnallaşma selinin idarə edilməsi funksiyasını yerinə yetirir"],
+["Nəqliyyat paket şəbəkəsində şlüzlər hansı funksiyanı həyata keçirir?","Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirir","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","NGN-in əsas məlumat nəqli funksiyasını yerinə yetirir"],
+["Siqnallaşma selinin idarəedici qurğularının funksiyası nədir?","İnformasiya seli emal olunaraq birləşmələr, çağırışlar idarə olunur","Analoq şəbəkəsi ilə NGN şəbəkəsi arasında birləşmə ara bağlantısı","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edir","Məlumatların nəqli funksiyasını yerinə yetirir"],
+["ATM sözünün mənası nədir?","Asinxron veriş rejimi","Avtonom tranzit modulu","Adaptiv ötürmə metodu","Aktiv nəqliyyat mexanizmi"],
+["ATM paketinin uzunluğu nə qədərdir?","53 bayt","48 bayt","5 bayt","64 bayt"],
+["ATM paketində başlığın ölçüsü neçə baytdır?","5 bayt","48 bayt","53 bayt","8 bayt"],
+["ATM paketində informasiya həcmi neçə baytdır?","48 bayt","53 bayt","5 bayt","32 bayt"],
+["Bunlardan hansı ATM trafiklərin ötürülmə üsulu deyil?","TDM (vaxt bölgülü multipleksasiya)","CBR (sabit bit sürətli)","VBR (dəyişən bit sürətli)","UBR (spesifik olmayan bit sürətli)"],
+["CBR hansı tipli trafikdir?","Sabit bit sürətli sinxron rejimdə xidmət olunur, gecikmələr əsasdır","Dəyişən bit sürətli trafik növüdür","Spesifik olmayan bit sürətli, etibarlılığı yoxdur","Sərbəst bit sürətli, gecikməyə yol verilir"],
+["UBR hansı tipli trafikdir?","Spesifik olmayan bit sürətli, qeyri-müəyyən bit sürətinə malik etibarlılığı yoxdur","Sabit bit sürətli sinxron rejimdə xidmət olunur","Dəyişən bit sürətli","Sərbəst bit sürətli, gecikməyə yol verilir"],
+["VBR hansı tipli trafikdir?","Dəyişən bit sürətli","Sabit bit sürətli","Spesifik olmayan bit sürətli","Sərbəst bit sürətli"],
+["ABR hansı tipli trafikdir?","Sərbəst bit sürətli, gecikməyə yol verilir. Veriş sürəti yükdən ibarətdir","Sabit bit sürətli sinxron rejimdə xidmət olunur","Dəyişən bit sürətli","Spesifik olmayan bit sürətli, etibarlılığı yoxdur"],
+["Bunlardan hansı dəyişən bit sürətli trafiklərdə aiddir?","VBR","CBR","ABR","UBR"],
+["Bunlardan hansı ATM səviyyələridir?","Fiziki səviyyə, ATM səviyyəsi, ATM uyğunlaşma səviyyəsi","Fiziki, Data Link, Şəbəkə səviyyəsi","NGN, Softswitch, Abunəçi səviyyəsi","UNI, NNI, PVC səviyyəsi"],
+["ATM texnologiyası neçə səviyyəlidir?","3","2","4","5"],
+["Fiziki səviyyənin vəzifəsi nədir?","ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi təşkil olunur","ATM ilə uyğunlaşma səviyyəsi arasında uyğunlaşma prosesi olur","Daha yüksək səviyyəli protokol interfeysi arasında uyğunlaşma prosesi olur","Məntiqi virtual kanalların yaradılması və idarə edilməsi"],
+["ATM səviyyəsinin vəzifəsi nədir?","Fiziki səviyyədə elementar siqnal selinin ATM ilə uyğunlaşma səviyyəsi və ya əksinə verilişi olur","ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi","Daha yüksək səviyyəli protokol interfeysi arasında uyğunlaşma prosesi olur","Virtual kanalların daimi qoşulmasını təmin edir"],
+["ATM uyğunlaşma səviyyəsinin vəzifəsi nədir?","ATM səviyyəsi ilə daha yüksək səviyyəli protokol interfeysi arasında uyğunlaşma prosesi olur","ATM şəbəkəsi ilə informasiya selinin fiziki olaraq ötürülməsi","Fiziki səviyyədə elementar siqnal selinin ATM-ə verilişi","Məntiqi virtual kanalların yaradılması"],
+["Hansı virtual kanalın növləridir?","Daimi virtual kanal (PVC), Kommutasiyalı virtual kanal (SVC), İntellektual virtual kanal (SPVC)","Sinxron, Asinxron, Multipleks virtual kanal","UNI, NNI, CBR kanal","Fiziki, Məntiqli, Şəbəkə kanalı"],
+["ATM nəqliyyat şəbəkəsinin əsas elementi nədir?","Məntiqi virtual kanal","Optik kabel","ATM multipleksoru","Tranzit qovşaq"],
+["Virtual kanal neçə istiqamətli təşkil edilir?","2 istiqamətlə","1 istiqamətlə","3 istiqamətlə","4 istiqamətlə"],
+["PVC hansı növ virtual kanaldır?","Daimi virtual kanal","Kommutasiyalı virtual kanal","İntellektual daimi virtual kanal","Çeviklik virtual kanal"],
+["SVC hansı növ virtual kanaldır?","Kommutasiyalı virtual kanal","Daimi virtual kanal","İntellektual daimi virtual kanal","Sinxron virtual kanal"],
+["SPVC hansı növ virtual kanaldır?","İntellektual daimi virtual kanal","Daimi virtual kanal","Kommutasiyalı virtual kanal","Çeviklik virtual kanal"],
+["ATM multipleksoru ilk dəfə Bakıda neçənci ildə quraşdırılmışdır?","2005-ci il","2000-ci il","2003-cü il","2010-cu il"],
+["ATM şəbəkəsində istifadə olunan interfeys tipləri hansıdır?","UNI, NNI","PVC, SVC","CBR, VBR","SDH, PDH"],
+["ATM multipleksoru Bakıda ilk dəfə hansı ATS-də quraşdırılmışdır?","Bakı Şts ATS 423/498","464 saylı ATS","Bakı Şts ATS 100/200","Bakı Mərkəzi ATS"],
+["ATM şəbəkəsində maksimum veriliş sürəti nə qədərdir?","2,4 Gbit/san","10 Gbit/san","100 Mbit/san","1 Gbit/san"],
+["ATM-in xüsusiyyətlərinə aid olmayanı göstərin.","ATM texnologiyası geniş miqyasda kommersiya tətbiqinə malikdir","Geniş zolaqlı multiservice sistemlərinin yaradılması üçün istifadə olunur","Daha çox interfeys blokları olur","ATM texnologiyası geniş tətbiq olunmayıb"],
+["ATM texnologiyası ilə NGN şəbəkəsində uzaq məsafəyə rabitə yaratmaq üçün hansı kabeldən istifadə olunur?","Optik kabel","Koaksial kabel","Buruq cütlü kabel","Mis kabel"],
+["İP telefonun kəşfi hansı ölkəyə məxsusdur?","İsrail","ABŞ","Yaponiya","Almaniya"],
+["Vokatel şirkəti neçənci ildə internet şəbəkəsilə danışıq ötürməyə nail olmuşdur?","1995","1990","2000","1998"],
+["Ənənəvi diskret məlumat şəbəkələri hansı prinsipə əsaslanır?","Kanal kommutasiyası prinsipi","Paket kommutasiyası prinsipi","ATM kommutasiyası prinsipi","Siqnal kommutasiyası prinsipi"],
+["İP şəbəkəsi hansı kommutasiya prinsipi əsasında işləyir?","Paket kommutasiyası","Kanal kommutasiyası","ATM kommutasiyası","Virtual kanal kommutasiyası"],
+["İP şəbəkəsindən veriliş sürəti nə qədər nəzərdə tutulmuşdur?","10 Gbit/san","2,4 Gbit/san","100 Mbit/san","1 Gbit/san"],
+["İP-nin xüsusiyyətlərinə aid olmayanı göstərin.","Böyük ünvanlara malikdir","Paket kommutasiyası prinsipə əsaslanır","Minimum gecikməsi","Yaddaş qurğuların olması tələb edir"],
+["Paketlərin gecikməsi nədir?","2 istifadəçi arasında bir nöqtədən digər nöqtəyə ötürülməsinə deyilir","Paketlər arasında vaxt fərqi","Siqnalın gedib qayıtma müddəti","Danışan insanın öz səsini eşitdiyi gecikmə"],
+["Paketlərin gecikməsi səbəblərinə aid olmayan hansıdır?","Fiziki ötürmə mühitinin rəngi","Şəbəkəylə bağlı gecikmə","Kodekin gecikməsi","Əməliyyat sistemi ilə bağlı gecikmə"],
+["Ən yaxşı danışıq keyfiyyəti üçün gecikmə müddəti nə qədər ola bilər?","150 ms-dən çox ola bilməz","300 ms-dən çox ola bilməz","50 ms-dən çox ola bilməz","250 ms-dən çox ola bilməz"],
+["Jitter nədir?","Paketlərin verilməsi ardıcıllığının pozulması nəticəsində paketlər arasında vaxt fərqi","İki istifadəçi arasında ötürülmə müddəti","Danışan insanın öz səsini eşitdiyi gecikmə","Siqnalın gedib qayıtma müddəti"],
+["Kosmik peyk rabitəsindən siqnalın gedib qayıtma müddəti nə qədərdir?","250–300 ms/san","150 ms/san","50 ms/san","500 ms/san"],
+["Əks-səda nədir?","Danışan insan müəyyən gecikməylə öz səsini eşidir","Paketlər arasında vaxt fərqi","Siqnalın gedib qayıtma müddəti","Şəbəkə yükünün artması nəticəsindəki gecikmə"],
+["Gecikimlərin ən dözülməz müddəti hansıdır?","300 ms/san","150 ms/san","50 ms/san","250 ms/san"],
+["Boş otaq effekti nə vaxt yaranır?","Hər siqnalin gecikməsi 15–20 ms/san olarsa","Hər siqnalin gecikməsi 150 ms/san olarsa","Hər siqnalin gecikməsi 300 ms/san olarsa","Hər siqnalin gecikməsi 50 ms/san olarsa"],
+["Akustik formalı əks-səda effekti nəyin hesabına yaranır?","Ucadan danışan qurğulardan terminallar hesabına","Paketlərin gecikmə fərqindən","Şəbəkə yükünün artmasından","Optik kabelin uzunluğundan"],
+["Peyk rabitəsindən İP şəbəkəsilə gecikmə vaxtı yaxşı danışıq üçün nə qədərdir?","250–300 ms/san","150 ms/san","50 ms/san","500 ms/san"],
+["Abunəçi neçə millisaniyəyə qədər gecikimərə ciddi reaksiya vermir?","50 ms/san","150 ms/san","300 ms/san","20 ms/san"],
+["Əks-səda effektini aradan qaldıran qurğulara aid olan hansıdır?","Əks-səda məhdudlaşdırıcı, əks-səda kompensatoru","Jitter bufferi, noise canceller","ATM multipleksoru, optik amplifikator","Codec, modem"],
+["Əks-səda məhdudlaşdırıcısı nə vaxtdan tətbiq edilməyə başlayıb?","20-ci əsrin 70-ci illərindən","20-ci əsrin 50-ci illərindən","20-ci əsrin 90-ci illərindən","21-ci əsrin 2000-ci illərindən"],
+["Əks-səda kompensatorları hansı siqnalları ləğv edir?","32–64 ms/san","150–300 ms/san","5–10 ms/san","100–200 ms/san"],
+["Uzun kadrlı protokolların tətbiqi nəyə təsir edir?","İnformasiyanın emalı prosesindən gecikmə","Şəbəkənin ötürmə sürətinə","ATM paketlərinin ölçüsünə","Virtual kanalların sayına"],
+["Yerli şəbəkədə gecikimənin maksimal qiyməti nə qədər olmalıdır?","Minimal olmalıdır","150 ms","300 ms","50 ms"],
+["Kodek nədir?","Kodlama və dekodlama prosesini yerinə yetirən qurğu","Paketlərin marşrutlaşdırılması üçün istifadə olunan qurğu","Şəbəkə interfeyslərini birləşdirən qurğu","Siqnallaşma məlumatlarını emal edən qurğu"],
+["G.711 seriyalı kodek hansı növ kodeklərə aiddir?","İKM tipli","ADIKM tipli","CELP tipli","MP-MLQ tipli"],
+["G.711 seriyalı kodekdə veriliş sürəti nə qədərdir?","64 kbit/san","8 kbit/san","16 kbit/san","32 kbit/san"],
+["Bu kodeklərdən hansı ənənəvi telefon şəbəkəsindən istifadə edilir?","G.711","G.726","G.729a","G.723.1"],
+["G.711 seriyalı kodek nə vaxtdan tətbiq edilir?","1984-cü il","1995-ci il","1990-cı il","2000-ci il"],
+["G.711 seriyalı kodeklər harada istifadə edilir?","Ənənəvi telefon şəbəkəsi","Video konfrans rabitəsi","Sıxlaşdırılmış rabitə kanalı","Peyk rabitə sistemi"],
+["G.726 seriyalı kodekdə veriliş sürəti nə qədərdir?","16, 24, 32 kbit/san","64 kbit/san","8 kbit/san","128 kbit/san"],
+["G.726 seriyalı kodek neçə veriliş sürətinə malikdir?","3","2","4","1"],
+["G.726 seriyalı kodek harada tətbiq edilir?","Video konfrans rabitəsi","Ənənəvi telefon şəbəkəsi","Sıxlaşdırılmış rabitə kanalı","Peyk rabitə sistemi"],
+["G.726 seriyalı kodek hansı tip kodekdir?","ADIKM","İKM","CELP","MP-MLQ"],
+["G.726 seriyalı kodekdə 1 saniyədə aparılan əməliyyatların sayı nə qədərdir?","8 milyon","16 milyon","30 milyon","40 milyon"],
+["G.723.1 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?","16 milyon","8 milyon","30 milyon","40 milyon"],
+["G.723.1 seriyalı kodekdə gecikmə nə qədərdir?","30 ms/san","10 ms/san","3–5 ms/san","64 ms/san"],
+["G.729a seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?","20 milyon","8 milyon","16 milyon","40 milyon"],
+["G.729a seriyalı kodekdə veriliş sürəti nə qədərdir?","8 kbit/san","16 kbit/san","64 kbit/san","32 kbit/san"],
+["G.729 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?","30 milyon","8 milyon","16 milyon","20 milyon"],
+["G.728 seriyalı kodekdə 1 saniyədə aparılan əməliyyat sayı nə qədərdir?","40 milyon","8 milyon","16 milyon","30 milyon"],
+["G.729a seriyalı kodekdə gecikmə nə qədərdir?","10 ms/san","30 ms/san","3–5 ms/san","64 ms/san"],
+["G.728 seriyalı kodekdə veriliş sürəti nə qədərdir?","16 kbit/san","8 kbit/san","64 kbit/san","32 kbit/san"],
+["G.728 seriyalı kodekdə gecikmə nə qədərdir?","3–5 ms/san","10 ms/san","30 ms/san","64 ms/san"],
+["G.728 seriyalı kodek harada istifadə olunur?","Sıxlaşdırılmış rabitə kanalında","Ənənəvi telefon şəbəkəsində","Video konfrans rabitəsində","Peyk rabitə sistemlərində"]
+],
+k2:[
+["SDH texnologiyası nədir?","Sinxron rəqəm iyerarxiyası (interfeys texnologiyası)","Siqnal distributor host","Simmetrik data hub","Sistem dinamik hiperlink"],
+["AŞATS nədir?","Avtomatik şəhərlərarası telefon stansiyası","Analoq şəhərlərarası terminal stansiyası","Avtomatik şəbəkə abunəçi texniki sistemi","Adaptiv şəhər ATM transkoderi"],
+["İP şəbəkəsində nəzərdə tutulmuş veriliş sürəti nə qədərdir?","10 Gbit/san","2.4 Gbit/san","100 Mbit/san","1 Gbit/san"],
+["NGN şəbəkəsində şlüzlər hansı səviyyədə qoşulur?","Nəqliyyat səviyyəsi","Softswitch səviyyəsi","Abunəçi səviyyəsi","Xidmət idarəetmə səviyyəsi"],
+["C&C08 sistemi ümumilikdə 7 saylı siqnallaşmanın neçə manqasını emal edir?","3072","1024","2048","4096"],
+["Bakı ŞTŞ-də 2005-ci ildə neçə stansiya və qovşaq NGN əsasında rekonstruksiya edildi?","46 qovşaq və stansiya","24 qovşaq və stansiya","64 qovşaq və stansiya","36 qovşaq və stansiya"],
+["Səsin kompressiyası nədir?","Səs siqnalının sıxlaşdırılması","Səs siqnalının gücləndirilməsi","Səs siqnalının filtrlənməsi","Səs siqnalının çevrilməsi"],
+["Qəza vaxtı NGN şəbəkəsinin işinin dayanmasına əsas səbəb olan amil hansıdır?","Mərkəzləşdirilmiş idarəetmə qurğusunun sıradan çıxması","Optik kabelin qırılması","ATM paketlərinin pozulması","Kodek avadanlığının xarab olması"],
+["Tranzit qovşaqlar nəyin əsasında qurulur?","Çoxlu sayda güclü kommutasiya avadanlığı əsasında","Sadə marşrutlaşdırıcılar əsasında","Analoq kommutatorlar əsasında","ATM multipleksoru əsasında"],
+["Analoq abunəçi xətlərini paket kommutasiya şəbəkəsinə qoşmaq üçün hansı şlüzdən istifadə olunur?","Siqnal şlüzü","Nəqliyyat şlüzü","Trankınq şlüzü","Qoşulma şlüzü"],
+["Tranzit qovşaq nədir?","İnformasiya selinin ötürülməsi və kommutasiya funksiyasını yerinə yetirən qovşaq","Abunəçilərə multiservis şəbəkəsinə qoşulmanı təmin edən qovşaq","NGN-in əsas məlumat nəqli funksiyasını yerinə yetirən qovşaq","Siqnallaşma selinin emalını həyata keçirən qovşaq"],
+["NGN şəbəkəsində tariflləndirməni hansı qurğu aparır?","Softswitch","ATM multipleksoru","Tranzit qovşaq","Siqnal şlüzü"],
+["Videokonfransda mübadilə rejimi necədir?","İkitərəfli","Birtərəfli","Üçtərəfli","Çoxtərəfli"],
+["VPN nədir?","Virtual Private Network (virtual özəl şəbəkə)","Variable Packet Network","Voice Processing Node","Video Protocol Network"],
+["IM — idarəetmə modulu, RM — rabitə modulu, bəs KM nədir?","Kommutasiya modulu","Kanal modulu","Kontrol modulu","Kodek modulu"],
+["NGN şəbəkəsinə V5 interfeysi ilə hansı abunəçilər qoşulur?","VPN və ATM abunəçiləri","Yalnız analoq abunəçilər","Yalnız rəqəm abunəçilər","Yalnız ISDN abunəçilər"],
+["Videomüşahidə zamanı mübadilə rejimi necə olur?","Birtərəfli","İkitərəfli","Üçtərəfli","Çoxtərəfli"],
+["İP TV-də birləşmənin konfiqurasiyası necədir?","Nöqtə-nöqtə","Nöqtə-çox nöqtə","Çox nöqtə-çox nöqtə","Ulduz konfiqurasiyası"],
+["Mərkəzi kommutasiya sahəsi nələrdən təşkil olunmuşdur?","C&C08 kommutasiyalı sistem boyunca standart fiziki interfeys və böyük şəbəkələşmədən","Tranzit qovşaqlar əsasında qurulan marşrutlaşdırma sistemi","ATM multipleksorları və optik kabellərdən","Softswitch serverlər və siqnal şlüzlərindən"],
+["Tranzit qovşaqda trafiklər kanal kommutasiyası şəbəkəsi istiqamətində hansı şlüz vasitəsilə ötürülür?","Trankınq şlüzü","Nəqliyyat şlüzü","Siqnal şlüzü","Qoşulma şlüzü"],
+["SCP nədir?","Server xidmət modulu","Siqnal kommutasiya protokolu","Sinxron çoxprotokol qovşağı","Sistemin mərkəzi prosessoru"],
+["MEM-da hansı prosessordan istifadə edilir?","MPU 860 növlü prosessor","Intel Pentium prosessoru","ARM Cortex prosessoru","MPU 486 növlü prosessor"],
+["MKS-nin kommutasiya matrisası neçə xəttin qoşulmasını təmin edir?","512 giriş, 512 çıxış","256 giriş, 256 çıxış","1024 giriş, 1024 çıxış","128 giriş, 128 çıxış"],
+["C&C08-in proqram təminatı nəyin əsasında qurulmuşdur?","Modul prinsipi əsasında","Monolitik arxitektura əsasında","Peer-to-peer prinsipi əsasında","Client-server prinsipi əsasında"],
+["C&C08 avadanlığı neçə moduldan təşkil edilmişdir?","4","3","5","6"],
+["C&C08 avadanlığının modullarına aid olmayan hansılardır?","NEM (Şəbəkə genişləndirmə modulu)","İdarəetmə modulu (IM)","Rabitə modulu (RM)","Kommutasiya modulu (KM)"],
+["E1 portunun veriliş sürəti nə qədərdir?","2048 kbit/san","64 kbit/san","10 Gbit/san","155 Mbit/san"],
+["C&C08 stansiyasında birləşdirici xətlərin sayı nə qədərdir?","180 000","800 000","100 000","500 000"],
+["C&C08 tipli ATS-də hansı mikrosxemlərdən istifadə olunur?","0,18 mkm – 0,35 mkm texnologiyalı mikrosxemlər","1 mkm – 2 mkm texnologiyalı mikrosxemlər","0,5 mkm – 1 mkm texnologiyalı mikrosxemlər","5 mkm – 10 mkm texnologiyalı mikrosxemlər"],
+["C&C08-in ATS avadanlığı hansı siqnallaşma sistemlərinin birgə işləməsinə imkan verir?","R2, TUP, ISUP, TCAP, SCCP, INAP","SIP, H.323, MEGACO, MGCP","TCP/IP, UDP, RTP, RTCP","ATM, SDH, PDH, SONET"],
+["C&C08 tipli sistem necə sistemdir?","Abunəçilər tərəfindən telekom xidmətlərinə olan tələbatı qarşılayan sistem","Yalnız kanal kommutasiyası əsasında işləyən sistem","Yalnız paket kommutasiyası əsasında işləyən sistem","Tranzit funksiyalarını həyata keçirən sistem"],
+["C&C08 sistemi nəyi təmin edir?","Yeni telekommunikasiya xidmətlərinə olan tələbatı ödəmək və sektorun sürətli inkişafını","Yalnız analog abunəçilərə xidmət göstərməyi","Yalnız rəqəm siqnallarının ötürülməsini","Şəbəkənin təhlükəsizliyini təmin etməyi"],
+["C&C08 stansiyası neçə abunəçi xəttinə qədər artırıla bilər?","800 000","100 000","500 000","180 000"],
+["C&C-in açılışı nədir?","Computer and Communication","Channel and Circuit","Central Control","Communication and Connectivity"],
+["C&C08 sistemi hansı ölkənin istehsalıdır?","Çin Xalq Respublikası","ABŞ","Almaniya","Yaponiya"],
+["C&C08 sistemi hansı şirkət tərəfindən istehsal olunub?","Huawei","Ericsson","Nokia","Cisco"],
+["Telematik xidmət qovşaqları nə üçün qurulur?","İnternet şəbəkəsinə, IP şəbəkəsinə qoşulma və sorğu məlumatlarına çıxış üçün","ATM şəbəkəsinin marşrutlaşdırılması üçün","Analoq siqnalların rəqəm formatına çevrilməsi üçün","Tranzit kommutasiya funksiyaları üçün"],
+["Telematik xidmətlər göstərən şəbəkənin tərkibinə nələr daxildir?","Modem server","ATM multipleksoru","Siqnal şlüzü","Tranzit qovşaq"],
+["İXRŞ nədir?","İnteqral xidmətli rəqəm şəbəkəsi","İnformasiya xətti rabitə şəbəkəsi","İnteraktiv xidmət resurs şəbəkəsi","İdarəetmə xidmət rabitə şəbəkəsi"],
+["Multimedia xidmətlərinə aid olmayan hansıdır?","Sadə analoq telefon danışığı","Video konfrans","İP TV","İnternet xidmətləri"],
+["C&C08 ATS-in adi vaxtlarda enerji sərfiyyatı nə qədərdir?","0,3 Vt","3 Vt","0,03 Vt","30 Vt"],
+["Telematik xidmət növlərinə aid olmayan hansıdır?","Sadə telefon danışığı","İnternet xidməti","Data ötürmə xidməti","E-mail xidməti"],
+["Əvvəlcədən ödənişli kartla danışıq xidmətinin kodu hansıdır?","181","100","171","191"],
+["NGN şəbəkəsində intellektual xidmətlər platforması nəyin əsasında yaradılır?","Paket şəbəkəsi resursları əsasında","Kanal kommutasiyası resursları əsasında","ATM şəbəkəsi resursları əsasında","SDH şəbəkəsi resursları əsasında"],
+["Multimedia nədir?","Müxtəlif növ məlumatların bir mühitdə birləşdirilməsi","Çoxlu sayda medya serverin birləşdirilməsi","Video və audio siqnalların ayrıca ötürülməsi","İnternet üzərindən video yayımı"],
+["İntelektual xidmətlərə aid olmayanı göstərin.","Adi kanal kommutasiyası","İntellektual xidmət serveri","Tele-səs vermə","Çağırış selinin istiqamətinin dəyişdirilməsi"],
+["NGN-də istismar xərclərinin azalması faktoru hansıdır?","Şəbəkədə idarəetmə sisteminin bir yerdə olması","ATM texnologiyasından istifadə edilməsi","Analoq avadanlıqların ləğvi","Yeni kodeklərin tətbiqi"],
+["181 xidməti nədir?","Əvvəlcədən ödənişli kartla danışıq xidməti","Zəng yönləndirmə xidməti","Konferans əlaqə xidməti","Nömrə saxlama xidməti"],
+["İntelektual şəbəkədə xidmətlər nəyin vasitəsilə həyata keçirilir?","SSP — server xidmət qovşağı vasitəsilə","ATM multipleksoru vasitəsilə","Tranzit qovşaq vasitəsilə","Siqnal şlüzü vasitəsilə"],
+["SSP nədir?","Server xidmət qovşağı","Siqnal seviyyəsi prosessoru","Sistem siqnal protokolu","Sinxron şəbəkə platası"],
+["İntelektual xidmətlərə aid olanı göstərin.","İntellektual xidmət serveri, tele-səs vermə, SCP tərəfindən çağırış seli istiqamətini dəyişmə","Sadə telefon danışığı, faks, modem","E-mail, FTP, HTTP","Kanal kommutasiyası, paket ötürmə, multipleksasiya"],
+["MPLS nədir?","Çoxprotokol etiketli kommutasiya (şəbəkəsi)","Çoxtərəfli paket lineer sistemi","Multipleks protokol loopback seqmenti","Modul paylanmış level servisi"],
+["Çevik kommutator hansı səviyyədə yerləşir?","Softswitch (idarəetmə səviyyəsi)","Nəqliyyat səviyyəsində","Abunəçi səviyyəsində","Fiziki səviyyədə"],
+["Bakı ŞTS-də NGN-in tətbiqi hansı variantda qurulmuşdur?","Giriş məlumat prinsipi","Tranzit kommutasiya prinsipi","Kombinə edilmiş variant","Tam yeni şəbəkə quruculuğu"],
+["Kombinə edilmiş variantda nə nəzərdə tutulur?","ÜİTŞ-nin qismən və ya mərhələli edilməsi","Tamamilə yeni şəbəkənin qurulması","Köhnə şəbəkənin saxlanılması","Yalnız ATM texnologiyasına keçid"],
+["1995-ci ilə kimi Bakı ŞTS hansı prinsip əsasında fəaliyyət göstərmişdir?","Giriş məlumat qovşaq prinsipi","Tranzit kommutasiya prinsipi","Paket kommutasiyası prinsipi","Kombinə edilmiş prinsip"],
+["MSAN nədir?","Multi-servis abunəçi konsentratoru","Multipleks siqnal analizator nodu","Modular sistem abunəçi nəqliyyatı","Magistral serverlər arasında node"],
+["Klassik şəbəkələrə qoşulmaq üçün hansı şlüzlərdən istifadə edilir?","Rezident şlüzü","Nəqliyyat şlüzü","Siqnal şlüzü","Trankınq şlüzü"],
+["Korporativ şəbəkələrə qoşulmaq üçün hansı interfeysdən istifadə edilir?","V5 interfeysi","E1 interfeysi","UNI interfeysi","NNI interfeysi"],
+["Mövcud şəbəkənin NGN tətbiqi ilə rekonstruksiyası üçün nəyin ləğvi nəzərdə tutulmuşdur?","Tranzit qovşaqların ləğvi","Bütün ATS-lərin ləğvi","Abunəçi xətlərinin ləğvi","Siqnal şlüzlərinin ləğvi"],
+["Multiservis şəbəkəsinin nəqliyyat səviyyəsində rabitə qovşağı necə adlanır?","Access node","Transit node","Core node","Service node"],
+["Access node nədir?","ATM nəqliyyat şəbəkəsinin rabitə qovşağı","İP şəbəkəsinin tranzit qovşağı","NGN-in siqnal emal qovşağı","Abunəçi qoşulma modulu"],
+["Access node qovşağında şlüz avadanlığı hansı vəzifəni yerinə yetirir?","Müxtəlif şəbəkə növlərinin birləşdirilməsini təmin edir","Siqnal emalı funksiyasını yerinə yetirir","Tranzit kommutasiya funksiyasını yerinə yetirir","Abunəçilərə xidmət göstərir"],
+["Tranzit səviyyəsini yaratmaqda məqsəd nə olmuşdur?","Müxtəlif ATS-lər arasında informasiya və siqnallaşma sellərini marşrutlamaq","Yeni abunəçiləri şəbəkəyə qoşmaq","Şəbəkənin təhlükəsizliyini artırmaq","Enerji sərfiyyatını azaltmaq"],
+["Mövcud telefon şəbəkələrində NGN texnologiyasının tətbiqi üçün neçə variant təklif edilmişdir?","2","3","4","5"],
+["Rekonstruksiya sözünün mənası nədir?","Yenidən qurma","Modernləşdirmə","Genişləndirmə","Optimallaşdırma"],
+["Bakıda ilk dəfə NGN texnologiyası neçənci ildə tətbiq edilmişdir?","2005","2000","2010","2003"],
+["Bakıda ilk dəfə NGN texnologiyası hansı ATS-də qurulmuşdur?","464 saylı dekad-addım ATS","ATS 423/498","Bakı Mərkəzi ATS","100 saylı ATS"],
+["464 saylı ATS rekonstruksiyaya qədər hansı tip ATS olmuşdur?","Dekad-addım tipi","Rəqəm tipi","Analoq elektron tipi","Koordinat tipi"],
+["NGN texnologiyası əsasında abunəçi xətləri şəbəkəyə necə qoşulur?","MSAN konsentratorları vasitəsilə","Birbaşa tranzit qovşağa","ATM multipleksoru vasitəsilə","Siqnal şlüzü vasitəsilə"],
+["Bunlardan hansı NGN-in üstün cəhətlərinə aid deyil?","Kanal kommutasiyası şəbəkəsini tam əvəz etmir","Müxtəlif növ xidmətlər göstərməsi","İdarəetmə xərclərinin azalması","Universal şəbəkə quruculuğu"],
+["Bunlardan hansı C&C08 ATS-in struktur sxeminə aid deyil?","Optik amplifikator","İdarəetmə modulu (IM)","Rabitə modulu (RM)","Kommutasiya modulu (KM)"],
+["Bunlardan hansı NGN avadanlığının tətbiqi aspektlərinə daxil deyil?","Kanal kommutasiyasının genişləndirilməsi","Şəbəkə infrastrukturunun modernləşdirilməsi","Yeni xidmətlərin tətbiqi","İdarəetmənin mərkəzləşdirilməsi"],
+["ÜİTŞ abunəçilərinə aid olmayanı göstərin.","ATM multipleksoru abunəçiləri","Adi analoq telefon abunəçiləri","ISDN abunəçiləri","Rəqəm telefon abunəçiləri"],
+["Kanal kommutasiyası ilə qurulmuş obyektlərdə tutum artımı üçün nə etmək lazımdır?","Mərkəzləşdirilmiş üsuldan istifadə etmək","Yeni tranzit qovşaqlar qurmaq","ATM texnologiyasına keçmək","Siqnal şlüzlərini artırmaq"]
+],
+k3:[
+["NGN sözünün mənası nədir?","Next Generation Network (Yeni nəsil şəbəkə)","Network Gateway Node","New Generation Node","Numeric Group Network"],
+["Kommutasiya sözünün mənası nədir?","Əlaqə birləşmə","Siqnal ötürmə","Məlumat şifrələmə","Şəbəkə bölgüsü"],
+["İnfokommunikasiya anlayışı nədir?","İnformatika, komputer, telekommunikasiya sözlərinin birləşməsindən yaranır","İnformasiya texnologiyası sahəsi","İnternet protokolunun inkişaf etmiş versiyası","İnteqral rəqəm kommunikasiya texnologiyası"],
+["NGN şəbəkəsi nəyi təmin etmir?","Yalnız telefon trafikini ötürmə imkanı","Telefon trafikinin ötürülməsini","Müxtəlif növ telekommunikasiya trafikini","Xidmət keyfiyyətinin təminatını"],
+["Hansı NGN prinsiplərinə aid deyil?","Yalnız nöqtə-nöqtə əlaqəni dəstəkləyir","Nöqtə-nöqtə prinsipindən hərbirinə keçirilmə","Müxtəlif çeşidli xidmətlərin universal xarakter daşıması","Xidməti təqdim edən və qəbul edən arasında qarşılıqlılıq"],
+["NGN şəbəkəsinin xidmətlərinə aid deyil?","Yalnız sabit ötürmə sürətli xidmətlər","Müxtəlif növ informasiyaların ötürülməsi","Diskret məlumatların seli","Paket kommutasiyası rejimli xidmətlər"],
+["NGN şəbəkəsi hansı kommutasiya texnologiyaları əsasında işləyir?","IP və ATM paket kommutasiyası","Yalnız kanal kommutasiyası","TDM və kanal kommutasiyası","SDH və PDH texnologiyaları"],
+["NGN şəbəkəsi necə şəbəkənin birləşməsi əsasında yaradılmışdır?","3 şəbəkənin (kanal kommutasiya, paket kommutasiya, nəqliyyat paket)","2 şəbəkənin (analoq və rəqəm)","4 şəbəkənin","5 şəbəkənin"],
+["Hansı şəbəkə NGN şəbəkəsinə aid deyil?","Analoq kommutator şəbəkəsi","IP paket şəbəkəsi","ATM nəqliyyat şəbəkəsi","Softswitch idarəetmə şəbəkəsi"],
+["NGN şəbəkəsi necə səviyyəlidir?","3 səviyyəli","2 səviyyəli","4 səviyyəli","5 səviyyəli"],
+["NGN-in səviyyələri hansılardır?","Nəqliyyat, Softswitch proqram kommutasiya, Abunə və xidmətlərin idarə olunması","Fiziki, Data Link, Şəbəkə","Nəqliyyat, Sessiya, Tətbiq","ATM, IP, NGN"],
+["Şlüzlər hansı səviyyədə yerləşir?","Nəqliyyat səviyyəsi","Softswitch səviyyəsi","Abunəçi idarəetmə səviyyəsi","Xidmət idarəetmə səviyyəsi"],
+["Adi şlüzlərin vəzifəsi nədir?","IP xidmətlərinin qoşulmasını təmin edir","Siqnallaşma sisteminin çevrilməsini təmin edir","Abunəçiləri şəbəkəyə qoşur","Tranzit kommutasiya funksiyasını yerinə yetirir"],
+["Billinq nədir?","Hesablama aparmaq üçün qurğu","Şəbəkə bağlantısı protokolu","Bandwidth limitləmə sistemi","Buraxılış idarəetmə qovşağı"],
+["Bakı ŞTŞ-də nəqliyyat səviyyəsinin avadanlığı nədir?","Çinin Huawei NE40","Cisco CRS","Ericsson MINI-LINK","Nokia FlexiServer"],
+["Softswitch nədir?","Proqram kommutator, telefon serveri, siqnallaşma selinin emalı, çağırışların marşrutlanması","Şəbəkə kommutator avadanlığı","ATM çevik multipleksoru","Paket ötürmə şəbəkəsi gateway"],
+["Nəqliyyat səviyyəsinin vəzifəsi nədir?","İnformasiya selinin nəqli","Siqnallaşma selinin emalı","Abunəçilərin idarə edilməsi","Çağırışların marşrutlanması"],
+["Softswitch səviyyəsinin vəzifəsi nədir?","Siqnallaşma selinin emalı, çağırışların marşrutlanması","İnformasiya selinin nəqli","Abunəçilərin idarə edilməsi","Şəbəkə interfeyslərinin idarəsi"],
+["Abunə və xidmətlərin idarə edilməsi səviyyəsinin vəzifəsi nədir?","Müxtəlif növ abunəçi terminallarından NGN şəbəkəsinə qoşulma","İnformasiya selinin nəqli","Siqnallaşma selinin emalı","Şəbəkə marşrutlarının idarəsi"],
+["Bunlardan hansı NGN avadanlığının tərkibinə daxil deyil?","TDM kommutator","SIP terminali","H.323 terminali","IAD qurğusu"],
+["NGN-in nəqliyyat səviyyəsi hansı texnologiyalar əsasında qurulmuşdur?","IP və ATM","SDH və PDH","TDM və kanal kommutasiyası","SONET və SDH"],
+["Bakı ŞTŞ-də nəqliyyat səviyyəsinin veriliş sürəti nə qədərdir?","10 Gbit/san","2,4 Gbit/san","100 Mbit/san","1 Gbit/san"],
+["Softswitchin əsas texniki xarakteristikaları hansılardır?","Yük buraxma, Etibarlılıq","Ölçü, çəki, enerji sərfiyyatı","Protokol dəstəyi, interfeys sayı","Qiymət, istehsal ölkəsi"],
+["Yükburaxma qabiliyyəti nədir?","Vahid zamanda softswitch xidmət edə biləcəyi çağırışların maksimum sayı","Şəbəkənin ötürdüyü informasiyanın həcmi","ATM multipleksorunun kanal sayı","Tranzit qovşaqların sayı"],
+["Etibarlılıq nədir?","Obyektin tətbiq olunduğu şərait nəzərə alınaraq tam parametrlərin saxlandığı müddət həddi","Şəbəkənin ötürmə sürəti","Avadanlığın fiziki ölçüsü","Protokolların sayı"],
+["Bunlardan hansı Softswitchin vəzifələrinə aid deyil?","Domenlərdən istifadə","Çağırışların emalı","Tarifləndirilmə","Marşrutlaşdırma"],
+["İAD qurğusu nədir?","İnteqrasiya imkanlı giriş qurğusu","İnterfeys adaptasiya dataqramı","İntranet abunəçi distributor","İdarəetmə analizatoru dataqramı"],
+["MEGACO nədir?","Nəqliyyat şlüzünün kontrolleri","Multimedia enerji gateway kontrol","Modular etiketli gateway abunəçi kodu","Multipleks ekvivalenti gateway çevrici"],
+["Siqnallaşma nədir?","Siqnal mübadiləsi","Məlumat ötürmə prosesi","Kanal kommutasiyası prosesi","Paket marşrutlaşdırması"],
+["QoS nədir?","Quality of Services (Xidmət keyfiyyəti)","Quantum of Service","Queue of Signals","Query of Systems"],
+["Çevik kommutatorun vəzifəsi nədir?","Çağırışları emal etmək, serverlərdə qoşulmanı təmin etmək, tarifləndirilmə","İnformasiyanın fiziki ötürülməsi","Optik kabel xətlərinin idarəsi","ATM paketlərinin yaradılması"],
+["Çevik kommutator nə qurğusudur?","İdarəetmə səviyyəsi funksiyasını reallaşdıran, informasiyanın idarə olunması üçün əsas qurğu","Fiziki siqnal ötürücü qurğu","ATM multipleks qurğusu","Paket filtirləmə qurğusu"],
+["Bunlardan hansı çevik kommutatora aid deyil?","Fiziki siqnal ötürmə funksiyası","Çağırış marşrutlaşdırması","Siqnallaşma emalı","Tarifləndirilmə"],
+["Çevik kommutatorların işi nə ilə xarakterizə edilir?","Çevik buraxma qabiliyyəti, vahid zamanda xidmət olunan çağırışların maksimum sayı","Fiziki ölçüsü və çəkisi","İstifadə olunan kodeklərin sayı","Optik interfeyslerin sayı"],
+["Çevik kommutatorların siqnal şlüzləri ilə əlaqəsi üçün hansı protokol istifadə edilir?","M2UA, M3UA, M2PA","SIP, H.323, MEGACO","TCP/IP, UDP","RTP, RTCP"],
+["Çevik kommutatorların digər kommutatorlarla əlaqə üçün hansı protokol istifadə edilir?","SIP-T","H.323","MEGACO","MGCP"],
+["ATM nəqliyyatını təmin edən şlüzlər üçün hansı protokol istifadə edilir?","BICC","SIP-T","H.323","MGCP"],
+["E1 interfeysində veriliş sürəti nə qədərdir?","2048 kbit/san","64 kbit/san","155 Mbit/san","10 Gbit/san"],
+["Çevik kommutatorların interfeyslərinə aiddir?","E1, Ethernet","Yalnız Ethernet","SDH, PDH","UNI, NNI"],
+["Şlüz nədir?","Şəbəkəyə qoşulma qurğusu olub mövcud şəbəkələrin razılaşdırma funksiyalarını yerinə yetirir","Şəbəkə marşrutlaşdırma qurğusu","ATM kommutasiya qurğusu","Siqnal gücləndiricisi"],
+["Şlüzlərin növləri hansılardır?","Nəqliyyat, Siqnal, Trankınq, Qoşulma, Rezident qoşulma şlüzü","Fiziki, Məntiqli, Virtual şlüzlər","PVC, SVC, SPVC şlüzlər","UNI, NNI, BICC şlüzlər"],
+["Bunlardan hansı şlüzlərə aid deyil?","Optik şlüz","Nəqliyyat şlüzü","Siqnal şlüzü","Qoşulma şlüzü"],
+["Nəqliyyat şlüzünün vəzifəsi nədir?","Danışıq informasiyalarının IP paketlərinə/ATM yuvacıqlarına çevirme və onları marşrutlamaq","Siqnallaşma sisteminin çevrilməsi","Abunəçilərin şəbəkəyə qoşulması","Tranzit kommutasiya funksiyası"],
+["Siqnal şlüzünün vəzifəsi nədir?","ÜKS-7 ümumi kanal siqnallaşma sistemini paket şəbəkəsinin siqnallaşmasına çevirmək","Danışıq informasiyalarının IP paketlərinə çevrilməsi","Abunəçilərin şəbəkəyə qoşulması","Tarif hesablamalarının aparılması"],
+["Trankınq şlüzünün vəzifəsi nədir?","Eyni zamanda nəqliyyat şlüzünün və siqnal şlüzünün funksiyalarını yerinə yetirir","Yalnız siqnallaşma sistemini çevirir","Yalnız danışıq məlumatlarını ötürür","Abunəçi xətlərini idarə edir"],
+["Qoşulma şlüzünün vəzifəsi nədir?","V5 interfeysi vasitəsilə qoşulan abunəçilərin nəqliyyat şlüzü və siqnal şlüzü funksiyalarını yerinə yetirir","Tranzit kommutasiya funksiyasını yerinə yetirir","ÜKS-7 siqnallaşma sistemini çevirir","ATM paketlərini yaradır"],
+["Rezident şlüzünün vəzifəsi nədir?","ÜİTŞ və İXRŞ istifadəçilərini multi servis şəbəkələrinə qoşulması","Korporativ şəbəkələri NGN-ə qoşmaq","ATM abunəçilərini qoşmaq","Tranzit kommutasiya funksiyasını yerinə yetirmək"],
+["Bunlardan hansı nəqliyyat şlüzünün funksiyalarına aid deyil?","Siqnallaşma sisteminin çevrilməsi","Ünvanlaşma","Kanal məxfiliyi","Daşınma funksiyası"],
+["Bunlardan hansı siqnal şlüzlərinin funksiyalarına aid deyil?","Danışıq məlumatlarının IP paketinə çevrilməsi","Məlumat məxfiliyi","Çağırışların idarə olunması","Menecment"],
+["Ünvanlaşma funksiyası hansı şlüzə aiddir?","Nəqliyyat şlüzü","Siqnal şlüzü","Qoşulma şlüzü","Rezident şlüzü"],
+["Şlüzün tutumu nədir?","Kanal və paket kommutasiyaların interfeyslərinin qoşulan rabitə kanallarının sayı ilə müəyyən olunur","Şlüzün fiziki ölçüsü","İstifadə olunan protokolların sayı","Şlüzün enerji sərfiyyatı"],
+["Şlüzün ötürmə qabiliyyəti nədir?","Şlüz üzərindən qarşılıqlı əlaqədə kanal və paket şəbəkələrinin maksimum ötürə biləcəyi resurslar","Şlüzün fiziki ötürmə sürəti","Şlüzdə istifadə olunan kabellərin sayı","Şlüzün interfeys növləri"],
+["Nəqliyyat şlüzündə istifadə olunan protokollar hansılardır?","Çevik kommutasiya: H248,IPDC,BICC; Paket şəbəkəsi: RTP,RTCP,DNNI,UNI","SIP, H.323, MEGACO","TCP/IP, UDP, FTP","R2, TUP, ISUP"],
+["Siqnal şlüzündə istifadə olunan protokollar hansılardır?","İUTŞ: MTP2, MTP3; Çevik kommutasiya: M2UA, M3UA, M2PA","H248, IPDC, BICC","RTP, RTCP, DNNI","SIP, H.323, MEGACO"],
+["Qoşulma şlüzündə istifadə olunan protokollar hansılardır?","Analoq xətləri, MEGACO","MTP2, MTP3","H248, IPDC","RTP, RTCP"],
+["Hansı şlüzlərdə interfeysləri istifadə edilir?","Nəqliyyat şlüzü, Siqnal şlüzü, Qoşulma şlüzü","Yalnız Nəqliyyat şlüzü","Yalnız Siqnal şlüzü","Yalnız Qoşulma şlüzü"],
+["Nəqliyyat şlüzündə istifadə edilməyən interfeys hansıdır?","Koaksial interfeys","PDH (E1)","SDH (STM)","Ethernet"],
+["Siqnal şlüzündə istifadə edilən interfeyslar hansılardır?","PDH (E1), Base Ethernet","SDH (STM), Gigabit Ethernet","Koaksial, PDH","ATM UNI, NNI"],
+["Qoşulma şlüzündə istifadə edilməyən interfeys hansıdır?","SDH (STM)","Ethernet","E1","PDH (E1)"],
+["NGN-in şəbəkə protokollarına aid olmayan hansıdır?","ATM siqnallaşma protokolu (Q.2931)","İnternet şəbəkəsinin baza protokolu","Nəqliyyat protokolu","Siqnal protokolu"],
+["Bunlardan hansı internetin baza protokollarına aid deyil?","SIP","RTP","RTCP","TCP/IP"],
+["Bunlardan hansı nəqliyyat protokollarına aiddir?","RTP, RTCP","SIP, H.323","TCP, UDP","FTP, HTTP"],
+["Bunlardan hansı siqnal protokollarına aiddir?","SIP, H.323, MEGACO, UGCP, RSVP, SIP-T, BICC, IWAP","FTP, HTTP, SMTP","RIP, IGRP, IS-IS","RTP, RTCP, TCP"],
+["Bunlardan hansı marşrutlama protokollarına aiddir?","RIP, IGRP, IS-IS, TRiR, IDRP","SIP, H.323, BICC","RTP, RTCP, UDP","FTP, HTTP, SMTP"],
+["Bunlardan hansı xidməti protokollarına aiddir?","FTP, HTTP, IMTP, NNTP","RIP, IGRP, IS-IS","SIP, H.323, BICC","M2UA, M3UA, M2PA"],
+["Bunlardan hansı informasiya və idarəetmə protokollarına aiddir?","ILP, OSP, LDAP, SWMP","FTP, HTTP, SMTP","SIP, H.323, MEGACO","RTP, RTCP, UDP"],
+["İCMP protokolu nədir?","İnternet şəbəkəsində məlumatların idarə edilməsidir","İnternet siqnallaşma kommutasiya protokolu","İnteqrasiya kanal marşrutlaşma protokolu","İnternal çağırış məlumat protokolu"],
+["TCP protokolu nədir?","Veriş idarəetmə protokoludur","Terminal çağırış protokolu","Tranzit kommunikasiya protokolu","Texniki kanal protokolu"],
+["FTP protokolu nədir?","Faylların ötürülmə protokoludur","Frekvent texniki protokol","Fundamental tranzit protokolu","Fiziki texnologiya protokolu"],
+["HTTP protokolu nədir?","Mətnlərin və ya veriliş protokolu","Host-to-host texniki protokol","Hiper text transkodlaşdırma protokolu","Hazır tranzit protokolu"],
+["UDP protokolu nədir?","İstifadəçi dataqram protokolu olub paketlərin yerindəliyini yoxlamaq üçün istifadə olunur","Universal data paylanma protokolu","Ünvanlı dataqram protokolu","Uzaq dinamik protokol"],
+["SİP protokolu nədir?","Rabitə seans protokolu","Siqnal ötürmə interfeys protokolu","Sistem inteqrasiya protokolu","Sinxron IP protokol"],
+["MGCP protokolu nədir?","Nəqliyyat şlüzünü idarə etmək protokolu olub paylanmış multimedia şlüzünün elementləri arasında istifadə olunur","Modul gateway çağırış protokolu","Multipleks gateway komanda protokolu","Media gateway kontrol proseduru"],
+["RTP protokolu nədir?","Real vaxtda veriş protokolu olub internet şəbəkəsilə paketlərin ünvanlara ötürülməsi","Routing texnologiya protokolu","Resursların trafikini paylanması","Rabitə terminali protokolu"],
+["RTCP protokolu nədir?","Real vaxtda idarəetmə protokolu","Routing texnologiya çağırış protokolu","Rezerv trafik kontrol protokolu","Rabitə terminal control protokolu"]
+],
+elave:[
+["RIM Modulu neçə səviyyəlidir?","2","3","4","1"],
+["C&C08 tipli ATS-də stansiya daxili rabitə yaradılması prosesi neçə mərhələdə həyata keçirilir?","5 mərhələ","3 mərhələ","4 mərhələ","7 mərhələ"],
+["Bunlardan hansı C&C08 128 strukturuna sxeminə aid deyil?","OSPF","E1","MKS","RIM"],
+["RIM modulunun hər səviyyəsi neçə giriş və neçə çıxış xəttinə malikdir?","56 giriş, 56 çıxış","32 giriş, 32 çıxış","128 giriş, 128 çıxış","64 giriş, 64 çıxış"],
+["Kommutasiya modulunun vəzifəsi nədir?","Çağırışları emal etmək, C&C08 plataları arasında uyğunlaşdırmaq","Siqnal emalı və şifrələmə","Fiziki xəttlərin idarəsi","Tarif hesablamalarını aparmaq"],
+["Çağırışlara xidmət etmə sistemi C&C08 tipli ATS-də hansı modullardan istifadə etməklə təmin olunur?","RIB, RIM, SSM","IM, RM, KM","BAM, XIM, NEM","MKS, QSIB, MEN"],
+["BAM modulu hansı platalardan ibarətdir?","CRC","MTP","DSP","SMB"],
+["MHM nədir?","Məlumat hesablama mərkəzi","Marşrutlaşma həcm modulatoru","Multipleks həcm meneceri","Modul hesablama metodu"],
+["Stansiya daxili rabitenin yaradılmasında 3-cü mərhələ hansıdır?","Çağırılan abunəçiyə çağırış siqnallarının göndərilməsi","Zəngin açılması","Çağırışçının nömrəsinin emalı","Birləşmənin sonlandırılması"],
+["Əlavə növ rabitə xidmətinə aid olmayanı göstərin.","Adi danışıq xidməti","Çağırılan xəttin identifikasiyası","Giris çağırışlarının qeyri-şərtsiz başqa ünvana göndərilməsi","Qoşulmuş xətlərə identifikasiya imkanı verilməsi"]
+]
+};
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function playSound(ok){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(ok){o.type="sine";o.frequency.setValueAtTime(523,ctx.currentTime);o.frequency.setValueAtTime(659,ctx.currentTime+0.12);o.frequency.setValueAtTime(784,ctx.currentTime+0.24);g.gain.setValueAtTime(0.25,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.45);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.45);}
+    else{o.type="sawtooth";o.frequency.setValueAtTime(220,ctx.currentTime);o.frequency.linearRampToValueAtTime(110,ctx.currentTime+0.3);g.gain.setValueAtTime(0.25,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.35);}
+  }catch(e){}
+}
+
+let state={section:null,questions:[],idx:0,answers:{},locked:false,hintVisible:false};
+
+function processSection(raw){
+  return raw.map(([q,correct,...wrongs])=>{
+    const opts=shuffle([{t:correct,ok:true},...wrongs.map(w=>({t:w,ok:false}))]);
+    return{q,opts:opts.map(o=>o.t),correct:opts.findIndex(o=>o.ok),hint:correct};
+  });
+}
+
+function show(id){['home','quiz','results'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id));}
+
+function buildHome(){
+  const list=document.getElementById('sec-list');
+  list.innerHTML=SECTION_META.map(s=>`
+    <div class="sec-card" onclick="startQuiz('${s.key}')" style="--c:${s.color}"
+      onmouseover="this.style.borderColor='${s.color}';this.style.background='#161f30';this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.borderColor='#1e293b';this.style.background='#111827';this.style.transform='none'">
+      <div class="sec-icon">${s.icon}</div>
+      <div class="sec-info" style="flex:1">
+        <div class="sec-label" style="color:${s.color}">${s.label}</div>
+        <div class="sec-sub">${s.sub}</div>
+        <span class="sec-badge" style="color:${s.color};border-color:${s.color}55;background:${s.color}18">${s.count} sual</span>
+      </div>
+      <div style="color:#475569;font-size:1.4rem">›</div>
+    </div>`).join('');
+}
+
+function startQuiz(key){
+  state.section=key;
+  state.questions=processSection(RAW[key]);
+  state.idx=0;state.answers={};state.locked=false;state.hintVisible=false;
+  renderQuiz();
+  show('quiz');
+}
+
+function renderQuiz(){
+  const{questions,idx,answers,locked,hintVisible}=state;
+  const q=questions[idx];
+  const meta=SECTION_META.find(m=>m.key===state.section);
+  const color=meta.color;
+  const total=questions.length;
+  const answered=Object.keys(answers).length;
+
+  document.getElementById('prog-bar').style.width=(answered/total*100)+'%';
+  document.getElementById('prog-bar').style.background=`linear-gradient(90deg,${color},${color}aa)`;
+  document.getElementById('q-cur').textContent=idx+1;
+  document.getElementById('q-cur').style.color=color;
+  document.getElementById('q-tot').textContent=total;
+  document.getElementById('q-num').textContent=meta.label+' · Sual '+(idx+1);
+  document.getElementById('q-num').style.color=color;
+  document.getElementById('q-text').textContent=q.q;
+
+  const isOk=answers[idx];
+  const card=document.getElementById('q-card');
+  card.style.borderColor=locked?(isOk?'#166534':'#7f1d1d'):'#1e293b';
+
+  const hintBox=document.getElementById('hint-box');
+  hintBox.classList.toggle('hidden',!hintVisible);
+  if(hintVisible)hintBox.innerHTML='💡 <strong>İpucu:</strong> '+q.hint;
+
+  const optsEl=document.getElementById('opts');
+  optsEl.innerHTML=q.opts.map((opt,i)=>{
+    let cls='opt';
+    if(locked){if(i===q.correct)cls+=' correct';else if(answers[idx]===false&&i!==q.correct&&state.selectedIdx===i)cls+=' wrong';}
+    return`<button class="${cls}" onclick="selectOpt(${i})" style="cursor:${locked?'default':'pointer'}">`+
+      `<span style="margin-right:8px;opacity:.5;font-weight:700">${'ABCD'[i]}.</span>${opt}</button>`;
+  }).join('');
+
+  document.getElementById('btn-prev').style.opacity=idx===0?'0.3':'1';
+  document.getElementById('btn-prev').style.cursor=idx===0?'not-allowed':'pointer';
+  document.getElementById('btn-next').textContent=idx<total-1?'İrəli →':'Nəticə 🏁';
+  document.getElementById('btn-next').style.background=color;
+}
+
+function selectOpt(i){
+  if(state.locked)return;
+  const q=state.questions[state.idx];
+  const isOk=i===q.correct;
+  state.selectedIdx=i;
+  state.locked=true;
+  state.answers[state.idx]=isOk;
+  playSound(isOk);
+  renderQuiz();
+}
+
+function toggleHint(){
+  state.hintVisible=!state.hintVisible;
+  const btn=document.querySelector('.hint-btn');
+  btn.textContent=state.hintVisible?'🙈 Gizlət':'💡 İpucu';
+  const hintBox=document.getElementById('hint-box');
+  hintBox.classList.toggle('hidden',!state.hintVisible);
+  if(state.hintVisible)hintBox.innerHTML='💡 <strong>İpucu:</strong> '+state.questions[state.idx].hint;
+}
+
+function goPrev(){
+  if(state.idx===0)return;
+  state.idx--;
+  const prevAns=state.answers[state.idx];
+  state.locked=prevAns!==undefined;
+  state.hintVisible=false;
+  state.selectedIdx=undefined;
+  renderQuiz();
+}
+
+function goNext(){
+  if(state.idx<state.questions.length-1){
+    state.idx++;
+    const ans=state.answers[state.idx];
+    state.locked=ans!==undefined;
+    state.hintVisible=false;
+    state.selectedIdx=undefined;
+    renderQuiz();
+  }else{showResults();}
+}
+
+function showResults(){
+  const total=state.questions.length;
+  const correct=Object.values(state.answers).filter(Boolean).length;
+  const score=Math.round(correct/total*100);
+  const grade=score>=90?'Əla! 🌟':score>=75?'Yaxşı 👍':score>=60?'Kafi ✔️':'Zəif ❌';
+  const color=score>=90?'#22c55e':score>=75?'#00d4ff':score>=60?'#f59e0b':'#ef4444';
+  const meta=SECTION_META.find(m=>m.key===state.section);
+  document.getElementById('res-score').textContent=score+'%';
+  document.getElementById('res-score').style.color=color;
+  document.getElementById('res-grade').textContent=grade;
+  document.getElementById('res-grade').style.color=color;
+  document.getElementById('res-ok').textContent=correct;
+  document.getElementById('res-wrong').textContent=total-correct;
+  document.getElementById('res-total').textContent=total;
+  document.getElementById('res-retry').style.background=meta.color;
+  document.getElementById('res-retry').style.color='#000';
+  show('results');
+}
+
+function retryQuiz(){startQuiz(state.section);}
+function goHome(){show('home');}
+
+buildHome();
+show('home');
+</script>
+</body>
+</html>
