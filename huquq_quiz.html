@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hüququn Əsasları — 3-cü Kollokvium</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --card: #141828;
+    --border: #252a45;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e8ecff;
+    --muted: #6b7280;
+    --hint-bg: #1a1f35;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-image: radial-gradient(ellipse at 20% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, rgba(124,92,252,0.08) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-top: 20px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #4f8ef7, #7c5cfc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .progress-wrap {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 20px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 5px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4f8ef7, #7c5cfc);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  .score-badge {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .score-badge .correct { color: var(--green); }
+  .score-badge .wrong { color: var(--red); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 40px;
+    width: 100%;
+    max-width: 720px;
+    animation: slideIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #4f8ef7, #7c5cfc);
+    border-radius: 20px 20px 0 0;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .q-number {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(17px, 2.5vw, 21px);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  .hint-box {
+    background: var(--hint-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yellow);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: #c9a227;
+    line-height: 1.6;
+  }
+
+  .hint-box strong {
+    color: var(--yellow);
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text);
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    line-height: 1.5;
+  }
+
+  .option:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(79,142,247,0.07);
+    transform: translateX(4px);
+  }
+
+  .option .opt-letter {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .option:hover:not(:disabled) .opt-letter {
+    background: var(--accent);
+    color: white;
+  }
+
+  .option.correct {
+    border-color: var(--green) !important;
+    background: rgba(34,197,94,0.1) !important;
+    animation: pulse-green 0.4s ease;
+  }
+
+  .option.correct .opt-letter {
+    background: var(--green);
+    color: white;
+  }
+
+  .option.wrong {
+    border-color: var(--red) !important;
+    background: rgba(239,68,68,0.1) !important;
+    animation: shake 0.4s ease;
+  }
+
+  .option.wrong .opt-letter {
+    background: var(--red);
+    color: white;
+  }
+
+  .option.reveal-correct {
+    border-color: var(--green) !important;
+    background: rgba(34,197,94,0.07) !important;
+  }
+
+  .option.reveal-correct .opt-letter {
+    background: rgba(34,197,94,0.5);
+    color: white;
+  }
+
+  .option:disabled { cursor: default; }
+
+  @keyframes pulse-green {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    gap: 12px;
+  }
+
+  .btn {
+    padding: 11px 26px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost {
+    background: var(--border);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover { background: #2e3558; color: var(--text); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4f8ef7, #7c5cfc);
+    color: white;
+    box-shadow: 0 4px 15px rgba(79,142,247,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79,142,247,0.4);
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    transform: none !important;
+  }
+
+  .feedback-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 24px;
+    margin-top: 12px;
+  }
+
+  .feedback-correct { color: var(--green); }
+  .feedback-wrong { color: var(--red); }
+
+  /* RESULT SCREEN */
+  .result-screen {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    animation: slideIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .result-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    display: block;
+    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+  }
+
+  @keyframes pop {
+    from { transform: scale(0.5); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .result-sub {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 36px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
+    background: var(--hint-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 10px;
+  }
+
+  .stat-card .val {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .stat-card.s1 .val { color: var(--accent); }
+  .stat-card.s2 .val { color: var(--green); }
+  .stat-card.s3 .val { color: var(--red); }
+
+  .wrong-list {
+    text-align: left;
+    margin-bottom: 30px;
+  }
+
+  .wrong-list h3 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .wrong-item {
+    background: var(--hint-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .wrong-item .wi-q {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .wrong-item .wi-a {
+    color: var(--green);
+    font-size: 12px;
+  }
+
+  .restart-btn {
+    background: linear-gradient(135deg, #4f8ef7, #7c5cfc);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(79,142,247,0.3);
+  }
+
+  .restart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(79,142,247,0.45);
+  }
+
+  @media (max-width: 520px) {
+    .card { padding: 24px 20px; }
+    .stats-grid { grid-template-columns: repeat(3,1fr); }
+    .stat-card .val { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Hüququn Əsasları</h1>
+  <p>3-cü Kollokvium · 60 Sual</p>
+</header>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span id="progLabel">Sual 1 / 60</span>
+    <div class="score-badge">
+      <span class="correct" id="scoreCorrect">✓ 0</span>
+      <span class="wrong" id="scoreWrong">✗ 0</span>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div id="quizArea"></div>
+
+<script>
+const Q = [
+  {
+    q: "Milli məclisin neçə deputatı qanunvericilik təşəbbüsü hüququna malikdir?",
+    a: "40 deputat",
+    hint: "40 deputat",
+    wrong: ["20 deputat", "83 deputat", "10 deputat"]
+  },
+  {
+    q: "Milli Məclis deputatlığına namizədliyi qeydə alınmış şəxs hansı fəaliyyətlə məşğul ola bilər?",
+    a: "Elmi-yaradıcılıq fəaliyyəti",
+    hint: "Elmi yaradıcılıq fəaliyyəti ilə",
+    wrong: ["Sahibkarlıq fəaliyyəti", "Dövlət qulluğu", "Hüquq-mühafizə orqanlarında çalışma"]
+  },
+  {
+    q: "Azərbaycan Respublikasında qanunlar hüquqi əhəmiyyətinə görə hansı qruplara bölünür?",
+    a: "Konstitusiya ilə, referendumla, Milli Məclis tərəfindən qəbul olunanlar",
+    hint: "Konstitusiya ilə, referendumla, Milli Məclis tərəfindən qəbul olunma ilə",
+    wrong: ["Prezident, nazirlər kabineti, Milli Məclis tərəfindən qəbul olunanlar", "Federal, regional və yerli qanunlar", "Mülki, cinayət və inzibati qanunlar"]
+  },
+  {
+    q: "Azərbaycan Respublikasında qanunlar neçə yolla qəbul oluna bilər?",
+    a: "2 yolla: Milli Məclis və referendum vasitəsilə",
+    hint: "2 yolla: Milli Məclis və referendum",
+    wrong: ["3 yolla: Milli Məclis, referendum və Prezident fərmanı ilə", "Yalnız Milli Məclis vasitəsilə", "4 yolla: Milli Məclis, referendum, Prezident və nazirlər kabineti ilə"]
+  },
+  {
+    q: "Hüquqi dövlətin prinsiplərindən deyil:",
+    a: "Hakimiyyətin bir əldə cəmlənməsi",
+    hint: "Hakimiyyətin 1 əldə cəmlənməsi",
+    wrong: ["Qanunun aliliyi", "İnsan hüquqlarının təmin edilməsi", "Hakimiyyətin bölünməsi"]
+  },
+  {
+    q: "Azərbaycan Respublikasının Nazirlər Kabineti hansı orqandır?",
+    a: "Ali icra hakimiyyəti orqanıdır",
+    hint: "Ali icra hakimiyyət orqanıdır",
+    wrong: ["Ali qanunvericilik orqanıdır", "Yerli özünüidarəetmə orqanıdır", "Ali məhkəmə orqanıdır"]
+  },
+  {
+    q: "Azərbaycan Respublikasında icra hakimiyyəti kimə məxsusdur?",
+    a: "Prezidentə",
+    hint: "Prezidentə",
+    wrong: ["Milli Məclisə", "Nazirlər Kabinetinə", "Baş Nazirə"]
+  },
+  {
+    q: "Prezidentin qəbul etdiyi normativ xarakterli hüquqi akt necə adlanır?",
+    a: "Fərman",
+    hint: "Fərman",
+    wrong: ["Qərar", "Sərəncam", "Əmr"]
+  },
+  {
+    q: "Əmək müqaviləsi bağlamaq üçün yol verilən minimum yaş həddi neçədir?",
+    a: "15 yaş",
+    hint: "15 yaş",
+    wrong: ["14 yaş", "16 yaş", "18 yaş"]
+  },
+  {
+    q: "Əmək müqaviləsi hansı formada bağlanır?",
+    a: "Yazılı formada",
+    hint: "Yazılı formada",
+    wrong: ["Şifahi formada", "Elektron formada", "Notarial formada"]
+  },
+  {
+    q: "Sınaq müddəti ən çox nə qədər müəyyən edilə bilər?",
+    a: "3 aya qədər",
+    hint: "3 aya qədər",
+    wrong: ["1 aya qədər", "6 aya qədər", "1 ilə qədər"]
+  },
+  {
+    q: "Azərbaycan Respublikasında Məhkəmə hakimiyyətini hansı orqanlar həyata keçirir?",
+    a: "Məhkəmələr (Konstitusiya, Ali, Apellyasiya, Ağır cinayətlər, İnzibati, Ümumi)",
+    hint: "Məhkəmələr: Konstitusiya məhkəməsi, Ali məhkəmə, Apellyasiya məhkəməsi, Ağır cinayətlər məhkəməsi, İnzibati məhkəmə və ümumi məhkəmə",
+    wrong: ["Yalnız Ali Məhkəmə", "Prokurluq orqanları", "Nazirlər Kabineti"]
+  },
+  {
+    q: "Hakimlər fəaliyyətində kimdən və ya nədən asılıdır?",
+    a: "Yalnız AR Konstitusiyasından və qanunlardan",
+    hint: "Yalnız AR Konstitusiyasından və qanunlarından",
+    wrong: ["Prezidentdən", "Milli Məclisdən", "Ədliyyə Nazirliyindən"]
+  },
+  {
+    q: "Konstitusiya Məhkəməsi neçə hakimdən ibarətdir?",
+    a: "9 hakimdən",
+    hint: "9 hakimdən",
+    wrong: ["7 hakimdən", "11 hakimdən", "5 hakimdən"]
+  },
+  {
+    q: "Hakimliyə namizədlər üçün yaş həddi neçədir?",
+    a: "30 yaşdan aşağı olmayan",
+    hint: "30 yaşdan aşağı olmayan",
+    wrong: ["25 yaşdan aşağı olmayan", "35 yaşdan aşağı olmayan", "40 yaşdan aşağı olmayan"]
+  },
+  {
+    q: "Əmək müqaviləsi tərəflərin iradəsindən asılı olmayan hansı halda ləğv edilə bilər?",
+    a: "İşçinin ölümü, məhkəmə tərəfindən fəaliyyət qabiliyyətsiz sayılması, hərbi xidmətə çağırılması",
+    hint: "İşçinin ölümü, məhkəmə tərəfindən fəaliyyətin qabiliyyətsiz sayılması, hərbi xidmətə çağırılması, məhkəmə tərəfindən vəzifə tutma hüququndan məhkum etmə",
+    wrong: ["Tərəflərin razılığı ilə", "İşəgötürənin qərarı ilə", "İşçinin ərizəsi ilə"]
+  },
+  {
+    q: "Əmək müqaviləsinin məzmununa daxil edilməsi məcburi olmayan bənd hansıdır?",
+    a: "Əlavə şərtlər (könüllü bəndlər)",
+    hint: "Məcburi bəndlər: əmək funksiyası, iş yeri, əmək haqqı, iş vaxtı, əlavə şərt müddəti...",
+    wrong: ["Əmək funksiyası", "Əmək haqqı miqdarı", "İş vaxtının müddəti"]
+  },
+  {
+    q: "Bərabərlik hüququ ilə bağlı hansı fikir yanlışdır?",
+    a: "Bərabərlik hüququ bütün vətəndaşlara eyni miqdarda əmək haqqı verilməsini tələb edir",
+    hint: "Bərabərlik hüququ bütün vətəndaşlara eyni miqdarda əmək haqqı verilməsini tələb edir — yanlış fikirdir",
+    wrong: ["Bütün vətəndaşlar qanun qarşısında bərabərdir", "Heç kəs irqinə görə ayrı-seçkiliyə məruz qala bilməz", "Cinsiyyətindən asılı olmayaraq hüquqlar bərabərdir"]
+  },
+  {
+    q: "Hüququn mahiyyəti ilə bağlı hansı fikir yanlışdır?",
+    a: "Hüquq yalnız dövlətin məcbur etmə gücü ilə təmin olunur",
+    hint: "Hüquq yalnız dövlətin məcbur etmə gücü ilə təmin olunur — yanlış fikirdir",
+    wrong: ["Hüquq davranış qaydalarını müəyyən edir", "Hüquq dövlət tərəfindən qorunur", "Hüquq normaları ümumi xarakter daşıyır"]
+  },
+  {
+    q: "AR Konstitusiyasına əsasən mülkiyyətdən hansı subyektin qərarı ilə məhrum edilmək olar?",
+    a: "Məhkəmə",
+    hint: "Məhkəmə",
+    wrong: ["Prezident", "Nazirlər Kabineti", "İcra Hakimiyyəti"]
+  },
+  {
+    q: "Azərbaycan Respublikasının Dövlət himninin musiqisi və mətni müəyyən edilir:",
+    a: "Konstitusiya qanunu ilə",
+    hint: "Konstitusiya qanunu ilə",
+    wrong: ["Prezident fərmanı ilə", "Milli Məclisin qərarı ilə", "Referendum yolu ilə"]
+  },
+  {
+    q: "Azərbaycanda üçrəngli dövlət bayrağı Azərbaycan Xalq Cümhuriyyəti hökumətinin qərarı ilə nə vaxt qəbul edilmişdir?",
+    a: "1918-ci il noyabrın 9-u",
+    hint: "1918-ci il noyabrın 9-u",
+    wrong: ["1918-ci il noyabrın 17-si", "1920-ci il aprel 28-i", "1991-ci il oktyabrın 18-i"]
+  },
+  {
+    q: "Azərbaycan xalqı öz suveren hüququnu necə həyata keçirir?",
+    a: "Xalq hakimiyyəti vasitəsilə (birbaşa və nümayəndəli)",
+    hint: "Xalq hakimiyyəti ilə; icra, məhkəmə",
+    wrong: ["Yalnız referendum vasitəsilə", "Yalnız seçkilər vasitəsilə", "Yalnız nümayəndəli orqanlar vasitəsilə"]
+  },
+  {
+    q: "Ölkəmizdə dövlət hakimiyyəti hansı prinsip əsasında təşkil olunur?",
+    a: "Hakimiyyətin bölünməsi prinsipi əsasında",
+    hint: "Hakimiyyətin bölünmə prinsipi: qanunverici, icra, məhkəmə",
+    wrong: ["Hakimiyyətin birliyi prinsipi əsasında", "Xalq iradəsinin birbaşa icrası prinsipi", "Prezident respublikası prinsipi"]
+  },
+  {
+    q: "Hansı halda 'hakimiyyətin bölünməsi' prinsipi ardıcıl şəkildə həyata keçirilir?",
+    a: "Qanunvericilik, icra və məhkəmə hakimiyyəti müstəqil olduqda",
+    hint: "Qanunvericilik və icra hakimiyyəti (müstəqil olduqda)",
+    wrong: ["Qanunvericilik və icra hakimiyyəti birləşdikdə", "Prezident həm icra, həm qanunvericilik başçısı olduqda", "Məhkəmə hakimiyyəti icra hakimiyyətinə tabe olduqda"]
+  },
+  {
+    q: "AR Konstitusiyasına görə MM deputatı mandatından məhrum edilə bilməz:",
+    a: "Cinayət üstündə tutulma halı istisna olmaqla",
+    hint: "Cinayət başında tutulmursa, və digər müəyyən hallarda",
+    wrong: ["Heç bir halda mandatdan məhrum edilə bilməz", "Yalnız istefaya getdikdə", "Milli Məclisin qərarı ilə istənilən vaxt"]
+  },
+  {
+    q: "Qanunvericilik təşəbbüsü hüququ kimə aid deyil?",
+    a: "Konstitusiya Məhkəməsinə və Mərkəzi Seçki Komissiyasına",
+    hint: "Aid olan: Prezident, deputat, Naxçıvan Ali Meclisi, 40 min seçici. Aid olmayan: Konstitusiya məhkəməsi, Mərkəzi Seçki Komissiyası",
+    wrong: ["Prezidentə", "Naxçıvan Muxtar Respublikasının Ali Məclisinə", "40 min seçiciyə"]
+  },
+  {
+    q: "Azərbaycan Respublikasının Milli Məclisi haqqında qanun qəbul edilmişdir:",
+    a: "AR Milli Məclisinin Daxili Nizamnaməsi",
+    hint: "AR Milli Məclisinin daxili nizamnaməsi",
+    wrong: ["AR Parlamentin Fəaliyyəti haqqında Qanun", "Milli Məclisin Əsasnaməsi", "AR Dövlət Quruluşu Qanunu"]
+  },
+  {
+    q: "Milli Məclisin tərkibi neçə deputatdan ibarətdir?",
+    a: "125 deputat",
+    hint: "125",
+    wrong: ["100 deputat", "150 deputat", "83 deputat"]
+  },
+  {
+    q: "Hansı məhkəmələrin yaradılması qadağandır?",
+    a: "Fövqəladə məhkəmələrin yaradılması",
+    hint: "Fövqəladə məhkəmələrin",
+    wrong: ["İnzibati məhkəmələrin yaradılması", "Apellyasiya məhkəmələrinin yaradılması", "İxtisaslaşdırılmış məhkəmələrin yaradılması"]
+  },
+  {
+    q: "Hakim cinayət törətdikdə onun vəzifədən kənarlaşdırılması təşəbbüsünü kim irəli sürə bilər?",
+    a: "Baş Prokurluq (Məhkəmə-Hüquq Şurasının razılığı ilə)",
+    hint: "Baş prokurluq və məhkəmə hüququnun şurasının razılığı ilə",
+    wrong: ["Yalnız Prezident", "Ədliyyə Nazirliyi", "Milli Məclisin üzvləri"]
+  },
+  {
+    q: "Milli Məclisdə seçkilər hansı seçki sistemi əsasında keçirilir?",
+    a: "Majoritar seçki sistemi əsasında",
+    hint: "Majoritar",
+    wrong: ["Proporsional seçki sistemi", "Qarışıq seçki sistemi", "Reytinq seçki sistemi"]
+  },
+  {
+    q: "AR Ali Məhkəməsinin hakimləri hansı qaydada vəzifəyə təyin edilir?",
+    a: "Prezidentin təqdimatı ilə Milli Məclis tərəfindən",
+    hint: "Prezidentin təqdimati ilə Milli Məclis tərəfindən",
+    wrong: ["Yalnız Prezident tərəfindən", "Ədliyyə Naziri tərəfindən", "Konstitusiya Məhkəməsi tərəfindən"]
+  },
+  {
+    q: "Naxçıvan MR-in Ali Məclisinin səlahiyyət müddəti neçə ildir?",
+    a: "5 il",
+    hint: "5 il",
+    wrong: ["4 il", "6 il", "3 il"]
+  },
+  {
+    q: "Aşağıdakılardan hansı AR qanunvericilik sisteminə daxil deyil?",
+    a: "Prezident",
+    hint: "Prezident",
+    wrong: ["Konstitusiya", "Qanunlar", "AR-ın tərəfdar çıxdığı beynəlxalq müqavilələr"]
+  },
+  {
+    q: "Məhkəmə icraatı nəyin müəyyən edilməsini təmin etməlidir?",
+    a: "Həqiqətin müəyyən edilməsini (şəxslərin hüquq və azadlıqlarının qorunması)",
+    hint: "Həqiqətin müəyyən edilməsi: şəxslərin hüquq və azadlıqları",
+    wrong: ["Yalnız cinayətkarların cəzalandırılmasını", "Dövlət maraqlarının qorunmasını", "Büdcə vəsaitlərinin bölüşdürülməsini"]
+  },
+  {
+    q: "Hakim olmaq üçün tələb deyil:",
+    a: "Yaş senzi",
+    hint: "Yaş senzi",
+    wrong: ["Ali hüquq təhsili", "AR vətəndaşlığı", "Hüquqi staj"]
+  },
+  {
+    q: "'Hakimlərin toxunulmazlığı' maddəsi ilə bağlı hansı fikir yanlışdır?",
+    a: "Hakim heç vaxt cinayət məsuliyyətinə cəlb oluna bilməz",
+    hint: "Ağır cinayət törədəndə tutulur və ya xitam edilir; digər halda məsuliyyətə cəlb olunur; qanunvericilikdə nəsə etsə işdən atılır",
+    wrong: ["Hakim ağır cinayət zamanı tutula bilər", "Hakimin toxunulmazlığı qaldırıla bilər", "Hakim cinayət üstündə tutulduqda vəzifəsindən kənarlaşdırıla bilər"]
+  },
+  {
+    q: "Hansı subyekt xalq tərəfindən seçilmir?",
+    a: "Nazirlər Kabinetinin üzvləri, Konstitusiya Məhkəməsinin hakimləri, Baş Prokuror",
+    hint: "Nazirlər kabinetinin üzvləri, Konstitusiya məhkəmə hakimi və baş prokuror",
+    wrong: ["Prezident", "Milli Məclis deputatları", "Bələdiyyə üzvləri"]
+  },
+  {
+    q: "Azərbaycan Respublikasının Prezidenti ilə bağlı hansı fikir yanlışdır?",
+    a: "Prezident eyni zamanda qanunvericilik orqanının rəhbəridir",
+    hint: "Cavabı özün yaz — Prezident icra hakimiyyətinin başçısıdır, qanunvericilik orqanının rəhbəri deyil",
+    wrong: ["Prezident icra hakimiyyətinin başçısıdır", "Prezident Silahlı Qüvvələrin Ali Baş Komandanıdır", "Prezident AR-ın dövlət başçısıdır"]
+  },
+  {
+    q: "Hansı halda hakimiyyətin mənimsənilməsinə yol verilir?",
+    a: "Heç bir halda hakimiyyətin mənimsənilməsinə yol verilmir",
+    hint: "Heç bir halda hakimiyyətin mənimsənilməsinə yol verilmir",
+    wrong: ["Milli təhlükəsizlik təhdidi zamanı", "Fövqəladə vəziyyət zamanı", "Prezidentin sərəncamı ilə"]
+  },
+  {
+    q: "Fiziki şəxs deyil:",
+    a: "Müəssisə, təşkilat, idarə (bunlar hüquqi şəxslərdir)",
+    hint: "Hüquqi şəxsə aid olanlar: Müəssisə, təşkilat, idarə — dövlət orqanlarında hüquqi şəxslər fiziki sayılmır",
+    wrong: ["Vətəndaş", "Əcnəbi", "Vətəndaşlığı olmayan şəxs"]
+  },
+  {
+    q: "Ölkəmizdə qanunvericilik hakimiyyətini həyata keçirir:",
+    a: "Milli Məclis",
+    hint: "Milli Məclis",
+    wrong: ["Prezident", "Nazirlər Kabineti", "Konstitusiya Məhkəməsi"]
+  },
+  {
+    q: "Milli Məclisdə qanunvericilik təşəbbüsü hüququna kim malik deyil?",
+    a: "Fiziki şəxslər, ayrı-ayrı nazirlər, icra hakimiyyəti başçıları",
+    hint: "Fiziki şəxs, ayrı-ayrı nazirlər, icra hakimiyyəti başçıları və s.",
+    wrong: ["Prezident", "Milli Məclisin deputatları", "40 min seçici"]
+  },
+  {
+    q: "Milli Məclisin növbəti sessiyaları ildə neçə dəfə çağırılır?",
+    a: "İldə 2 dəfə: yaz və payız sessiyası",
+    hint: "İldə 2 dəfə: yaz və payız sessiyası",
+    wrong: ["İldə 4 dəfə", "İldə 1 dəfə", "Hər ay sessiya keçirilir"]
+  },
+  {
+    q: "Azərbaycan dövlətinin başçısı nəyin təminatçısı sayılmır?",
+    a: "Qanunvericilik və məhkəmə hakimiyyətinin müstəqilliyinin",
+    hint: "Qanunvericilik və məhkəmə hakimiyyətinin",
+    wrong: ["Konstitusiyanın tətbiqinin", "Dövlət suverenliyinin", "İnsan hüquqlarının qorunmasının"]
+  },
+  {
+    q: "Azərbaycan dövlətçiliyinin varisliyindən danışarkən hansı tarixi dövr nəzərdə tutulur?",
+    a: "1918–1920-ci illərdə mövcud olmuş Azərbaycan Xalq Cümhuriyyəti",
+    hint: "1918–1920-ci illərdə mövcud olmuş Azərbaycan Xalq Cümhuriyyəti",
+    wrong: ["1991-ci ildə müstəqilliyin bərpası", "1828-ci il Türkmənçay müqaviləsi", "Albaniya dövlətinin mövcudluğu dövrü"]
+  },
+  {
+    q: "Azərbaycan Respublikası Silahlı Qüvvələri hansı məqsədlə yaradır?",
+    a: "Suverenliyi, ərazi bütövlüyü, sərhədlərin toxunulmazlığını qorumaq üçün",
+    hint: "AR-ın suverenliyi, ərazi bütövlüyü, sərhədlərin toxunulmazlığını qorumaq, təcavüzdən müdafiə etmək",
+    wrong: ["Beynəlxalq sülhməramlı misiyalar üçün", "Hüquq-mühafizə funksiyaları üçün", "İqtisadi inkişafı dəstəkləmək üçün"]
+  },
+  {
+    q: "Hüquqi şəxsdir:",
+    a: "Müəssisələr",
+    hint: "Müəssisələr",
+    wrong: ["Vətəndaşlar", "Əcnəbilər", "Vətəndaşlığı olmayan şəxslər"]
+  },
+  {
+    q: "Fiziki şəxsin tam fəaliyyət qabiliyyəti nə zaman əmələ gəlir?",
+    a: "18 yaşına çatdıqda; nikaha daxil olduqda; 16 yaşından əmək müqaviləsi ilə işlədikdə",
+    hint: "18 yaşına çatdıqda; nikaha daxil olduqda; 16 yaşına çatmış şəxs əmək müqaviləsi ilə işlədikdə, sahibkarlıq fəaliyyəti ilə məşğul olduqda",
+    wrong: ["Yalnız 18 yaşında", "21 yaşında", "Yalnız evlənmə ilə"]
+  },
+  {
+    q: "Hüquqi şəxsin fəaliyyət qabiliyyəti nə zaman əmələ gəlir?",
+    a: "Dövlət qeydiyyatına alındığı vaxtdan",
+    hint: "Dövlət qeydiyyatına alındığı vaxtdan",
+    wrong: ["Nizamnaməsi təsdiq edildiyi vaxtdan", "İlk əməliyyatı həyata keçirdiyi vaxtdan", "Fəaliyyət lisenziyası aldığı vaxtdan"]
+  },
+  {
+    q: "Hansı şəxslərə əmək müqaviləsi bağlanarkən valideynlərindən birinin razılığı mütləq olmalıdır?",
+    a: "14–15 yaşlı şəxslərə",
+    hint: "15 yaşına çatmamış, 14 yaşdan 15 yaşa qədər olan şəxslərə",
+    wrong: ["18 yaşına çatmamış bütün şəxslərə", "16–18 yaşlı şəxslərə", "Yalnız 12–14 yaşlılara"]
+  },
+  {
+    q: "Normal iş vaxtı dedikdə hansı iş vaxtı başa düşülür?",
+    a: "Həftədə 40 saatdan artıq olmayan tam iş vaxtı",
+    hint: "Normal iş vaxtı, tam iş vaxtı — həftədə 40 saatdan artıq olmaz",
+    wrong: ["Həftədə 36 saatdan artıq olmayan", "Həftədə 48 saatdan artıq olmayan", "Gündə 8 saatdan artıq olmayan (həftəlik limit yoxdur)"]
+  },
+  {
+    q: "AR vətəndaşları dövlətin idarə olunmasında hansı formada iştirak edə bilərlər?",
+    a: "Seçmək və seçilmək hüququ vasitəsilə",
+    hint: "Seçmək və seçilmək",
+    wrong: ["Yalnız referendum vasitəsilə", "Yalnız etiraz aksiyaları vasitəsilə", "Yalnız ərizə və şikayətlər vasitəsilə"]
+  },
+  {
+    q: "AR Konstitusiyasına əsasən məhkəmə quruluşuna dair ümumi qaydaları müəyyən edir:",
+    a: "AR Konstitusiyası və 'Məhkəmələr və Hakimlər haqqında' Qanun",
+    hint: "AR Konstitusiyası, Məhkəmələr və Hakimlər haqqında qanun",
+    wrong: ["Yalnız Konstitusiya", "Cinayət Prosessual Məcəlləsi", "Prezident fərmanları"]
+  },
+  {
+    q: "AR Konstitusiyasına görə Milli Məclisdə qanunvericilik təşəbbüs hüququna malik deyil:",
+    a: "Bələdiyyələr, ayrı-ayrı nazirlər",
+    hint: "Bələdiyyələr, ayrı-ayrı nazirlər",
+    wrong: ["Prezident", "Naxçıvan MR-in Ali Məclisi", "Milli Məclisin deputatları"]
+  },
+  {
+    q: "AR Konstitusiyasına görə seçkidə, həmçinin referendumda iştirak etmək hüququ yoxdur:",
+    a: "Fəaliyyət qabiliyyətsizliyi məhkəmə tərəfindən təsdiq edilmiş və cəza çəkən şəxslərin",
+    hint: "Məhkəmə qərarı ilə fəaliyyət qabiliyyətsizliyi təsdiq olunmuş, cəza çəkən şəxslərin",
+    wrong: ["18 yaşına çatmamış şəxslərin", "Əcnəbilərin", "Vətəndaşlığı olmayan şəxslərin"]
+  },
+  {
+    q: "Azərbaycan Respublikasının Milli Məclisi nə vaxt səlahiyyətli olur?",
+    a: "83 deputatın səlahiyyəti təsdiq olunduqda",
+    hint: "83 deputatın səlahiyyəti təsdiq olunduqda",
+    wrong: ["Bütün 125 deputatın səlahiyyəti təsdiq olunduqda", "63 deputatın səlahiyyəti təsdiq olunduqda", "40 deputatın iştirakı ilə"]
+  },
+  {
+    q: "AR Prezidentinin səlahiyyətinə daxil deyil:",
+    a: "Qanunların qəbul edilməsi və dövlət büdcəsinin təsdiqi",
+    hint: "Qanunların qəbul edilməsi və dövlət büdcəsinin təsdiqi",
+    wrong: ["Fərmanların qəbul edilməsi", "Beynəlxalq müqavilələrin imzalanması", "Nazirlərin təyin edilməsi"]
+  },
+  {
+    q: "16 yaşınadək olan işçilər üçün həftəlik iş vaxtının müddəti nə qədərdir?",
+    a: "24 saatdan artıq olmaz",
+    hint: "24 saatdan artıq olmaz",
+    wrong: ["36 saatdan artıq olmaz", "40 saatdan artıq olmaz", "20 saatdan artıq olmaz"]
+  }
+];
+
+// State
+let current = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answered = new Array(Q.length).fill(null); // null, 'correct', 'wrong'
+let wrongItems = []; // {q, a}
+
+// Shuffle helper
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Generate options for a question
+function getOptions(idx) {
+  const q = Q[idx];
+  const options = shuffle([q.a, ...q.wrong]);
+  return options;
+}
+
+// Audio via Web Audio API
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function getAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playCorrect() {
+  try {
+    const ctx = getAudio();
+    const times = [0, 0.15, 0.3];
+    const freqs = [523.25, 659.25, 783.99];
+    times.forEach((t, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freqs[i];
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.18, ctx.currentTime + t);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.3);
+      osc.start(ctx.currentTime + t);
+      osc.stop(ctx.currentTime + t + 0.35);
+    });
+  } catch(e) {}
+}
+
+function playWrong() {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(160, ctx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+  } catch(e) {}
+}
+
+function updateProgress() {
+  const done = answered.filter(x => x !== null).length;
+  document.getElementById('progLabel').textContent = `Sual ${current + 1} / ${Q.length}`;
+  document.getElementById('progressFill').style.width = (done / Q.length * 100) + '%';
+  document.getElementById('scoreCorrect').textContent = `✓ ${correctCount}`;
+  document.getElementById('scoreWrong').textContent = `✗ ${wrongCount}`;
+}
+
+function renderQuestion() {
+  const qa = document.getElementById('quizArea');
+  const q = Q[current];
+  const opts = getOptions(current);
+  const isAnswered = answered[current] !== null;
+
+  qa.innerHTML = `
+    <div class="card" id="qCard">
+      <div class="q-number">SUAL ${current + 1} / ${Q.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="hint-box">
+        <strong>💡 İpucu</strong>
+        ${q.hint}
+      </div>
+      <div class="options" id="optContainer">
+        ${opts.map((opt, i) => `
+          <button class="option${isAnswered ? ' ' + (opt === q.a ? 'reveal-correct' : '') + (answered[current] === 'wrong' && opt === q.a ? ' reveal-correct' : '') : ''}"
+            id="opt_${i}"
+            ${isAnswered ? 'disabled' : ''}
+            onclick="selectOption(this, '${opt.replace(/'/g,"\\'")}', ${i})">
+            <span class="opt-letter">${['A','B','C','D'][i]}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="feedback-row" id="feedback">
+        ${isAnswered
+          ? (answered[current] === 'correct'
+              ? '<span class="feedback-correct">✓ Düzgün cavab!</span>'
+              : '<span class="feedback-wrong">✗ Yanlış cavab. Düzgün cavab vurğulanıb.</span>')
+          : ''}
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="navigate(-1)" ${current === 0 ? 'disabled' : ''}>← Əvvəlki</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">
+          ${current === Q.length - 1 ? 'Nəticə →' : 'Növbəti →'}
+        </button>
+      </div>
+    </div>
+  `;
+
+  updateProgress();
+}
+
+function selectOption(btn, selectedText, idx) {
+  if (answered[current] !== null) return;
+  const q = Q[current];
+  const isCorrect = selectedText === q.a;
+
+  // Mark answered state
+  answered[current] = isCorrect ? 'correct' : 'wrong';
+  if (isCorrect) {
+    correctCount++;
+    playCorrect();
+  } else {
+    wrongCount++;
+    playWrong();
+    wrongItems.push({ q: q.q, a: q.a });
+  }
+
+  // Disable all options & style
+  const container = document.getElementById('optContainer');
+  const btns = container.querySelectorAll('.option');
+  btns.forEach(b => {
+    b.disabled = true;
+    const text = b.querySelector('span:last-child').textContent;
+    if (text === q.a) {
+      b.classList.add(isCorrect ? 'correct' : 'reveal-correct');
+    }
+  });
+
+  if (!isCorrect) btn.classList.add('wrong');
+  else btn.classList.add('correct');
+
+  const fb = document.getElementById('feedback');
+  if (isCorrect) {
+    fb.innerHTML = '<span class="feedback-correct">✓ Düzgün cavab!</span>';
+  } else {
+    fb.innerHTML = '<span class="feedback-wrong">✗ Yanlış cavab. Düzgün cavab vurğulanıb.</span>';
+  }
+
+  updateProgress();
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0) return;
+  if (next >= Q.length) {
+    showResult();
+    return;
+  }
+  current = next;
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('progressWrap').style.display = 'none';
+  const total = Q.length;
+  const pct = Math.round(correctCount / total * 100);
+  let grade = '', icon = '';
+  if (pct >= 90) { grade = 'Əla! Möhtəşəm nəticə!'; icon = '🏆'; }
+  else if (pct >= 70) { grade = 'Yaxşı! Bir az da çalış!'; icon = '⭐'; }
+  else if (pct >= 50) { grade = 'Kafi. Daha çox oxu!'; icon = '📚'; }
+  else { grade = 'Zəif. Mövzuları yenidən oxu!'; icon = '💪'; }
+
+  // Remove duplicate wrong items
+  const uniqueWrong = [];
+  const seen = new Set();
+  wrongItems.forEach(w => {
+    if (!seen.has(w.q)) { seen.add(w.q); uniqueWrong.push(w); }
+  });
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="result-screen">
+      <span class="result-icon">${icon}</span>
+      <div class="result-title">${grade}</div>
+      <div class="result-sub">Kollokvium imtahan nəticəniz</div>
+      <div class="stats-grid">
+        <div class="stat-card s1">
+          <div class="val">${pct}%</div>
+          <div class="lbl">Ümumi nəticə</div>
+        </div>
+        <div class="stat-card s2">
+          <div class="val">${correctCount}</div>
+          <div class="lbl">Düzgün cavab</div>
+        </div>
+        <div class="stat-card s3">
+          <div class="val">${wrongCount}</div>
+          <div class="lbl">Yanlış cavab</div>
+        </div>
+      </div>
+      ${uniqueWrong.length > 0 ? `
+        <div class="wrong-list">
+          <h3>❌ Yanlış cavabladığın suallar (${uniqueWrong.length})</h3>
+          ${uniqueWrong.map(w => `
+            <div class="wrong-item">
+              <div class="wi-q">${w.q}</div>
+              <div class="wi-a">✓ Düzgün cavab: ${w.a}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<p style="color:var(--green);margin-bottom:30px;font-weight:600;">🎉 Bütün sualları düzgün cavabladın!</p>'}
+      <button class="restart-btn" onclick="restartQuiz()">🔄 Yenidən Başla</button>
+    </div>
+  `;
+}
+
+function restartQuiz() {
+  current = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  answered = new Array(Q.length).fill(null);
+  wrongItems = [];
+  document.getElementById('progressWrap').style.display = 'block';
+  renderQuestion();
+}
+
+// Init
+renderQuestion();
+</script>
+</body>
+</html>
