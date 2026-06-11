@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hüquq Testi</title>
+    <style>
+        :root {
+            --bg-color: #fcf8f2;
+            --card-bg: #ffffff;
+            --text-color: #5d4037;
+            --primary-color: #bcaaa4;
+            --accent-color: #8d6e63;
+            --correct-color: #a5d6a7;
+            --wrong-color: #ef9a9a;
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(141, 110, 99, 0.15);
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: var(--bg-color);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background-color: #f5ebe6;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-color) !important;
+            border-color: #81c784;
+            color: #1b5e20;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--wrong-color) !important;
+            border-color: #e57373;
+            color: #b71c1c;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #6d4c41;
+        }
+
+        .btn:disabled {
+            background-color: #d7ccc8;
+            cursor: not-allowed;
+        }
+
+        .hint-btn {
+            background-color: #dfd5d0;
+            color: var(--text-color);
+        }
+
+        .hint-text {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #fff9c4;
+            border-left: 4px solid #fbc02d;
+            border-radius: 4px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .result-item {
+            background: #fff5f5;
+            border-left: 4px solid var(--wrong-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .result-item strong {
+            color: #c62828;
+        }
+
+        .correct-answer-view {
+            margin-top: 8px;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-box">
+        <div class="header">
+            <span id="progress">Sual: 1 / 45</span>
+            <span id="score">Xal: 0</span>
+        </div>
+        <div class="question" id="question-text">Sual mətni bura gələcək.</div>
+        <div class="options" id="options-box"></div>
+        
+        <div class="hint-text" id="hint-box"></div>
+
+        <div class="navigation">
+            <button class="btn" id="prev-btn" onclick="prevQuestion()">Geri</button>
+            <button class="btn hint-btn" id="hint-toggle-btn" onclick="toggleHint()">İpucu 💡</button>
+            <button class="btn" id="next-btn" onclick="nextQuestion()">İrəli</button>
+        </div>
+    </div>
+
+    <div id="result-box" class="result-section">
+        <h2>Test bitdi! 🎉</h2>
+        <p id="final-score">Sizin yekun xalınız: </p>
+        <hr style="border: 1px solid var(--primary-color); margin: 20px 0;">
+        <h3 id="wrong-title">Səhv cavab verilən suallar və düzgün izahları:</h3>
+        <div id="wrong-questions-list"></div>
+        <button class="btn" onclick="location.reload()" style="margin-top: 15px; width: 100%;">Yenidən Başla</button>
+    </div>
+</div>
+
+<script>
+// Səslər funksiyası (Audio sintezi ilə real vaxtda bip səsi çıxarır)
+function playSound(type) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'correct') {
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // Düz cavab - xoş səs
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+    } else {
+        osc.frequency.setValueAtTime(120, ctx.currentTime); // Səhv cavab - qalın səs
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+    }
+}
+
+const quizData = [
+    {
+        q: "1. Dövlətin müəyyənləşdirdiyi və ya sanksiyalaşdırdığı və onun gücü ilə qorunan, hamı üçün ümumməcburi davranış qaydalarının məcmusuna nə deyilir?",
+        a: "Hüquq",
+        options: ["Hüquq", "Mənəviyyat norması", "Sosial müqavilə", "Dövlət fərmanı"]
+    },
+    {
+        q: "2. Hüquq elmində «hüquq» anlayışı neçə mənada işlədilir?",
+        a: "2 mənada",
+        options: ["1 mənada", "2 mənada", "3 mənada", "4 mənada"]
+    },
+    {
+        q: "3. Azərbaycan Respublikasının Konstitusiyası hansı hissə ilə başlayır?",
+        a: "Preambula",
+        options: ["Ümumi müddəalar", "Preambula", "Keçid müddəaları", "Birinci bölmə"]
+    },
+    {
+        q: "4. Azərbaycan Respublikası Konstitusiyasına əsasən hamı bərabərdir:",
+        a: 'Hamı bərabərdir "Kişi qadın hüququ eynidir" ; "Ər və arvad hüququ eynidir"',
+        options: ['Hamı bərabərdir "Kişi qadın hüququ eynidir" ; "Ər və arvad hüququ eynidir"', "Yalnız iqtisadi və sosial sahələrdə bərabərlik nəzərdə tutulur", "Vətəndaşlar hüquqlarına görə fərqlənirlər", "Yalnız dövlət qulluqçuları bərabər hüquqa malikdir"]
+    },
+    {
+        q: "5. Obyektiv hüquq nədir?",
+        a: "Ümumi publik hüquq",
+        options: ["Şəxsin konkret səlahiyyətləri", "Ümumi publik hüquq", "Fərdi müqavilələr", "Məhkəmə presedentləri"]
+    },
+    {
+        q: "6. Subyektiv hüquq nədir?",
+        a: "Subyektiv bir şəxsə aiddir",
+        options: ["Dövlətin ümumi qanunları", "Subyektiv bir şəxsə aiddir", "Beynəlxalq konvensiyalar", "Normativ hüquqi aktlar sistemi"]
+    },
+    {
+        q: "7. Azərbaycan Konstitusiyasının niyyətləri, xüsusiyyətləri və strukturu hansılardır?",
+        a: "1) Dövlətimizin müstəqilliyi, ərazi suverenliyi, 2) demokratik quruluşa təminat vermək, 3) Vətəndaş cəmiyyətini bərqərar etmək, 4) Xalqın layiqli həyat səviyyəsini təmin etmək, 5) Hüquqi Dünyəvi dövlət qurmaq, 6) Bütün dünyaya sülhsevər dövlət olduğumuzu göstərmək",
+        options: ["1) Dövlətimizin müstəqilliyi, ərazi suverenliyi, 2) demokratik quruluşa təminat vermək, 3) Vətəndaş cəmiyyətini bərqərar etmək, 4) Xalqın layiqli həyat səviyyəsini təmin etmək, 5) Hüquqi Dünyəvi dövlət qurmaq, 6) Bütün dünyaya sülhsevər dövlət olduğumuzu göstərmək", "Yalnız iqtisadi inkişafın təmini və beynəlxalq təşkilatlarla əməkdaşlıq", "Monarxiya quruluşunun elementlərinin qorunması və qonşu dövlətlərlə ittifaq yaradılması", "Sosialist dövlət prinsiplərinin bərpası və təkpartiyalı sistemin qurulması"]
+    },
+    {
+        q: "8. Azərbaycan vətəndaşının vəzifələrindəndir:",
+        a: "Vergi və digər ödənişləri vaxtında ödəmək, vətənə sədaqət, vətəni müdafiə, Dövlət rəmzlərinə hörmət, ətraf mühiti və tarixi abidələri qorumaq",
+        options: ["Təhsil almaq, sahibkarlıqla məşğul olmaq, istirahət etmək", "Mitinglərdə məcburi iştirak etmək, xarici dil bilmək", "Vergi və digər ödənişləri vaxtında ödəmək, vətənə sədaqət, vətəni müdafiə, Dövlət rəmzlərinə hörmət, ətraf mühiti və tarixi abidələri qorumaq", "Seçkilərdə namizəd kimi iştirak etmək və dövlət qulluğuna girmək"]
+    },
+    {
+        q: "9. Hüquq normaları necə xarakter daşıyır?",
+        a: "Ümumməcburi xarakter daşıyır",
+        options: ["Tövsiyə xarakterli", "Ümumməcburi xarakter daşıyır", "Fərdi və subyektiv xarakterli", "Müvəqqəti və fəsilli"]
+    },
+    {
+        q: "10. Hüquq normalarının müxtəlif əlamətlərə görə necə təsnifatını vermək olar?",
+        a: "Ərazi bütövlüyü, Beynəlxalq müqavilə, qadağanedici hüquq, sanksiya ...",
+        options: ["Yalnız mənəvi və dini təsnifat", "Ərazi bütövlüyü, Beynəlxalq müqavilə, qadağanedici hüquq, sanksiya ...", "Siyasi partiyaların statusuna görə bölgü", "Fiziki gücə və yaş həddinə görə qruplaşdırma"]
+    },
+    {
+        q: "11. Hansı aktla ilk dəfə olaraq Azərbaycan Respublikasında hakimiyyət bölgüsü təsbitlənmişdir?",
+        a: "Dövlət müstəqillik aktında",
+        options: ["1978-ci il Konstitusiyasında", "1995-ci il Konstitusiyasında", "Dövlət müstəqillik aktında", "Milli Məclisin ilk Daxili Nizamnaməsində"]
+    },
+    {
+        q: "12. Dünyada İlk Konstitusiya hansı ölkədə qəbul edilmişdir?",
+        a: "ABŞ",
+        options: ["Böyük Britaniya", "Fransa", "ABŞ", "SSRİ"]
+    },
+    {
+        q: "13. Dini mərasimlərin yerinə yetirilməsi mümkün deyil, əgər:",
+        a: "Dini cərəyanların yayılması, insan ləyaqətini alçaldan, ictimai əxlaqa ziddirsə",
+        options: ["Dövlət orqanlarından xüsusi icazə alınmadıqda", "Dini cərəyanların yayılması, insan ləyaqətini alçaldan, ictimai əxlaqa ziddirsə", "Mərasim qapalı məkanda keçirilmədikdə", "Mərasimdə xarici vətəndaşlar iştirak etdikdə"]
+    },
+    {
+        q: "14. Dövlətimizin idarəetmə formasıdır:",
+        a: "Respublika (Dövlət quruluşuna görə isə Unitardır)",
+        options: ["Unitar Federativ", "Respublika (Dövlət quruluşuna görə isə Unitardır)", "Konfederasiya", "Mütləq Monarxiya"]
+    },
+    {
+        q: "15. Azərbaycan xalqı öz hüquq və mənafeləri ilə bağlı hansı məsələləri referendumla həll edə bilər?",
+        a: "Hər bir məsələni (Konstitusiyada qadağan olunmayan)",
+        options: ["Yalnız büdcə məsələlərini", "Hər bir məsələni (Konstitusiyada qadağan olunmayan)", "Yalnız müharibə elan edilməsini", "Yalnız amnistiya qərarlarını"]
+    },
+    {
+        q: "16. Azərbaycan dövlətinin təməlini təşkil edir:",
+        a: "Xalqın vahidliyi",
+        options: ["İqtisadi resurslar", "Siyasi partiyalar", "Xalqın vahidliyi", "Dövlət aparatının gücü"]
+    },
+    {
+        q: "17. «Norma» latın dilindən tərcümədə hansı mənanı verir?",
+        a: "mənası \"qayda\" deməkdir",
+        options: ["mənası \"qanun\" deməkdir", "mənası \"qayda\" deməkdir", "mənası \"cəza\" deməkdir", "mənası \"əmr\" deməkdir"]
+    },
+    {
+        q: "18. Hüquq normaları aşağıdakıları müəyyən edir (struktur elementləri):",
+        a: "Hipoteza, Sanksiya, dispozisiya",
+        options: ["Preambula, Maddə, Fəsil", "Hipoteza, Sanksiya, dispozisiya", "Giriş, Öhdəlik, Cəza", "Qanun, Fərman, Sərəncam"]
+    },
+    {
+        q: "19. Unitarizmin əlamətlərindəndir:",
+        a: "Dövlətin vahid konstitusiyası olur ; Vahid məhkəmə hüquq sistemi olur ; Vahid pul maliyyə sistemi olur ; Vahid vətəndaşlığı olur",
+        options: ["Dövlətin daxilində müstəqil respublikaların olması", "Dövlətin vahid konstitusiyası olur ; Vahid məhkəmə hüquq sistemi olur ; Vahid pul maliyyə sistemi olur ; Vahid vətəndaşlığı olur", "Hər bir bölgənin öz ordusu və gömrük sisteminin olması", "İkiqat vətəndaşlıq və regional qanunvericilik sisteminin üstünlüyü"]
+    },
+    {
+        q: "20. Azərbaycan Respublikasında dövlət hakimiyyətinin yeganə mənbəyi kimdir?",
+        a: "Azərbaycan Xalqı",
+        options: ["Milli Məclis", "Prezident", "Azərbaycan Xalqı", "Konstitusiya Məhkəməsi"]
+    },
+    {
+        q: "21. Azərb. Resp. Kons. görə “dövlət dili” ilə bağlı məsələ hansı halda referenduma çıxarıla bilər?",
+        a: "Heç bir halda (Xalqın suveren iradəsinə zidd dəyişiklik edilə bilməz)",
+        options: ["Milli Məclisin 2/3 səs çoxluğu ilə", "Prezidentin fərmanı ilə", "Heç bir halda (Xalqın suveren iradəsinə zidd dəyişiklik edilə bilməz)", "Yalnız müharibə şəraitində"]
+    },
+    {
+        q: "22. Referendum sözünün mənasıdır:",
+        a: "Bəyan (müraciət, ümumxalq səsverməsi)",
+        options: ["Qanun layihəsi", "Bəyan (müraciət, ümumxalq səsverməsi)", "Hakimiyyət bölgüsü", "Seçki komissiyası"]
+    },
+    {
+        q: "23. Konstitusiyanın funksiyası deyil:",
+        a: "Hüquqi, Siyasi, Sosial, tərbiyəvi funksiyalar aid OLDURĞU üçün bunlardan kənar variant",
+        options: ["Hüquqi tənzimləmə funksiyası", "Siyasi sabitliyin qorunması funksiyası", "Hüquqi, Siyasi, Sosial, tərbiyəvi funksiyalar aid OLDURĞU üçün bunlardan kənar variant", "İdeoloji və tərbiyəvi funksiya"]
+    },
+    {
+        q: "24. Azərbaycan Respublikasında qanunlar hüquqi əhəmiyyətinə görə hansı qruplara bölünür?",
+        a: "Milli Məclis tərəfindən qəbul edilən qanunlar, Referendum aktları, Konstitusiya qanunları",
+        options: ["Milli Məclis tərəfindən qəbul edilən qanunlar, Referendum aktları, Konstitusiya qanunları", "Nazirlər Kabinetinin qərarları və icra başçılarının əmrləri", "Məhkəmə qərarları və bələdiyyə aktları", "Yalnız Prezident fərmanları və sərəncamları"]
+    },
+    {
+        q: "25. Azərbaycan Respublikasında Qanunlar neçə yolla qəbul oluna bilər?",
+        a: "2 yolla (Milli məclis və Referendum)",
+        options: ["1 yolla (Yalnız Milli Məclis)", "2 yolla (Milli məclis və Referendum)", "3 yolla (Milli Məclis, Prezident və Nazirlər Kabineti)", "4 yolla (Bələdiyyələr daxil olmaqla)"]
+    },
+    {
+        q: "26. Müstəqil Azərbaycan Respublikasının ilk Konstitusiyası nə vaxt qəbul olunub?",
+        a: "1995 12 noyabr",
+        options: ["1918 28 may", "1920 28 aprel", "1991 18 oktyabr", "1995 12 noyabr"]
+    },
+    {
+        q: "27. Hüquq normasının tərkibinə aid deyil:",
+        a: "Hipoteza, Sanksiya, Dispozisiya aid olanlardır (bunlardan başqasını seçin)",
+        options: ["Hipoteza", "Sanksiya", "Dispozisiya", "Hipoteza, Sanksiya, Dispozisiya aid olanlardır (bunlardan başqasını seçin)"]
+    },
+    {
+        q: "28. Hüquqi dövlətin prinsiplərindən deyil:",
+        a: "Aid olanlar: Qanunun aliliyi, hamının qanun qarşısında bərabərliyi, Hakimiyyətin bölünməsi, Məhkəmə müstəqilliyi, Fərdin dövlət, dövlətin fərd qarşısında məsuliyyəti (bunlardan kənar variant)",
+        options: ["Qanunun aliliyi", "Hakimiyyətin vahid əldə cəmləşməsi (Prinsip deyil)", "Aid olanlar: Qanunun aliliyi, hamının qanun qarşısında bərabərliyi, Hakimiyyətin bölünməsi, Məhkəmə müstəqilliyi, Fərdin dövlət, dövlətin fərd qarşısında məsuliyyəti (bunlardan kənar variant)", "İnsan hüquqlarının müdafiəsi"]
+    },
+    {
+        q: "29. Azərb. Res. Kons.na görə aşağıdakı məsələlər referendumla dəyişilə bilməz:",
+        a: "Hakimiyyət mənbəyi, xalqın suverenliyi, Hakimiyyətin mənimsənilməsinə yol verilməməsi, Azərbaycan dövlətinin forması, dövlət dili, dövlət başçısı haqqında bəzi əsas müddəalar",
+        options: ["Hakimiyyət mənbəyi, xalqın suverenliyi, Hakimiyyətin mənimsənilməsinə yol verilməməsi, Azərbaycan dövlətinin forması, dövlət dili, dövlət başçısı haqqında bəzi əsas müddəalar", "Milli Məclisin deputatlarının sayı və növbəti seçki tarixləri", "Nazirlər Kabinetinin strukturu və nazirliklərin adları", "Bələdiyyələrin büdcəsi və yerli vergilərin dərəcələri"]
+    },
+    {
+        q: "30. Azərbaycan Respublikası Konstitusiyasının bölməsidir:",
+        a: "5 bölmədən ibarətdir: Ümumi müddəalar; Əsas hüquqlar, azadlıqlar və vəzifələr; Dövlət hakimiyyəti; Yerli özünüidarəetmə; Hüquq və qanun",
+        options: ["3 bölmədən ibarətdir: Giriş, Əsas hissə, Yekun müddəalar", "5 bölmədən ibarətdir: Ümumi müddəalar; Əsas hüquqlar, azadlıqlar və vəzifələr; Dövlət hakimiyyəti; Yerli özünüidarəetmə; Hüquq və qanun", "10 fəsildən ibarət vahid bölmə", "Yalnız dövlət orqanlarını tənzimləyən 2 fərqli bölmə"]
+    },
+    {
+        q: "31. Azərbaycan Konstitusiyasının niyyətlərindəndir:",
+        a: "Dövlətimizin müstəqilliyi, ərazi bütövlüyünün suverenliyi; demokratik quruluşa təminat vermək, Vətəndaş cəmiyyətini bərqərar etmək, Xalqın layiqli həyat səviyyəsini təmin etmək, Hüquqi dünyəvi dövlət qurmaq, Bütün dünyaya sülhsevər dövlət olduğumuzu göstərmək",
+        options: ["Dövlətimizin müstəqilliyi, ərazi bütövlüyünün suverenliyi; demokratik quruluşa təminat vermək, Vətəndaş cəmiyyətini bərqərar etmək, Xalqın layiqli həyat səviyyəsini təmin etmək, Hüquqi dünyəvi dövlət qurmaq, Bütün dünyaya sülhsevər dövlət olduğumuzu göstərmək", "Sosialist mülkiyyət formasını qorumaq və planlı iqtisadiyyata keçmək", "Dövlət dinini elan etmək və teokratik idarəetmə formalaşdırmaq", "Milli Məclisin səlahiyyətlərini məhdudlaşdırıb mütləqiyyət yaratmaq"]
+    },
+    {
+        q: "32. Respublika idarəetmə quruluşu neçə yerə bölünür?",
+        a: "2 yerə bölünür: Parlament, Prezident (və Qarışıq)",
+        options: ["1 yerə (Yalnız unitar)", "2 yerə bölünür: Parlament, Prezident (və Qarışıq)", "3 yerə (Monarxiya, Teokrasiya, Respublika)", "4 yerə (Diktatura daxil olmaqla)"]
+    },
+    {
+        q: "35. Azərbaycan Respublikası Konstitusiyasına əsasən mülkiyyətdən hansı subyektin qərarı ilə məhrum edilmək olar?",
+        a: "Məhkəmə",
+        options: ["Prezident", "Milli Məclis", "Məhkəmə", "Polis orqanları"]
+    },
+    {
+        q: "36. Azərbaycan Respublikasının Dövlət himninin musiqisi və mətni müəyyən edilir:",
+        a: "Konstitusiya qanunu ilə",
+        options: ["Prezidentin sərəncamı ilə", "Konstitusiya qanunu ilə", "Nazirlər Kabinetinin qərarı ilə", "Mədəniyyət Nazirliyinin əmri ilə"]
+    },
+    {
+        q: "37. Konstitusiyaya görə tətil edə bilməzlər:",
+        a: "Azərbaycan Respublikasının Silahlı Qüvvələrində xidmət edən hərbi qulluqçular və mülki şəxslər tətil edə bilməzlər",
+        options: ["Təhsil və səhiyyə sahəsində çalışan bütün işçilər", "Azərbaycan Respublikasının Silahlı Qüvvələrində xidmət edən hərbi qulluqçular və mülki şəxslər tətil edə bilməzlər", "Özəl sektorda çalışan fəhlələr", "Bələdiyyə üzvləri və kənd təsərrüfatı işçiləri"]
+    },
+    {
+        q: "38. Azərbaycanda üçrəngli dövlət bayrağı nə vaxt Azərbaycan Xalq Cümhuriyyəti hökumətinin qərarı ilə qəbul edilmişdir?",
+        a: "1918 9 noyabr",
+        options: ["1918 28 may", "1918 9 noyabr", "1920 28 aprel", "1991 18 oktyabr"]
+    },
+    {
+        q: "39. Azərbaycan xalqı öz suveren hüququnu hansı seçki hüququ əsasında həyata keçirir?",
+        a: "Azərbaycan xalqı öz suveren hüququnu bilavasitə ümumxalq səsverməsi – referendum və ümumi, bərabər və birbaşa seçki hüququ əsasında sərbəst, gizli və şəxsi səsvermə yolu ilə seçilmiş nümayəndələri vasitəsi ilə həyata keçirir.",
+        options: ["Azərbaycan xalqı öz suveren hüququnu bilavasitə ümumxalq səsverməsi – referendum və ümumi, bərabər və birbaşa seçki hüququ əsasında sərbəst, gizli və şəxsi səsvermə yolu ilə seçilmiş nümayəndələri vasitəsi ilə həyata keçirir.", "Yalnız dolayısı və açıq səsvermə prinsipləri əsasında təyin olunmuş məmurlar vasitəsilə", "İctimai təşkilatların və siyasi partiyaların rəhbərlərinin birgə konsensusu ilə", "Yerdə qalan kənd və şəhər icmalarının nümayəndələrinin açıq əl qaldırması yolu ilə"]
+    },
+    {
+        q: "40. Azərbaycan xalqı öz suveren hüququnu necə həyata keçirir?",
+        a: "Seçki və referendum",
+        options: ["Yalnız mitinqlər vasitəsilə", "Seçki və referendum", "Xarici dövlətlərin dəstəyi ilə", "Məhkəmə iddiaları vasitəsilə"]
+    },
+    {
+        q: "41. Ölkəmizdə dövlət hakimiyyəti hansı prinsip əsasında təşkil olunur?",
+        a: "Hakimiyyətin bölünməsi",
+        options: ["Mərkəzi idarəçilik", "Hakimiyyətin bölünməsi", "Sosial bərabərlik", "Dini qanunların aliliyi"]
+    },
+    {
+        q: "42. Hansı halda “hakimiyyətin bölünməsi” prinsipi ardıcıllığıdır?",
+        a: "qanunvericilik, icra, məhkəmə hakimiyyəti",
+        options: ["icra, bələdiyyə, prokurorluq", "qanunvericilik, icra, məhkəmə hakimiyyəti", "ordu, polis, məhkəmə", "Prezident, Nazirlər kabineti, MM"]
+    },
+    {
+        q: "43. AR Kons.na görə MM deputatı mandatından məhrum edilə bilməz, əgər:",
+        a: "Cinayət başında yaxalanmadıqda, Ağır cinayət törətmədikdə (və digər qanuni əsaslar olmadıqda)",
+        options: ["İclaslarda mütəmadi iştirak etmədikdə", "Cinayət başında yaxalanmadıqda, Ağır cinayət törətmədikdə (və digər qanuni əsaslar olmadıqda)", "Partiya üzvlüyündən çıxdıqda", "Seçicilərlə görüşmədikdə"]
+    },
+    {
+        q: "44. Qanunvericilik təşəbbüsü hüququ ilə bağlı doğru müddəa:",
+        a: "Layihə 2 ay ərzində səsə qoyulur, əgər prezident, prokurorluq, Ali Məhkəmə təcili qeydi ilə verirsə 20 gün ərzində olur",
+        options: ["Bütün vətəndaşlar fərdi olaraq birbaşa qanun layihəsini Milli Məclisə təqdim edə bilər", "Layihə 2 ay ərzində səsə qoyulur, əgər prezident, prokurorluq, Ali Məhkəmə təcili qeydi ilə verirsə 20 gün ərzində olur", "Hər bir qanun mütləq 1 il ərzində müzakirə edilməlidir", "Qanun layihələri yalnız bələdiyyələr tərəfindən hazırlanır"]
+    },
+    {
+        q: "46. Milli Məclisin tərkibi neçə deputatdan ibarətdir?",
+        a: "125",
+        options: ["100", "121", "125", "150"]
+    },
+    {
+        q: "47. Hakim cinayət törətdikdə onun vəzifədən kənarlaşdırılması təşəbbüsünü kim irəli sürə bilər?",
+        a: "Baş prokuror (müvafiq qaydada Prezidentə təqdimat üçün)",
+        options: ["Ədliyyə Naziri", "Milli Məclisin Sədri", "Baş prokuror (müvafiq qaydada Prezidentə təqdimat üçün)", "Bələdiyyə sədri"]
+    },
+    {
+        q: "48. AR Konstitusiya Məhkəməsi neçə hakimdən ibarətdir?",
+        a: "9",
+        options: ["7", "9", "11", "15"]
+    },
+    {
+        q: "49. Aşağıdakılardan hansı AR qanunvericilik sisteminə daxil deyil?",
+        a: "Qanunvericilik sisteminə daxil olanlar: Konstitusiya, Referendum aktları, Qanunlar, Fərmanlar, NK qərarları, Mərkəzi icra orqanlarının normativ aktları (bunlardan başqası daxil deyil)",
+        options: ["Konstitusiya və Fərmanlar", "Nazirlər Kabinetinin qərarları", "Bələdiyyə qərarları (qanunvericilik sisteminə daxil deyil, yerli xarakterlidir)", "Qanunvericilik sisteminə daxil olanlar: Konstitusiya, Referendum aktları, Qanunlar, Fərmanlar, NK qərarları, Mərkəzi icra orqanlarının normativ aktları (bunlardan başqası daxil deyil)"]
+    },
+    {
+        q: "50. Məhkəmə icraatı nəyin müəyyən edilməsini təmin etməlidir?",
+        a: "Həqiqətin müəyyən edilməsini, şəxslərin hüquq və azadlıqlarını",
+        options: ["Dövlət büdcəsinin gəlirlərini", "Həqiqətin müəyyən edilməsini, şəxslərin hüquq və azadlıqlarını", "Siyasi partiyaların reytinqini", "Müttəhimin mütləq cəzalandırılmasını"]
+    },
+    {
+        q: "51. Hakim olmaq üçün tələb deyil:",
+        a: "Yalnız Ali təhsil kifayət deyil (Ali hüquq təhsili, 5 il iş stajı, yaş həddi tələb olunur)",
+        options: ["Ali hüquq təhsili", "30 yaşdan aşağı olmamaq", "Yalnız Ali təhsil kifayət deyil (Ali hüquq təhsili, 5 il iş stajı, yaş həddi tələb olunur)", "Seçkilərdə iştirak etmək hüququna malik olmaq"]
+    },
+    {
+        q: "53. Hansı subyekt xalq tərəfindən seçilmir?",
+        a: "Baş nazir və Nazirlər Kabineti",
+        options: ["Prezident", "Milli Məclisin deputatları", "Baş nazir və Nazirlər Kabineti", "Bələdiyyə üzvləri"]
+    },
+    {
+        q: "55. Hansı halda hakimiyyətin mənimsənilməsinə yol verilir?",
+        a: "Heç bir halda",
+        options: ["Müharibə şəraitində", "Fövqəladə vəziyyətdə", "Heç bir halda", "Referendum keçirilmədikdə"]
+    },
+    {
+        q: "56. Ölkəmizdə qanunvericilik hakimiyyətini həyata keçirir:",
+        a: "Milli Məclis",
+        options: ["Prezident", "Milli Məclis", "Nazirlər Kabineti", "Konstitusiya Məhkəməsi"]
+    },
+    {
+        q: "57. İcra hakimiyyəti mənsubdur:",
+        a: "Prezidentə",
+        options: ["Baş Nazirə", "Milli Məclisə", "Prezidentə", "Ali Məhkəməyə"]
+    },
+    {
+        q: "58. Azərbaycan dövlətinin başçısı nəyin təminatçısı sayılmır?",
+        a: "Məhkəmə hakimiyyətinin müstəqilliyinin (O, dövlətin müstəqilliyinin, ərazi bütövlüyünün və beynəlxalq müqavilələrə riayət olunmasının təminatçısıdır)",
+        options: ["Dövlətin müstəqilliyinin", "Ərazi bütövlüyünün", "Məhkəmə hakimiyyətinin müstəqilliyinin (O, dövlətin müstəqilliyinin, ərazi bütövlüyünün və beynəlxalq müqavilələrə riayət olunmasının təminatçısıdır)", "Beynəlxalq müqavilələrə riayət olunmasının"]
+    },
+    {
+        q: "59. Azərbaycan dövlətçiliyinin varisliyi dedikdə Azərbaycan dövlətinin hansı tarixi nəzərdə tutulur?",
+        a: "1918-1920 Azərbaycan Xalq Cümhuriyyəti",
+        options: ["Səfəvilər İmperiyası", "1918-1920 Azərbaycan Xalq Cümhuriyyəti", "Azərbaycan SSR dövrü", "Xanlıqlar dövrü"]
+    },
+    {
+        q: "60. Hüquqi şəxsdir:",
+        a: "Müəssisə, təşkilatlar, dövlət orqanları",
+        options: ["Azərbaycan vətəndaşı", "Xarici ölkə vətəndaşı", "Müəssisə, təşkilatlar, dövlət orqanları", "Fərdi sahibkar (fiziki şəxs olaraq)"]
+    },
+    {
+        q: "61. Fiziki şəxsin tam fəaliyyət qabiliyyəti əmələ gəlir:",
+        a: "18 yaşına çatdıqda, nikaha girəndə, 16 yaş müqavilə ilə sahibkarlıqla məşğul olduqda və s.",
+        options: ["Yalnız 16 yaşı tamam olduqda", "18 yaşına çatdıqda, nikaha girəndə, 16 yaş müqavilə ilə sahibkarlıqla məşğul olduqda və s.", "Anadan olduğu andan etibarən", "Yalnız ali təhsil haqqında diplom alanda"]
+    },
+    {
+        q: "62. Hüquqi şəxsin fəaliyyət qabiliyyəti əmələ gəlir:",
+        a: "Dövlət qeydiyyatına alındığı vaxtda",
+        options: ["Təsis müqaviləsi imzalandıqda", "Dövlət qeydiyyatına alındığı vaxtda", "İlk gəlir əldə edildikdə", "Möhür hazırlanan gün"]
+    },
+    {
+        q: "63. Teokratik dövlət quruluşuna görə dövlət necə əmələ gəlir?",
+        a: "Allah tərəfindən və dini qanunlarla idarə olunur",
+        options: ["Xalqın seçimi ilə", "Sinfi mübarizə nəticəsində", "Allah tərəfindən və dini qanunlarla idarə olunur", "İctimai müqavilə ilə"]
+    },
+    {
+        q: "64. Hansı şəxslərlə əmək müqaviləsi bağlanan zaman onların valideynlərindən birinin mütləq razılığı olmalıdır?",
+        a: "14-15 yaşında olan uşaqlar",
+        options: ["14-15 yaşında olan uşaqlar", "16-18 yaşlı gənclər", "Yalnız tələbələr", "Hərbi xidmətə çağırışçılar"]
+    },
+    {
+        q: "65. Müddəti qanunla müəyyən edilmiş həftəlik və gündəlik iş saatları ərzində işçilərin öz əmək funksiyalarını yerinə yetirməsi üçün müəyyən edilmiş zaman dedikdə hansı iş vaxtı başa düşülür?",
+        a: "Normal iş vaxtı",
+        options: ["Növbəli iş vaxtı", "Gecə iş vaxtı", "Normal iş vaxtı", "Kəsik iş vaxtı"]
+    },
+    {
+        q: "66. Milli parlamentin formalaşması hansı dövrü əhatə edir?",
+        a: "2 dövrü əhatə edir: 1918 - AXC dövrü və Müstəqilliyin bərpası dövrü",
+        options: ["Yalnız 1995-ci ildən sonrakı dövrü", "2 dövrü əhatə edir: 1918 - AXC dövrü və Müstəqilliyin bərpası dövrü", "Xanlıqlar və Çar Rusiyası dövrünü", "Yalnız SSRİ tərkibindəki Ali Sovet dövrünü"]
+    },
+    {
+        q: "67. Azərbaycan Respublikası Konstitusiyasına əsasən məhkəmə quruluşuna və hakimlərin statusuna dair ümumi qaydaları müəyyən edir:",
+        a: "Milli Məclis",
+        options: ["Ədliyyə Nazirliyi", "Milli Məclis", "Məhkəmə-Hüquq Şurası", "Vəkillər Kollegiyası"]
+    },
+    {
+        q: "69. Azərbaycan Respublikasının Konstitusiyasına görə Milli Məclisdə qanunvericilik təşəbbüsü hüququna malik deyil:",
+        a: "Məhkəmənin qərarı ilə fəaliyyət qabiliyyətsizliyi təsdiq olunmuş şəxslər, seçilmək hüququ məhdudlaşdırılanlar və s.",
+        options: ["Prezident", "Milli Məclisin deputatları", "Məhkəmənin qərarı ilə fəaliyyət qabiliyyətsizliyi təsdiq olunmuş şəxslər, seçilmək hüququ məhdudlaşdırılanlar və s.", "Ali Məhkəmə"]
+    },
+    {
+        q: "71. Azərb. Resp-nın Milli Məclisi nə vaxt səlahiyyətli olur?",
+        a: "83 deputatın səlahiyyətləri təsdiq olunduqda",
+        options: ["63 deputat seçildikdə", "83 deputatın səlahiyyətləri təsdiq olunduqda", "125 deputatın hamısı hazır olduqda", "Prezident icazə verdikdə"]
+    },
+    {
+        q: "73. Dövlətin xarici funksiyasına daxildir:",
+        a: "Beynəlxalq iqtisadiyyat, Beynəlxalq Təhlükəsizlik",
+        options: ["Ölkə daxilində asayişin qorunması", "Vergilərin yığılması", "Beynəlxalq iqtisadiyyat, Beynəlxalq Təhlükəsizlik", "Milli valyutanın emissiyası"]
+    },
+    {
+        q: "74. Azərbaycan Respublikası Prezidentinin səlahiyyətində deyil (Səlahiyyətlərinə aid olanlar variantda verilmişdir):",
+        a: "Milli Məclis seçkilərini təyin edir; Dövlət büdcəsini MM-ə verir; Qanunları imzalayır; Referendum təyin edir; Əfv edir (Bunlardan kənar variant səlahiyyəti deyil)",
+        options: ["Milli Məclisə seçkilər təyin etmək", "Dövlət büdcəsini təsdiq üçün təqdim etmək", "Milli Məclis seçkilərini təyin edir; Dövlət büdcəsini MM-ə verir; Qanunları imzalayır; Referendum təyin edir; Əfv edir (Bunlardan kənar variant səlahiyyəti deyil)", "Əfv fərmanı imzalamaq"]
+    },
+    {
+        q: "75. Vətəndaşlığın əldə olunmasının üsul və vasitələri, vətəndaşın vəzifələri kontekstində şərtlər:",
+        a: "Dövlət Dilini bilməsiylə bağlı imtahan, Onun mənafeyi dövlətin mənafeyinə zidd olmamalıdır, Azərbaycan ərazisində son 5 il daimi yaşamaq, Dövlət rüsumu ödəmək",
+        options: ["Dövlət Dilini bilməsiylə bağlı imtahan, Onun mənafeyi dövlətin mənafeyinə zidd olmamalıdır, Azərbaycan ərazisində son 5 il daimi yaşamaq, Dövlət rüsumu ödəmək", "Yalnız ölkədə daşınmaz əmlaka sahib olmaq", "Mütləq şəkildə hər hansı bir siyasi partiyanın üzvü olmaq", "Xarici dövlətin vətəndaşlığından çıxmadan birbaşa pasport almaq"]
+    },
+    {
+        q: "78. A.R. Prezidentinin səlahiyyətlərinə vaxtından əvvəl xitam verilməsi halları:",
+        a: "Səlahiyyət müddəti bitdikdə; Səhhətinə görə; İstifa ərizəsiylə; Cinayət başında yaxalandıqda (və ya ağır cinayət törətdikdə impiçment)",
+        options: ["Milli Məclis iclaslarında iştirak etmədikdə", "Səlahiyyət müddəti bitdikdə; Səhhətinə görə; İstifa ərizəsiylə; Cinayət başında yaxalandıqda (və ya ağır cinayət törətdikdə impiçment)", "Xarici səfərə getdikdə", "Hökumət üzvləri ilə razılığa gələ bilmədikdə"]
+    },
+    {
+        q: "80. A.R. Cinayət Məclisəsi nə vaxt qəbul edilmiş və qüvvəyə minmişdir?",
+        a: "1999-cu il dekabrın 30-da qəbul edilmiş, 2000-ci il sentyabrın 1-də qüvvəyə minmişdir",
+        options: ["1995-ci il 12 noyabrda", "1998-ci il 30 dekabrda", "1999-cu il dekabrın 30-da qəbul edilmiş, 2000-ci il sentyabrın 1-də qüvvəyə minmişdir", "2005-ci il 1 yanvarda"]
+    }
+];
+
+let currentIdx = 0;
+let score = 0;
+let userAnswers = new Array(quizData.length).fill(null);
+let wrongQuestions = [];
+
+function loadQuestion() {
+    const qData = quizData[currentIdx];
+    document.getElementById("progress").innerText = `Sual: ${currentIdx + 1} / ${quizData.length}`;
+    document.getElementById("question-text").innerText = qData.q;
+    
+    const optionsBox = document.getElementById("options-box");
+    optionsBox.innerHTML = "";
+    
+    // İpucunu gizlət və mətnini yenilə
+    const hintBox = document.getElementById("hint-box");
+    hintBox.style.display = "none";
+    hintBox.innerText = `Doğru Cavab: ${qData.a}`;
+
+    qData.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = opt;
+        
+        // Əgər istifadəçi artıq bu suala cavab veribsə, rəngləri saxla
+        if (userAnswers[currentIdx] !== null) {
+            btn.disabled = true;
+            if (opt === qData.a) {
+                btn.classList.add("correct");
+            }
+            if (userAnswers[currentIdx] === opt && opt !== qData.a) {
+                btn.classList.add("wrong");
+            }
+        } else {
+            btn.onclick = () => checkAnswer(opt, btn);
+        }
+        
+        optionsBox.appendChild(btn);
+    });
+
+    // Düymələrin aktivlik vəziyyəti
+    document.getElementById("prev-btn").disabled = currentIdx === 0;
+    document.getElementById("next-btn").innerText = currentIdx === quizData.length - 1 ? "Bitir" : "İrəli";
+}
+
+function checkAnswer(selectedOpt, btn) {
+    const qData = quizData[currentIdx];
+    userAnswers[currentIdx] = selectedOpt;
+
+    const allButtons = document.querySelectorAll(".option-btn");
+    allButtons.forEach(b => b.disabled = true);
+
+    if (selectedOpt === qData.a) {
+        btn.classList.add("correct");
+        score += 10;
+        document.getElementById("score").innerText = `Xal: ${score}`;
+        playSound('correct');
+    } else {
+        btn.classList.add("wrong");
+        playSound('wrong');
+        // Düzgün variantı da vizual olaraq göstər
+        allButtons.forEach(b => {
+            if (b.innerText === qData.a) b.classList.add("correct");
+        });
+        // Səhv cavablar siyahısına əlavə et
+        if (!wrongQuestions.some(item => item.q === qData.q)) {
+            wrongQuestions.push({ q: qData.q, a: qData.a });
+        }
+    }
+}
+
+function toggleHint() {
+    const hintBox = document.getElementById("hint-box");
+    if (hintBox.style.display === "none") {
+        hintBox.style.display = "block";
+    } else {
+        hintBox.style.display = "none";
+    }
+}
+
+function nextQuestion() {
+    if (currentIdx < quizData.length - 1) {
+        currentIdx++;
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function prevQuestion() {
+    if (currentIdx > 0) {
+        currentIdx--;
+        loadQuestion();
+    }
+}
+
+function showResults() {
+    document.getElementById("quiz-box").style.display = "none";
+    const resultBox = document.getElementById("result-box");
+    resultBox.style.display = "block";
+    document.getElementById("final-score").innerText = `Sizin yekun xalınız: ${score} (Maksimum mümkün xal: ${quizData.length * 10})`;
+
+    const wrongList = document.getElementById("wrong-questions-list");
+    wrongList.innerHTML = "";
+
+    if (wrongQuestions.length === 0) {
+        document.getElementById("wrong-title").innerText = "Təbriklər! Heç bir suala səhv cavab vermədiniz. 🌟";
+    } else {
+        wrongQuestions.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "result-item";
+            div.innerHTML = `<div><strong>Sual:</strong> ${item.q}</div><div class="correct-answer-view">Düzgün Cavab: ${item.a}</div>`;
+            wrongList.appendChild(div);
+        });
+    }
+}
+
+// İlk sualı yüklə
+loadQuestion();
+</script>
+
+</body>
+</html>
