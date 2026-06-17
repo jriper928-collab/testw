@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock İmtahan – Telekommunikasiya Şəbəkələri</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #fdf6ec;
+    color: #3d2c1e;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #c8956c 0%, #e8b89a 100%);
+    color: #fff;
+    text-align: center;
+    padding: 28px 20px 22px;
+    box-shadow: 0 4px 16px #c8956c44;
+  }
+  .header h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: .5px; }
+  .header p  { font-size: .95rem; margin-top: 4px; opacity: .9; }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    background: #f0e4d4;
+    border-bottom: 1px solid #e0ccb8;
+    padding: 10px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .progress-bar-bg {
+    flex: 1; height: 10px; background: #ddd0c4; border-radius: 8px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #c8956c, #e8b89a);
+    border-radius: 8px; transition: width .4s ease;
+  }
+  .progress-label { font-size: .85rem; font-weight: 700; color: #8b5e3c; white-space: nowrap; }
+
+  /* ── Card ── */
+  .card-wrap {
+    max-width: 720px;
+    margin: 30px auto;
+    padding: 0 16px 60px;
+  }
+  .card {
+    background: #fff9f3;
+    border: 1.5px solid #e8d5c0;
+    border-radius: 18px;
+    padding: 30px 28px 24px;
+    box-shadow: 0 6px 28px #c8956c18;
+    position: relative;
+  }
+
+  .q-number {
+    font-size: .8rem; font-weight: 700;
+    color: #c8956c; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 1.08rem; font-weight: 700;
+    line-height: 1.55; margin-bottom: 22px;
+    color: #2e1e10;
+  }
+
+  /* ── Options ── */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+  .opt-btn {
+    background: #fff;
+    border: 2px solid #e0ccb8;
+    border-radius: 12px;
+    padding: 13px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .97rem;
+    font-weight: 600;
+    color: #3d2c1e;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .18s, background .18s, transform .12s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .opt-btn:hover:not(:disabled) {
+    border-color: #c8956c;
+    background: #fff4ec;
+    transform: translateX(3px);
+  }
+  .opt-letter {
+    width: 30px; height: 30px; min-width: 30px;
+    border-radius: 50%;
+    background: #f0e4d4;
+    color: #8b5e3c;
+    font-weight: 800; font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .18s, color .18s;
+  }
+  .opt-btn.correct {
+    border-color: #4caf72;
+    background: #edfaf3;
+  }
+  .opt-btn.correct .opt-letter { background: #4caf72; color: #fff; }
+  .opt-btn.wrong {
+    border-color: #e05c5c;
+    background: #fdf0f0;
+  }
+  .opt-btn.wrong .opt-letter { background: #e05c5c; color: #fff; }
+  .opt-btn:disabled { cursor: default; }
+
+  /* ── Hint ── */
+  .hint-row {
+    margin-top: 18px; display: flex; justify-content: flex-end;
+  }
+  .hint-btn {
+    background: none;
+    border: 2px solid #c8956c;
+    border-radius: 10px;
+    padding: 7px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .85rem; font-weight: 700;
+    color: #c8956c; cursor: pointer;
+    transition: background .18s, color .18s;
+  }
+  .hint-btn:hover { background: #c8956c; color: #fff; }
+  .hint-box {
+    margin-top: 12px;
+    background: #fff8ed;
+    border: 1.5px dashed #c8956c;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: .92rem; color: #5e3a1e;
+    line-height: 1.5;
+    display: none;
+  }
+  .hint-box.show { display: block; }
+  .hint-box strong { color: #c8956c; }
+
+  /* ── Nav ── */
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 26px;
+  }
+  .nav-btn {
+    background: linear-gradient(135deg, #c8956c, #e8b89a);
+    border: none;
+    border-radius: 12px;
+    padding: 11px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .95rem; font-weight: 700;
+    color: #fff; cursor: pointer;
+    transition: opacity .18s, transform .12s;
+    box-shadow: 0 3px 12px #c8956c40;
+  }
+  .nav-btn:hover { opacity: .88; transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: .35; cursor: default; transform: none; }
+  .nav-center { font-size: .9rem; font-weight: 700; color: #8b5e3c; }
+
+  /* ── Status icons ── */
+  .status-icon {
+    font-size: 1.8rem;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── Result screen ── */
+  #result-screen {
+    display: none;
+    max-width: 720px;
+    margin: 30px auto;
+    padding: 0 16px 60px;
+  }
+  .result-card {
+    background: #fff9f3;
+    border: 1.5px solid #e8d5c0;
+    border-radius: 18px;
+    padding: 36px 28px 28px;
+    box-shadow: 0 6px 28px #c8956c18;
+    text-align: center;
+  }
+  .result-emoji { font-size: 3.5rem; }
+  .result-title { font-size: 1.6rem; font-weight: 800; margin: 10px 0 4px; }
+  .result-score {
+    font-size: 3rem; font-weight: 800;
+    color: #c8956c; margin: 14px 0;
+  }
+  .result-sub { font-size: 1rem; color: #8b5e3c; margin-bottom: 24px; }
+
+  .wrong-list {
+    text-align: left;
+    margin-top: 20px;
+  }
+  .wrong-list h3 {
+    font-size: 1rem; font-weight: 800;
+    color: #e05c5c; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .wrong-item {
+    background: #fdf0f0;
+    border: 1.5px solid #f3c4c4;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: .9rem;
+    line-height: 1.5;
+  }
+  .wrong-item .wi-q { font-weight: 700; color: #2e1e10; }
+  .wrong-item .wi-your { color: #e05c5c; font-size: .85rem; margin-top: 4px; }
+  .wrong-item .wi-correct { color: #4caf72; font-size: .85rem; }
+
+  .restart-btn {
+    margin-top: 28px;
+    background: linear-gradient(135deg, #c8956c, #e8b89a);
+    border: none; border-radius: 12px;
+    padding: 13px 36px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    color: #fff; cursor: pointer;
+    box-shadow: 0 3px 14px #c8956c44;
+    transition: opacity .18s;
+  }
+  .restart-btn:hover { opacity: .88; }
+
+  /* ── Answered dot grid (optional mini-map) ── */
+  .dot-grid {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    justify-content: center; margin: 12px 0 0;
+  }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #e0ccb8;
+  }
+  .dot.answered-correct { background: #4caf72; }
+  .dot.answered-wrong   { background: #e05c5c; }
+  .dot.current { outline: 2px solid #c8956c; outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📡 Telekommunikasiya Şəbəkələri</h1>
+  <p>Mock İmtahan – Bütün suallar</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="prog-fill" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="prog-label">0 / 0</div>
+</div>
+
+<div class="card-wrap" id="exam-screen">
+  <div class="card">
+    <div class="q-number" id="q-number">Sual 1</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="hint-row">
+      <button class="hint-btn" id="hint-btn" onclick="toggleHint()">💡 İpucu</button>
+    </div>
+    <div class="hint-box" id="hint-box"></div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn" id="prev-btn" onclick="go(-1)">← Əvvəlki</button>
+    <span class="nav-center" id="nav-center"></span>
+    <button class="nav-btn" id="next-btn" onclick="go(1)">Sonrakı →</button>
+  </div>
+
+  <!-- Dot map -->
+  <div class="dot-grid" id="dot-grid"></div>
+</div>
+
+<!-- Result Screen -->
+<div id="result-screen">
+  <div class="result-card">
+    <div class="result-emoji" id="res-emoji">🎉</div>
+    <div class="result-title" id="res-title">Nəticə</div>
+    <div class="result-score" id="res-score">0 / 0</div>
+    <div class="result-sub" id="res-sub"></div>
+    <div class="wrong-list" id="wrong-list"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Yenidən başla</button>
+  </div>
+</div>
+
+<!-- Audio -->
+<audio id="snd-correct" preload="auto">
+  <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq3ozGBBYjeHw1oE3CBBaluHw0H0wBg5Xk+Hx0n42BA1UkeDy0ns0AwxSjt/y0Hk" type="audio/wav">
+</audio>
+<audio id="snd-wrong" preload="auto">
+  <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq3ozGBBYjeHw1oE3CBBaluHw0H0wBg5Xk+Hx0n42BA1UkeDy0ns0AwxSjt/y0Hk" type="audio/wav">
+</audio>
+
+<script>
+// ══════════════════════════════════════════
+//  Q U E S T I O N S  (in order from file)
+// ══════════════════════════════════════════
+const RAW = [
+  {q:"Qapalı nömrələnmə sistemi nə ilə xarakterizə olunur?", a:"Abunəçi tam nömrəsi"},
+  {q:"80000 çox tutumlu şəbəkə quruluşu giriş və çıxış məlumat qovşaqlarına əsaslanırsa, nömrə neçə rəqəmli olur?", a:"7"},
+  {q:"ŞTŞ-nin qurulmasında I mərhələdə nə tələb olunur?", a:"Analoq sistem tətbiq edilir, rəqəm üsulu ilə kommutasiya veriliş sisteminə keçməsi, rayonlaşdırılmamış şəbəkə yaranır"},
+  {q:"İnteqral xidmətli telekommunikasiya şəbəkələrinin yaranmasında I mərhələdə hansı saxlanılır?", a:"Analoq abunəçi xətləri və analoq telefon"},
+  {q:"Birləşdirici xətləri təşkil etmək üçün şəbəkədə ən azı neçə ATS olmalıdır?", a:"2"},
+  {q:"\"Radial-qovşaq\" prinsipi nəyi təmin edir?", a:"Ölkənin beynəlxalq TKŞ-lərə çıxışını təmin edir"},
+  {q:"Telekommunikasiya şəbəkələrinin qurulmasında \"biri hər biri\" prinsipi nə vaxt daha çox istifadə olunur?", a:"Şəbəkə iqtisadi cəhətdən səmərəli, texniki cəhətdən etibarlı olmalı; hər bir qovşaq şəbəkədəki digər qovşaqla əlaqə saxlamalıdır"},
+  {q:"Kommutasiya nə üçün istifadə olunur?", a:"Fərdi birləşmə yaratmaq üçün"},
+  {q:"Kanal kommutasiyası hansı xüsusiyyətə malikdir?", a:"İnformasiya real zaman ərzində ötürülür; giriş ilə çıxış arasında birləşdirici yol; kanalın tam tutulması"},
+  {q:"Paket kommutasiyası necə işləyir?", a:"Məlumatları paketlərə bölərək eyni uzunluqlu bloklar şəklində ötürür"},
+  {q:"Şəbəkənin tutumu 80000 qədər olduqda nömrələnmə neçə rəqəmli tətbiq olunur?", a:"7"},
+  {q:"80000-800000 tutumlu şəbəkələrdə nömrələnmə prinsipi necədir?", a:"6 rəqəmli olur; 1 rəqəm ATS kodu, 4 nömrə abunəçi nömrəsini göstərir"},
+  {q:"1-ci rəqəm ATS kodu, qalan 4 rəqəm abunəçi nömrəsi olduqda şəbəkənin maksimal tutumu nə qədər ola bilər?", a:"10.000 abunəçi"},
+  {q:"Kommutasiya sistemi nəyi həyata keçirir?", a:"Telekommunikasiya şəbəkəsinin kommutasiyasını, operativ stansiyaların kommutasiyasını reallaşdıran rabitə-texniki vasitədir"},
+  {q:"1-ci rəqəm milyonluq göstəricisi, 2-ci rəqəm qovşaq kodu olduqda nömrənin qalan hissəsi nəyi göstərir?", a:"ATS kodunu və fərdi nömrəni"},
+  {q:"ŞTŞ-nin əsas məqsədi nədir?", a:"Telefon şəbəkələri əhalini, müəssisələri, təşkilatları, firmaları və digər özəl müəssisələri təmin edir"},
+  {q:"Əvvəllər şəbəkənin son qurğusu nə idi?", a:"Telefon aparatları"},
+  {q:"Böyük tutumlu şəbəkələrdə 7 rəqəmli nömrələnmədə 2-ci rəqəm nədir?", a:"Qovşaq kodu"},
+  {q:"ŞTŞ hansı xidmətləri göstərir?", a:"Telefoniya, faks, data ötürülməsi, radio konfrans, internet multimedia xidmətləri"},
+  {q:"1-ci rəqəm ATS kodu, qalan 4 rəqəm abunəçi nömrəsini göstərirsə, şəbəkənin tutumu hansı aralıqda olur?", a:"80.000-ə qədər"},
+  {q:"Telefon şəbəkələrində nömrələnmə sistemi nəyə xidmət edir?", a:"Abunəçinin şəbəkədə birmənalı ünvanlanması"},
+  {q:"Beynəlxalq abonent nömrəsinin strukturu necədir?", a:"Beynəlxalq kod + zona kodu + abunə kodu"},
+  {q:"ŞTŞ neçə mərhələdə qurulur?", a:"3"},
+  {q:"1-ci rəqəm milyonluq, 2-ci rəqəm qovşağın kodu, 3-cü rəqəm ATS kodu, axırıncı 4 rəqəm abunəçi nömrəsini göstərirsə, bu hansı tutumlu şəbəkə üçündür?", a:"Çox böyük tutumlu şəbəkə (1 rəqəm milyonluq, 2-ci rəqəm qovşaq kodu)"},
+  {q:"BTİ nömrələnmə sistemində hansı indeks istifadə olunur?", a:"Beynəlxalq indeks"},
+  {q:"Azərbaycanda yerli abonent nömrəsinin uzunluğu adətən nə qədər olur?", a:"7 rəqəmli"},
+  {q:"Kommutasiya sahəsi nədir?", a:"Abunəçilərin birləşdirilməsi üçün istifadə olunan sahə"},
+  {q:"Aşağıdakılardan hansı informasiya ötürmə vasitəsidir?", a:"Kabel xətləri, radio-relə xətləri, optik lif"},
+  {q:"Kanal kommutasiyası hansı xüsusiyyətə malikdir?", a:"İnformasiyanı real zamanda ötürür"},
+  {q:"Paket kommutasiyası necə işləyir?", a:"Məlumatları blok şəklində paketləyir"},
+  {q:"ŞTŞ-nin qurulmasında II mərhələdə hansı sistem istifadə olunur?", a:"Rəqəmli inteqral şəbəkə"},
+  {q:"STM-16 sürəti nə qədərdir?", a:"2,5 Gbit/san"},
+  {q:"STM-64 sürəti nə qədərdir?", a:"10 Gbit/san"},
+  {q:"III mərhələdə hansı xidmətlər artır?", a:"Televiziya proqramları, yüksək sürətli fayl ötürülməsi, videokonfrans üçün geniş rəqəmli kanal yaranır; ötürmə sürəti 144 Mbit/san-dan böyükdür"},
+  {q:"Rəqəmli sistemin üstünlüyü nədir?", a:"Hamısı (keyfiyyət, etibarlılıq, sürət, səs-küy davamlılığı)"},
+  {q:"Geniş zolaqlı şəbəkə nə üçündür?", a:"Yüksək sürətli məlumat ötürmək üçün"},
+  {q:"SDH nədir?", a:"Sinxron rəqəmli iyerarxiya"},
+  {q:"TKŞ-lərinin qurulmasında radial-qovşaq prinsipi nəyə görə üstünlük təşkil edir?", a:"Dolayı yolla yaranan rabitəni qısa müddətdə kiçik məsafədə həyata keçirir, TKŞ çıxışını təmin edir, kabel xərclərini minimuma endirir"},
+  {q:"Optik telekommunikasiya şəbəkələrinin strukturunda əsasən hansı prinsiplər əsas götürülür?", a:"Kanalların tezliyə və zamana görə bölünmə prinsipi"},
+  {q:"\"Radial-qovşaq\" prinsipi vasitəsilə şəbəkənin hansı xüsusiyyəti təmin olunur?", a:"TKŞ ölkəyə çıxışını təmin edir, şəbəkənin genişləndirilməsi mümkündür, etibarlı rabitə yaradılır"},
+  {q:"Bütün şəbəkələrdə rabitə yaratmaq üçün əsasən hansı kabellərdən istifadə edilir?", a:"Optik lifli və mis kabellər"},
+  {q:"Kommutasiya nədir?", a:"İstifadəçilər arasında rabitə yaradılması"},
+  {q:"Kommutasiyanın əsas növləri hansılardır?", a:"Məlumat kommutasiyası, kanalların kommutasiyası"},
+  {q:"Paket kommutasiyası nədir?", a:"İnformasiyanın eyni uzunluqlu, məlumat bloku şəklində hissə-hissə paket şəklində göndərilməsi"},
+  {q:"III mərhələdə sürət nə qədərdir?", a:"144 Mbit/san-dan böyük"},
+  {q:"Qapalı nömrələnmə sistemi nə ilə xarakterizə olunur?", a:"Abunəçi tam nömrəsi"},
+  {q:"Regenerasiya prosesi nədir?", a:"Özünü yeniləmək, bərpa etmək"},
+  {q:"Kommutasiya sahəsi nədir?", a:"Sistemin veriliş girişi ilə çıxışına informasiya ötürülməsi"},
+  {q:"Optik telekommunikasiya şəbəkələrinin qurulmasında əsas komponentlər hansılardır?", a:"Optik lif, optik gücləndiricilər, ötürücü/qəbuledicilər"},
+  {q:"\"Radial-qovşaq\" prinsipi hansı üstünlüyü verir?", a:"Qısa müddətdə kiçik məsafəyə ötürür"},
+  {q:"Şəbəkənin \"biri hər biri\" prinsipi ilə qurulması nə deməkdir?", a:"Hər bir qovşaq şəbəkədəki bütün digər qovşaqlarla birbaşa əlaqə saxlayır"},
+  {q:"Kommutasiya sistemi nədir?", a:"Telekommunikasiya şəbəkəsinin kommutasiya stansiyalarını operativ kommutasiyanın standartlaşdırılması"},
+  {q:"Paket kommutasiyası hansı halda istifadə olunur?", a:"Məlumatı bölərek paketləyərək ötürdükdə"},
+  {q:"Kanal kommutasiyası necə işləyir?", a:"İnformasiya real zamanda işlənir"},
+  {q:"Şəbəkə tutumu 80000-dən çox olduqda hansı nömrələnmə prinsipi tətbiq olunur?", a:"Giriş və çıxış məlumat qovşağına əsaslanır, 7 rəqəmli olur"},
+  {q:"7 rəqəmli nömrələnmədə 1-ci rəqəm nəyi göstərir?", a:"Milyonluq qrup (indeksin) nömrəsi"},
+  {q:"Şəbəkə quruluşu giriş və çıxış məlumat qovşaqlarına əsaslanırsa və tutumu 80000-dən çoxdursa, nömrə neçə rəqəmli tətbiq olunur?", a:"7"},
+  {q:"ŞTŞ-yə nə qoşulur?", a:"Kompüter"},
+  {q:"İnformasiya şəbəkələri nə təmin edir?", a:"Məlumatın toplanması, ötürülməsi"},
+  {q:"6 rəqəmli nömrələnmədə 2-ci rəqəm nəyi bildirir?", a:"ATS kodu"},
+  {q:"Kanal kommutasiyasında nə baş verir?", a:"İki abonent arasında məlumat ötürülməsi üçün rabitə kanalı ayrılır"},
+  {q:"Rəqəmli kommutasiya neçə formada olur?", a:"2 formada: kanal və məlumatların kommutasiyası"},
+  {q:"1-ci rəqəm milyonluq, 2-ci rəqəm qovşaq, 3-cü rəqəm ATS kodu olduqda abunəçi nömrəsi neçə rəqəmdən ibarət olur?", a:"4"},
+  {q:"Şəbəkə tutumu 80000-800000 aralığında olduqda hansı nömrə uzunluğu tətbiq edilir?", a:"6"},
+  {q:"Kommutasiya avadanlığının funksiyalarına daxildir:", a:"Gələn çağırışların qəbulu, nömrənin analizi, abonentlər arasında əlaqə"},
+  {q:"Aşağıdakılardan hansı 7 rəqəmli nömrə strukturu üçün doğrudur?", a:"1 rəqəm milyonluq + 1 rəqəm qovşaq + 1 rəqəm ATS + 4 rəqəm abunəçi"},
+  {q:"Abonent nömrəsinin unikal olması nə üçün vacibdir?", a:"Abonenti dəqiq tapmaq üçün"},
+  {q:"Şəhərararası kod hansı məqsədlə istifadə olunur?", a:"Müxtəlif şəhərlərin və ya regionların şəbəkələrini fərqləndirmək üçün"},
+  {q:"STM-1 sürəti nə qədərdir?", a:"155 Mbit/san"},
+  {q:"STM-4 sürəti nə qədərdir?", a:"620 Mbit/san"},
+  {q:"ŞTŞ-nin qurulmasında II mərhələdə nə yaradılır?", a:"Xüsusi rəqəmli inteqral şəbəkə"},
+  {q:"ŞTŞ-nin qurulmasında II mərhələdə sürət neçə olur?", a:"2048 kbit/san"},
+  {q:"ŞTŞ-nin qurulmasında III mərhələdə əsas fərq nədir?", a:"Şəbəkənin tam rəqəmsallaşması, IP texnologiyasının tətbiqi, multimedia xidmətlərindən istifadə"},
+  {q:"Optik kabel hansı sistemə aiddir?", a:"Optik rabitə sistemləri və geniş zolaqlı ötürmə şəbəkələri"},
+  {q:"Şəbəkənin tutumu 80000-800000 arası olduqda nömrələnmə neçə rəqəmli olur?", a:"6 rəqəmli"}
+];
+
+// ── Wrong-answer distractor pools ──
+const DISTRACTORS = [
+  "5 rəqəmli","4","8","3","10","6","9","2","1",
+  "Rəqəmli abunəçi kodu","Zona indeksi","Ölkə kodu","Şəhər prefiksi",
+  "Analoq sistem","Paket şəbəkəsi","Simsiz şəbəkə","Optik lifsiz şəbəkə",
+  "Kommutasiya qovşağı","Yönləndirici","Gücləndiricilər","Modulyator",
+  "Mis kabellər","Koaksial kabel","Fiber optik","Radio dalğaları",
+  "Məlumat bloku","Kadr","Sinxrosiqnal","İşarə",
+  "STM-0","PDH","ISDN","ATM","IP","MPLS",
+  "64 kbit/san","2 Mbit/san","100 Mbit/san","1 Gbit/san",
+  "Yalnız telefon","Yalnız internet","Yalnız faks","Yalnız data",
+  "Müvəqqəti birləşmə","Daimi kanal","Marşrutlaşdırma","Tunelləşdirmə",
+  "Abonəçi xətti","Terminal adapter","Gateway","Modem",
+  "Tezlik bölünməsi","Amplituda modulyasiyası","Fazovı sürüşmə","Dalğa bölünməsi",
+  "Simsiz ATS","Mobil şəbəkə","Peyk kanali","Bluetooth",
+  "3 rəqəmli","11 rəqəmli","2 rəqəmli","12 rəqəmli",
+  "Abunəçi qısa nömrəsi","Qovşaq nömrəsi","Zona nömrəsi","Port nömrəsi"
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getDistractors(correct, n) {
+  const pool = DISTRACTORS.filter(d => d !== correct);
+  return shuffle(pool).slice(0, n);
+}
+
+// Build question objects with shuffled options
+const questions = RAW.map((item, idx) => {
+  const wrongs = getDistractors(item.a, 3);
+  const opts = shuffle([item.a, ...wrongs]);
+  return {
+    id: idx,
+    q: item.q,
+    a: item.a,
+    opts
+  };
+});
+
+let current = 0;
+const userAnswers = new Array(questions.length).fill(null); // null | {chosen, correct}
+
+// ── Sounds via Web Audio ──
+const AC = window.AudioContext || window.webkitAudioContext;
+let ac;
+function ensureAC() { if (!ac) ac = new AC(); }
+
+function playTone(type) {
+  try {
+    ensureAC();
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    if (type === 'correct') {
+      o.frequency.setValueAtTime(523, ac.currentTime);
+      o.frequency.setValueAtTime(659, ac.currentTime + .1);
+      o.frequency.setValueAtTime(784, ac.currentTime + .2);
+      g.gain.setValueAtTime(.25, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + .5);
+      o.start(); o.stop(ac.currentTime + .5);
+    } else {
+      o.frequency.setValueAtTime(300, ac.currentTime);
+      o.frequency.setValueAtTime(200, ac.currentTime + .15);
+      g.gain.setValueAtTime(.25, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + .4);
+      o.start(); o.stop(ac.currentTime + .4);
+    }
+  } catch(e) {}
+}
+
+// ── Render ──
+function render() {
+  const q = questions[current];
+  const ua = userAnswers[current];
+
+  document.getElementById('q-number').textContent = `Sual ${current + 1} / ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Hint
+  const hbox = document.getElementById('hint-box');
+  hbox.className = 'hint-box';
+  hbox.innerHTML = `<strong>✅ Düzgün cavab:</strong> ${q.a}`;
+
+  // Options
+  const optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    if (ua) {
+      btn.disabled = true;
+      if (opt === q.a) btn.classList.add('correct');
+      else if (opt === ua.chosen) btn.classList.add('wrong');
+    } else {
+      btn.onclick = () => selectAnswer(opt);
+    }
+    optWrap.appendChild(btn);
+  });
+
+  // Nav
+  document.getElementById('prev-btn').disabled = (current === 0);
+  document.getElementById('next-btn').textContent =
+    current === questions.length - 1 ? 'Nəticə 🏁' : 'Sonrakı →';
+  document.getElementById('nav-center').textContent =
+    `${current + 1} / ${questions.length}`;
+
+  // Progress
+  const answered = userAnswers.filter(x => x !== null).length;
+  document.getElementById('prog-fill').style.width = (answered / questions.length * 100) + '%';
+  document.getElementById('prog-label').textContent = `${answered} / ${questions.length}`;
+
+  updateDots();
+}
+
+function selectAnswer(chosen) {
+  const q = questions[current];
+  const correct = chosen === q.a;
+  userAnswers[current] = { chosen, correct };
+  playTone(correct ? 'correct' : 'wrong');
+  render();
+}
+
+function go(dir) {
+  if (dir === 1 && current === questions.length - 1) {
+    showResult(); return;
+  }
+  current = Math.max(0, Math.min(questions.length - 1, current + dir));
+  const hbox = document.getElementById('hint-box');
+  hbox.className = 'hint-box';
+  render();
+}
+
+function toggleHint() {
+  const hbox = document.getElementById('hint-box');
+  hbox.classList.toggle('show');
+}
+
+// ── Dots ──
+function buildDots() {
+  const grid = document.getElementById('dot-grid');
+  grid.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = `dot-${i}`;
+    d.title = `Sual ${i+1}`;
+    d.onclick = () => { current = i; render(); };
+    d.style.cursor = 'pointer';
+    grid.appendChild(d);
+  });
+}
+
+function updateDots() {
+  questions.forEach((_, i) => {
+    const d = document.getElementById(`dot-${i}`);
+    if (!d) return;
+    d.className = 'dot';
+    if (userAnswers[i]) {
+      d.classList.add(userAnswers[i].correct ? 'answered-correct' : 'answered-wrong');
+    }
+    if (i === current) d.classList.add('current');
+  });
+}
+
+// ── Result ──
+function showResult() {
+  document.getElementById('exam-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const total = questions.length;
+  const correct = userAnswers.filter(a => a && a.correct).length;
+  const pct = Math.round(correct / total * 100);
+
+  document.getElementById('res-score').textContent = `${correct} / ${total}`;
+  document.getElementById('res-sub').textContent = `Düzgün cavab: ${correct} | Səhv: ${total - correct} | Faiz: ${pct}%`;
+
+  let emoji = '😢', title = 'Daha çox çalışın!';
+  if (pct >= 90) { emoji = '🏆'; title = 'Əla nəticə!'; }
+  else if (pct >= 70) { emoji = '🎉'; title = 'Yaxşı iş!'; }
+  else if (pct >= 50) { emoji = '👍'; title = 'Orta nəticə'; }
+  document.getElementById('res-emoji').textContent = emoji;
+  document.getElementById('res-title').textContent = title;
+
+  // Wrong list
+  const wl = document.getElementById('wrong-list');
+  const wrongs = questions.filter((_, i) => userAnswers[i] && !userAnswers[i].correct);
+  if (wrongs.length === 0) {
+    wl.innerHTML = '<p style="text-align:center;color:#4caf72;font-weight:700;">🎊 Bütün sualları düzgün cavablandırdınız!</p>';
+    return;
+  }
+  wl.innerHTML = `<h3>❌ Səhv cavablandırılan suallar (${wrongs.length})</h3>`;
+  wrongs.forEach(q => {
+    const ua = userAnswers[q.id];
+    wl.innerHTML += `
+      <div class="wrong-item">
+        <div class="wi-q">${q.q}</div>
+        <div class="wi-your">❌ Sizin cavab: ${ua.chosen}</div>
+        <div class="wi-correct">✅ Düzgün cavab: ${q.a}</div>
+      </div>`;
+  });
+}
+
+function restart() {
+  userAnswers.fill(null);
+  current = 0;
+  document.getElementById('exam-screen').style.display = 'block';
+  document.getElementById('result-screen').style.display = 'none';
+  const hbox = document.getElementById('hint-box');
+  hbox.className = 'hint-box';
+  buildDots();
+  render();
+}
+
+// ── Init ──
+buildDots();
+render();
+</script>
+</body>
+</html>
