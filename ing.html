@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock İmtahan</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 50%, #ddeeff 100%);
+    min-height: 100vh;
+    color: #1a3a5c;
+  }
+  .header {
+    background: linear-gradient(135deg, #1e6fa5 0%, #2196f3 100%);
+    color: white;
+    padding: 18px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 12px rgba(33,150,243,0.3);
+  }
+  .header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.5px; }
+  .header .progress-info { font-size: 0.9rem; opacity: 0.9; }
+  .progress-bar-wrap { background: #bbdefb; height: 6px; width: 100%; }
+  .progress-bar {
+    height: 6px;
+    background: linear-gradient(90deg, #1565c0, #42a5f5);
+    transition: width 0.4s ease;
+  }
+  .main { max-width: 780px; margin: 36px auto; padding: 0 16px; }
+  .question-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 6px 30px rgba(33,150,243,0.13);
+    padding: 36px 38px 30px;
+    border-top: 5px solid #2196f3;
+    animation: fadeIn 0.35s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+  .q-number { font-size: 0.82rem; color: #2196f3; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .q-type { font-size: 0.85rem; color: #78909c; margin-bottom: 14px; font-style: italic; }
+  .q-text { font-size: 1.15rem; font-weight: 600; color: #1a3a5c; margin-bottom: 28px; line-height: 1.55; }
+  .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; }
+  .option-btn {
+    background: #f0f7ff;
+    border: 2px solid #bbdefb;
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 1rem;
+    color: #1a3a5c;
+    cursor: pointer;
+    transition: all 0.22s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) { background: #e3f2fd; border-color: #2196f3; transform: translateX(4px); }
+  .option-btn .opt-letter {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #bbdefb;
+    color: #1565c0;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.22s;
+  }
+  .option-btn.correct { background: #e8f5e9; border-color: #43a047; color: #1b5e20; }
+  .option-btn.correct .opt-letter { background: #43a047; color: white; }
+  .option-btn.wrong { background: #ffebee; border-color: #e53935; color: #b71c1c; }
+  .option-btn.wrong .opt-letter { background: #e53935; color: white; }
+  .option-btn:disabled { cursor: default; }
+  .hint-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .hint-btn {
+    background: #fff8e1;
+    border: 2px solid #ffe082;
+    border-radius: 10px;
+    padding: 8px 18px;
+    color: #f57f17;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hint-btn:hover { background: #fff3cd; border-color: #ffc107; }
+  .hint-box {
+    display: none;
+    background: #fffde7;
+    border: 2px solid #ffe082;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.92rem;
+    color: #5d4037;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    animation: fadeIn 0.25s;
+  }
+  .hint-box.visible { display: block; }
+  .correct-answer-line {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #2e7d32;
+    font-size: 0.95rem;
+  }
+  .nav-row { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .nav-btn {
+    background: white;
+    border: 2px solid #90caf9;
+    border-radius: 10px;
+    padding: 10px 24px;
+    color: #1565c0;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: #e3f2fd; border-color: #2196f3; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  /* Results */
+  .results-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 6px 30px rgba(33,150,243,0.13);
+    padding: 40px;
+    text-align: center;
+    animation: fadeIn 0.4s;
+  }
+  .results-card h2 { font-size: 1.8rem; color: #1565c0; margin-bottom: 8px; }
+  .score-circle {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e6fa5, #42a5f5);
+    color: white;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin: 24px auto;
+    box-shadow: 0 6px 20px rgba(33,150,243,0.35);
+  }
+  .score-circle .big { font-size: 2.4rem; font-weight: 800; }
+  .score-circle .small { font-size: 0.85rem; opacity: 0.85; }
+  .wrong-list { text-align: left; margin-top: 28px; }
+  .wrong-list h3 { color: #c62828; margin-bottom: 14px; font-size: 1.05rem; }
+  .wrong-item {
+    background: #fff5f5;
+    border-left: 4px solid #e53935;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    color: #37474f;
+  }
+  .wrong-item strong { color: #c62828; }
+  .wrong-item .correct-ans { color: #2e7d32; font-weight: 600; }
+  .restart-btn {
+    background: linear-gradient(135deg, #1e6fa5, #2196f3);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 40px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(33,150,243,0.3);
+  }
+  .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(33,150,243,0.4); }
+  .status-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; margin-left: 8px; }
+  .badge-answered { background: #e8f5e9; color: #2e7d32; }
+  .badge-skipped { background: #ffebee; color: #c62828; }
+  @media (max-width: 600px) {
+    .question-card { padding: 24px 18px 20px; }
+    .main { margin: 18px auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Mock İmtahan</h1>
+  <div class="progress-info" id="progressInfo">Sual 1 / 120</div>
+</div>
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+</div>
+
+<div class="main" id="mainContent">
+  <div class="question-card" id="questionCard">
+    <div class="q-number" id="qNumber"></div>
+    <div class="q-type" id="qType"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="hint-row">
+      <button class="hint-btn" onclick="showHint()">💡 İpucu</button>
+    </div>
+    <div class="hint-box" id="hintBox"></div>
+    <div class="options-grid" id="optionsGrid"></div>
+    <div class="nav-row">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Geri</button>
+      <span id="answerStatus"></span>
+      <button class="nav-btn" id="nextBtn" onclick="navigate(1)">İrəli →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const allQuestions = [
+  { q: "Can you give … to …, please?", type: "Choose the correct pronouns.", correct: "it / me", hint: "Birinci boşluq əşyaya, ikinci boşluq insana aiddir." },
+  { q: "She's always … - she always tells the truth.", type: "Complete the sentence.", correct: "honest", hint: "Həmişə həqiqəti söyləyən biri necə adlandırılır?" },
+  { q: "The man dropped the axe into the river.", type: "Choose the correct sentence in the Passive Voice.", correct: "The axe was dropped by the man.", hint: "Passive Voice: Object + was/were + V3 + by + Subject" },
+  { q: "… have you been waiting here?", type: "Complete the sentence.", correct: "How long", hint: "Müddəti soruşmaq üçün hansı ifadə istifadə olunur?" },
+  { q: "Where … you buy your shirt?", type: "Choose the correct answer.", correct: "did", hint: "Past Simple suallarında köməkçi fel 'did' istifadə olunur." },
+  { q: "1. fall-asleep  2. feel-tired  3. finish-work/school", type: "Match the words.", correct: "1-c, 2-a, 3-b", hint: "fall asleep (yuxuya getmək), feel tired (yorğun hiss etmək), finish work/school" },
+  { q: "John has backache. He … carry heavy things.", type: "Choose the correct modal verb.", correct: "can't", hint: "Bel ağrısı olan biri ağır şeylər daşıya bilməz." },
+  { q: "1. in  2. you often find  3. articles  4. interesting  5. newspapers", type: "Make up a sentence.", correct: "You often find interesting articles in newspapers.", hint: "Subject + Verb + Object + Adverb" },
+  { q: "What did he advise him?", type: "Choose the correct interrogative sentence.", correct: "What did he advise him?", hint: "Past Simple sual cümləsi 'did' ilə formalaşır." },
+  { q: "They … in the park at 3 o'clock yesterday.", type: "Choose the correct tense form.", correct: "were", hint: "Keçmişdə müəyyən vaxtda baş verən hal - Past Continuous (be + -ing)" },
+  { q: "someone who works with languages:", type: "Read the definition and complete the job.", correct: "linguist", hint: "Dil mütəxəssisi..." },
+  { q: "sea  beach  sand  eye  sun", type: "Which word doesn't go with others.", correct: "eye", hint: "Digər sözlər dəniz/çimərliklə əlaqədardır." },
+  { q: "1. much peace organizations 2. many music fans 3. few news channels 4. several tasty cake", type: "Choose the correct variant.", correct: "2 and 3", hint: "countable nouns: many/few; uncountable: much/little" },
+  { q: "She … to change her lifestyle and eating habits.", type: "Choose the correct modal verb.", correct: "has", hint: "'Has to' = məcburiyyət (must) mənasında." },
+  { q: "1. money 2. goose 3. mice 4. jeans 5. advice 6. teeth", type: "Choose the nouns in the plural.", correct: "3, 4, 6", hint: "mice (siçanlar), jeans (cins), teeth (dişlər) - çoxluq formalarıdır." },
+  { q: "They usually … about their day in the evening.", type: "Choose the correct tense form.", correct: "talk", hint: "'Usually' - adverb of frequency → Present Simple" },
+  { q: "someone who makes food in a restaurant.", type: "Read the definition and complete the job.", correct: "cook", hint: "Restoranda yemək hazırlayan kim?" },
+  { q: "Bruce … only three photographs yesterday.", type: "Choose the correct tense form.", correct: "took", hint: "'Yesterday' → Past Simple. take → took" },
+  { q: "Olivia left … school bag on the bus.", type: "Choose the correct pronoun.", correct: "her", hint: "Olivia qadın adıdır → her" },
+  { q: "He's a … - he always works a lot.", type: "Complete the sentence.", correct: "hardworking", hint: "Çox işləyən biri necə adlandırılır?" },
+  { q: "… did you go home at 10 p.m.?", type: "Choose the correct variant.", correct: "When", hint: "Vaxt soruşmaq üçün... (10 p.m. → vaxt)" },
+  { q: "I water the plants in the morning.", type: "Choose the correct sentence in the Passive Voice.", correct: "The plants are watered in the morning.", hint: "Present Simple Passive: am/is/are + V3" },
+  { q: "… have you been sitting there?", type: "Choose the correct variant.", correct: "How long", hint: "Müddəti soruşan ifadə nədir?" },
+  { q: "I think you … apologize to him.", type: "Choose the correct modal verb.", correct: "should", hint: "Məsləhət vermək üçün 'should' istifadə olunur." },
+  { q: "I … the topic at 5 o'clock yesterday.", type: "Choose the correct tense form.", correct: "was discussing", hint: "Keçmişdə müəyyən vaxtda davam edən iş → Past Continuous" },
+  { q: "1. a few deers's skin 2. a day's rest 3. 5 minute's break 4. mice's tails", type: "Choose the correct variant.", correct: "a day's rest", hint: "Possessive apostrophe: singular + 's" },
+  { q: "I saw … elephant in … Zoo.", type: "Choose the correct article.", correct: "an / the", hint: "'elephant' - sait ilə başlayır → an; Zoo - müəyyən yer → the" },
+  { q: "Children … respect their parents.", type: "Choose the correct modal verb.", correct: "should", hint: "Uşaqlar valideynlərini hörmət etməlidir - tövsiyə." },
+  { q: "Ann's cakes … very delicious.", type: "Choose the correct variant.", correct: "are", hint: "'Cakes' çoxluqdur → are" },
+  { q: "She was … because her manager shouted at her.", type: "Choose the correct answer.", correct: "upset", hint: "Rəisi ona bağırdıqda necə hiss edirdi?" },
+  { q: "He hadn't learned the direction … he lost his way.", type: "Choose the correct conjunction.", correct: "so", hint: "Nəticə bildirən bağlayıcı." },
+  { q: "1. lost 2. I 3. my pen 4. today 5. have", type: "Make up a sentence.", correct: "I have lost my pen today.", hint: "Present Perfect: Subject + have/has + V3" },
+  { q: "someone who helps you when you are ill:", type: "Read the definition and complete the job.", correct: "doctor", hint: "Xəstə olanda kimə müraciət edirik?" },
+  { q: "… did Anya phone you yesterday?", type: "Choose the correct variant.", correct: "When", hint: "Vaxt soruşulur (yesterday - vaxt göstəricisidir)." },
+  { q: "The restaurant manager showed us the table.", type: "Choose the correct sentence in the Passive Voice.", correct: "We were shown the table by the manager.", hint: "Passive with indirect object: We were shown..." },
+  { q: "The students often … skiing during winter vacation.", type: "Choose the correct tense form.", correct: "go", hint: "'Often' → Present Simple tense" },
+  { q: "moonlight, movement / leadership, handshake", type: "Choose the compound nouns.", correct: "moonlight, handshake", hint: "Mürəkkəb isimlər iki müstəqil sözdən ibarətdir." },
+  { q: "Those are the people … missed the train.", type: "Choose the correct variant.", correct: "who", hint: "İnsanlara istinad edən əvəzlik." },
+  { q: "He … to be at home by seven o'clock.", type: "Choose the correct modal verb.", correct: "has to", hint: "'Has to' - məcburiyyət bildirir." },
+  { q: "1. a piece of advice 2. an advice 3. two advice 4. some advice", type: "Choose the correct variant.", correct: "1 and 4", hint: "'advice' sayılmayan isimdir → a piece of / some" },
+  { q: "1. get 2. go to 3. have a", type: "Match the halves.", correct: "1-c (up), 2-a (bed), 3-b (nap)", hint: "get up, go to bed, have a nap" },
+  { q: "My brother has toothache. He … eat candies.", type: "Choose the correct modal verb.", correct: "shouldn't", hint: "Diş ağrısı olan biri şirniyyat yeyə bilməz - tövsiyə." },
+  { q: "He is very … to other people – he listens when they have problems.", type: "Complete the sentence.", correct: "kind", hint: "Başqalarını dinləyən biri necədir?" },
+  { q: "… Thames is … second longest river in … Britain.", type: "Choose the correct article.", correct: "The / the / –", hint: "Çaylar the ilə işlənir, 'Britain' isə ölkə adı." },
+  { q: "1. Alice noticed 2. from 3. was coming 4. that 5. the next room 6. the noise", type: "Make up a sentence.", correct: "Alice noticed that the noise was coming from the next room.", hint: "Reported speech: noticed + that clause" },
+  { q: "Choose the line of nouns in the singular.", type: "Choose the correct variant.", correct: "watch, clock, gate", hint: "Bunların hamısı tək halda olan isimlərdir." },
+  { q: "I was really … to see her because I thought she was on holiday.", type: "Choose the correct variant.", correct: "surprised", hint: "Tətildə olduğunu düşündüyü birisini gördükdə necə hiss edir?" },
+  { q: "… south of Turkey is hotter than … north.", type: "Choose the correct article.", correct: "The / the", hint: "Cəhəti göstərən sözlər 'the' ilə işlənir." },
+  { q: "She was … because there was nothing to do.", type: "Choose the correct answer.", correct: "bored", hint: "Heç bir iş olmadıqda necə hiss edirik?" },
+  { q: "Mark … tennis while his sister … in the pool.", type: "Choose the correct tense form.", correct: "was playing, was swimming", hint: "Eyni vaxtda baş verən hərəkətlər → Past Continuous" },
+  { q: "The friends visit David every week.", type: "Choose the correct Passive Voice of the sentence.", correct: "David is visited by his friends every week.", hint: "Present Simple Passive: is/are + V3" },
+  { q: "It was too late and she … stay there any longer.", type: "Choose the correct modal verb.", correct: "couldn't", hint: "Geç idi, qala bilmirdi → couldn't (bacarmırdı)" },
+  { q: "The train stopped … the passengers began to get out.", type: "Choose the correct conjunction.", correct: "and", hint: "Ardıcıl hadisələri birləşdirən bağlayıcı." },
+  { q: "Diligence and honesty … his positive qualities.", type: "Choose the correct variant.", correct: "are", hint: "'Diligence and honesty' - iki şey → çoxluq → are" },
+  { q: "He's very … person – he is good at waiting calmly without getting angry.", type: "Complete the sentence.", correct: "patient", hint: "Sakit gözləyə bilmək xüsusiyyəti." },
+  { q: "someone who drives you where you want to go:", type: "Read the definition and complete the job.", correct: "driver", hint: "Sizi istədiyiniz yerə aparan kimdir?" },
+  { q: "She invited us round for a … meal.", type: "Choose the correct variant.", correct: "home-cooked", hint: "Evdə hazırlanmış yemək..." },
+  { q: "1. children 2. sitting 3. were 4. little 5. the 6. grass 7. on", type: "Make up a sentence.", correct: "The little children were sitting on the grass.", hint: "Subject + were + V-ing + prepositional phrase" },
+  { q: "I don't have … time to finish this exercise.", type: "Choose the correct variant.", correct: "much", hint: "'time' sayılmayan isimdir → much" },
+  { q: "Brain has a cough. He … drink cold drinks.", type: "Choose the correct modal verb.", correct: "shouldn't", hint: "Öskürəyi olan biri soyuq içki içməməlidir." },
+  { q: "The friends … to the forest every autumn.", type: "Choose the correct tense form.", correct: "go", hint: "'Every autumn' → Present Simple" },
+  { q: "… is the man with the long beard?", type: "Choose the correct variant.", correct: "Who", hint: "İnsanı soruşmaq üçün..." },
+  { q: "Choose the line of singular nouns.", type: "Choose the correct variant.", correct: "weather, money", hint: "'weather' və 'money' sayılmayan isimlərdir - həmişə tək formada." },
+  { q: "… was Pat so angry?", type: "Choose the correct variant.", correct: "Why", hint: "Niyə soruşulur (angry - niyə əsəbidir?)." },
+  { q: "Don't leave the house! It ... now.", type: "Choose the correct tense form.", correct: "is raining", hint: "İndi, danışıq anında baş verən hal → Present Continuous" },
+  { q: "... you sleepy?", type: "Choose the correct variant.", correct: "Are", hint: "'You' ilə 'to be' felinin hansı forması işlənir?" },
+  { q: "... is your favorite actor?", type: "Choose the correct variant.", correct: "Who", hint: "Bir insanı soruşmaq üçün..." },
+  { q: "Someone who drives you where you want to go:", type: "Read the definition and complete the job.", correct: "driver", hint: "Sizi aparan sürücü..." },
+  { q: "Tim's Birthday is .... May.", type: "Choose the correct preposition.", correct: "in", hint: "Ay adları ilə 'in' işlənir." },
+  { q: "The students often … skiing during winter vacation.", type: "Choose the correct tense form.", correct: "go", hint: "'Often' → Present Simple" },
+  { q: "How many delicious meals … … for dinner?", type: "Choose the correct variant.", correct: "are there", hint: "There is/are sual forması: Are there...?" },
+  { q: "… south of Turkey is hotter than … north.", type: "Choose the correct article.", correct: "The / the", hint: "Cəhətlər the ilə işlənir." },
+  { q: "1. lost 2. I 3. my pen 4. today 5. have", type: "Make up a sentence.", correct: "I have lost my pen today.", hint: "Present Perfect: I + have + V3" },
+  { q: "The Whites arrived in London … plane yesterday.", type: "Choose the correct preposition.", correct: "by", hint: "Nəqliyyat vasitəsi ilə: by plane/car/bus" },
+  { q: "beautiful-nice / fast-slow / low-high / ask-answer / finish-begin", type: "Which pairs are synonyms?", correct: "beautiful-nice", hint: "Sinonim = eyni mənalı sözlər" },
+  { q: "1. fall 2. feel 3. finish", type: "Match the words.", correct: "1-asleep, 2-tired, 3-work/school", hint: "fall asleep, feel tired, finish work/school" },
+  { q: "... a person who dances or whose profession is dancing.", type: "Who is she/he?", correct: "A dancer", hint: "Rəqs edən peşəkar..." },
+  { q: "head / eyes / swim / mouth", type: "Choose the odd-one out.", correct: "swim", hint: "Digər sözlər bədən hissələridir." },
+  { q: "... a strong wind yesterday.", type: "Complete the sentence.", correct: "There was", hint: "Keçmişdə bir şeyin mövcud olması: There was..." },
+  { q: "I have to solve ... problems.", type: "Choose the correct variant.", correct: "some", hint: "Müsbət cümlələrdə: some" },
+  { q: "Shaki is one of the ... towns of Azerbaijan.", type: "Choose the correct variant.", correct: "most beautiful", hint: "Üstünlük dərəcəsi: one of the most + adjective" },
+  { q: "I ... carry my bag. It was very heavy.", type: "Choose the correct variant.", correct: "couldn't", hint: "Keçmişdə bacarmamaq: couldn't" },
+  { q: "I ... my friends in Canada three years ago.", type: "Choose the correct tense form.", correct: "visited/met", hint: "'Three years ago' → Past Simple" },
+  { q: "… Ben … TV in the evening yesterday?", type: "Choose the correct tense form.", correct: "Did ... watch", hint: "Past Simple sual: Did + subject + V1" },
+  { q: "... a good film on TV last night.", type: "Choose the correct variant.", correct: "There was", hint: "Keçmişdə mövcudluq: There was..." },
+  { q: "- … do you have Physical Education? - On Monday.", type: "Choose the correct interrogative word.", correct: "When", hint: "Monday - günü bildirir → vaxt soruşulur" },
+  { q: "Someone who cook food in a restaurant.", type: "Read the definition and complete the job.", correct: "cook", hint: "Restoranda aşpaz..." },
+  { q: "I was born .... 1996.", type: "Choose the correct preposition.", correct: "in", hint: "İl ilə 'in' işlənir." },
+  { q: "Where … you buy your shirt?", type: "Choose the correct answer.", correct: "did", hint: "Past Simple sual → did" },
+  { q: "They … at the school.", type: "Choose the correct variant.", correct: "are", hint: "'They' ilə 'to be' felinin forması." },
+  { q: "I saw … elephant in … Zoo.", type: "Choose the correct article.", correct: "an / the", hint: "elephant - sait ilə başlayır → an; Zoo - müəyyən yer → the" },
+  { q: "1. quite 2. building 3. that 4. was 5. ancient", type: "Make up a sentence.", correct: "That building was quite ancient.", hint: "Subject + verb + predicate" },
+  { q: "Foreign language courses … popular among students.", type: "Choose the correct variant.", correct: "are", hint: "'Courses' çoxluqdur → are" },
+  { q: "dislike-hate / poor-rich / fast-quick / modern-new / let-allow", type: "Choose the correct antonyms.", correct: "poor-rich", hint: "Antonym = əks mənalı sözlər" },
+  { q: "1. to have 2. to go 3. to write", type: "Match the halves.", correct: "1-children, 2-abroad, 3-a book", hint: "have children, go abroad, write a book" },
+  { q: ".... is the creative leads of the film.", type: "Who is she/he?", correct: "The Director / Producer", hint: "Filmin yaradıcı rəhbərliyi..." },
+  { q: "Can .... tell me how much your children watch TV?", type: "Choose the correct pronoun.", correct: "you", hint: "Müraciət şəxsə → you" },
+  { q: "I didn't want... soup.", type: "Choose the correct variant.", correct: "any", hint: "Mənfi cümlədə: any" },
+  { q: "Anar was ... among the boys.", type: "Choose the correct adjectives.", correct: "the best", hint: "Üstünlük dərəcəsi: the best" },
+  { q: "I ... play the piano well when I was young.", type: "Choose the correct variant.", correct: "could", hint: "Keçmişdə bacarıq: could" },
+  { q: "My father ... a new car last week.", type: "Choose the correct tense form.", correct: "bought", hint: "'Last week' → Past Simple. buy → bought" },
+  { q: "- What are the boys doing here? - They ... chess.", type: "Choose the correct tense form.", correct: "are playing", hint: "İndi davam edən hal → Present Continuous" },
+  { q: "Do you love your father?", type: "Choose the correct synonym.", correct: "Like", hint: "love = like (sinonim)" },
+  { q: "... is that man over there?", type: "Choose the correct variant.", correct: "Who", hint: "İnsanı soruşmaq üçün..." },
+  { q: "Someone who works with languages:", type: "Read the definition and complete the job.", correct: "linguist", hint: "Dilçi, dil mütəxəssisi..." },
+  { q: "Those dogs … hungry.", type: "Choose the correct variant.", correct: "are", hint: "'Those dogs' çoxluqdur → are" },
+  { q: "Bruce … only three photographs yesterday.", type: "Choose the correct tense form.", correct: "took", hint: "'Yesterday' → Past Simple" },
+  { q: "… … red and yellow flowers in the park.", type: "Choose the correct article.", correct: "There are", hint: "Çoxluq + mövcudluq: There are..." },
+  { q: "This is … best Mexican restaurant in … country.", type: "Choose the correct article.", correct: "the / the", hint: "Üstünlük dərəcəsi + yer adı: the" },
+  { q: "1. are 2. flowers 3. beautiful 4. very 5. those", type: "Make up a sentence.", correct: "Those flowers are very beautiful.", hint: "Subject + verb + predicate" },
+  { q: "Have you got a cat? Yes, … .", type: "Choose the correct variant.", correct: "I have", hint: "Have you got → short answer: Yes, I have" },
+  { q: "1. to buy 2. to dress 3. to eat", type: "Match the halves.", correct: "1-flowers, 2-up, 3-out", hint: "buy flowers, dress up, eat out" },
+  { q: "....a person who plays a musical instrument.", type: "Who is she/he?", correct: "A musician", hint: "Musiqi aləti çalan..." },
+  { q: "Bill and Tom are going to a balloon party. .... are making masks and posters.", type: "Choose the correct pronouns.", correct: "They", hint: "İki nəfər → They" },
+  { q: "Jim could answer ... questions.", type: "Choose the correct variant.", correct: "many / all", hint: "Sayıla bilən çoxluq → many" },
+  { q: "In autumn it is ... than in summer.", type: "Choose the correct adjective.", correct: "colder", hint: "Müqayisə dərəcəsi: cold → colder" },
+  { q: "Can you help me? -I'm sorry I ... .", type: "Choose the correct variant.", correct: "can't", hint: "Bacarmamaq → can't" },
+  { q: "We ………in Chicago some years ago.", type: "Choose the correct Tense Form.", correct: "were / lived", hint: "'Some years ago' → Past Simple" },
+  { q: "Larisa's sisters are waiting for their dad.", type: "Choose the correct pronouns.", correct: "Their / him", hint: "Qızların atası → their (onların), dad → him" },
+  { q: "My uncle has a dog. His name is Max. Max never leaves him. He was a very … dog.", type: "Choose correct variant.", correct: "friendly", hint: "Sahibini tərk etməyən köpək necədir?" },
+  { q: "1. much water 2. many water 3. the girl's idea 4. the girls's ideas 5. many book", type: "Choose the correct variant.", correct: "much water / the girl's idea", hint: "water → uncountable → much; possessive: girl's" },
+  { q: "Last year Mr. Black … a millionaire, but now he … a poor man.", type: "Choose the correct tense form.", correct: "was ... is", hint: "Last year → Past Simple; now → Present Simple" },
+  { q: "Choose the line of the nouns. (water, danger, litter)", type: "Choose the correct variant.", correct: "water, danger, litter", hint: "Bunlar isimlər sırasına aiddir." },
+  { q: "How many delicious meals … … for dinner?", type: "Choose the correct variant.", correct: "are there", hint: "There is/are sual: Are there...?" },
+  { q: "close-near / empty-full / fat-heavy / honest-reliable", type: "Choose the correct pair of antonyms.", correct: "empty-full", hint: "Antonym: əks mənalı cütlər." },
+  { q: "1. quite 2. building 3. that 4. was 5. ancient", type: "Make up a sentence.", correct: "That building was quite ancient.", hint: "Subject + adverb + adjective" },
+  { q: "We have very … money left.", type: "Choose the correct variant.", correct: "little", hint: "money → uncountable → little (az)" },
+  { q: "Nick will write his essay as soon as he … his work.", type: "Choose the correct tense form.", correct: "finishes", hint: "'As soon as' zaman budaq cümləsindən sonra Present Simple" },
+  { q: "… you … see an action movie tomorrow night?", type: "Choose the correct variant.", correct: "Will you", hint: "Gələcək vaxt sual: Will + subject + V1?" },
+  { q: "She will … the gym every morning.", type: "Choose the correct variant.", correct: "go to", hint: "'go to the gym' - getmək" },
+  { q: "Sam … go to the party because he was too busy.", type: "Choose the correct modal verb.", correct: "couldn't", hint: "Keçmişdə bacarmamaq: couldn't" },
+  { q: "She cooked the dinner in the afternoon.", type: "Change the sentence into Passive.", correct: "The dinner was cooked in the afternoon.", hint: "Past Simple Passive: was/were + V3" },
+  { q: "A lot of boys are interested … cars.", type: "Choose the correct preposition.", correct: "in", hint: "interested in = maraqlanmaq" },
+  { q: "The children organized the party all by … .", type: "Choose the correct pronoun.", correct: "themselves", hint: "Uşaqlar özləri etdilər → themselves" },
+  { q: "How much grass … for this cow?", type: "Choose the correct option.", correct: "is needed", hint: "Passive + uncountable → is needed" },
+  { q: "My brother … play the guitar very well, but my sister … .", type: "Choose the correct modal verbs.", correct: "can ... can't", hint: "Bacarıq: can; bacarmamaq: can't" },
+  { q: "1. breakfast 2. my brother 3. at 7 a.m. 4. eats 5. always 6. in the dining room", type: "Make up a sentence.", correct: "My brother always eats breakfast at 7 a.m. in the dining room.", hint: "Subject + adverb + verb + object + time + place" },
+  { q: "Choose the correct pair of derivative nouns. (freedom, imagination)", type: "Choose the correct variant.", correct: "freedom, imagination", hint: "Şəkilçi ilə düzəlmiş isimlər: freedom (-dom), imagination (-tion)" },
+  { q: "They built the station many years ago.", type: "Choose the correct sentence in the Passive Voice.", correct: "The station was built many years ago.", hint: "Past Simple Passive: was/were + V3" },
+  { q: "The weather today is very cold.", type: "Choose the antonym of the underlined word.", correct: "hot", hint: "cold-un antonimidir." },
+  { q: "- Who … some apple pie? - We would.", type: "Choose the correct variant.", correct: "would like", hint: "Formal təklif: would like" }
+];
+
+function getWrongOptions(correct) {
+  const pools = [
+    ["dishonest","friendly","talkative","generous","lazy","patient","rude","shy"],
+    ["can","will","should","must","may","might","need","would","had to","could"],
+    ["How much","How many","How far","How often","How old","What","Why","Where","Who"],
+    ["did","do","does","is","was","were","have","has","will","would"],
+    ["a","an","the","– (no article)","a / a","the / a","an / a","– / the"],
+    ["but","or","because","although","when","if","while","as","so that"],
+    ["was playing","played","plays","has played","is playing","had played"],
+    ["is raining","rains","rained","has rained","will rain","was raining"],
+    ["her","his","their","our","your","its","my"],
+    ["surprised","bored","excited","angry","upset","tired","happy","sad","nervous"],
+    ["in","on","at","by","for","with","from","to","of","about"],
+    ["much","many","some","any","few","little","a lot of","plenty of"],
+    ["are","is","was","were","have","has","do","does"],
+    ["cook","chef","waiter","manager","owner","barista","driver","linguist","teacher","doctor","dancer","musician"],
+    ["They","We","He","She","I","You","It"],
+    ["go to","goes to","went to","going to","to go","gone to"],
+    ["could","can't","might","should","must","would","couldn't","needn't"],
+    ["will you","do you","are you","did you","have you","can you","should you"],
+    ["themselves","yourself","himself","herself","ourselves","itself"],
+    ["much water","many books","some children","any advice","little money"],
+    ["Who","What","Where","Why","When","Which","How","Whose"],
+    ["most beautiful","more beautiful","beautifuler","the beautifuler","most beauty"],
+    ["was / is","is / was","were / are","are / were","has been / is"],
+    ["friendly","lazy","angry","shy","nervous","excited","bored"],
+    ["finishes","will finish","finished","has finished","finish","finishing"],
+    ["colder","more cold","coldest","most cold","as cold"],
+    ["hot","cold","warm","cool","freezing","icy"],
+    ["There was","There were","There is","There are","There has been"],
+    ["I have","I do","I did","Yes, I do","Yes, I can","Of course"],
+    ["in","on","at","by","since","for","during","from"],
+    ["can't","shouldn't","wouldn't","mustn't","couldn't","needn't"],
+  ];
+  const c = correct.toLowerCase();
+  let pool;
+  if (c.includes("was") && c.includes("is")) pool = pools[22];
+  else if (c === "hot") pool = pools[26];
+  else if (c.includes("there was") || c.includes("there were")) pool = pools[27];
+  else if (c === "i have") pool = pools[28];
+  else if (c === "finishes") pool = pools[24];
+  else if (c === "colder") pool = pools[25];
+  else if (c === "themselves" || c === "yourself" || c === "himself") pool = pools[18];
+  else if (c === "will you") pool = pools[17];
+  else if (c === "could" || c === "couldn't" || c === "can't" || c === "shouldn't" || c === "should" || c === "has" || c === "has to") pool = pools[1];
+  else if (c === "in" || c === "on" || c === "at" || c === "by" || c === "for") pool = pools[10];
+  else if (c === "much" || c === "many" || c === "some" || c === "any" || c === "little" || c === "few") pool = pools[11];
+  else if (c === "are" || c === "is" || c === "was" || c === "were" || c === "have" || c === "has") pool = pools[12];
+  else if (c === "who" || c === "what" || c === "where" || c === "why" || c === "when" || c === "which" || c === "how") pool = pools[20];
+  else if (c === "did" || c === "do" || c === "does") pool = pools[3];
+  else if (c.includes("honest") || c.includes("hardwork") || c.includes("patient") || c.includes("kind") || c.includes("friendly") || c.includes("bored") || c.includes("surprised") || c.includes("upset")) pool = [...pools[0], ...pools[9]];
+  else if (c.includes("the") || c.includes("an") || c.includes("–")) pool = pools[4];
+  else if (c === "and" || c === "so" || c === "but" || c === "or") pool = pools[5];
+  else if (c.includes("cook") || c.includes("doctor") || c.includes("linguist") || c.includes("driver") || c.includes("dancer") || c.includes("musician")) pool = pools[13];
+  else if (c === "they" || c === "we" || c === "he" || c === "she" || c === "her" || c === "him") pool = pools[14];
+  else if (c.includes("go to") || c.includes("goes")) pool = pools[15];
+  else if (c.includes("most beautiful")) pool = pools[21];
+  else pool = pools[Math.floor(Math.random() * pools.length)];
+  const filtered = pool.filter(w => w.toLowerCase() !== c);
+  return filtered.sort(() => Math.random() - 0.5).slice(0, 3);
+}
+
+let questions = [];
+let current = 0;
+let answers = {};
+// Store shuffled options per question so they don't re-shuffle on re-render
+let questionOpts = {};
+
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+function init() {
+  questions = allQuestions.map((q, i) => ({ ...q, originalIndex: i }));
+  current = 0;
+  answers = {};
+  questionOpts = {};
+  render();
+}
+
+function render() {
+  if (current >= questions.length) { showResults(); return; }
+  const q = questions[current];
+  document.getElementById('qNumber').textContent = `Sual ${current + 1} / ${questions.length}`;
+  document.getElementById('qType').textContent = q.type;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressInfo').textContent = `Sual ${current + 1} / ${questions.length}`;
+  document.getElementById('progressBar').style.width = ((current + 1) / questions.length * 100) + '%';
+
+  // Reset hint
+  const hintBox = document.getElementById('hintBox');
+  hintBox.innerHTML = q.hint + '<div class="correct-answer-line">✓ Düzgün cavab: ' + q.correct + '</div>';
+  hintBox.className = 'hint-box';
+
+  // Build options (stable per question)
+  if (!questionOpts[current]) {
+    const wrongs = getWrongOptions(q.correct);
+    questionOpts[current] = shuffle([q.correct, ...wrongs.slice(0, 3)]);
+  }
+  const opts = questionOpts[current];
+
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const answered = answers[current];
+
+  opts.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[idx]}</span><span>${opt}</span>`;
+    if (answered) {
+      btn.disabled = true;
+      if (opt === q.correct) btn.classList.add('correct');
+      else if (opt === answered.chosen) btn.classList.add('wrong');
+    } else {
+      btn.onclick = () => chooseAnswer(opt, q.correct);
+    }
+    grid.appendChild(btn);
+  });
+
+  const status = document.getElementById('answerStatus');
+  if (answered) {
+    status.innerHTML = answered.correct
+      ? '<span class="status-badge badge-answered">✓ Düzgün</span>'
+      : '<span class="status-badge badge-skipped">✗ Səhv</span>';
+  } else {
+    status.innerHTML = '';
+  }
+
+  document.getElementById('prevBtn').disabled = current === 0;
+  const isLast = current === questions.length - 1;
+  document.getElementById('nextBtn').disabled = isLast && !answered;
+  document.getElementById('nextBtn').textContent = isLast ? 'Nəticə →' : 'İrəli →';
+}
+
+function chooseAnswer(chosen, correct) {
+  const isCorrect = chosen.trim().toLowerCase() === correct.trim().toLowerCase();
+  answers[current] = { chosen, correct: isCorrect };
+  if (isCorrect) {
+    playTone(880, 0.15, 'sine');
+    setTimeout(() => playTone(1100, 0.1, 'sine'), 150);
+  } else {
+    playTone(200, 0.2, 'sawtooth');
+    setTimeout(() => playTone(150, 0.15, 'sawtooth'), 150);
+  }
+  render();
+}
+
+function playTone(freq, duration, type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(); osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0) return;
+  if (next >= questions.length) { showResults(); return; }
+  current = next;
+  render();
+}
+
+function showHint() {
+  document.getElementById('hintBox').classList.toggle('visible');
+}
+
+function showResults() {
+  const total = questions.length;
+  const correctCount = Object.values(answers).filter(a => a.correct).length;
+  const wrong = Object.entries(answers).filter(([, a]) => !a.correct);
+  const unanswered = total - Object.keys(answers).length;
+  document.getElementById('mainContent').innerHTML = `
+    <div class="results-card">
+      <h2>🏁 İmtahan Tamamlandı!</h2>
+      <div class="score-circle">
+        <div class="big">${correctCount}/${total}</div>
+        <div class="small">${Math.round(correctCount/total*100)}%</div>
+      </div>
+      <p style="color:#546e7a;font-size:1rem;margin-bottom:8px;">
+        ✅ Düzgün: <b style="color:#2e7d32">${correctCount}</b> &nbsp;
+        ❌ Səhv: <b style="color:#c62828">${wrong.length}</b> &nbsp;
+        ⬜ Cavabsız: <b style="color:#e65100">${unanswered}</b>
+      </p>
+      ${wrong.length > 0 ? `
+      <div class="wrong-list">
+        <h3>❌ Səhv Cavablandırılan Suallar</h3>
+        ${wrong.map(([idx, a]) => `
+          <div class="wrong-item">
+            <strong>Sual ${parseInt(idx)+1}:</strong> ${questions[idx].q}<br>
+            Sizin cavabınız: <span style="color:#c62828">${a.chosen}</span><br>
+            <span class="correct-ans">✓ Düzgün cavab: ${questions[idx].correct}</span>
+          </div>
+        `).join('')}
+      </div>` : '<p style="color:#2e7d32;font-size:1.1rem;margin-top:16px;">🎉 Bütün suallara düzgün cavab verdiniz!</p>'}
+      <button class="restart-btn" onclick="restartExam()">🔄 Yenidən Başla</button>
+    </div>
+  `;
+}
+
+function restartExam() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="question-card" id="questionCard">
+      <div class="q-number" id="qNumber"></div>
+      <div class="q-type" id="qType"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="hint-row">
+        <button class="hint-btn" onclick="showHint()">💡 İpucu</button>
+      </div>
+      <div class="hint-box" id="hintBox"></div>
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="nav-row">
+        <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Geri</button>
+        <span id="answerStatus"></span>
+        <button class="nav-btn" id="nextBtn" onclick="navigate(1)">İrəli →</button>
+      </div>
+    </div>
+  `;
+  init();
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
