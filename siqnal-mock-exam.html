@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>📡 Siqnal Kolleksiyası — Mock İmtahan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0f1e;--card:#111827;--border:rgba(255,255,255,0.07);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,0.15);
+  --green:#22c55e;--green-dim:rgba(34,197,94,0.18);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.18);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.15);
+  --text:#f1f5f9;--muted:#94a3b8;
+}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(59,130,246,0.15),transparent);
+  color:var(--text);min-height:100vh;
+}
+#app{display:flex;flex-direction:column;align-items:center;padding:0 0 60px}
+
+/* ── HEADER ── */
+.header{width:100%;max-width:720px;padding:20px 20px 0}
+.header-title{
+  font-size:15px;font-weight:700;color:#93c5fd;
+  letter-spacing:.04em;text-transform:uppercase;
+  text-align:center;margin-bottom:14px;
+}
+.progress-track{background:rgba(255,255,255,.08);border-radius:99px;height:6px;overflow:hidden;margin-bottom:8px}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#818cf8);border-radius:99px;transition:width .4s ease}
+.progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+
+/* ── CARD ── */
+.card{
+  width:100%;max-width:720px;margin:18px 20px 0;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:24px 22px;
+  transition:border-color .3s;
+}
+.q-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748b;letter-spacing:.08em;margin-bottom:10px}
+.q-text{font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;color:#e2e8f0;font-weight:500}
+
+/* ── OPTIONS ── */
+.options{width:100%;max-width:720px;margin:10px 20px 0;display:flex;flex-direction:column;gap:10px}
+.opt-btn{
+  width:100%;text-align:left;padding:14px 18px;
+  border-radius:14px;border:1.5px solid var(--border);
+  background:rgba(255,255,255,.03);color:var(--text);
+  cursor:pointer;font-family:'Space Grotesk',sans-serif;
+  font-size:13.5px;line-height:1.5;transition:all .18s ease;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.opt-btn:hover:not(:disabled){
+  background:rgba(59,130,246,.08);
+  border-color:rgba(59,130,246,.35);
+  transform:translateX(3px);
+}
+.opt-btn.correct{background:var(--green-dim)!important;border-color:var(--green)!important;color:#bbf7d0}
+.opt-btn.wrong{background:var(--red-dim)!important;border-color:var(--red)!important;color:#fecaca}
+.opt-btn:disabled{cursor:default}
+.opt-label{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  font-weight:600;color:#475569;flex-shrink:0;margin-top:1px;transition:color .18s;
+}
+.opt-btn.correct .opt-label{color:var(--green)}
+.opt-btn.wrong .opt-label{color:var(--red)}
+
+/* ── HINT ── */
+.hint-row{width:100%;max-width:720px;margin:12px 20px 0;display:flex;flex-direction:column;gap:10px}
+.hint-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--amber-dim);border:1px solid rgba(245,158,11,.3);
+  border-radius:10px;padding:9px 16px;color:#fcd34d;
+  font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .18s;font-family:'Space Grotesk',sans-serif;width:fit-content;
+}
+.hint-btn:hover{background:rgba(245,158,11,.25)}
+.hint-box{
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+  border-radius:12px;padding:14px 16px;color:#fde68a;
+  font-size:13.5px;line-height:1.6;
+  animation:fadeIn .25s ease;
+}
+.hint-box strong{color:#fbbf24}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAVIGATION ── */
+.nav-row{width:100%;max-width:720px;margin:16px 20px 0;display:flex;gap:10px}
+.nav-btn{
+  flex:1;padding:13px;border-radius:14px;
+  border:1.5px solid var(--border);
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all .18s;color:var(--text);
+}
+.nav-btn.prev{background:rgba(255,255,255,.04)}
+.nav-btn.prev:hover:not(:disabled){background:rgba(255,255,255,.08)}
+.nav-btn.next{background:var(--blue);border-color:var(--blue);color:#fff}
+.nav-btn.next:hover{background:#2563eb}
+.nav-btn.finish{background:linear-gradient(135deg,#059669,#10b981);border-color:#10b981;color:#fff}
+.nav-btn.finish:hover{background:linear-gradient(135deg,#047857,#059669)}
+.nav-btn:disabled{opacity:.28;cursor:not-allowed}
+
+.quick-finish{
+  width:100%;max-width:720px;margin:10px 20px 0;
+  background:rgba(139,92,246,.1);border:1px dashed rgba(139,92,246,.35);
+  border-radius:12px;padding:10px;text-align:center;
+  font-size:13px;color:#c4b5fd;cursor:pointer;
+  transition:all .18s;font-family:'Space Grotesk',sans-serif;
+}
+.quick-finish:hover{background:rgba(139,92,246,.18)}
+
+/* ── RESULTS ── */
+#result{
+  display:none;flex-direction:column;align-items:center;
+  padding:40px 20px;width:100%;
+  background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(34,197,94,.1),transparent);
+}
+.score-circle{
+  width:160px;height:160px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:4px solid;margin:0 auto 24px;
+}
+.score-num{font-size:42px;font-weight:700;line-height:1}
+.score-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.grade-badge{
+  display:inline-block;padding:6px 20px;border-radius:99px;
+  font-size:15px;font-weight:700;letter-spacing:.04em;margin-bottom:28px;
+}
+.stats-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;
+  width:100%;max-width:500px;margin-bottom:24px;
+}
+.stat-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px 12px;text-align:center;
+}
+.stat-val{font-size:26px;font-weight:700}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.retry-btn{
+  background:var(--blue);border:none;border-radius:14px;
+  padding:14px 40px;color:#fff;font-size:15px;font-weight:700;
+  cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .18s;
+}
+.retry-btn:hover{background:#2563eb}
+.breakdown-list{
+  width:100%;max-width:500px;margin-top:28px;
+  display:flex;flex-direction:column;gap:8px;
+  max-height:420px;overflow-y:auto;padding-right:4px;
+}
+.breakdown-item{
+  background:var(--card);border-radius:10px;padding:10px 14px;
+  font-size:12.5px;display:flex;align-items:flex-start;gap:10px;border-left:3px solid;
+}
+.breakdown-item.ok{border-color:var(--green)}
+.breakdown-item.fail{border-color:var(--red)}
+.breakdown-item.skip{border-color:#475569}
+.bd-num{color:var(--muted);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.bd-text{color:#cbd5e1;line-height:1.4}
+.bd-you{color:#fca5a5;font-size:12px;margin-top:3px}
+.bd-correct{color:#86efac}
+.bd-ok{color:#86efac;font-size:12px;margin-top:3px}
+.bd-skip{color:#64748b;font-size:12px;margin-top:3px}
+h2.result-title{font-size:22px;font-weight:700;margin-bottom:6px}
+p.result-sub{color:#94a3b8;font-size:13px;margin-bottom:24px}
+.result-emoji{font-size:36px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- EXAM SCREEN -->
+  <div id="exam">
+    <div class="header">
+      <div class="header-title">📡 Siqnal Kolleksiyası — Mock İmtahan</div>
+      <div class="progress-track"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+      <div class="progress-meta">
+        <span id="qCounter">Sual 1 / 75</span>
+        <span id="answeredCount">Cavablandı: 0 / 75</span>
+      </div>
+    </div>
+
+    <div class="card" id="qCard">
+      <div class="q-num" id="qNum">SUAL 1</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options" id="optionsWrap"></div>
+
+    <div class="hint-row">
+      <button class="hint-btn" id="hintBtn" onclick="toggleHint()">🔔 İpucunu göstər</button>
+      <div class="hint-box" id="hintBox" style="display:none"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn prev" id="prevBtn" onclick="goTo(currentQ-1)" disabled>← Əvvəlki</button>
+      <button class="nav-btn next" id="nextBtn" onclick="goTo(currentQ+1)">Növbəti →</button>
+    </div>
+
+    <button class="quick-finish" id="quickFinish" style="display:none" onclick="showResult()">
+      Nəticəyə bax →
+    </button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result">
+    <div class="result-emoji" id="rEmoji"></div>
+    <h2 class="result-title">İmtahan Nəticəsi</h2>
+    <p class="result-sub">Siqnal Kolleksiyası Mock İmtahan</p>
+    <div class="score-circle" id="scoreCircle">
+      <span class="score-num" id="scorePct"></span>
+      <span class="score-sub" id="scoreFrac"></span>
+    </div>
+    <div class="grade-badge" id="gradeBadge"></div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val" id="sCorrect" style="color:#22c55e"></div><div class="stat-lbl">Düzgün</div></div>
+      <div class="stat-box"><div class="stat-val" id="sWrong" style="color:#ef4444"></div><div class="stat-lbl">Səhv</div></div>
+      <div class="stat-box"><div class="stat-val" id="sSkip" style="color:#94a3b8"></div><div class="stat-lbl">Buraxılan</div></div>
+    </div>
+    <button class="retry-btn" onclick="restart()">🔄 Yenidən Başla</button>
+    <div class="breakdown-list" id="breakdown"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   SOUND
+════════════════════════════════════════ */
+function playSound(type){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    if(type==="correct"){
+      osc.type="sine";
+      osc.frequency.setValueAtTime(523,ctx.currentTime);
+      osc.frequency.setValueAtTime(659,ctx.currentTime+.12);
+      osc.frequency.setValueAtTime(784,ctx.currentTime+.25);
+      gain.gain.setValueAtTime(.35,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.65);
+      osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.65);
+    }else if(type==="wrong"){
+      osc.type="square";
+      osc.frequency.setValueAtTime(220,ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(90,ctx.currentTime+.4);
+      gain.gain.setValueAtTime(.2,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.5);
+      osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.5);
+    }else{
+      osc.type="sine";
+      osc.frequency.setValueAtTime(880,ctx.currentTime);
+      osc.frequency.setValueAtTime(1100,ctx.currentTime+.07);
+      gain.gain.setValueAtTime(.12,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.22);
+      osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.22);
+    }
+  }catch(e){}
+}
+
+/* ════════════════════════════════════════
+   DATA
+════════════════════════════════════════ */
+const RAW=[
+  {q:"Aşağıda verilənlərdən hansı etibarlılıq göstəricisidir?",a:"Sistemdə qurğuların imtina intensivliyi; imtina zamanı bərpa olunma müddəti"},
+  {q:"Aşağıda verilənlərdən hansı etibarlılıq göstəricisidir?",a:"İmtinalarary işləmə müddəti; Sistemin hazırlıq müddəti; imtinaya qarşı dayanıqlılıq müddəti"},
+  {q:"ηe.e = Ri · Ps · Pm — ifadəsi nəyi göstərir?",a:"TK sistemlərinin energetik effektivliyi"},
+  {q:"Uf = UΩ · cos(πφ₀ · t) — ifadəsi nəyi göstərir?",a:"Aşağı tezlikli faydalı məlumat daşıyan siqnal"},
+  {q:"m = (Umax − Umin) / (Umax + Umin) < 1 — ifadəsi nəyi göstərir?",a:"Modulyasiya dərinlik əmsalı"},
+  {q:"∆ω = KTM · UΩ — ifadəsi nəyi göstərir?",a:"Tezlik dəyişməsinin qiyməti"},
+  {q:"MFN = ∆φ  və ya  MFM = KFM · UΩ — ifadəsi nəyi göstərir?",a:"Fazanın maksimal dəyişməsi — faza modulyasiyası (FM)"},
+  {q:"1/ω₀C ≪ R ≪ 1/ΩC;  R = Ry — ifadəsi nəyi göstərir?",a:"Süzgəcin elementlərinin seçilməsi"},
+  {q:"S · Ry ≫ 1,  Ry > Rd.düz — ifadəsi nəyi göstərir?",a:"Detektor sxeminin normal işləməsi üçün ödənilməli bərabərsizlik"},
+  {q:"f(t) = Σ h⁺(t − nT) — ifadəsi nəyi göstərir?",a:"Ardıcıl və periodik radio impuls — impuls ardıcıllığının riyazi modeli"},
+  {q:"Aşağıda verilənlərdən hansı impuls modulyasiyasının növüdür?",a:"AIM, TIM, FIM — impuls modulyasiyası; impuls kod modulyasiyası"},
+  {q:"Aşağıda verilənlərdən hansı impuls modulyasiyasının növüdür?",a:"İmpuls kod, enine impuls, amplitud impuls, tezlik impuls, faza impuls modulyasiyası"},
+  {q:"İmpuls modulyasiyası hansı kriteriyaya malik olmalıdır?",a:"Energetik xərclər, maneə davamlılıq, kanal avadanlıqlarının mürəkkəbliyi"},
+  {q:"∆tk = 1/(2 · Fy) = 1/(2 · Fmax) — ifadəsi nəyi göstərir?",a:"Kvantlama addımı"},
+  {q:"Rmax = n · logm / TD = Fd · n · logm — ifadəsi nəyi göstərir?",a:"Maksimal informasiya ötürmə sürəti"},
+  {q:"Keyfiyyətin verilişini təmin etmək üçün hansı şərt ödənilməlidir?",a:"Vk > Vs"},
+  {q:"Telefon trafiki üçün aktivlik əmsalı nə qədər götürülür?",a:"0,25 − 0,35"},
+  {q:"P(nT) = (mⁿ/n!) · e⁻ᵐ — ifadəsi nəyi göstərir?",a:"Fotonun daxil olma ehtimalı"},
+  {q:"Optik kanallarda sönmənin qiyməti nə qədər götürülür?",a:"0,45 − 0,22 dB/km"},
+  {q:"Birmodlu veriliş üsulunda dalğa uzunluğunun qiyməti nə qədər götürür?",a:"1,31 – 1,55 mkm"},
+  {q:"Çoxmodlu veriliş üsulunda dalğa uzunluğunun qiyməti nə qədər götürülür?",a:"0,85 − 1,30 mkm"},
+  {q:"λ = c / f — ifadəsi nəyi göstərir?",a:"Dalğa uzunluğu (tezlikdən asılı olaraq)"},
+  {q:"NK < ∆FK / ∆FS — ifadəsi nəyi göstərir?",a:"Tezlik sıxlaşdırması zamanı bir-birinə maneə törətmədən ötürülməsi şərti"},
+  {q:"ηi.e = R1/Cmax = ημe · ηke · ηm — ifadəsi nəyi göstərir?",a:"TK sistemlərinin informasiya-energetik effektivliyi"},
+  {q:"Peyk rabitə xətləri hansı diapazonda işləyir?",a:"Santimetrlə ölçülən diapazonda"},
+  {q:"Aşağıda verilənlərdən hansı etibarlılıq göstəricisidir? (Ts — bərpa)",a:"Ts — sistemin orta bərpa müddəti"},
+  {q:"Aşağıda verilənlərdən hansı etibarlılıq göstəricisidir? (Ts — hazırlıq)",a:"Ts — sistemin iş qabiliyyəti (hazırlıq) əmsalı"},
+  {q:"ηt.e = Ri / ∆F — ifadəsi nəyi göstərir?",a:"Texniki effektivlik"},
+  {q:"∆CXB = log₂(1 + Ps/Pm) — ifadəsi nəyi göstərir?",a:"Rabitə sistemlərinin xüsusi buraxma qabiliyyəti (Şenonun düsturu)"},
+  {q:"UA.M = U₀[1 + m · cosΩt] · cos(ω₀t + φ₀) — ifadəsi nəyi göstərir?",a:"AM siqnalının rəqsinin tezliyi"},
+  {q:"B(t) = UΩ · cosΩt;  ω = ω₀ + ∆ω · cosΩt — ifadəsi nəyi göstərir?",a:"Modullaşdırıcı siqnalin monoharmonik ifadəsi"},
+  {q:"M(t) = ∆ω / Ω — ifadəsi nəyi göstərir?",a:"Tezlik modulyasiya indeksi"},
+  {q:"Detektəetmə prosesi nədir?",a:"Demodulyasiya prosesi"},
+  {q:"R ≫ 1/ω₀C;  R ≪ 1/ΩC — ifadəsi nəyi göstərir?",a:"Tezlik süzgəcinin elementlərinin münasibətləri"},
+  {q:"UC1X(t) = S·R/π · KA·M · tb(t) — ifadəsi nəyi göstərir?",a:"Xətti detektorun çıxış gərginliyi"},
+  {q:"Analoq siqnalların rəqəm formasına çevrilməsi üçün hansı mərhələ vacibdir?",a:"Diskretləşdirmə, kvantlaşma, kodlaşdırma"},
+  {q:"Aşağıda verilənlərdən hansı impuls modulyasiyasının növüdür? (enine)",a:"Enine impuls modulyasiya; AIM, FIM, TIM, impuls kod modulyasiyası"},
+  {q:"İmpuls modulyasiyası hansı kriteriyaya malik olmalıdır? (ts-13)",a:"ts-13 standartı: 6,8 kHz takt tezliyi"},
+  {q:"Danışıq siqnalları üçün diskretləmə tezliyinin qiyməti nə qədərdi?",a:"8 kHz (0,3 − 3,4 kHz)"},
+  {q:"f(t) = Fd · M · NE — ifadəsi nəyi göstərir?",a:"Qrup rəqəm siqnallarının takt tezliyi"},
+  {q:"Vk = De · Fk · Tk — ifadəsi nəyi göstərir?",a:"Rabitə kanallarının həcmi"},
+  {q:"Ck = ηk · ∆FK · lg(1 + Porta/PM) — ifadəsi nəyi göstərir?",a:"Kanalın informasiya buraxma qabiliyyəti"},
+  {q:"Diskretləşmə tezliyinin qiyməti (danışıq siqnalları üçün) nə qədər götürülür?",a:"6,8 kHz"},
+  {q:"Optik dalğaların dalğa uzunluğu nə qədər götürülür?",a:"0,85 − 1,55 mkm"},
+  {q:"Veriliş üsullarına görə veriliş üsullarının növləri?",a:"Birmodlu, çoxmodlu"},
+  {q:"Çoxmodlu veriliş üsulunda içliyin diametri nə qədərdir?",a:"50 − 60 mkm"},
+  {q:"αs = Vmax / λ — ifadəsi nəyi göstərir?",a:"Sönmənin qiyməti"},
+  {q:"∆f = N · F — ifadəsi nəyi göstərir?",a:"Ümumi tezlik zolağının eni"},
+  {q:"∆φ = 2πN — ifadəsi nəyi göstərir?",a:"Faza fərqi"},
+  {q:"Lr = 10⁴ · Dp / Vmax — ifadəsi nəyi göstərir?",a:"Regenerasiya məsafəsi"},
+  {q:"Rabitə sistemlərində etibarlılıq dedikdə nə nəzərdə tutulur?",a:"Vahid zamanda öz funksional imkanlılığını göstərməsi; imtinaya qarşı dayanıqlı olması"},
+  {q:"Aşağıda verilənlərdən hansı etibarlılıq göstəricisidir? (Ts — imtinasız)",a:"Ts — sistemin orta imtinasız işləmə müddəti"},
+  {q:"ri.e = V/Cmax = R1/Cmax < 1 — ifadəsi nəyi göstərir?",a:"TK sistemlərinin informasiya effektivliyi"},
+  {q:"Cmax = ∆F · log₂(1 + Ps/PM) — ifadəsi nəyi göstərir?",a:"Analoq siqnallarının maksimum buraxma qabiliyyəti"},
+  {q:"Ua = Um · cosω₀t = Um · cos2πφ₀t — ifadəsi nəyi göstərir?",a:"Yüksək tezlikli aparıcı tezlikli siqnal"},
+  {q:"ωr = ω₀ + KTM · UΩ · sinΩt — ifadəsi nəyi göstərir?",a:"Rezonans tezliyinin qiyməti"},
+  {q:"UTM = U · cos(ω₀t + Mt · sinΩt) — ifadəsi nəyi göstərir?",a:"Aşağı tezlik modulyasiya siqnalı"},
+  {q:"UFM = U · cos(ω₀ + NFM · sinΩt + φ₀) — ifadəsi nəyi göstərir?",a:"Faza modulyasiya siqnalı"},
+  {q:"Ug = U · cosω₀t;  ω₀ = 2π/T₀ — ifadəsi nəyi göstərir?",a:"Dioda verilən gərginlik"},
+  {q:"Kd = Uc/U(t) = S·R/π;  Uc = I₀(t) · R — ifadəsi nəyi göstərir?",a:"Detektorun ötürmə əmsalı"},
+  {q:"Analoq siqnalların rəqəm formasına çevrilməsi üçün hansı mərhələ vacibdir?",a:"Diskretləşdirmə, kvantlama, kodlama"},
+  {q:"Aşağıda verilənlərdən hansı impuls modulyasiyasının növüdür? (FIM)",a:"FIM — Faza İmpuls Modulyasiyası"},
+  {q:"Aşağıda verilənlərdən hansı impuls modulyasiyasının növüdür? (TIM)",a:"TIM — Tezlik İmpuls Modulyasiyası"},
+  {q:"İmpuls modulyasiyası hansı kriteriyaya malik olmalıdır? (spektr)",a:"Spektrin effektiv istifadəsi, xəta davamlılığı, qurğunun sadəliyi"},
+  {q:"tk = TD / NK;  TD = 1/Fd — ifadəsi nəyi göstərir?",a:"Elektron açarın açılması və bağlanması (diskretləşdirici)"},
+  {q:"Dk = 10 · lg(Pk max / Pk min) — ifadəsi nəyi göstərir?",a:"Kanalın dinamik diapazonu"},
+  {q:"A = 10 · lg(Pk min / PM) — ifadəsi nəyi göstərir?",a:"Kanalın mühafizə olunması"},
+  {q:"Ca.max = ∆F · log₂(1 + PS/PM) — ifadəsi nəyi göstərir?",a:"Analoq kanalların maksimum buraxma qabiliyyəti"},
+  {q:"Optik kanallarda tezlik zolağının eni nə qədərdir?",a:"10¹⁴ − 10¹⁶ Hz"},
+  {q:"Optik siqnalların ötürülməsi üçün veriliş sürətinin qiyməti nə qədərdir?",a:"10³ − 10¹² bit/s"},
+  {q:"Birmodlu veriliş üsulunda içliyin diametri nə qədərdir?",a:"8 − 10 mkm"},
+  {q:"αs = 10 · lg(Pc/Pg) — ifadəsi nəyi göstərir?",a:"Sönmə əmsalı"},
+  {q:"Ef = h · c / λ — ifadəsi nəyi göstərir?",a:"Fotonun enerjisi"},
+  {q:"Uq(t) = Σ Ui(t) — ifadəsi nəyi göstərir?",a:"Çıxışda qrup siqnallarının yaranması"},
+  {q:"SNR(N₀, PS) = PS·Ti/N₀ > PS/(N₀·Cmax) — ifadəsi nəyi göstərir?",a:"Siqnal-maneə nisbəti"}
+];
+
+/* ════════════════════════════════════════
+   BUILD QUESTIONS WITH 4 OPTIONS
+════════════════════════════════════════ */
+function seededShuffle(arr,seed){
+  const a=[...arr];let s=seed*9301+49297;
+  for(let i=a.length-1;i>0;i--){
+    s=(s*9301+49297)%233280;
+    const j=Math.floor((s/233280)*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const QUESTIONS=(()=>{
+  const answers=RAW.map(r=>r.a);
+  return RAW.map((item,i)=>{
+    const dist=[];
+    for(const off of[17,34,51,8,23,42,60]){
+      const c=answers[(i+off)%answers.length];
+      if(c!==item.a&&!dist.includes(c)){dist.push(c);if(dist.length===3)break;}
+    }
+    const opts=seededShuffle([item.a,...dist.slice(0,3)],i+1);
+    return{...item,options:opts,correctIndex:opts.indexOf(item.a)};
+  });
+})();
+
+const TOTAL=QUESTIONS.length;
+const LABELS=["A","B","C","D"];
+
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+let currentQ=0;
+const selected={};   // index→optionIdx
+const hintOpen={};   // index→bool
+
+/* ════════════════════════════════════════
+   RENDER
+════════════════════════════════════════ */
+function render(){
+  const q=QUESTIONS[currentQ];
+  const isAnswered=selected[currentQ]!==undefined;
+  const answeredCount=Object.keys(selected).length;
+
+  // Progress
+  document.getElementById("prog").style.width=(answeredCount/TOTAL*100)+"%";
+  document.getElementById("qCounter").textContent=`Sual ${currentQ+1} / ${TOTAL}`;
+  document.getElementById("answeredCount").textContent=`Cavablandı: ${answeredCount} / ${TOTAL}`;
+
+  // Question
+  document.getElementById("qNum").textContent=`SUAL ${currentQ+1}`;
+  document.getElementById("qText").textContent=q.q;
+
+  // Options
+  const wrap=document.getElementById("optionsWrap");
+  wrap.innerHTML="";
+  q.options.forEach((opt,idx)=>{
+    let cls="";
+    if(isAnswered){
+      if(idx===q.correctIndex)cls="correct";
+      else if(idx===selected[currentQ])cls="wrong";
+    }
+    const btn=document.createElement("button");
+    btn.className=`opt-btn ${cls}`;
+    btn.disabled=isAnswered;
+    btn.innerHTML=`<span class="opt-label">${LABELS[idx]})</span><span>${opt}</span>`;
+    btn.onclick=()=>selectOption(idx);
+    wrap.appendChild(btn);
+  });
+
+  // Hint
+  const hintBox=document.getElementById("hintBox");
+  const hintBtn=document.getElementById("hintBtn");
+  if(hintOpen[currentQ]){
+    hintBox.style.display="block";
+    hintBox.innerHTML=`💡 Düzgün cavab: <strong>${q.a}</strong>`;
+    hintBtn.textContent="🔔 İpucunu gizlət";
+  }else{
+    hintBox.style.display="none";
+    hintBtn.textContent="🔔 İpucunu göstər";
+  }
+
+  // Nav buttons
+  document.getElementById("prevBtn").disabled=(currentQ===0);
+  const nextBtn=document.getElementById("nextBtn");
+  if(currentQ===TOTAL-1){
+    nextBtn.textContent="🏁 Nəticə →";
+    nextBtn.className="nav-btn finish";
+    nextBtn.onclick=showResult;
+  }else{
+    nextBtn.textContent="Növbəti →";
+    nextBtn.className="nav-btn next";
+    nextBtn.onclick=()=>goTo(currentQ+1);
+  }
+
+  // Quick finish
+  const qf=document.getElementById("quickFinish");
+  if(answeredCount>0&&currentQ<TOTAL-1){
+    qf.style.display="block";
+    qf.textContent=`Nəticəyə bax → (${answeredCount}/${TOTAL} cavablandı)`;
+  }else{
+    qf.style.display="none";
+  }
+}
+
+function selectOption(optIdx){
+  if(selected[currentQ]!==undefined)return;
+  const q=QUESTIONS[currentQ];
+  const correct=optIdx===q.correctIndex;
+  selected[currentQ]=optIdx;
+  playSound(correct?"correct":"wrong");
+  // Flash card border
+  const card=document.getElementById("qCard");
+  card.style.borderColor=correct?"rgba(34,197,94,.55)":"rgba(239,68,68,.55)";
+  setTimeout(()=>card.style.borderColor="",700);
+  render();
+}
+
+function goTo(idx){
+  if(idx<0||idx>=TOTAL)return;
+  currentQ=idx;
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function toggleHint(){
+  if(!hintOpen[currentQ])playSound("hint");
+  hintOpen[currentQ]=!hintOpen[currentQ];
+  render();
+}
+
+/* ════════════════════════════════════════
+   RESULT
+════════════════════════════════════════ */
+function getGrade(pct){
+  if(pct>=90)return{label:"Əla",color:"#22c55e",emoji:"🏆"};
+  if(pct>=75)return{label:"Yaxşı",color:"#84cc16",emoji:"🎯"};
+  if(pct>=50)return{label:"Kafi",color:"#f59e0b",emoji:"📚"};
+  return{label:"Qeyri-kafi",color:"#ef4444",emoji:"📖"};
+}
+
+function showResult(){
+  document.getElementById("exam").style.display="none";
+  const res=document.getElementById("result");
+  res.style.display="flex";
+
+  const answered=Object.keys(selected).length;
+  const score=Object.entries(selected).filter(([qi,oi])=>QUESTIONS[+qi].correctIndex===oi).length;
+  const wrong=answered-score;
+  const skipped=TOTAL-answered;
+  const pct=answered>0?Math.round((score/answered)*100):0;
+  const grade=getGrade(pct);
+
+  document.getElementById("rEmoji").textContent=grade.emoji;
+  const circle=document.getElementById("scoreCircle");
+  circle.style.borderColor=grade.color;
+  circle.style.color=grade.color;
+  document.getElementById("scorePct").textContent=pct+"%";
+  document.getElementById("scoreFrac").textContent=`${score}/${answered}`;
+  const badge=document.getElementById("gradeBadge");
+  badge.textContent=grade.label;
+  badge.style.background=grade.color+"22";
+  badge.style.color=grade.color;
+  badge.style.border=`1px solid ${grade.color}44`;
+  document.getElementById("sCorrect").textContent=score;
+  document.getElementById("sWrong").textContent=wrong;
+  document.getElementById("sSkip").textContent=skipped;
+
+  // Breakdown
+  const bd=document.getElementById("breakdown");
+  bd.innerHTML="";
+  QUESTIONS.forEach((q,i)=>{
+    const ans=selected[i];
+    const ok=ans!==undefined&&ans===q.correctIndex;
+    const sk=ans===undefined;
+    const div=document.createElement("div");
+    div.className=`breakdown-item ${sk?"skip":ok?"ok":"fail"}`;
+    let detail="";
+    if(sk) detail=`<div class="bd-skip">Cavablanmayıb</div>`;
+    else if(ok) detail=`<div class="bd-ok">✓ Düzgün</div>`;
+    else detail=`<div class="bd-you">Siz: ${q.options[ans]}<br><span class="bd-correct">Düzgün: ${q.a}</span></div>`;
+    div.innerHTML=`<span class="bd-num">${i+1}.</span><div class="bd-text"><div style="color:#e2e8f0;margin-bottom:3px">${q.q}</div>${detail}</div>`;
+    bd.appendChild(div);
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function restart(){
+  Object.keys(selected).forEach(k=>delete selected[k]);
+  Object.keys(hintOpen).forEach(k=>delete hintOpen[k]);
+  currentQ=0;
+  document.getElementById("result").style.display="none";
+  document.getElementById("exam").style.display="block";
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>
