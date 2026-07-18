@@ -1,0 +1,211 @@
+#pragma warning(disable : 6387) // Visual Studio-nun Code Analysis xəbərdarlıqlarını tamamilə söndürür
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4267)
+
+#include <windows.h>
+#include <d3d11.h>
+#include <psapi.h>
+#include <vector>
+#include <iostream>
+
+// Kitabxana başlıqları - Fayllar birbaşa yan-yana axtarılır
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+#include "MinHook.h"
+
+#pragma comment(lib, "d3d11.lib")
+
+// --- STRUKTURLAR ---
+struct GlowColor { float r, g, b, a; };
+
+class CS2Player {
+public:
+    int GetHealth() { return *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(this) + 0x334); }
+    int GetTeam() { return *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(this) + 0x3C8); }
+    void ApplyGlow(bool enable, GlowColor color) {
+        uintptr_t glowProperty = *reinterpret_cast<uintptr_t*>(reinterpret_cast<uintptr_t>(this) + 0xBC);
+        if (!glowProperty) return;
+        *reinterpret_cast<bool*>(glowProperty + 0x30) = enable;
+        *reinterpret_cast<GlowColor*>(glowProperty + 0x34) = color;
+    }
+};
+
+// --- QLOBAL DƏYİŞƏNLƏR VƏ AYARLAR ---
+uintptr_t g_LocalPlayer = 0;
+uintptr_t g_EntityList = 0;
+bool g_GlowWallhack = false;
+float g_EnemyColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f }; // Standart Qırmızı massiv
+
+typedef HRESULT(__stdcall* Present)(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+namespace Sdk {
+    // AOB Skaner
+    uintptr_t PatternScan(const char* moduleName, const char* pattern) {
+        HMODULE hModule = GetModuleHandleA(moduleName);
+        if (!hModule) return 0;
+        MODULEINFO modInfo;
+        GetModuleInformation(GetCurrentProcess(), hModule, &modInfo, sizeof(MODULEINFO));
+        uintptr_t base = reinterpret_cast<uintptr_t>(modInfo.lpBaseOfDll);
+        DWORD size = modInfo.SizeOfImage;
+
+        std::vector<int> bytes;
+        char* start = const_cast<char*>(pattern);
+        char* end = const_cast<char*>(pattern) + strlen(pattern);
+        for (char* curr = start; curr < end; ++curr) {
+            if (*curr == '?') { ++curr; if (*curr == '?') ++curr; bytes.push_back(-1); }
+            else { bytes.push_back(strtol(curr, &curr, 16)); }
+        }
+
+        std::uint8_t* scanBytes = reinterpret_cast<std::uint8_t*>(base);
+        for (DWORD i = 0; i < size - bytes.size(); ++i) {
+            bool found = true;
+            for (size_t j = 0; j < bytes.size(); ++j) {
+                if (bytes[j] != -1 && scanBytes[i + j] != bytes[j]) { found = false; break; }
+            }
+            if (found) return reinterpret_cast<uintptr_t>(&scanBytes[i]);
+        }
+        return 0;
+    }
+
+    uintptr_t ResolveRip(uintptr_t address, DWORD instSize, DWORD offset) {
+        if (!address) return 0;
+        int32_t displacement = *reinterpret_cast<int32_t*>(address + offset);
+        return address + instSize + displacement;
+    }
+}
+
+namespace Hooking {
+    Present oPresent = nullptr;
+    HWND window = nullptr;
+    WNDPROC oWndProc = nullptr;
+    ID3D11Device* pDevice = nullptr;
+    ID3D11DeviceContext* pContext = nullptr;
+    ID3D11RenderTargetView* mainRenderTargetView = nullptr;
+    bool init = false;
+
+    LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+        if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)) return true;
+        return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
+    }
+
+    // Əsas Render və Hile Dövrü
+    HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags) {
+        if (!init) {
+            if (SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**)&pDevice)) && pDevice != nullptr) {
+                pDevice->GetImmediateContext(&pContext);
+                DXGI_SWAP_CHAIN_DESC sd;
+                pSwapChain->GetDesc(&sd);
+                window = sd.OutputWindow;
+
+                ID3D11Texture2D* pBackBuffer = nullptr;
+                HRESULT hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+
+                // CODE GENERATION FAILED XƏTASININ TAM HƏLLİ (Məcburi null və success yoxlanışı)
+                if (SUCCEEDED(hr) && pBackBuffer != nullptr) {
+                    pDevice->CreateRenderTargetView(pBackBuffer, NULL, &mainRenderTargetView);
+                    pBackBuffer->Release();
+                }
+
+                if (window != nullptr) {
+                    oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
+                    IMGUI_CHECKVERSION();
+                    ImGui::CreateContext();
+                    ImGui_ImplWin32_Init(window);
+                    ImGui_ImplDX11_Init(pDevice, pContext);
+                    ImGui::StyleColorsDark();
+                    init = true;
+                }
+            }
+            if (!init) return oPresent(pSwapChain, SyncInterval, Flags);
+        }
+
+        if (init) {
+            ImGui_ImplDX11_NewFrame();
+            ImGui_ImplWin32_NewFrame();
+            ImGui::NewFrame();
+
+            static bool showMenu = true;
+            if (GetAsyncKeyState(VK_INSERT) & 1) showMenu = !showMenu;
+
+            if (showMenu) {
+                ImGui::Begin("CS2 VIP Internal", &showMenu, 1 << 6);
+                ImGui::Text("Status: Aktivlesdirildi");
+                ImGui::Separator();
+                ImGui::Checkbox("Glow Wallhack (ESP)", &g_GlowWallhack);
+                ImGui::ColorEdit4("Dusmen Rengi", g_EnemyColor);
+                ImGui::End();
+            }
+
+            // WALLHACK MƏNTİQİ
+            if (g_GlowWallhack && g_LocalPlayer && g_EntityList) {
+                CS2Player* localPlayer = *reinterpret_cast<CS2Player**>(g_LocalPlayer);
+                uintptr_t entityListPtr = *reinterpret_cast<uintptr_t*>(g_EntityList);
+
+                if (localPlayer && entityListPtr) {
+                    int myTeam = localPlayer->GetTeam();
+                    GlowColor col = { g_EnemyColor[0], g_EnemyColor[1], g_EnemyColor[2], g_EnemyColor[3] };
+
+                    for (int i = 1; i <= 64; i++) {
+                        uintptr_t listEntry = *reinterpret_cast<uintptr_t*>(entityListPtr + (8 * (i & 0x7FFF) >> 9) + 16);
+                        if (!listEntry) continue;
+                        uintptr_t playerAddress = *reinterpret_cast<uintptr_t*>(listEntry + 120 * (i & 0x1FF));
+                        if (!playerAddress) continue;
+
+                        CS2Player* player = reinterpret_cast<CS2Player*>(playerAddress);
+                        if (player == localPlayer || player->GetHealth() <= 0) continue;
+
+                        if (player->GetTeam() != myTeam) {
+                            player->ApplyGlow(true, col);
+                        }
+                    }
+                }
+            }
+
+            ImGui::Render();
+            if (pContext != nullptr && mainRenderTargetView != nullptr) {
+                pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
+                ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+            }
+        }
+        return oPresent(pSwapChain, SyncInterval, Flags);
+    }
+}
+
+void HideModule(HMODULE hModule) {
+    DWORD old;
+    VirtualProtect(hModule, 4096, PAGE_READWRITE, &old);
+    RtlZeroMemory(hModule, 4096);
+    VirtualProtect(hModule, 4096, old, &old);
+}
+
+DWORD WINAPI InitThread(LPVOID lpParam) {
+    HMODULE hMod = (HMODULE)lpParam;
+
+    uintptr_t localPat = Sdk::PatternScan("client.dll", "48 8B 05 ? ? ? ? 48 85 C0 74 ? 8B 88");
+    uintptr_t entPat = Sdk::PatternScan("client.dll", "48 8B 0D ? ? ? ? 48 89 7C 24 ? 8B FA");
+
+    g_LocalPlayer = Sdk::ResolveRip(localPat, 7, 3);
+    g_EntityList = Sdk::ResolveRip(entPat, 7, 3);
+
+    if (MH_Initialize() == MH_OK) {
+        uintptr_t presentAddr = Sdk::PatternScan("dxgi.dll", "55 57 41 56 48 8D 6C");
+        if (presentAddr) {
+            MH_CreateHook((LPVOID)presentAddr, &Hooking::hkPresent, reinterpret_cast<LPVOID*>(&Hooking::oPresent));
+            MH_EnableHook((LPVOID)presentAddr);
+        }
+    }
+
+    HideModule(hMod);
+    return 0;
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+    if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+        DisableThreadLibraryCalls(hModule);
+        CreateThread(nullptr, 0, InitThread, hModule, 0, nullptr);
+    }
+    return TRUE;
+}
+
