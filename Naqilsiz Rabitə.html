@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Naqilsiz Rabitə</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0d0613;--card:#1b0f26;--line:#3a2250;--tx:#f3e8ff;--mut:#a38bbd;--or:#ff7a1a;--pu:#9b5de5;--ok:#46e08a;--bad:#ff3b4e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#3b1458 0,var(--bg) 60%) fixed;color:var(--tx);font:16px/1.5 Georgia,'Times New Roman',serif;overflow-x:hidden}
+h1,h2,.fx{font-family:'Creepster',Impact,fantasy;letter-spacing:2px;font-weight:400}
+.moon{position:fixed;top:30px;right:6%;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff7d6,#f3d77a 60%,#c9a43c);box-shadow:0 0 60px 20px #f3d77a44;opacity:.5;z-index:0}
+.bat{position:fixed;font-size:26px;z-index:0;animation:fly linear infinite;opacity:.7}
+@keyframes fly{from{transform:translateX(-10vw) translateY(0)}50%{transform:translateX(50vw) translateY(-30px)}to{transform:translateX(110vw) translateY(20px)}}
+.fog{position:fixed;left:0;right:0;bottom:0;height:140px;background:linear-gradient(transparent,#9b5de522);z-index:0;pointer-events:none}
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:16px}
+header{text-align:center;padding:10px 0}
+h1{font-size:clamp(30px,7vw,52px);margin:0;color:var(--or);text-shadow:0 0 18px #ff7a1a88}
+.sub{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 40px #0008}
+.bar{height:8px;background:#2a1a3a;border-radius:9px;overflow:hidden;margin:10px 0 4px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pu),var(--or));transition:width .4s}
+.meta{display:flex;justify-content:space-between;color:var(--mut);font-size:14px;gap:8px;flex-wrap:wrap}
+h2{font-size:clamp(22px,4.5vw,30px);margin:14px 0;color:#ffd9b0;font-family:Georgia,serif;letter-spacing:0;font-weight:700;line-height:1.35}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;margin:9px 0;padding:13px 14px;background:#25143550;border:2px solid var(--line);border-radius:12px;color:var(--tx);font:inherit;cursor:pointer;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--or);transform:translateX(4px);background:#ff7a1a14}
+.opt b{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--pu);color:#fff}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok);background:#46e08a22;animation:glow .6s}
+.opt.ok b{background:var(--ok);color:#052}
+.opt.no{border-color:var(--bad);background:#ff3b4e22;animation:shake .5s}
+.opt.no b{background:var(--bad)}
+.opt.hint{border-color:var(--or);animation:pulse 1.1s infinite}
+@keyframes shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+@keyframes glow{50%{box-shadow:0 0 24px #46e08a}}
+@keyframes pulse{50%{box-shadow:0 0 18px #ff7a1a;background:#ff7a1a22}}
+.hintbox{margin:14px 0 4px;padding:12px 14px;border:2px dashed var(--pu);border-radius:12px;color:#d8c2f5;cursor:pointer;background:#9b5de514;user-select:none}
+.hintbox.open{border-style:solid;border-color:var(--or);color:#ffd9b0}
+.nav{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;padding:12px;border-radius:12px;border:2px solid var(--pu);background:transparent;color:var(--tx);font:inherit;font-weight:700;cursor:pointer}
+.btn:hover:not(:disabled){background:var(--pu)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.go{background:var(--or);border-color:var(--or);color:#1b0a00}
+.dots{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:6px;margin-top:16px}
+.dot{padding:6px 0;border-radius:8px;border:1px solid var(--line);background:#25143550;color:var(--mut);font:13px Georgia,serif;cursor:pointer}
+.dot.cur{outline:2px solid var(--or);color:#fff}.dot.ok{background:#46e08a33;color:#9ff0c2}.dot.no{background:#ff3b4e33;color:#ffb0b8}
+.top{display:flex;justify-content:flex-end;margin-bottom:6px}
+.mute{background:none;border:1px solid var(--line);color:var(--tx);border-radius:20px;padding:4px 12px;cursor:pointer;font:inherit;font-size:14px}
+.big{font-size:70px;text-align:center}.score{font-size:48px;text-align:center;color:var(--or)}
+.wrong{border-left:4px solid var(--bad);padding:10px 14px;margin:12px 0;background:#ff3b4e12;border-radius:0 10px 10px 0}
+.wrong p{margin:3px 0}.y{color:#ffb0b8}.c{color:#9ff0c2}
+.hid{display:none}
+</style></head><body>
+<div class="moon"></div><div class="fog"></div>
+<span class="bat" style="top:12%;animation-duration:22s">🦇</span><span class="bat" style="top:30%;animation-duration:30s;animation-delay:-9s">🦇</span><span class="bat" style="top:55%;animation-duration:26s;animation-delay:-15s">🦇</span>
+<main>
+<header><h1>🎃 Naqilsiz Rabitə Testi 🎃</h1><div class="sub">Kollokvium · 41 sual · Cəsarətin varsa, cavab ver…</div></header>
+<div class="top"><button class="mute" id="mute">🔊 Səs: açıq</button></div>
+<div class="card" id="quiz">
+ <div class="bar"><i id="pb"></i></div>
+ <div class="meta"><span id="cnt"></span><span id="sc"></span></div>
+ <h2 id="q"></h2><div id="opts"></div>
+ <div class="hintbox" id="hint"></div>
+ <div class="nav"><button class="btn" id="prev">◀ Əvvəlki</button><button class="btn" id="next">Növbəti ▶</button></div>
+ <button class="btn go" id="fin" style="width:100%;margin-top:10px">💀 Testi bitir və nəticəyə bax</button>
+ <div class="dots" id="dots"></div>
+</div>
+<div class="card hid" id="res"></div>
+</main>
+<script>
+var Q=[
+['Telefonu kim ixtira etmişdir?',['Tomas Edison','Nikola Tesla','Aleksandr Qrexem Bell','Qilermo Markoni'],2],
+['Bell ilk kommutasiya stansiyasını neçənci ildə qurmuşdur?',['1843','1876','1878','1890'],2],
+['İlk kommersiya radiostansiyası neçənci ildə öz işinə başlamışdır?',['1895','1901','1907','1920'],3],
+['Mobil və naqilsiz qurğuların mürəkkəblik pilləkənində ən sadə qurğu hansıdır?',['Peycer','Verici (Sensor)','Mobil telefon','PDA'],1],
+['Verici (Sensor) qurğusu nə edir?',['Yalnız öz vəziyyəti barədə informasiya ötürür','Tam kompüter funksiyalarını yerinə yetirir','İnternet brauzeri saxlayır','Video zəngləri idarə edir'],0],
+['Mürəkkəblik pilləkənində “Quraşdırılmış idarəetmə vasitələri” hansı qurğulara aid nümunədir?',['Klaviatura, siçan, fen, paltaryuyan maşın kimi məişət cihazları','Noutbuk və cib kompüteri','Yalnız mobil telefonlar','Yalnız PDA-lar'],0],
+['Peycer nə üçün istifadə olunur?',['Uzun videoların ötürülməsi üçün','Yalnız GPS naviqasiyası üçün','Fərdi kompüter proqramlarının işlədilməsi üçün','Qısa mətn məlumatlarının göstərilməsi üçün'],3],
+['Elektron yaddaş kitabçası (PDA) əsasən hansı funksiyaları təklif edir?',['Yalnız oyun funksiyalarını','Təqvim, bloknot, poçt kimi sadə ofis funksiyalarını','Yalnız video redaktəsini','Yalnız peyk rabitəsini'],1],
+['Cib kompüteri hansı xüsusiyyətlərə malikdir?',['Yalnız qara-ağ displey və böyük klaviatura','Heç bir displeyi yoxdur','Rəngli displey və kiçik həcmli klaviatura','Yalnız səs zəngləri qəbul edir'],2],
+['Noutbuk (səyyar kompüter) niyə mobil texnologiyaların zirvəsi hesab olunur?',['Çünki ən ucuz qurğudur','Çünki adi fərdi kompüterin bütün xarakteristikalarına malikdir','Çünki yalnız zəng etmək üçün istifadə olunur','Çünki enerji tələb etmir'],1],
+['Mobil və naqilsiz qurğuların təkmilləşdirilməsində əsas çətinlik nə ilə bağlıdır?',['Rəng seçimi ilə','Enerji təchizatı ilə','Səs keyfiyyəti ilə','Qablaşdırma dizaynı ilə'],1],
+['Naqilsiz rabitə texnologiyaları hansı əlamətə görə təsnif olunur?',['Yalnız sürətinə görə','İlkin informasiyanın emal üsuluna görə','Telefon nömrəsinə görə','Kabel uzunluğuna görə'],1],
+['İlkin informasiyanın emal üsuluna görə texnologiyalar necə bölünür?',['Lokal və qlobal','Mobil və stasionar','Rəqəmli və analoq','Dar və genişzolaqlı'],2],
+['Rəqəmli rabitə sistemində giriş informasiyası necə olur?',['Həmişə analoq qalır','Rəqəmli formaya çevrilir','Heç dəyişmir','Yalnız səs olur'],1],
+['Veriliş zolağının genişliyinə görə texnologiyalar necə bölünür?',['Lokal və qlobal','Rəqəmli və analoq','Darzolaqlı, genişzolaqlı, ifrat genişzolaqlı','Mobil və sabit'],2],
+['Abunəçilərin yerləşməsinə görə texnologiyalar necə bölünür?',['Lokal və qlobal','Stasionar və hərəkətli','Dar və geniş','Rəqəmli və analoq'],1],
+['Ölçüsünə görə naqilsiz rabitə necə bölünür?',['Rəqəmli və analoq','Mobil və sabit','Fərdi, lokal, şəhər, qlobal','Dar və geniş'],2],
+['Naqilsiz teleqrafı ilk dəfə 1895-ci ildə kim nümayiş etdirmişdir?',['Aleksandr Bell','Qilermo Markoni','Tomas Edison','Con Berd'],1],
+['İlk transatlantik radio verilişi neçənci ildə həyata keçirilmişdir?',['1895','1901','1907','1920'],1],
+['Tezlik modulyasiyasını (FM) kim və neçənci ildə kəşf etmişdir?',['Edvin Armstronq, 1933','Con Berd, 1928','Markoni, 1895','Hers, 1886'],0],
+['Azərbaycanda ilk mobil şəbəkəni hansı şirkət qurmuşdur?',['Azercell','Bakcell','Azerfon','Nar Mobile'],1],
+['Bakcell şirkəti neçənci ildə təsis edilmişdir?',['1992','1994','1996','1998'],1],
+['Azercell Telecom neçənci ildə təsis edilmişdir?',['1994','1996','1998','2005'],1],
+['Mobil rabitə sistemləri hansı texnologiyaya əsaslanır?',['Naqilli texnologiya','Hidravlik sistemlər','Mexaniki sistemlər','Rəqəmsal və naqilsiz texnologiya'],3],
+['Sadələşdirilmiş etalon model nəyi göstərir?',['Enerji səviyyəsini','Səs keyfiyyətini','Şəbəkənin quruluşunu və səviyyələrini','Kabel uzunluğunu'],2],
+['Kanal səviyyəsi nə edir?',['Enerji verir','Siqnalları idarə edir','Məlumat ötürülməsini təşkil edir','Səsi artırır'],2],
+['Şəbəkə səviyyəsinin vəzifəsi nədir?',['Siqnalı gücləndirmək','Marşrut seçmək','Enerji toplamaq','Səs yazmaq'],1],
+['Nəqliyyat səviyyəsi nə edir?',['Məlumatın düzgün çatdırılmasını təmin edir','Enerji ötürür','Temperatur ölçür','Antena qurur'],0],
+['İlk radiotelefon rabitəsi nə vaxt yaradılmışdır?',['1933','1940','1921','1955'],2],
+['İlk radiotelefon rabitəsi hansı ölkədə yaradılmışdır?',['Almaniya','ABŞ','Fransa','İngiltərə'],1],
+['1933-cü ildə hansı yenilik tətbiq edilmişdir?',['Rəqəmsal rabitə','450 MHz sistemi','İkitərəfli radiotelefon rabitəsi','Peyk rabitəsi'],2],
+['1955-ci ildə hansı sistem istifadəyə verilmişdir?',['450 MHz 6 kanallı sistem','150 MHz 11 kanallı sistem','800 MHz sistem','Rəqəmsal sistem'],1],
+['İlk sistemlərdə hansı modulyasiya növü istifadə edilirdi?',['Tezlik modulyasiyası','Rəqəmsal modulyasiya','Amplitud modulyasiyası','Faza modulyasiyası'],2],
+['İSO hansı tip təşkilatdır?',['Kommersiya təşkilatı','Könüllü, qeyri-kommersiya təşkilatı','Dövlət nazirliyi','Hərbi qurum'],1],
+['ETSİ hansı regionun standartlaşdırma institutudur?',['Asiya','Avropa','Şimali Amerika','Afrika'],1],
+['OSİ modeli neçənci ildə və kim tərəfindən hazırlanmışdır?',['1983, İSO tərəfindən','1991, İTU tərəfindən','1970, ARPANET tərəfindən','2000, İEEE tərəfindən'],0],
+['OSİ modeli neçə səviyyədən ibarətdir?',['5','6','7','9'],2],
+['OSİ modelinin 1-ci səviyyəsi hansıdır?',['Tətbiqi səviyyə','Fiziki səviyyə','Şəbəkə səviyyəsi','Seans səviyyəsi'],1],
+['Kanal səviyyəsinin əsas vəzifəsi nədir?',['Bit axınının siqnala çevrilməsi','Kadrların formalaşdırılması və mühitə daxilolmanın idarəsi','Verilənlərin istifadəçi tərəfindən idarəsi','Uzaq proseslər arasında dialoqun təmini'],1],
+['Şəbəkəarası qurğunun əsas funksiyası nədir?',['Yalnız enerji təchizatı','Naqilsiz və stasionar şəbəkələri əlaqələndirmək','Yalnız məlumat saxlamaq','Yalnız səs gücləndirmək'],1],
+['Etalon modeldə hansı səviyyələr aralıq sistemdə (şəbəkəarası qurğuda) adətən olmur?',['Fiziki və kanal','Nəqliyyat və əlavələr','Şəbəkə və fiziki','Kanal və şəbəkə'],1]
+];
+var N=Q.length,L='ABCD',cur=0,ord=[],ans=[],hnt=[],muted=false,AC=null;
+function $(i){return document.getElementById(i)}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function start(){cur=0;ord=Q.map(function(q){return shuf(q[1].map(function(_,i){return i}))});ans=Q.map(function(){return null});hnt=Q.map(function(){return false});$('res').classList.add('hid');$('quiz').classList.remove('hid');render()}
+/* səslər */
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
+function tone(f,t,d,type,g,f2){var a=ac();if(!a||muted)return;var o=a.createOscillator(),v=a.createGain(),n=a.currentTime+t;o.type=type;o.frequency.setValueAtTime(f,n);if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);v.gain.setValueAtTime(0.0001,n);v.gain.exponentialRampToValueAtTime(g,n+0.02);v.gain.exponentialRampToValueAtTime(0.0001,n+d);o.connect(v);v.connect(a.destination);o.start(n);o.stop(n+d+0.05)}
+function sndOk(){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.09,0.35,'sine',0.18)});tone(1568,0.38,0.5,'triangle',0.08)}
+function sndBad(){tone(220,0,0.9,'sawtooth',0.16,55);tone(233,0,0.9,'square',0.07,48);tone(90,0.1,0.8,'sawtooth',0.12,40);for(var i=0;i<5;i++)tone(700-i*90,0.9+i*0.08,0.12,'square',0.05)}
+function sndClick(){tone(330,0,0.08,'triangle',0.06)}
+$('mute').onclick=function(){muted=!muted;this.textContent=muted?'🔇 Səs: bağlı':'🔊 Səs: açıq';ac()};
+/* render */
+function render(){
+ var q=Q[cur],c=q[2],a=ans[cur];
+ $('cnt').textContent='Sual '+(cur+1)+' / '+N;
+ var done=ans.filter(function(x){return x!==null}).length,ok=ans.filter(function(x,i){return x===Q[i][2]}).length;
+ $('sc').textContent='✅ '+ok+'  ❌ '+(done-ok);
+ $('pb').style.width=(done/N*100)+'%';
+ $('q').textContent=(cur+1)+'. '+q[0];
+ var h='';
+ ord[cur].forEach(function(oi,p){
+  var cl='opt';
+  if(a!==null){if(oi===c)cl+=' ok';else if(oi===a)cl+=' no'}
+  else if(hnt[cur]&&oi===c)cl+=' hint';
+  h+='<button class="'+cl+'" data-o="'+oi+'"'+(a!==null?' disabled':'')+'><b>'+L[p]+'</b><span>'+q[1][oi]+'</span></button>'});
+ $('opts').innerHTML=h;
+ var hb=$('hint');
+ if(hnt[cur]){hb.className='hintbox open';hb.textContent='🔮 Cavab: '+L[ord[cur].indexOf(c)]+') '+q[1][c]}
+ else{hb.className='hintbox';hb.textContent='🔮 İpucu qutusu — cavabı görmək üçün toxun'}
+ $('prev').disabled=cur===0;$('next').disabled=cur===N-1;
+ var d='';for(var i=0;i<N;i++){var k='dot';if(ans[i]!==null)k+=ans[i]===Q[i][2]?' ok':' no';if(i===cur)k+=' cur';d+='<button class="'+k+'" data-i="'+i+'">'+(i+1)+'</button>'}
+ $('dots').innerHTML=d}
+$('opts').onclick=function(e){var b=e.target.closest('.opt');if(!b||ans[cur]!==null)return;ac();var o=+b.dataset.o;ans[cur]=o;o===Q[cur][2]?sndOk():sndBad();render()};
+$('hint').onclick=function(){ac();if(!hnt[cur]){hnt[cur]=true;sndClick();render()}};
+$('prev').onclick=function(){if(cur>0){cur--;sndClick();render()}};
+$('next').onclick=function(){if(cur<N-1){cur++;sndClick();render()}};
+$('dots').onclick=function(e){var b=e.target.closest('.dot');if(b){cur=+b.dataset.i;sndClick();render()}};
+document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')$('next').click();if(e.key==='ArrowLeft')$('prev').click()});
+$('fin').onclick=function(){
+ var ok=0,bad=[];
+ Q.forEach(function(q,i){if(ans[i]===q[2])ok++;else bad.push(i)});
+ var p=Math.round(ok/N*100),em=p>=90?'👑':p>=70?'🎃':p>=50?'👻':'💀',msg=p>=90?'Sən əsl cadugər ustadısan!':p>=70?'Yaxşı nəticə, bir az da və mükəmməl olacaq!':p>=50?'Orta nəticə — xəyallar səni izləyir…':'Qaranlıq çökdü… yenidən oxu və cəhd et!';
+ var h='<div class="big">'+em+'</div><div class="score fx">'+ok+' / '+N+' ('+p+'%)</div><p style="text-align:center">'+msg+'</p>';
+ h+='<p style="text-align:center;color:var(--mut)">İpucu istifadə olunan sual: '+hnt.filter(Boolean).length+'</p>';
+ if(bad.length){h+='<h2 class="fx" style="font-family:Creepster,Impact,fantasy;color:var(--or)">☠ Səhvlərin ('+bad.length+')</h2>';
+  bad.forEach(function(i){var q=Q[i];h+='<div class="wrong"><p><b>'+(i+1)+'. '+q[0]+'</b></p><p class="y">Sənin cavabın: '+(ans[i]===null?'— cavab verilməyib —':q[1][ans[i]])+'</p><p class="c">Düzgün cavab: '+q[1][q[2]]+'</p></div>'})}
+ else h+='<p style="text-align:center;font-size:20px">Heç bir səhv yoxdur! 🎉</p>';
+ h+='<button class="btn go" id="again" style="width:100%;margin-top:10px">🔁 Yenidən başla</button>';
+ $('quiz').classList.add('hid');$('res').innerHTML=h;$('res').classList.remove('hid');window.scrollTo(0,0);
+ ok/N>=0.5?sndOk():sndBad();
+ $('again').onclick=start};
+start();
+</script></body></html>
