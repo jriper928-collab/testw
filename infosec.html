@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Test – İnformasiya Təhlükəsizliyi</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#120a1c;--bg2:#2a1240;--card:#1c1029;--line:#4a2a66;--tx:#f3e9ff;--mute:#a995c2;--or:#ff7a1a;--ok:#3ddc84;--okbg:#0f3322;--bad:#ff4d5e;--badbg:#3a1018;--pur:#8b3dff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,var(--bg2),var(--bg) 70%);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+.moon{position:fixed;top:24px;right:6vw;width:70px;height:70px;border-radius:50%;background:#ffe9b0;box-shadow:0 0 60px 20px rgba(255,200,100,.25);opacity:.85;pointer-events:none}
+.bat{position:fixed;font-size:26px;pointer-events:none;animation:fly 14s linear infinite;opacity:.7}
+.bat:nth-of-type(2){top:20%;animation-duration:19s;animation-delay:-6s}
+.bat:nth-of-type(3){top:55%;animation-duration:24s;animation-delay:-12s}
+@keyframes fly{0%{left:-8%;transform:translateY(0)}50%{transform:translateY(-40px)}100%{left:108%;transform:translateY(10px)}}
+.fog{position:fixed;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,rgba(139,61,255,.18));pointer-events:none}
+main{position:relative;max-width:720px;margin:0 auto;padding:18px 14px 40px}
+h1{font-family:Creepster,Georgia,serif;font-weight:400;color:var(--or);text-align:center;font-size:clamp(28px,7vw,44px);margin:8px 0 2px;text-shadow:0 0 18px rgba(255,122,26,.5);letter-spacing:1px}
+.sub{text-align:center;color:var(--mute);font-size:14px;margin-bottom:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;color:var(--mute);margin-bottom:8px}
+.bar{height:8px;background:#2b1a3d;border-radius:8px;overflow:hidden;margin-bottom:10px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--or),#ffc23d);transition:width .3s}
+.dots{display:flex;gap:5px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:thin}
+.dots button{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#24153a;color:var(--mute);font-size:12px;cursor:pointer;padding:0}
+.dots button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.dots button.no{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.dots button.cur{outline:2px solid var(--or);outline-offset:1px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px;box-shadow:0 10px 40px rgba(0,0,0,.45),0 0 0 1px rgba(255,122,26,.08)}
+.q{font-size:clamp(17px,4.4vw,21px);line-height:1.4;margin:0 0 16px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#26163a;color:var(--tx);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:15px;line-height:1.4;cursor:pointer;font-family:inherit;transition:transform .12s,border-color .12s}
+.opt b{flex:0 0 26px;height:26px;border-radius:50%;background:#3a2358;display:grid;place-items:center;font-size:13px;color:var(--or)}
+.opt:hover:not(:disabled){border-color:var(--or);transform:translateX(3px)}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.no{background:var(--badbg);border-color:var(--bad);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hint{margin-top:6px;border:1.5px dashed var(--or);border-radius:12px;padding:10px 14px;background:rgba(255,122,26,.07);cursor:pointer;font-size:14px;color:#ffd2a8;user-select:none}
+.hint .a{display:none;margin-top:8px;color:var(--tx);line-height:1.45}
+.hint.open .a{display:block}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.btn{border:0;border-radius:12px;padding:12px 20px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;background:var(--or);color:#1a0a00}
+.btn.ghost{background:#2b1a3d;color:var(--tx);border:1px solid var(--line)}
+.btn:disabled{opacity:.35;cursor:default}
+.mute{background:none;border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:4px 10px;cursor:pointer;font-size:14px}
+.score{text-align:center}
+.score .big{font-family:Creepster,Georgia,serif;font-size:64px;color:var(--or);text-shadow:0 0 20px rgba(255,122,26,.5)}
+.mist{border:1px solid var(--line);border-left:4px solid var(--bad);background:#22122f;border-radius:10px;padding:12px 14px;margin:10px 0;font-size:14px;line-height:1.45}
+.mist .t{font-weight:700;margin-bottom:6px}
+.mist .w{color:var(--bad)}.mist .r{color:var(--ok)}
+.perfect{color:var(--ok);text-align:center;margin:16px 0}
+</style>
+</head>
+<body>
+<div class="moon"></div><span class="bat">🦇</span><span class="bat">🦇</span><span class="bat">🦇</span><div class="fog"></div>
+<main>
+<h1>🎃 Test 🎃</h1>
+<div class="sub">İnformasiya təhlükəsizliyi · 41 sual</div>
+<div id="app"></div>
+</main>
+<script>
+// [sual, DÜZGÜN cavab, səhv1, səhv2, səhv3]
+const Q=[
+[
+"İnformasiya təhlükəsizliyinin təmin edilməsi necə istiqamətdə nəzərdən keçirilir?",
+"2 istiqamət: konkret server mənbələrinin qorunması, rabitə kanalı və sistemdə olanların təhlükəsizliyinin təmin olunması",
+"3 istiqamət: server mənbələrinin qorunması, istifadəçilərin qorunması və proqram təminatının təhlükəsizliyinin təmin olunması",
+"2 istiqamət: yalnız fiziki mühafizə və yalnız proqram təminatının təhlükəsizliyinin təmin olunması",
+"1 istiqamət: yalnız rabitə kanalının şifrələnməsi və sistemdə olanların silinməsi"
+],
+[
+"Effektiv təhlükəsizlik üçün müdafiə mexanizmləri necə tətbiq edilməlidir?",
+"Vahid və kompleks şəkildə",
+"Ayrı-ayrılıqda və seçmə qaydada",
+"Yalnız texniki vasitələrlə",
+"Yalnız təhlükə yarandıqdan sonra"
+],
+[
+"Təhlükəsizlik siyasəti müəyyən edildikdən sonra ilk olaraq nə edilir?",
+"Təhlükəsizlik mühitinin, sonra zərərin qiymətləndirilməsi",
+"Əvvəl zərər qiymətləndirilir, sonra mühit təhlil olunur",
+"Bütün istifadəçilərin hüquqları ləğv edilir",
+"Dərhal sistem söndürülür və yenidən qurulur"
+],
+[
+"Qanunilik prinsipi nə deməkdir?",
+"İnformasiya təhlükəsizliyi sahəsində həyata keçirilən tədbirlərin mövcud qanuna uyğun olması",
+"İnformasiya təhlükəsizliyi sahəsində həyata keçirilən tədbirlərin yalnız təşkilatın daxili qaydalarına uyğun olması",
+"İnformasiya təhlükəsizliyi sahəsində qanunların tədbirlər həyata keçirildikdən sonra tətbiq edilməsi",
+"İnformasiya təhlükəsizliyi sahəsində tədbirlərin yalnız dövlət qurumları üçün məcburi olması"
+],
+[
+"Tədbirlərin kompleksliyi prinsipinə görə hansı tədbirlər bir-birini tamamlamalıdır?",
+"Hüquqi, təşkilati, proqram və texniki",
+"Hüquqi, iqtisadi, proqram və fiziki",
+"Təşkilati, maliyyə, texniki və sosial",
+"Yalnız proqram və texniki"
+],
+[
+"İnsan amili ilə bağlı hansı nəticə çıxır?",
+"Təhlükəsizlik qaydasına əməl olunmazsa sistemlərdə ziyan dəyər. Nəticə: insan və texnologiya bir-birindən ayrı olmaz",
+"Təhlükəsizlik qaydasına əməl olunmasa belə sistemlərdə ziyan dəyməz. Nəticə: texnologiya insan amilini tam əvəz edir",
+"Təhlükəsizlik qaydasına əməl olunmazsa sistemlərdə ziyan dəyər. Nəticə: insan amili təhlükəsizliyə təsir etmir",
+"Təhlükəsizlik qaydasına əməl olunmazsa ziyan yalnız insana dəyər. Nəticə: texnologiya insandan ayrı işləyə bilər"
+],
+[
+"Mobil rabitədə informasiya təhlükəsizliyinin əsas məqsədi nədir?",
+"Mobil rabitədə informasiya təhlükəsizliyinin əsas məqsədi istifadəçilərin məxfiliyini qorumaq, icazəsiz dinləmələrin qarşısını almaq və fasiləsiz xidmət təmin etməkdir",
+"Mobil rabitədə informasiya təhlükəsizliyinin əsas məqsədi istifadəçilərin məxfiliyini qorumaq, şəbəkə sürətini artırmaq və tarifləri azaltmaqdır",
+"Mobil rabitədə informasiya təhlükəsizliyinin əsas məqsədi icazəsiz dinləmələrin qarşısını almaq, lakin xidmətə fasilə verməkdir",
+"Mobil rabitədə informasiya təhlükəsizliyinin əsas məqsədi abunəçi sayını artırmaq və məlumatı açıq yaymaqdır"
+],
+[
+"İnformasiya təhlükəsizliyinin əsas prinsipləri hansılardır?",
+"① Qanunvericiliyin - informasiya qanunvericilik tələbinə uyğun ② Şəxsi - dövlətin və dövlət marağının qorunması ③ Təhlükəsizlik subyektlərinin fəaliyyətləri uzlaşdırılmalıdır ④ Tədbirlərin kompleksliyi: hüquqi, təşkilati, proqram, texniki tamamlamalıdır ⑤ Təhlükəsizlik prinsipinə qoyulan informasiya mühafizəsi ⑥ İstifadəçilərin minimum zəruri uyğunluğu",
+"① Qanunvericiliyin - informasiya qanunvericilik tələbinə uyğun ② Şəxsi - şəxsin və təşkilatın marağının qorunması ③ Təhlükəsizlik subyektlərinin fəaliyyətləri müstəqil olmalıdır ④ Tədbirlərin təkliyi: yalnız texniki tədbirlər kifayətdir ⑤ Təhlükəsizlik prinsipinə qoyulan informasiya mühafizəsi ⑥ İstifadəçilərin maksimum giriş hüququ",
+"① Qanunvericiliyin - informasiya qanunvericilik tələbinə uyğun ② Şəxsi - dövlətin və dövlət marağının qorunması ③ Təhlükəsizlik subyektlərinin fəaliyyətləri uzlaşdırılmalıdır ④ Tədbirlərin kompleksliyi: hüquqi, təşkilati, proqram, texniki tamamlamalıdır ⑤ Təhlükəsizlik prinsipinə qoyulan informasiya açıqlığı ⑥ İstifadəçilərin maksimum zəruri uyğunluğu",
+"① Qanunvericiliyin - informasiya qanunvericilik tələbinə uyğun ② Şəxsi - istifadəçinin və şirkətin marağının qorunması ③ Təhlükəsizlik subyektlərinin fəaliyyətləri uzlaşdırılmamalıdır ④ Tədbirlərin kompleksliyi: yalnız proqram və texniki tamamlamalıdır ⑤ Təhlükəsizlik prinsipinə qoyulan informasiya mühafizəsi ⑥ İstifadəçilərin minimum zəruri uyğunluğu"
+],
+[
+"Məxfilik prinsipi nəyi təmin edir?",
+"Qanunsuz şəxslərin daxil olmasının qarşısını alır. Yeni informasiya yalnız səlahiyyətli istifadəçilərə təqdim edilir",
+"Qanunsuz şəxslərin daxil olmasına icazə verir. Yeni informasiya bütün istifadəçilərə təqdim edilir",
+"Məlumatın dəyişdirilməməsini təmin edir. Yeni informasiya yalnız səlahiyyətli istifadəçilərə təqdim edilir",
+"Qanunsuz şəxslərin daxil olmasının qarşısını alır. Yeni informasiya yalnız qeydiyyatdan keçməmiş istifadəçilərə təqdim edilir"
+],
+[
+"İnformasiyanın bütövlülüyü nə deməkdir?",
+"Məlumatın yaradıldığı andan etibarən dəqiq, tam, dəyişdirilməmiş və orijinal formada qalması deməkdir",
+"Məlumatın yaradıldığı andan etibarən yalnız səlahiyyətli şəxslərə açıq qalması deməkdir",
+"Məlumatın yaradıldığı andan etibarən istənilən vaxt əlçatan olması deməkdir",
+"Məlumatın yaradıldığı andan etibarən şifrələnərək gizli saxlanması deməkdir"
+],
+[
+"Fişinq hücumunun əsas məqsədi nədir?",
+"Xəbərdarlıqlara daxil edilən hücumlar vasitəsilə zərərli proqramların yüklənməsi (e-poçt və ya SMS link)",
+"Xəbərdarlıqlara daxil edilən hücumlar vasitəsilə serverin yüklənərək dayandırılması (DoS)",
+"Xəbərdarlıqlara daxil edilən hücumlar vasitəsilə trafikin gizlicə dinlənilməsi (e-poçt və ya SMS link)",
+"Xəbərdarlıqlara daxil edilən hücumlar vasitəsilə məlumatların ehtiyat nüsxəyə köçürülməsi"
+],
+[
+"Zərərli proqram təminatı nədir?",
+"Kompüter, sistem, serverlər, mobil cihazlara zərər yetirmək (Malware)",
+"Kompüter, sistem, serverlərin işini sürətləndirmək və mobil cihazları yeniləmək",
+"Kompüter, sistem, serverlərə təhlükəsizlik yeniləmələri yükləmək",
+"Kompüter, sistem və mobil cihazlarda ehtiyat nüsxə yaratmaq"
+],
+[
+"Şifrələnmənin əsas məqsədi nədir?",
+"Məlumatların qorunması, sızmanın qarşısını almaq",
+"Məlumatın həcmini azaltmaq",
+"İstifadəçinin kimliyini yoxlamaq",
+"Şəbəkə sürətini artırmaq"
+],
+[
+"Autentifikasiya nədir?",
+"İstifadəçinin kimliyinin yoxlanılması",
+"Səlahiyyət dərəcəsinin müəyyənləşdirilməsi",
+"Məlumatın şifrələnməsi",
+"Əməliyyatların jurnala yazılması"
+],
+[
+"Tələbənin icazəsiz dəyişdirilməsi hansı prinsipin pozulmasıdır?",
+"Tamlıq",
+"Məxfilik",
+"Əlçatanlıq",
+"Autentifikasiya"
+],
+[
+"Hücum edən şəxs məlumatın özünü dəyişmədən onu müşahidə edirsə, hansı təhlükəsizlik prinsipi pozulub?",
+"Məxfilik",
+"Tamlıq",
+"Əlçatanlıq",
+"Avtorizasiya"
+],
+[
+"Hansı əlçatanlığın pozulmasına səbəb ola bilər?",
+"İstifadəçilərə tələb olunan informasiya istənilən vaxt təmin edilməlidir, maneə olarsa pozulur",
+"İstifadəçilərə tələb olunan informasiya yalnız iş saatlarında təmin edilməlidir, maneə olarsa pozulmur",
+"İstifadəçilərə tələb olunan informasiya icazəsiz dəyişdirildikdə təmin edilməlidir, maneə olarsa pozulur",
+"İstifadəçilərə tələb olunan informasiya yalnız administratora təmin edilməlidir, maneə olarsa pozulur"
+],
+[
+"Avtorizasiya nəyi müəyyən edir?",
+"İstifadəçilərin sistem daxilində səlahiyyət dərəcəsi. Autentifikasiyadan sonra istifadəçinin informasiya sistemində hansı resurslara müraciət edəcəyini, hansı əməliyyatları keçirəcəyini müəyyənləşdirir",
+"İstifadəçilərin sistem daxilində kimliyi. Autentifikasiyadan əvvəl istifadəçinin hansı parolu istifadə edəcəyini müəyyənləşdirir",
+"İstifadəçilərin sistem daxilində səlahiyyət dərəcəsi. Autentifikasiyadan əvvəl istifadəçinin yalnız kimliyini müəyyənləşdirir",
+"Məlumatın sistem daxilində bütövlüyü. Autentifikasiyadan sonra istifadəçinin hansı məlumatı şifrələyəcəyini müəyyənləşdirir"
+],
+[
+"Autentifikasiya və avtorizasiya arasındakı əsas fərq nədir?",
+"Autentifikasiya kim olduğunuzu yoxlayır, Avtorizasiya isə nə etməyə icazənizin olduğunu müəyyən edir",
+"Autentifikasiya nə etməyə icazənizin olduğunu yoxlayır, Avtorizasiya isə kim olduğunuzu müəyyən edir",
+"Autentifikasiya məlumatı şifrələyir, Avtorizasiya isə şifrəni açmağa icazə verir",
+"Autentifikasiya kim olduğunuzu yoxlayır, Avtorizasiya isə məlumatın bütövlüyünü müəyyən edir"
+],
+[
+"İnformasiya təhlükəsizliyi necə təmin olunmalıdır?",
+"Təhlükəsizlik siyasəti tərtib olunur, bütöv məlumatların yarada biləcəyi zərərləri müəyyən edir, sistemin təhlükəsizlik potensial dərəcəsini, rabitə kanalını və sistemdəki dövriyyəni",
+"Təhlükəsizlik siyasəti tərtib olunmur, yalnız antivirus quraşdırılır, sistemin təhlükəsizlik potensial dərəcəsi nəzərə alınmır",
+"Təhlükəsizlik siyasəti tərtib olunur, yalnız maddi zərərləri müəyyən edir, rabitə kanalını və sistemdəki dövriyyəni nəzərə almır",
+"Təhlükəsizlik siyasəti təhlükə yarandıqdan sonra tərtib olunur, zərərləri müəyyən edir və istifadəçi sayını məhdudlaşdırır"
+],
+[
+"Şəbəkədə informasiya təhlükəsizliyinin növlərindən biri hansıdır?",
+"Abunəçilərin qorunması; göndərilən mesajların qorunması (kəsilmə, sıxışdırılma); həm abunəçi, həm şəbəkə informasiyalarının qorunması",
+"Abunəçilərin qorunması; göndərilən mesajların açıq yayımlanması; yalnız şəbəkə informasiyalarının qorunması",
+"Yalnız serverlərin fiziki mühafizəsi; mesajların kəsilməsinə icazə verilməsi; abunəçi informasiyalarının silinməsi",
+"Rabitə xərclərinin azaldılması; mesajların sıxışdırılması; abunəçi bazasının açıq yayımlanması"
+],
+[
+"Zərərli proqramlar və veb-saytlar nə məqsədlə istifadə oluna bilər?",
+"Məlumatı gizlətmək, sistemin işini pozmaq",
+"Sistemin işini sürətləndirmək",
+"Məlumatları ehtiyat nüsxələmək",
+"İstifadəçilərin kimliyini yoxlamaq"
+],
+[
+"Mobil ransomware hansı təhlükə növünə aiddir?",
+"Süni təhlükələr",
+"Təbii təhlükələr",
+"Təsadüfi daxili səhv",
+"Yalnız passiv təhlükələr"
+],
+[
+"Fişinq hücumları hansı vasitələrlə həyata keçir?",
+"E-poçt, SMS",
+"USB daşıyıcılar və printerlər",
+"Yalnız saxta Wi-Fi nöqtələri",
+"Yalnız telefon zəngləri"
+],
+[
+"“Hesabınız bloklanıb, açmaq üçün linkə daxil ol” bu hansı təhlükə ilə əlaqəli ola bilər?",
+"Fişinq təhlükəsi",
+"Ransomware təhlükəsi",
+"DoS hücumu",
+"Man in the middle"
+],
+[
+"İstifadəçi şübhəli SMS-ə daxil olur və nəticədə şəxsi məlumatlar oğurlanır. Burada hansı təhlükə ehtimal olunur?",
+"SMS fişinq (fişinq təhlükəsi)",
+"Troya atı",
+"Keylogger",
+"Fiziki oğurluq"
+],
+[
+"Ötürülən məlumat gizlicə dinlənilir və məlumatın məzmunu dəyişir. Bu vəziyyət hansı hücuma uyğundur?",
+"Man in the middle (ortadakı adam)",
+"DDoS hücumu",
+"Fişinq",
+"Brute force"
+],
+[
+"Təhlükələr təsnifatına görə neçə yerə bölünür?",
+"Aktiv və passiv təhlükələr",
+"Daxili və xarici təhlükələr",
+"Süni və təbii təhlükələr",
+"Birbaşa və dolayı təhlükələr"
+],
+[
+"Troya atları hansı qrupa aiddir?",
+"Zərərli proqramlar (Malware) və ya Aktiv / Süni təhlükələr qrupuna aiddir",
+"Zərərli proqramlar (Malware) və ya Passiv / Təbii təhlükələr qrupuna aiddir",
+"Zərərli proqramlar (Malware) və ya Passiv / Süni təhlükələr qrupuna aiddir",
+"Zərərli proqramlar (Malware) və ya Aktiv / Təbii təhlükələr qrupuna aiddir"
+],
+[
+"Mənbəyinə görə təhlükələr hansı qruplara bölünür?",
+"4 qrup: daxili, xarici, süni, təbii",
+"2 qrup: aktiv və passiv",
+"3 qrup: daxili, xarici, süni",
+"4 qrup: birbaşa, dolayı, aktiv, passiv"
+],
+[
+"Giriş parolunun başqa şəxslərlə paylaşması hansı təhlükəyə aiddir?",
+"Daxili",
+"Xarici",
+"Təbii",
+"Passiv xarici"
+],
+[
+"Passiv təhlükə zamanı hücum edən tərəf nə edir?",
+"İnformasiya resurslarını dəyişdirmədən müşahidə edir və istifadə edir",
+"İnformasiya resurslarını dəyişdirərək müşahidə edir və istifadə edir",
+"İnformasiya resurslarını silərək sistemin işini dayandırır",
+"İnformasiya resurslarını dəyişdirmədən başqasının adından çıxış edir"
+],
+[
+"Hansı aktiv təhlükəyə nümunədir?",
+"DoS/DDoS hücumları, Məlumatların dəyişdirilməsi, Zərərli proqramlar (Malware/Ransomware), Başqasının adından çıxış etmə (Masquerading/Spoofing)",
+"Trafikin dinlənilməsi, Məlumatların müşahidəsi, Şəbəkənin monitorinqi, İnformasiya resurslarının izlənməsi",
+"DoS/DDoS hücumları, Məlumatların dəyişdirilməsi, Trafikin dinlənilməsi, Şəbəkənin monitorinqi",
+"Məlumatların müşahidəsi, Zərərli proqramlar (Malware/Ransomware), Trafikin izlənməsi, Passiv dinləmə"
+],
+[
+"Təhlükə pəncərəsi nədir?",
+"Zəif yerlərin istifadə olunmaq mümkünlüyünün yarandığı vaxtdan bu zəifliyin aradan qaldırıldığı vaxta qədər olan zaman müddəti",
+"Hücumun başlandığı vaxtdan onun aşkarlandığı vaxta qədər olan zaman müddəti",
+"Zəif yerlərin aşkarlandığı vaxtdan antivirus bazasının yeniləndiyi vaxta qədər olan zaman müddəti",
+"Zəif yerlərin aradan qaldırıldığı vaxtdan yenidən yarandığı vaxta qədər olan zaman müddəti"
+],
+[
+"Məlumatın sistemdən kənara sızması necə yerə bölünür?",
+"Birbaşa və dolayı olmaqla 2 yerə bölünür",
+"Aktiv və passiv olmaqla 2 yerə bölünür",
+"Daxili və xarici olmaqla 2 yerə bölünür",
+"Texniki, təşkilati və hüquqi olmaqla 3 yerə bölünür"
+],
+[
+"Dolayı yolla müdaxilə nədir?",
+"İnformasiyanın əldə edilməsi üçün komponentlərin yerləşdiyi yerə girmək tələb olunmur",
+"İnformasiyanın əldə edilməsi üçün komponentlərin yerləşdiyi yerə girmək tələb olunur",
+"İnformasiyanın əldə edilməsi üçün yalnız daxili işçi komponentlərin yerləşdiyi yerə girir",
+"İnformasiyanın əldə edilməsi üçün sistem zərərli proqramla dəyişdirilməlidir"
+],
+[
+"Birbaşa müdaxilə nədir?",
+"Kompüterlərin yerləşdiyi yerə girir (dəyişdirərək və ya dəyişdirmədən)",
+"Kompüterlərin yerləşdiyi yerə girmədən uzaqdan əldə edir (dəyişdirərək və ya dəyişdirmədən)",
+"Kompüterlərin yerləşdiyi yerə girir (yalnız dəyişdirərək)",
+"Yalnız şəbəkə üzərindən komponentlərə uzaqdan daxil olur (dəyişdirmədən)"
+],
+[
+"İnformasiya sızması nədir?",
+"Məxfi, qorunan və ya şəxsi məlumatların icazəsiz, nəzarətsiz və qeyri-qanuni şəkildə daxili mühitdən kənara (ictimaiyyətə və ya kənar şəxslərin əlinə) çıxması prosesidir",
+"Məxfi, qorunan və ya şəxsi məlumatların səhvən və nəzarətli şəkildə daxili mühitdə silinməsi prosesidir",
+"Məxfi, qorunan və ya şəxsi məlumatların icazə ilə və qanuni şəkildə şifrələnərək ötürülməsi prosesidir",
+"Məxfi, qorunan və ya şəxsi məlumatların qanuni qaydada üçüncü tərəfə təqdim edilməsi prosesidir"
+],
+[
+"İnformasiya sızmasının qarşısını almaq üçün hansı tədbir daha məqsədəuyğundur?",
+"1 İnformasiya təhlükəsizliyi siyasətinin hazırlanması 2 Təhlillərin edilməsi, dəymiş ziyanın (maddi ziyan) qiymətləndirilməsi 3 Təhlükəsizliyi təmin etmək üçün vasitələr",
+"1 İstifadəçi sayının azaldılması 2 Məlumatların silinməsi 3 Təhlükəsizliyi təmin etmək üçün vasitələrdən imtina",
+"1 İnformasiya təhlükəsizliyi siyasətinin hazırlanması 2 Sızma baş verdikdən sonra cavab tədbirləri 3 Yalnız antivirus vasitələri",
+"1 Təhlükəsizlik siyasətinin ləğvi 2 Təhlillərin edilməsi, dəymiş ziyanın qiymətləndirilməsi 3 Vasitələrin məhdudlaşdırılması"
+],
+[
+"İnformasiya təhlükəsizliyinin pozulması hansı nəticəyə səbəb ola bilər?",
+"Maliyyə itkiləri, Reputasiya və etibarın itirilməsi, Hüquqi və operativ fəsadlar",
+"Maliyyə qazancı, Reputasiyanın yüksəlməsi, Sistem sürətinin artması",
+"Maliyyə itkiləri, Reputasiya və etibarın artması, Yalnız cihazın fiziki zədələnməsi",
+"Heç bir nəticə yoxdur, Yalnız texniki xəta, Operativ fəsadlar yoxdur"
+],
+[
+"Aşağıdakılardan hansı informasiyanın sızmasının əsas səbəblərindən biridir?",
+"Qeydiyyatdan keçmiş istifadəçinin texnikasının icazəsiz istifadəsi; İcazəsi olan istifadəçi adı altında maskalanma; Əməliyyat sistemi və ya icazəsi olan şəxsin adı altında; İnformasiya daşıyıcılarında olan məlumatın köçürülməsi; Proqramlaşdırılmış elektron əməliyyat sistemi boşluqları istifadə; Qulaq asma qurğusu tətbiq edilmə",
+"Qeydiyyatdan keçməmiş istifadəçinin texnikasının icazəsiz istifadəsi; İcazəsi olan istifadəçi adı altında maskalanma; Antivirusun vaxtında yenilənməsi; Məlumatların mütəmadi ehtiyat nüsxələnməsi; Parolların mütəmadi dəyişdirilməsi; Qulaq asma qurğusunun söndürülməsi",
+"Qeydiyyatdan keçmiş istifadəçinin texnikasının icazəli istifadəsi; İcazəsi olan istifadəçi adı altında maskalanma; Əməliyyat sistemi və ya icazəsi olan şəxsin adı altında; İnformasiya daşıyıcılarında olan məlumatın şifrələnməsi; Proqramlaşdırılmış elektron əməliyyat sistemi boşluqlarının aradan qaldırılması; Qulaq asma qurğusu tətbiqinin qadağası",
+"Qeydiyyatdan keçmiş istifadəçinin texnikasının icazəsiz istifadəsi; İcazəsiz istifadəçi adı altında maskalanma; Əməliyyat sistemi yeniləmələri; İnformasiya daşıyıcılarında olan məlumatın köçürülməsi; Antivirus proqramı quraşdırılması; Qulaq asma qurğusu tətbiq edilmə"
+]
+];
+const L="ABCD";let order,ans,cur,hints,AC,muted=false;
+const $=s=>document.querySelector(s),app=$("#app");
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function tone(f,t,d,type,v){if(muted||!AC)return;const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+t;o.type=type;o.frequency.setValueAtTime(f,s);g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.connect(g);g.connect(AC.destination);o.start(s);o.stop(s+d)}
+function good(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.09,.25,"triangle",.18))}
+function bad(){tone(200,0,.4,"sawtooth",.16);tone(140,.12,.5,"sawtooth",.16);tone(80,.3,.7,"square",.12);tone(300,.05,.3,"sawtooth",.05)}
+function start(){order=Q.map(()=>shuf([0,1,2,3]));ans=Array(Q.length).fill(null);hints=Array(Q.length).fill(false);cur=0;render()}
+function render(){
+const q=Q[cur],a=ans[cur],n=Q.length,done=ans.filter(x=>x!==null).length;
+const dots=Q.map((_,i)=>`<button data-go="${i}" class="${ans[i]===null?"":ans[i]===0?"ok":"no"} ${i===cur?"cur":""}">${i+1}</button>`).join("");
+const opts=order[cur].map((oi,p)=>{let c="";if(a!==null){if(oi===0)c="ok";else if(oi===a)c="no"}
+return `<button class="opt ${c}" data-p="${p}" ${a!==null?"disabled":""}><b>${L[p]}</b><span>${q[oi+1]}</span></button>`}).join("");
+app.innerHTML=`<div class="top"><span>Sual ${cur+1} / ${n} · Cavablanıb: ${done}</span><button class="mute" id="mu">${muted?"🔇 Səssiz":"🔊 Səs"}</button></div>
+<div class="bar"><i style="width:${done/n*100}%"></i></div><div class="dots">${dots}</div>
+<div class="card"><p class="q">${q[0]}</p>${opts}
+<div class="hint ${hints[cur]?"open":""}" id="hint">💡 İpucu – cavabı görmək üçün toxun<div class="a"><b>Cavab:</b> ${q[5]||q[1]}</div></div></div>
+<div class="nav"><button class="btn ghost" id="prev" ${cur===0?"disabled":""}>← Əvvəlki</button>
+${cur===n-1?`<button class="btn" id="fin">👻 Nəticəni göstər</button>`:`<button class="btn" id="next">Növbəti →</button>`}</div>`;
+const d=document.querySelector(".dots .cur");d&&d.scrollIntoView({inline:"center",block:"nearest"});
+}
+app.addEventListener("click",e=>{
+const t=e.target.closest("button,.hint");if(!t)return;
+if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(_){}}
+if(AC&&AC.state==="suspended")AC.resume();
+if(t.id==="hint"){hints[cur]=!hints[cur];t.classList.toggle("open",hints[cur]);return}
+if(t.dataset.p!==undefined&&ans[cur]===null){ans[cur]=order[cur][+t.dataset.p];ans[cur]===0?good():bad();render();return}
+if(t.dataset.go!==undefined){cur=+t.dataset.go;render();return}
+if(t.id==="mu"){muted=!muted;render();return}
+if(t.id==="prev"){cur--;render();return}
+if(t.id==="next"){cur++;render();return}
+if(t.id==="fin"){result();return}
+if(t.id==="again"){start();scrollTo(0,0);return}
+if(t.dataset.rev!==undefined){cur=+t.dataset.rev;render();scrollTo(0,0)}
+});
+function result(){
+const n=Q.length,ok=ans.filter(x=>x===0).length,skip=ans.filter(x=>x===null).length;
+const wrong=[];ans.forEach((a,i)=>{if(a!==0)wrong.push(i)});
+const pct=Math.round(ok/n*100);
+const msg=pct>=90?"🎃 Əla! Cadugər səndən qorxur!":pct>=70?"🦇 Yaxşıdır, bir az da çalış!":pct>=50?"👻 Orta nəticə – kabuslar səni gözləyir...":"💀 Daha çox təkrar et!";
+const list=wrong.map(i=>{const a=ans[i];return `<div class="mist"><div class="t">${i+1}. ${Q[i][0]}</div>
+<div class="w">✗ Sənin cavabın: ${a===null?"<i>cavab verilməyib</i>":Q[i][a+1]}</div><div class="r">✓ Düzgün cavab: ${Q[i][1]}</div>
+<button class="btn ghost" style="margin-top:8px;padding:6px 12px;font-size:13px" data-rev="${i}">Suala get</button></div>`}).join("");
+app.innerHTML=`<div class="card score"><div class="big">${ok} / ${n}</div><div style="font-size:18px">${pct}% · ${msg}</div>
+<div class="sub" style="margin-top:8px">Düzgün: ${ok} · Səhv: ${n-ok-skip} · Cavabsız: ${skip}</div></div>
+<h2 style="color:var(--or);margin:20px 0 4px">${wrong.length?"Səhvlərin ("+wrong.length+")":""}</h2>
+${wrong.length?list:`<div class="perfect">🎉 Heç bir səhv yoxdur! Mükəmməl!</div>`}
+<div class="nav" style="justify-content:center"><button class="btn" id="again">🔄 Yenidən başla</button></div>`;
+scrollTo(0,0);
+}
+start();
+</script>
+</body>
+</html>
