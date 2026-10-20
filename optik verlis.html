@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Optik Veriliş Sistemləri – Kollokvium 1</title>
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--tx:#1d2733;--mu:#6b7785;--bd:#dde3ea;--ac:#2f6fed;--ok:#1e9e5a;--okb:#e6f6ee;--er:#d6403a;--erb:#fdeceb;--hint:#fff7e0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.3rem;margin:0 0 4px}
+.sub{color:var(--mu);font-size:.9rem;margin-bottom:16px}
+.bar{height:8px;background:var(--bd);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(30,50,80,.05)}
+.qn{color:var(--ac);font-weight:600;font-size:.85rem;margin-bottom:6px}
+.q{font-size:1.1rem;font-weight:600;margin-bottom:16px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--ac);background:#f2f6ff}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok);background:var(--okb)}
+.opt.no{border-color:var(--er);background:var(--erb)}
+.opt.hl{border-color:#e0a800;background:var(--hint)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.btn{border:0;background:var(--ac);color:#fff;padding:10px 18px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+.btn.g{background:#e9eef6;color:var(--tx)}
+.btn:disabled{opacity:.4;cursor:default}
+.sp{flex:1}
+.hint{display:none;margin-top:12px;background:var(--hint);border:1px solid #f0d98a;border-radius:10px;padding:10px 14px;font-size:.95rem}
+.hint.on{display:block}
+.grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.grid button{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:#fff;font:inherit;font-size:.8rem;cursor:pointer}
+.grid .cur{outline:2px solid var(--ac)}
+.grid .ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.grid .no{background:var(--er);color:#fff;border-color:var(--er)}
+.score{font-size:2.6rem;font-weight:700;text-align:center;margin:6px 0}
+.stats{text-align:center;color:var(--mu);margin-bottom:18px}
+.mis{border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.mis b{display:block;margin-bottom:6px}
+.mis .w{color:var(--er)}.mis .r{color:var(--ok)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Optik Veriliş Sistemləri</h1>
+<div class="sub">Kollokvium 1 · test</div>
+<div id="app"></div>
+</div>
+<script>
+const D=[
+["OTS-də çoxkanallı rabitənin təşkili hansı prinsiplərə əsaslanır?","Kanalların zamana (TDM), tezliyə və dalğa uzunluğuna görə bölünməsi",["Kanalların zamana, amplituda və polyarizasiyaya görə bölünməsi","Kanalların tezliyə, məsafəyə və gücə görə bölünməsi","Kanalların yalnız zamana görə bölünməsi"]],
+["Elektrik siqnalları optik kabelə ötürülməzdən əvvəl nə edilir?","Modulyasiya edilir, optik şüalanma (işıq) siqnalına çevrilir",["Demodulyasiya edilir və rəqəmsal koda çevrilir","Gücləndirilib yenidən elektrik siqnalı kimi göndərilir","Kvantlanır və süzgəcdən keçirilib yaddaşda saxlanılır"]],
+["Daxili modulyasiya zamanı nə baş verir?","Elektrik siqnalı lazerin şüalandırma prosesinə təsir edir və siqnalın lazım olan forma və intensivliyini təmin edir",["Optik şüa lazerdən çıxdıqdan sonra ayrıca modulyatorda dəyişdirilir","Lazerin şüası fotodetektorda elektrik siqnalına çevrilir","Siqnal optik lifdə dispersiyaya uğrayaraq zəifləyir"]],
+["Yarımkeçirici lazerlərə malik sistemlər üçün hansı modulyasiya xarakterikdir?","Daxili modulyasiya",["Xarici modulyasiya","Yalnız faza modulyasiyası","Qarışıq (daxili-xarici) modulyasiya"]],
+["İşıq diodları tətbiq edilən sistemlərdə hansı modulyasiya xarakterikdir?","Xarici modulyasiya",["Daxili modulyasiya","Yalnız faza modulyasiyası","Qarışıq modulyasiya"]],
+["Optik diapazondan istifadə çox böyük veriliş sürəti əldə etməyə imkan versə də, niyə bu sürəti məhdudlaşdırmaq lazım gəlir?","Dispersiya, siqnalın zəifləməsi (attenuation), qeyri-xətti effektlər",["Optik lifin elektrik keçiriciliyinin yüksək olması","Elektromaqnit müdaxilələr və induksiya təsiri","Lifin çəkisinin və qiymətinin artması"]],
+["Müxtəlif kanal siqnallarının birləşdirilməsi və ayrılması hansı vasitə ilə həyata keçirilir?","Telekommunikasiya sisteminin standart avadanlığı vasitəsilə həyata keçirilir",["Yalnız optik birləşdiricilər (konnektorlar) vasitəsilə","Fotodetektor və lazer cütü vasitəsilə","Aralıq stansiyanın regeneratorları vasitəsilə"]],
+["ORX-in parametrlərini razılaşdırmaq üçün hansı sistemlərdən istifadə olunur?","Xüsusi verici və qəbuledici sistemlərdən istifadə olunur",["Standart telekommunikasiya avadanlığından istifadə olunur","Yalnız optik gücləndiricilərdən istifadə olunur","Xətti trakt avadanlığından istifadə olunur"]],
+["Qəbuledici stansiyada FD-dən (fotodetektor) sonra siqnal hara ötürülür?","Qəbuledici razılaşdırıcı qurğu (ORQ) vasitəsilə ÇKTS-nin qəbuledici hissəsinə ötürülür",["Birbaşa verici razılaşdırıcı qurğuya ötürülür","Optik lifə geri qaytarılır","Modulyatora ötürülür"]],
+["Optik-lifli veriliş sistemləri dedikdə nə başa düşülür?","Optik dalğaların və siqnalların köməyi ilə optik liflərlə informasiyanın ötürülməsini həyata keçirən aktiv və passiv qurğular yığımı",["Yalnız optik kabellərdən ibarət passiv xətlər","Elektrik siqnallarını mis kabellə ötürən qurğular yığımı","Radiodalğalarla informasiya ötürən qurğular yığımı"]],
+["Hazırda optik-lifli veriliş sistemlərinin qurulması üçün hansı uzunluqlu dalğalardan istifadə olunur?","0,8 – 1,65 mkm-ə qədər",["0,2 – 0,6 mkm-ə qədər","1,65 – 3,5 mkm-ə qədər","0,4 – 0,7 mkm-ə qədər"]],
+["Məlumat verilişi üçün işıq siqnallarından ilk dəfə neçənci ildə və kim tərəfindən istifadə edilmişdir?","1980-ci ildə, Q. İ. Morozov tərəfindən",["1960-cı ildə, Q. İ. Morozov tərəfindən","1980-ci ildə, A. Bell tərəfindən","1958-ci ildə, Ç. Taunz tərəfindən"]],
+["Optik rabitənin müasir erası neçənci ildə ilk lazerlərin yaranması ilə başlanmışdır?","1958-ci ildə",["1960-cı ildə","1980-ci ildə","1970-ci ildə"]],
+["1980-ci illərdə optik-lifli veriliş sistemlərinin inkişafında hansı əsas elementlər yaradıldı?","1980-ci illərdə bir çox ölkələrdə 10 dB/km-dən az itki ilə optik liflər istehsal olunmağa başladı və daha etibarlı yarımkeçirici optik şüalanma mənbələri və fotodetektorlar yaradıldı",["Rabitə peykləri və radiorele xətləri yaradıldı","100 dB/km-dən çox itkili liflər və qaz lazerləri yaradıldı","İlk koaksial kabellər və elektron lampalı gücləndiricilər yaradıldı"]],
+["Optik-lifli veriliş sistemlərinin üstünlüklərinə hansı aid deyil?","Cavab yoxdur",["Geniş buraxma zolağı","Elektromaqnit müdaxilələrə davamlılıq","Kiçik ölçü və çəki"]],
+["Optik-lifli veriliş sistemləri və optik-lifli rabitə xətləri birlikdə nəyi əmələ gətirirlər?","Optik veriliş xətlərini",["Elektrik veriliş xətlərini","Radiorele rabitə xətlərini","Peyk rabitə kanallarını"]],
+["Optik-lifli rabitə xəttlərindən geniş istifadə etmədən hansı sahələrin inkişafı qeyri-mümkündür?","Telefon və teleqraf rabitəsi, kabel televiziyası, faksimil rabitə, vahid rəqəmli şəbəkənin yaradılması (telekom)",["Yalnız radio yayımı və peyk rabitəsi","Mexaniki və elektromexaniki avadanlıq istehsalı","Yalnız yerüstü televiziya yayımı"]],
+["Optik-lifli veriliş sistemlərinin tətbiqi əsas telekommunikasiya sistemindən əlavə hansı sahələrin inkişafına da təsir göstərir?","İnfraqırmızı şüalanma və ya optik şüalanma",["Ultrabənövşəyi şüalanma və ya rentgen şüalanması","Yalnız radiodalğalar və mikrodalğalar","Yalnız akustik dalğalar"]],
+["0,8 mkm-dən 1,65 mkm-ə qədər dalğa uzunluğu necə adlanır?","İnfraqırmızı şüalanma və ya optik şüalanma",["Ultrabənövşəyi şüalanma","Rentgen şüalanması","Görünən işıq (yalnız)"]],
+["Adi optik şüalanma mənbələri ilə müqayisədə lazer şüalanması nə ilə fərqlənir?","Yüksək monoxromatikliyə, koherentliyə və çox böyük intensivliyə malikdir",["Geniş spektrə və aşağı koherentliyə malikdir","Yalnız yüksək tezlikli olması ilə fərqlənir","Yüksək monoxromatiklik, lakin aşağı intensivlik"]],
+["C = λf düsturunda C hərfi nəyi ifadə edir?","İşıq sürətini (və ya dalğanın yayılma sürətini)",["Dalğa uzunluğunu","Siqnalın tezliyini","Kanalın buraxma zolağını"]],
+["Kanalları tezliyə görə bölünən-analoq (KTB) çoxkanallı sistemlərdə hər bir kanal üçün nə ayrılır?","Xətti tezlik spektrinin içindən müəyyən tezlik zolağı ayrılır",["Müəyyən zaman intervalı ayrılır","Ayrıca dalğa uzunluğu ayrılır","Ayrıca fiziki optik lif ayrılır"]],
+["AÇKTS-lərinin kanalları əsasən hansı siqnalların ötürülməsi üçün istifadə olunur?","Bircinsli siqnalların ötürülməsi üçün istifadə olunur",["Yalnız rəqəmsal siqnalların ötürülməsi üçün","Müxtəlif növ siqnalların qarışıq ötürülməsi üçün","Yalnız video siqnalların ötürülməsi üçün"]],
+["KZB üsulunda kanal siqnallarının ani qiymətlərinin amplitudlarına bərabər olan nə formalaşdırılır?","Amplitudalı qısa müddətli impuls ardıcıllığı",["Tezlikli qısa müddətli impuls ardıcıllığı","Fazalı fasiləsiz harmonik rəqs","Amplitudalı fasiləsiz sinusoidal siqnal"]],
+["OTS-də tətbiq olunan kanalların hansı prinsiplərindən istifadə olunur?","Tezliyə və zamana görə bölünmə prinsipi",["Yalnız məkana görə bölünmə prinsipi","Amplituda və faza üzrə bölünmə prinsipi","Kod və polyarizasiyaya görə bölünmə prinsipi"]],
+["AÇKTS-də kanal siqnallarının formalaşdırılması lazım olmayan modulyasiya məhsullarını dəf edən hansı süzgəclərin vasitəsilə həyata keçirilir?","ZS₁…ZSₙ zolaq süzgəclərinin vasitəsilə həyata keçirilir",["AS₁…ASₙ alçaq tezlikli süzgəclər vasitəsilə","YS₁…YSₙ yüksək tezlikli süzgəclər vasitəsilə","KS₁…KSₙ kvantlayıcılar vasitəsilə"]],
+["Rəqəmsal ÇKTS-də ilkin fasiləsiz siqnallar hər bir kanal üzrə hansı qurğu vasitəsilə məhdudlaşdırılır?","Alçaq tezlikli süzgəclər vasitəsilə",["Yüksək tezlikli süzgəclər vasitəsilə","Zolaq süzgəcləri vasitəsilə","Modulyatorlar vasitəsilə"]],
+["Qəbuledici son stansiyada siqnalın uyğun qəbulediciyə daxil olması üçün elektron açarlar necə işləməlidir?","Sinxron",["Asinxron","Növbəli (ardıcıl)","Əks fazalı"]],
+["OTS-də daxili modulyasiya zamanı nəyə təsir edildiyi təmin olunur?","Elektrik siqnalı lazerin şüalanmasına təsir edir və siqnalın lazımi forma və intensivliyini təmin edir",["Elektrik siqnalı fotodetektora təsir edir və siqnalı bərpa edir","Optik şüalanma xarici modulyatorda dəyişdirilir","Siqnal optik lifin sındırma əmsalına təsir edir"]],
+["OTS-də əsasən hansı modulyasiya üsulundan istifadə olunur?","Daxili və xarici modulyasiya",["Yalnız daxili modulyasiya","Yalnız xarici modulyasiya","Amplituda və tezlik modulyasiyası"]],
+["Modulyasiya olunmuş şüalanma qəbuledici stansiyaya daxil olduqdan sonra elektrik siqnalına çevrildiyi element necə adlanır?","Fotodetektor (FD): optik siqnal elektrik siqnalına çevrilir",["Lazer: elektrik siqnalı optik siqnala çevrilir","Modulyator","Optik gücləndirici"]],
+["OTS-də çoxkanallı rabitənin təşkili hansı prinsiplərə əsaslanır?","Kanalların zamana (TDM), tezliyə və dalğa uzunluğuna görə bölünməsi",["Kanalların zamana, amplituda və polyarizasiyaya görə bölünməsi","Kanalların tezliyə, məsafəyə və gücə görə bölünməsi","Kanalların yalnız zamana görə bölünməsi"]],
+["Elektrik siqnalları optik kabelə ötürülməzdən əvvəl nə edilir?","Modulyasiya edilir, optik şüalanma (işıq) siqnalına çevrilir",["Demodulyasiya edilir və rəqəmsal koda çevrilir","Gücləndirilib yenidən elektrik siqnalı kimi göndərilir","Kvantlanır və süzgəcdən keçirilib yaddaşda saxlanılır"]],
+["Çoxkanallı veriliş sistemləri texnikasında əsas məqsəd nədir?","Yüksək iqtisadi effektivliyin əldə olunmasıdır",["Ən yüksək veriliş sürətinin əldə olunmasıdır","Avadanlığın maksimum sadələşdirilməsidir","Rabitə məsafəsinin minimuma endirilməsidir"]],
+["İqtisadi effektivlik hansı göstərici ilə qiymətləndirilir?","1 kilometr veriliş qiyməti və istismar xərcləri",["Kanalların sayı və lifin diametri","Veriliş sürəti və dalğa uzunluğu","Stansiyaların sayı və gücü"]],
+["Konkret veriliş sistemi üçün müəyyən normalara uyğun tipik kanalların yaradılması hansı avadanlığın vəzifəsidir?","Kanal yaradıcı avadanlıq (KYA)",["Xətti trakt avadanlığı","Uzlaşdırıcı qurğu (UQ)","Aralıq stansiya avadanlığı"]],
+["Kanalyaradıcı avadanlıqlarla xətt trakt avadanlıqları arasında razılaşmanı hansı qurğular təmin edir?","Uzlaşdırıcı qurğu (UQ)",["Kanal yaradıcı avadanlıq (KYA)","Birləşdirici qurğu (BQ)","Modulyator"]],
+["Mətndə verilənlərə əsasən, veriliş sisteminin əsas məsələlərinə hansı aid DEYİL?","Aid olan: tələb olunan sayda rabitə kanalının yaradılması, tələb olunan effektivliyin, etibarlılığın və rabitə məsafəsinin uzunluğunun təmin olunması",["Yalnız avadanlığın xarici dizaynının hazırlanması","Abunəçilərin tarif planlarının müəyyənləşdirilməsi","Binaların istilik və işıqlandırma sisteminin qurulması"]],
+["Xətti trakt avadanlığı özündə hansı elementləri birləşdirir?","Son stansiyalarda yerləşdirilmiş qurğuları, rabitə xəttini və aralıq stansiya avadanlıqlarının (gücləndirici və ya regenerasiya) məntəqələrini birləşdirir",["Yalnız modulyator və demodulyatoru birləşdirir","Yalnız lazer və fotodetektoru birləşdirir","Kanal yaradıcı avadanlıq və generator avadanlığını birləşdirir"]],
+["Kanal siqnallarının formalaşdırılması üçün zəruri olan elektrik siqnallarını nə hasil edir?","Xüsusi generatorlar",["Modulyatorlar","Zolaq süzgəcləri","Fotodetektorlar"]],
+["Veriliş sisteminin əsas hissələri arasında ən bahalı element hansıdır?","KYA (kanal yaradıcı avadanlıq)",["Xətti trakt avadanlığı","Uzlaşdırıcı qurğu","Aralıq stansiya"]],
+["N sayda siqnalların eyni vaxtda və bir-birindən asılı olmayaraq bir fiziki dövrə üzrə ötürülməsini təmin edən texniki vəsaitin məcmuəsi necə adlanır?","Çoxkanallı telekommunikasiya sistemi",["Birkanallı rabitə sistemi","Xətti trakt avadanlığı","Kanal yaradıcı avadanlıq"]],
+["Telekommunikasiya sistemində Birləşdirici Qurğunun (BQ) əsas funksiyası nədir?","Kanal siqnallarını birləşdirərək qrup siqnallarını əldə etməyə imkan verir; QS-lərini əldə etmək üçün toplama üsulundan istifadə etmək olar",["Qrup siqnallarını yenidən kanal siqnallarına ayırır","Siqnalı gücləndirir və regenerasiya edir","Elektrik siqnalını optik siqnala çevirir"]],
+["Aralıq stansiyanın (AS) təyinatı nədir?","Siqnalın uzunluğunu təyin edir, qrup siqnallarının uzaqlığını artırmaq üçün",["Kanal siqnallarını formalaşdırmaq üçün","Siqnalı optikdən elektrikə çevirmək üçün","Kanalları tezliyə görə ayırmaq üçün"]],
+["Telekommunikasiya sisteminin tərkibinə aralıq stansiyadan əlavə hansı stansiyalar daxildir?","Son stansiya kimi adlanan verici və qəbuledici stansiya",["Yalnız qəbuledici stansiya","Yalnız verici stansiya","Mərkəzi və regenerasiya stansiyası"]],
+["Son verici stansiyada ilkin fərdi siqnallar hansı qurğular vasitəsilə kanal siqnallarına çevrilir?","Modulyator vasitəsilə",["Demodulyator vasitəsilə","Süzgəc vasitəsilə","Generator vasitəsilə"]],
+["Qəbuledici hissədə kanal siqnallarını ilkin siqnallara çevirən qurğu hansıdır?","DM (demodulyator)",["M (modulyator)","ZS (zolaq süzgəci)","UQ (uzlaşdırıcı qurğu)"]]
+];
+const app=document.getElementById('app');
+let S,AC;
+function beep(ok){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;const notes=ok?[[660,0],[880,.12]]:[[220,0],[160,.15]];notes.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?'sine':'sawtooth';o.frequency.value=f;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.15,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.25);o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+.3)})}catch(e){}}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){S={i:0,ans:D.map(()=>null),hint:D.map(()=>false),opts:D.map(d=>shuffle([d[1],...d[2]])),done:false};render()}
+function render(){
+ if(S.done)return result();
+ const d=D[S.i],a=S.ans[S.i],n=D.length,cnt=S.ans.filter(x=>x!==null).length;
+ let h=`<div class="bar"><i style="width:${cnt/n*100}%"></i></div><div class="card"><div class="qn">Sual ${S.i+1} / ${n}</div><div class="q">${d[0]}</div>`;
+ S.opts[S.i].forEach((o,k)=>{let c='opt';if(a!==null){if(o===d[1])c+=' ok';else if(k===a)c+=' no'}else if(S.hint[S.i]&&o===d[1])c+=' hl';
+  h+=`<button class="${c}" data-k="${k}" ${a!==null?'disabled':''}>${o}</button>`});
+ h+=`<div class="hint ${S.hint[S.i]?'on':''}"><b>💡 İpucu:</b> düzgün cavab — ${d[1]}</div>
+ <div class="row"><button class="btn g" id="hb" ${a!==null?'disabled':''}>💡 İpucu</button><span class="sp"></span>
+ <button class="btn g" id="pv" ${S.i==0?'disabled':''}>← Əvvəlki</button>
+ ${S.i<n-1?'<button class="btn" id="nx">Növbəti →</button>':'<button class="btn" id="fin">Nəticə</button>'}</div></div>
+ <div class="grid">${D.map((_,j)=>{let c=j==S.i?'cur':'';if(S.ans[j]!==null)c+=S.opts[j][S.ans[j]]===D[j][1]?' ok':' no';return `<button class="${c}" data-j="${j}">${j+1}</button>`}).join('')}</div>
+ <div class="row"><button class="btn g" id="fin2">Testi bitir və nəticəni gör</button></div>`;
+ app.innerHTML=h;
+ app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;S.ans[S.i]=k;beep(S.opts[S.i][k]===d[1]);render()});
+ app.querySelectorAll('.grid button').forEach(b=>b.onclick=()=>{S.i=+b.dataset.j;render()});
+ const $=id=>document.getElementById(id);
+ $('hb').onclick=()=>{S.hint[S.i]=true;render()};
+ $('pv').onclick=()=>{S.i--;render()};
+ if($('nx'))$('nx').onclick=()=>{S.i++;render()};
+ if($('fin'))$('fin').onclick=finish;$('fin2').onclick=finish;
+}
+function finish(){S.done=true;render()}
+function result(){
+ let ok=0,wr=[],sk=[];D.forEach((d,j)=>{const a=S.ans[j];if(a===null)sk.push(j);else if(S.opts[j][a]===d[1])ok++;else wr.push(j)});
+ const p=Math.round(ok/D.length*100),hs=S.hint.filter(Boolean).length;
+ let h=`<div class="card"><div class="score" style="color:${p>=60?'var(--ok)':'var(--er)'}">${ok} / ${D.length}</div><div class="stats">${p}% · düzgün ${ok} · səhv ${wr.length} · cavabsız ${sk.length} · ipucu ${hs}</div>`;
+ if(wr.length+sk.length){h+=`<h3>Səhvlər və buraxılanlar</h3>`;
+  [...wr,...sk].sort((x,y)=>x-y).forEach(j=>{const a=S.ans[j];h+=`<div class="mis"><b>${j+1}. ${D[j][0]}</b>${a!==null?`<div class="w">✗ Sizin cavab: ${S.opts[j][a]}</div>`:'<div class="w">— Cavablandırılmayıb</div>'}<div class="r">✓ Düzgün cavab: ${D[j][1]}</div></div>`})}
+ else h+='<p style="text-align:center">🎉 Hamısı düzgündür!</p>';
+ h+=`<div class="row"><button class="btn g" id="rv">Testə qayıt</button><button class="btn" id="rs">Yenidən başla</button></div></div>`;
+ app.innerHTML=h;
+ document.getElementById('rs').onclick=start;
+ document.getElementById('rv').onclick=()=>{S.done=false;S.i=0;render()};
+ beep(p>=60);
+}
+start();
+</script>
+</body>
+</html>
