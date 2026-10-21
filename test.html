@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>İngilis dili test</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--tx:#1b2433;--mu:#6b7690;--bd:#dde4f0;--ac:#2563eb;--ok:#16a34a;--okb:#e8f7ee;--no:#dc2626;--nob:#fdeceb;--hint:#fff8e1;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.w{max-width:620px;margin:0 auto;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--mu);margin-bottom:8px}
+.bar{height:6px;background:#e3e9f5;border-radius:9px;overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(30,60,120,.06)}
+.task{font-size:13px;color:var(--ac);font-weight:600;margin-bottom:6px}
+.s{font-size:19px;font-weight:600;margin-bottom:14px;white-space:pre-line}
+.o{display:block;width:100%;text-align:left;font:inherit;background:#fff;color:var(--tx);border:1.5px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer}
+.o:active{background:#eef3ff}
+.o.ok{background:var(--okb);border-color:var(--ok);color:#0f6b31;font-weight:600}
+.o.no{background:var(--nob);border-color:var(--no);color:#a31b1b}
+.locked .o{cursor:default}
+button.b{font:inherit;border:0;border-radius:12px;padding:11px 16px;cursor:pointer;font-weight:600}
+.pri{background:var(--ac);color:#fff}.sec{background:#e8eefb;color:var(--ac)}.fin{background:#fff;color:var(--no);border:1.5px solid var(--no)}
+.b:disabled{opacity:.4;cursor:default}
+.hb{background:#fff3c4;color:#8a6100;margin-bottom:10px}
+.hint{background:var(--hint);border:1px dashed #e6b800;border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:15px;display:none}
+.nav{display:flex;gap:8px;margin-top:12px}.nav .b{flex:1}
+.grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.g{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--bd);background:#fff;color:var(--mu);font:600 13px inherit;cursor:pointer;padding:0}
+.g.cur{border-color:var(--ac);color:var(--ac)}.g.ok{background:var(--ok);border-color:var(--ok);color:#fff}.g.no{background:var(--no);border-color:var(--no);color:#fff}
+.stat{display:flex;gap:8px;margin:12px 0}.stat div{flex:1;text-align:center;border-radius:12px;padding:10px;background:#eef3ff;font-size:13px;color:var(--mu)}
+.stat b{display:block;font-size:22px;color:var(--tx)}
+.big{font-size:44px;font-weight:800;text-align:center;color:var(--ac)}
+.m{border-top:1px solid var(--bd);padding:10px 0;font-size:15px}
+.m .a{color:var(--no)}.m .c{color:var(--ok);font-weight:600}.m small{color:var(--mu)}
+h2{margin:6px 0;text-align:center}
+</style></head><body><div class="w" id="app"></div>
+<script>
+// [task, sentence, correct, wrong1, wrong2, wrong3, hint]
+const Q=[
+["Choose the line of singular nouns.","","book, child, man","books, children, men","book, children, man","books, child, men","Hər üç söz təkdir: bir kitab, bir uşaq, bir kişi."],
+["Choose the correct tense form.","He ___ a student.","is","are","am","be","He — 3-cü şəxs təkdir."],
+["Complete the sentence.","___ are you from?","Where","What","Who","When","Cavab ölkə/şəhər olacaq."],
+["Choose the correct possessive case.","","the Sun's rays, the world's heritage","the Suns' rays, the world's heritage","the Sun's rays, the worlds' heritage","the Suns rays, the worlds heritage","Hər ikisində ' təkin sonunda olur."],
+["Choose the correct pronoun.","Is this ___ pen? Does it belong to you?","your","you","yours","you're","İsimdən əvvəl yiyəlik əvəzliyi gəlir."],
+["Choose the correct variant.","We invited ___ guests, but only ___ came.","many, a few","much, a little","a few, many","any, a little","Guests sayıla bilir; ikinci boşluq \"bir neçəsi\" deməkdir."],
+["Choose the correct answer.","Maria is my aunt, she's my father's ___.","sister","brother","mother","cousin","Bibi atanın nəyidir?"],
+["Choose the correct variant.","My mother ___ a new car.","has","have","having","haves","My mother = she."],
+["Choose the correct answer.","We went swimming in the ___ near our house yesterday.","pool, river, lake","pool, road, lake","street, river, lake","pool, river, hill","Üzmək mümkün olan su yerləri."],
+["Choose the odd one out.","","carrot","apple","banana","orange","Biri meyvə deyil."],
+["Choose the correct Wh/How question.","___ do you like best, coffee or tea?","Which","What","Who","Whose","İki məlum seçim arasında seçmək."],
+["Choose the correct variant.","There was ___ traffic on the road.","much","many","a few","few","Traffic sayıla bilməyən isimdir."],
+["Choose the correct pronoun.","Mel and I are students. ___ are in Dublin now.","We","They","You","Us","Mel and I = biz."],
+["Make up a sentence.","1. Where  2. home  3. is  4. Enrique's?","Where is Enrique's home?","Where Enrique's is home?","Is where Enrique's home?","Where home is Enrique's?","Sual sözü ilk, sonra feil."],
+["Choose the correct demonstrative pronoun.","___ book is heavy.","This","These","Those","Them","Book təkdir."],
+["Choose the correct variant.","These are the largest animals in the world. What are they?","Blue whales","Elephants","Polar bears","Sharks","Okeanda yaşayır, məməlidir."],
+["Choose the countable nouns.","","apple, book, chair, cut","apple, water, chair, cut","apple, book, milk, cut","sugar, book, chair, cut","Hər biri 1, 2, 3 ilə sayılmalıdır."],
+["Choose the correct pronoun.","The book is on ___ desk.","the; my, his, your","me, him, you","I, he, you","the; me, him, your","Yiyəlik əvəzlikləri və artikl."],
+["Choose the correct answer.","These fish live in the deep water of many ___.","lakes, oceans, rivers, seas","lake, oceans, rivers, seas","lakes, ocean, river, sea","lake, ocean, rivers, sea","many + cəm."],
+["Choose the correct synonyms.","","big-large; small-little","big-small; large-little","big-little; small-large","big-large; small-huge","Sinonim = eyni mənalı."],
+["Choose the correct demonstrative pronoun.","___ shoes are very big.","These / Those","This / That","This / Those","That / These","Shoes cəmdir."],
+["Choose the correct answer.","The trees in the ___ are really beautiful.","park / garden","kitchen / room","park / bedroom","garden / office","Ağaclar harada olur?"],
+["Choose the correct Wh/How question.","___ are you going to go on holiday? - In July.","When","Where","Who","Why","Cavab zaman bildirir."],
+["Choose the correct variant.","Sam ___ his mobile phone with him.","takes","take","taking","taked","Sam = he, indiki zaman."],
+["Choose the uncountable nouns.","","water, money, information, milk, sugar","water, money, books, milk, sugar","water, money, information, milk, apples","chairs, money, information, milk, sugar","Sayıla bilməyənlər cəmə qoşulmur."],
+["Choose the nouns in the plural.","","children, mice, feet, books","childs, mice, feet, books","children, mouses, feet, books","children, mice, foots, books","Qeyri-müntəzəm cəmlərə fikir ver."],
+["Choose the odd one out.","","teacher","sister","mother","uncle","Biri ailə üzvü deyil."],
+["Make up a sentence.","1. How many  2. make  3. he  4. did  5. films?","How many films did he make?","How many did he make films?","How many films he did make?","How many he did films make?","How many + isim + did + subyekt + feil."],
+["Choose the correct variant.","These animals live in the desert and can carry things and people. What are they?","Camels","Horses","Donkeys","Elephants","Səhra gəmisi də deyilir."],
+["Choose the correct possessive case.","(irregular plurals)","children's, women's","childrens', womens'","childrens's, women's","children', women'","Cəm s ilə bitmirsə, 's əlavə olunur."],
+["Choose the correct pronoun.","___ like to go to the movies on weekends.","I","Me","My","Mine","Subyekt əvəzliyi lazımdır."],
+["Choose the correct variant.","There was ___ water in the river and we decided to cross it.","little","few","many","a few","Sayıla bilməyən + az."],
+["Choose the correct answer.","Mary is my mother and Tom is my father, so they are my ___.","parents","cousins","siblings","grandparents","Ana + ata."],
+["Choose the correct variant.","We've got ___ ideas for the title.","some","much","a little","any","Müsbət cümlə, cəm isim."],
+["Choose the correct variant.","___ books are there on the table?","How many","How much","How often","How long","Books sayıla bilir."],
+["Choose the correct tense form.","We ___ from Rome.","are","is","am","be","We ilə hansı feil?"],
+["Choose the uncountable noun.","","sugar / water","book / table","apple / chair","child / car","Saymaq olmayan şeylər."],
+["Choose the antonyms.","","big-small; hot-cold; happy-sad","big-large; hot-cold; happy-sad","big-small; hot-warm; happy-sad","big-small; hot-cold; happy-glad","Antonim = əks mənalı."],
+["Choose the correct demonstrative pronoun.","___ children over there are my cousins.","Those","This","That","Them","Uzaqda olan və cəm."],
+["Choose the correct variant.","___ sugar do you take in your coffee? - One spoon.","How much","How many","How often","How long","Sugar sayıla bilməyən isimdir."]
+];
+const $=id=>document.getElementById(id);
+let ac=null;
+function snd(ok){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const t=ac.currentTime;
+ const tone=(f,s,d,ty,v)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t+s);g.gain.exponentialRampToValueAtTime(.001,t+s+d);o.connect(g);g.connect(ac.destination);o.start(t+s);o.stop(t+s+d)};
+ if(ok){tone(660,0,.18,'sine',.25);tone(880,.12,.3,'sine',.25)}else{tone(180,0,.3,'sawtooth',.18);tone(140,.15,.35,'sawtooth',.18)}}catch(e){}}
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let opts,ans,cur,hint,done;
+function start(){opts=Q.map(q=>sh(q.slice(2,6)));ans={};hint={};cur=0;done=false;draw()}
+function pick(i,k){if(ans[i]!==undefined)return;ans[i]=k;snd(opts[i][k]===Q[i][2]);draw()}
+function draw(){
+ if(done)return result();
+ const q=Q[cur],a=ans[cur],n=Object.keys(ans).length;
+ let h=`<div class="top"><span>Sual ${cur+1} / ${Q.length}</span><span>Cavablanıb: ${n}</span></div><div class="bar"><i style="width:${n/Q.length*100}%"></i></div>
+ <div class="card ${a!==undefined?'locked':''}"><div class="task">${q[0]}</div>${q[1]?`<div class="s">${q[1]}</div>`:'<div class="s"></div>'}
+ <button class="b hb" onclick="hint[cur]=!hint[cur];draw()">💡 İpucu</button><div class="hint" style="display:${hint[cur]?'block':'none'}"><b>${q[2]}</b></div>`;
+ opts[cur].forEach((t,k)=>{let c='o';if(a!==undefined){if(t===q[2])c+=' ok';else if(k===a)c+=' no'}h+=`<button class="${c}" onclick="pick(${cur},${k})">${t}</button>`});
+ h+=`</div><div class="nav"><button class="b sec" ${cur?'':'disabled'} onclick="cur--;draw()">← Geri</button><button class="b sec" ${cur<Q.length-1?'':'disabled'} onclick="cur++;draw()">İrəli →</button></div><div class="grid">`;
+ Q.forEach((x,i)=>{const v=ans[i];let c='g';if(v!==undefined)c+=opts[i][v]===x[2]?' ok':' no';if(i===cur)c+=' cur';h+=`<button class="${c}" onclick="cur=${i};draw()">${i+1}</button>`});
+ h+=`</div><div class="nav"><button class="b fin" onclick="done=true;draw()">Testi bitir</button></div>`;
+ $('app').innerHTML=h;window.scrollTo(0,0)}
+function result(){
+ let ok=0,no=0,m='';Q.forEach((q,i)=>{const v=ans[i];if(v===undefined){m+=`<div class="m"><small>${i+1}. ${q[0]} ${q[1]}</small><div>Cavablanmayıb · <span class="c">${q[2]}</span></div></div>`}else if(opts[i][v]===q[2])ok++;else{no++;m+=`<div class="m"><small>${i+1}. ${q[0]} ${q[1]}</small><div class="a">Sənin cavabın: ${opts[i][v]}</div><div class="c">Düzgün: ${q[2]}</div></div>`}});
+ const un=Q.length-ok-no,p=Math.round(ok/Q.length*100);
+ $('app').innerHTML=`<div class="card"><h2>Nəticə</h2><div class="big">${p}%</div><div class="stat"><div><b style="color:var(--ok)">${ok}</b>Düz</div><div><b style="color:var(--no)">${no}</b>Səhv</div><div><b>${un}</b>Boş</div></div>
+ <div class="nav"><button class="b sec" onclick="done=false;draw()">Testə qayıt</button><button class="b pri" onclick="start()">Yenidən</button></div></div>
+ <div class="card" style="margin-top:12px"><b>${no+un?'Səhvlər və boş qalanlar':'Səhv yoxdur 🎉'}</b>${m}</div>`;window.scrollTo(0,0)}
+start();
+</script></body></html>
