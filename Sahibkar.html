@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sahibkarlığın əsasları – Test</title>
+<style>
+:root{color-scheme:light;--bg:#f3f8ff;--card:#fff;--ink:#1e2a3a;--mute:#64748b;--pri:#3b82f6;--pri2:#e0edff;--ok:#16a34a;--okbg:#e8f8ee;--bad:#dc2626;--badbg:#fdecec;--line:#dbe5f3;--hint:#fff7d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:linear-gradient(180deg,#eaf3ff,#f8fbff 60%);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:6px 0 2px}
+.sub{color:var(--mute);font-size:13px;margin-bottom:12px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 12px}
+.bar i{display:block;height:100%;background:var(--pri);width:0;transition:width .3s}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:14px}
+.grid button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 0;font-size:12px;cursor:pointer;color:var(--ink)}
+.grid button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.grid button.bad{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.grid button.cur{outline:2px solid var(--pri);outline-offset:1px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 18px rgba(59,130,246,.08)}
+.qn{font-size:12px;color:var(--pri);font-weight:700;letter-spacing:.04em}
+.q{font-size:18px;line-height:1.45;margin:6px 0 14px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px;font-size:15px;line-height:1.4;cursor:pointer;color:var(--ink);font-family:inherit}
+.opt:hover:not(:disabled){border-color:var(--pri);background:var(--pri2)}
+.opt b{flex:0 0 26px;height:26px;border-radius:50%;background:var(--pri2);color:var(--pri);display:grid;place-items:center;font-size:13px}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}.opt.ok b{background:var(--ok);color:#fff}
+.opt.bad{background:var(--badbg);border-color:var(--bad)}.opt.bad b{background:var(--bad);color:#fff}
+.opt.hinted{border:2px dashed #e0a800;background:var(--hint)}
+.hintbox{margin-top:6px;border:1.5px dashed #e0a800;background:var(--hint);border-radius:12px;padding:10px 12px;font-size:14px}
+.hbtn{margin-top:4px;background:var(--hint);border:1.5px solid #f0cf5a;color:#7a5b00;border-radius:12px;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;width:100%;text-align:left}
+.nav{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{flex:1;min-width:110px;border:0;border-radius:12px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;background:var(--pri);color:#fff;font-family:inherit}
+.btn.sec{background:#fff;color:var(--pri);border:1.5px solid var(--pri)}
+.btn.fin{background:#fff;color:var(--bad);border:1.5px solid var(--bad)}
+.btn:disabled{opacity:.4;cursor:default}
+.conf{margin-top:12px;background:#fff;border:1.5px solid var(--bad);border-radius:12px;padding:12px;font-size:14px}
+.conf .nav{margin-top:10px}
+.score{text-align:center;padding:10px 0}
+.big{font-size:54px;font-weight:800;color:var(--pri);line-height:1}
+.stats{display:flex;gap:8px;margin:14px 0}
+.stats div{flex:1;border-radius:12px;padding:10px;text-align:center;font-size:13px}
+.stats b{display:block;font-size:22px}
+.s1{background:var(--okbg);color:var(--ok)}.s2{background:var(--badbg);color:var(--bad)}.s3{background:#eef2f7;color:var(--mute)}
+.mis{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+.mis .t{font-weight:600;margin-bottom:8px;font-size:15px}
+.mis .y,.mis .c{font-size:14px;border-radius:8px;padding:7px 9px;margin-top:5px}
+.mis .y{background:var(--badbg);color:var(--bad)}.mis .c{background:var(--okbg);color:var(--ok)}
+.mis .y.none{background:#eef2f7;color:var(--mute)}
+@media(max-width:480px){.grid{grid-template-columns:repeat(8,1fr)}.q{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const Q=[
+["Sahibkarlıq fəaliyyətində başlıca məqsəd maksimum nəyin əldə edilməsidir?","Mənfəət",["Gəlir dövriyyəsi","Bazar payı","İşçi sayı"]],
+["Növünə və ya təyinat istiqamətlərinə görə sahibkarlıq fəaliyyəti hansı sahələr üzrə fərqləndirilir?","İstehsal, kommersiya, maliyyə-kredit və konsaltinq",["İstehsal, kommersiya, maliyyə və sığorta","İstehsal, xidmət, kənd təsərrüfatı və nəqliyyat","Dövlət, özəl, bələdiyyə və qarışıq"]],
+["Aşağıdakılardan hansı uğurlu sahibkarın xarakterik əlamətlərindən biridir?","İşin faydalılığını qiymətləndirmək bacarığı, risk etmək qabiliyyəti",["Riskdən çəkinmək, sabit maaşa üstünlük vermək","Yalnız hazır təcrübəyə güvənmək, yeniliyə qapalı olmaq","Qərar qəbul etməyi həmişə başqalarına həvalə etmək"]],
+["Yeni rəqiblərin bazara daxil olması hansı riskdir?","Rəqabət (bazar) riski",["Maliyyə riski","Texnoloji risk","Təbii-iqlim riski"]],
+["Dünya təcrübəsində konsaltinq adlanır?","Məsləhət xidmətləri",["İstehsal xidmətləri","Kredit xidmətləri","Sığorta xidmətləri"]],
+["Hansı iqtisadçı Qərb iqtisadiyyatında ilk dəfə “sahibkar” anlayışını istifadə etmişdir?","Rişar Kantilyon",["Adam Smit","Cozef Şumpeter","Alfred Marşall"]],
+["Sahibkar vaxtını düzgün idarə etməlidir, çünki:","Effektivliyini və məhsuldarlığını artırır (məqsədə çatmaq üçün)",["Vaxtı qənaət edib işçiləri daha çox işlətmək lazımdır","Vergi öhdəliklərini azaltmaq üçün","Yalnız rəqiblərdən əvvəl bazara çıxmaq üçün"]],
+["Hansı fəaliyyət istiqamətinə görə sahibkarlığın növləridir?","İstehsal, kommersiya, maliyyə, konsultativ",["Fərdi, kollektiv, dövlət, qarışıq","Kiçik, orta, iri","Yerli, regional, beynəlxalq, qlobal"]],
+["Hansı məlumat kommersiya sirri deyil?","Vergi ödənişləri və hesabatları, işçilərin sayı və s.",["Məhsulun istehsal texnologiyası","Müştəri bazasının məlumatları","Marketinq strategiyası və biznes planı"]],
+["Aşağıdakılardan hansı sahibkarlığa birbaşa təsir göstərən xarici mühit amilidir?","İstehlakçılar, rəqiblər, əmək ehtiyatları, qanunlar",["Elmi-texniki tərəqqi, siyasi amillər, beynəlxalq hadisələr","Məqsədlər, struktur, texnologiya, insan resursları","Mədəniyyət, demoqrafik vəziyyət, iqtisadi artım"]],
+["Sahibkarlığın xarici mühitinə aid edilmir?","İstehsal, idarəetmə strukturu və s.",["Qanunvericilik və dövlət tənzimlənməsi","Rəqiblər və təchizatçılar","İqtisadi və siyasi vəziyyət"]],
+["İnnovasiya sahibkarlığı nədir?","Yeni texnologiyaların, ideyaların və ya məhsulların tətbiqinə əsaslanan sahibkarlıq",["Yalnız mövcud məhsulların ucuz qiymətə satışına əsaslanan sahibkarlıq","Dövlət büdcəsi hesabına həyata keçirilən təsərrüfat fəaliyyəti","Qiymətli kağızlarla əməliyyatlara əsaslanan sahibkarlıq"]],
+["Zəlzələ və ya sel kimi hallar hansı risk kateqoriyasına daxildir?","Təbii-iqlim riskləri",["Siyasi risklər","Kommersiya riskləri","Maliyyə riskləri"]],
+["Sahibkarlıqda ilkin kapitalın itirilməsi hansı riskə aiddir?","Maliyyə riski",["Texnoloji risk","Kadr riski","Təbii-iqlim riski"]],
+["Hüquqi şəxs nədir?","Qanunla qeydiyyatdan keçmiş şəxs",["Hüquqi şəxs yaratmadan fəaliyyət göstərən fiziki şəxs","Yalnız dövlət tərəfindən idarə olunan qurum","Şirkətdə işləyən hüquqşünas"]],
+["Fərdi sahibkar kimdir?","Hüquqi şəxs yaratmadan, müstəqil şəkildə sahibkarlıqla məşğul olan fiziki şəxsdir",["Qanunla qeydiyyatdan keçmiş və nizamnamə kapitalı olan təşkilatdır","Şirkətdə rəhbər vəzifədə çalışan muzdlu işçidir","Sahibkarlıq fəaliyyətinə nəzarət edən dövlət məmurudur"]],
+["Texnologiyanın köhnəlməsi hansı riskdir?","Texnoloji risk",["Maliyyə riski","Kommersiya riski","Kadr riski"]],
+["Kommersiya sirri niyə qorunur?","Məlumatların gizliliyi müəssisənin bazarda rəqabət üstünlüyünü qorumaq və zərərin qarşısını almaq üçün",["Vergi orqanlarından məlumatları gizlətmək üçün","Dövlət qeydiyyatından yayınmaq üçün","İşçilərin əmək haqqını artırmamaq üçün"]],
+["Sahibkarlıq sirrinə aid olmayan məlumat hansıdır?","Qanunla açıq elan edilən məlumatlar (nizamnamə kapitalı, təsis sənədləri, vergi hesabatları)",["Məhsulun hazırlanma resepti","Müştərilərlə bağlanmış müqavilələrin gizli şərtləri","Gələcək inkişaf strategiyası"]],
+["Fərdi sahibkarlıqda mülkiyyət yalnız neçə fiziki şəxsə məxsus olur?","Yalnız 1 fiziki şəxsə",["Yalnız 2 fiziki şəxsə","3 fiziki şəxsə qədər","5 fiziki şəxsə qədər"]],
+["Mülkiyyətçilərin sayına görə sahibkarlıq fəaliyyəti hansı xarakteri daşıya bilər?","Fərdi və kollektiv",["Dövlət və özəl","Daxili və xarici","İstehsal və kommersiya"]],
+["İş və xidmət yerinə yetirilir, müəyyən mənəvi dəyərlər yaradılır. Bu, biznesin hansı növünə aiddir?","İstehsal",["Kommersiya","Maliyyə","Konsaltinq"]],
+["Maliyyə sahibkarlığı nəyi nəzərdə tutur?","Qiymətli kağızlarla əməliyyatlar, bazarın təhlili",["Malların alqı-satqısı və vasitəçilik","Maddi nemətlərin istehsalı","Məsləhət və informasiya xidmətlərinin göstərilməsi"]],
+["Müəssisənin kommersiya sirri sayılan informasiyalara aiddir:","Elmi-texniki işləmələr, kəşflər, maarifləndirmə və s.",["Nizamnamə kapitalı və təsis sənədləri","Vergi hesabatları və işçilərin sayı","Dövlət qeydiyyatı haqqında məlumatlar"]],
+["Aşağıdakılardan hansı sahibkarlığa birbaşa təsir göstərən xarici mühit amili deyil?","Texnologiya",["İstehlakçılar","Rəqiblər","Əmək ehtiyatları"]],
+["Sahibkarlığın daxili mühitinə aid edilmir?","Siyasi amillər",["Təşkilati struktur","İşçi heyəti","Müəssisənin məqsədləri"]],
+["Aşağıdakılardan hansı innovasiya növüdür?","Məhsul",["Gəlir","Mülkiyyət","Kredit"]],
+["İnnovasiya sahibkarlığında əsas amil hansıdır?","Yaradıcılıq",["Böyük kapital","Dövlət dəstəyi","İşçilərin sayı"]],
+["Uğurlu sahibkarın maliyyə vərdişlərindən biri hansıdır?","Xərcləri izləmək və büdcə etmək",["Gəlirdən artıq xərcləmək","Bütün vəsaiti riskli layihələrə yatırmaq","Büdcə tutmadan ehtiyac olduqca xərcləmək"]],
+["Yeni rəqiblərin bazara daxil olması hansı risk növüdür?","Bazar riski (rəqabət)",["Kadr riski","Siyasi risk","Hüquqi risk"]],
+["İşçi heyətinin tez-tez dəyişməsi hansı riskə aiddir?","Kadr (kollektiv) riski",["Maliyyə riski","Texnoloji risk","Bazar riski"]],
+["Fəaliyyət miqyasından asılı olaraq sahibkarlığı ayırd edirlər?","Kiçik, orta, iri",["Fərdi, kollektiv, qarışıq","İstehsal, kommersiya, maliyyə","Dövlət, özəl, bələdiyyə"]],
+["Sahibkar məhsulun qiymətini bazarda rəqabətə uyğun müəyyənləşdirir. Bu hansı sahibkarlıq sirrinə aiddir?","Kommersiya sirri",["İstehsal sirri","Maliyyə sirri","Kadr sirri"]],
+["Sahibkarlıq fəaliyyətinin növünə aid edilmir?","Kooperativ sahibkarlığı",["İstehsal sahibkarlığı","Kommersiya sahibkarlığı","Maliyyə sahibkarlığı"]],
+["Aşağıda qeyd edilənlərin hansını “sahibkar” anlayışına aid etmək olar?","Mənfəət əldə etmək məqsədilə müstəqil fəaliyyət göstərən, risk götürən şəxs",["Maaşla işləyən və qərarlarda risk daşımayan muzdlu işçi","Yalnız dövlət büdcəsindən təminat alan məmur","Başqasının adından idarəetmə funksiyası yerinə yetirən vəkil"]],
+["Aşağıdakılardan hansı sahibkarlığa dolayı təsir göstərən xarici mühit amilidir?","Elmi-texniki tərəqqi",["İstehlakçılar","Rəqiblər","Təchizatçılar"]],
+["Mahiyyətinə görə texnologiya nə vasitəsidir?","İstehsal vasitəsi",["İstehlak vasitəsi","Mübadilə vasitəsi","Ödəniş vasitəsi"]],
+["İnnovasiya sahibkarlığının əsas məqsədi nədir?","Yeni məhsul, xidmət və texnologiyalar yaratmaq",["Mövcud məhsulları daha ucuz satmaq","İşçi sayını artırmaq","Xərcləri azaltmaq üçün istehsalı dayandırmaq"]],
+["İnnovativ biznes üçün aşağıdakılardan hansı vacibdir?","Yenilikçilik, elmi-texniki bilik və investisiya",["Yalnız köhnə texnologiyaya sadiqlik","Rəqabətdən qaçmaq və kiçik qalmaq","Yüksək inzibati xərclər və bürokratiya"]],
+["Qeyd edilənlərdən hansı amil sahibkarlığın hüquqi formalarına aid deyil?","Texnoloji mühit",["Məhdud məsuliyyətli cəmiyyət","Açıq səhmdar cəmiyyəti","Tam ortaqlıq"]]
+];
+const L="ABCD";let st=[],cur=0,askFin=false,done=false,ac=null;
+const $=document.getElementById("app");
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function init(){st=Q.map(([q,c,d])=>({q,o:shuffle([c,...d].map((t,i)=>({t,ok:i==0}))),pick:null,hint:false}));cur=0;askFin=false;done=false;render()}
+function tone(f,t,d,type,v){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,ac.currentTime+t);g.gain.linearRampToValueAtTime(v,ac.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+d);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+d+.05)}
+function snd(ok){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state=="suspended")ac.resume();
+if(ok){tone(660,0,.15,"sine",.25);tone(880,.12,.25,"sine",.25)}else{tone(180,0,.18,"sawtooth",.2);tone(130,.15,.3,"sawtooth",.2)}}catch(e){}}
+function pick(i){const s=st[cur];if(s.pick!==null)return;s.pick=i;snd(s.o[i].ok);render()}
+function hint(){st[cur].hint=true;render()}
+function go(n){cur=Math.max(0,Math.min(Q.length-1,n));askFin=false;render();window.scrollTo({top:0,behavior:"smooth"})}
+function render(){done?result():quiz()}
+function quiz(){
+const s=st[cur],answered=st.filter(x=>x.pick!==null).length;
+const grid=st.map((x,i)=>`<button class="${x.pick===null?"":x.o[x.pick].ok?"ok":"bad"} ${i==cur?"cur":""}" onclick="go(${i})">${i+1}</button>`).join("");
+const opts=s.o.map((o,i)=>{let c="opt";if(s.pick!==null){if(o.ok)c+=" ok";else if(i==s.pick)c+=" bad"}else if(s.hint&&o.ok)c+=" hinted";
+return `<button class="${c}" ${s.pick!==null?"disabled":""} onclick="pick(${i})"><b>${L[i]}</b><span>${o.t}</span></button>`}).join("");
+const ans=s.o.findIndex(o=>o.ok);
+const hb=s.pick!==null?"":s.hint?`<div class="hintbox">💡 <b>İpucu:</b> düzgün cavab <b>${L[ans]})</b> variantıdır:<br>${s.o[ans].t}</div>`:`<button class="hbtn" onclick="hint()">💡 İpucu – düzgün cavabı göstər</button>`;
+const conf=askFin?`<div class="conf">Testi bitirmək istəyirsiniz? Cavablandırılan: <b>${answered}</b> / ${Q.length}. Cavabsız qalan <b>${Q.length-answered}</b> sual xəta kimi göstəriləcək.<div class="nav"><button class="btn sec" onclick="askFin=false;render()">Davam et</button><button class="btn" onclick="done=true;render();window.scrollTo(0,0)">Bəli, bitir</button></div></div>`:"";
+$.innerHTML=`<h1>📘 Sahibkarlığın əsasları</h1><div class="sub">40 sualluq test · Cavablandırılan: ${answered}/${Q.length}</div>
+<div class="bar"><i style="width:${answered/Q.length*100}%"></i></div><div class="grid">${grid}</div>
+<div class="card"><div class="qn">SUAL ${cur+1} / ${Q.length}</div><div class="q">${s.q}</div>${opts}${hb}
+<div class="nav"><button class="btn sec" onclick="go(cur-1)" ${cur==0?"disabled":""}>← Geri</button><button class="btn" onclick="go(cur+1)" ${cur==Q.length-1?"disabled":""}>İrəli →</button></div>
+<div class="nav"><button class="btn fin" onclick="askFin=true;render()">🏁 Testi bitir</button></div>${conf}</div>`}
+function result(){
+const ok=st.filter(x=>x.pick!==null&&x.o[x.pick].ok).length,bad=st.filter(x=>x.pick!==null&&!x.o[x.pick].ok).length,none=Q.length-ok-bad,pct=Math.round(ok/Q.length*100),hints=st.filter(x=>x.hint).length;
+const msg=pct>=85?"Əla nəticə! 🎉":pct>=60?"Yaxşı, bir az da təkrar edin 👍":"Daha çox hazırlaşmaq lazımdır 📚";
+const mis=st.map((x,i)=>({x,i})).filter(({x})=>x.pick===null||!x.o[x.pick].ok).map(({x,i})=>`<div class="mis"><div class="t">${i+1}. ${x.q}</div><div class="y ${x.pick===null?"none":""}">${x.pick===null?"Cavab verilməyib":"✗ Sizin cavab: "+x.o[x.pick].t}</div><div class="c">✓ Düzgün cavab: ${x.o.find(o=>o.ok).t}</div></div>`).join("");
+$.innerHTML=`<h1>📊 Nəticə</h1><div class="card"><div class="score"><div class="big">${pct}%</div><div class="sub" style="margin-top:8px">${msg}<br>${ok} / ${Q.length} düzgün${hints?` · ${hints} sualda ipucu istifadə olunub`:""}</div></div>
+<div class="stats"><div class="s1"><b>${ok}</b>Düzgün</div><div class="s2"><b>${bad}</b>Səhv</div><div class="s3"><b>${none}</b>Cavabsız</div></div>
+<div class="nav"><button class="btn" onclick="init();window.scrollTo(0,0)">🔄 Testi yenidən başla</button></div></div>
+<h1 style="margin-top:18px">${bad+none?"Səhvlər və cavabsız suallar":"Heç bir səhv yoxdur! 🏆"}</h1><div style="margin-top:10px">${mis}</div>`}
+init();
+</script>
+</body>
+</html>
