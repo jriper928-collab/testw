@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Azərbaycan tarixi – Test</title>
+<style>
+:root{color-scheme:light;--bg:#f4f8fc;--card:#fff;--tx:#1d2b3a;--mut:#6b7c8e;--ac:#2f7de1;--ok:#1f9d55;--okb:#e3f6ea;--no:#d64545;--nob:#fde8e8;--bd:#dbe5ef;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:680px;margin:0 auto;padding:16px}
+h1{font-size:19px;margin:4px 0 12px}
+.bar{height:8px;background:#dce8f5;border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 2px 8px #2f7de11a}
+.n{color:var(--mut);font-size:13px;margin-bottom:6px}.q{font-size:18px;font-weight:600;margin-bottom:14px}
+.o{display:block;width:100%;text-align:left;background:#f8fbff;border:1.5px solid var(--bd);border-radius:12px;padding:12px 14px;margin:8px 0;font:inherit;color:inherit;cursor:pointer}
+.o:hover:not(:disabled){border-color:var(--ac)}.o:disabled{cursor:default}
+.o.ok{background:var(--okb);border-color:var(--ok)}.o.no{background:var(--nob);border-color:var(--no)}
+.hint{margin-top:10px;font-size:14px}.hb{background:none;border:1.5px dashed var(--ac);color:var(--ac);border-radius:10px;padding:8px 12px;cursor:pointer;font:inherit}
+.hx{margin-top:8px;background:#fff8e1;border:1px solid #f1d98a;border-radius:10px;padding:10px 12px}
+.nav{display:flex;gap:8px;margin-top:8px}.b{flex:1;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:600;background:var(--ac);color:#fff;cursor:pointer}
+.b.g{background:#e3edf8;color:var(--ac)}.b.r{background:var(--no)}.b:disabled{opacity:.4}
+.grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.g1{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--bd);background:#fff;font:13px system-ui;cursor:pointer}
+.g1.ok{background:var(--okb);border-color:var(--ok)}.g1.no{background:var(--nob);border-color:var(--no)}.g1.cur{outline:2px solid var(--ac)}
+.big{font-size:42px;font-weight:700;color:var(--ac);text-align:center}.e{border-left:4px solid var(--no);padding:8px 12px;margin:10px 0;background:#fff7f7;border-radius:8px}
+.e small{color:var(--mut);display:block}
+</style></head><body><div class="w" id="app"></div>
+<script>
+const D=`Azərbaycan ərazisində ibtidai insanların əsas məşğuliyyətlərindən biri hansı olmuşdur?|Ovçuluq, yığıcılıq, maldarlıq|Əkinçilik və sənaye istehsalı|Ticarət və pul dövriyyəsi|Gəmiçilik və dəniz yürüşləri
+Qaraqoyunlu dövlətinin möhkəmlənməsində Qara Yusifin fəaliyyətinin əsas nəticəsi hansı idi?|1406-da Təbrizi ələ keçirdi, Qaraqoyunlunun siyasi mövqeyi möhkəmləndi|Şirvanşahlar dövlətini ləğv etdi|Ağqoyunlularla daimi sülh bağladı|Paytaxtı Gəncəyə köçürdü
+Şirvanşahlar dövlətinin uzun müddət mövcud olmasını şərtləndirən amillərdən biri hansı ola bilər?|Əlverişli coğrafi mövqe|Xilafətin daimi hərbi himayəsi|Monqol dövlətinə vassal birlik|Yalnız dəniz donanmasının gücü
+Babək hərəkatının Xilafət üçün ciddi təhlükəyə çevrilməsinin səbəblərindən biri hansı idi?|Uzunmüddətli və geniş ərazidə müqavimət göstərməsi|Xilafətin ordusunun olmaması|Hərəkatın yalnız bir şəhərdə cəmləşməsi|Bizans ordusunun birbaşa köməyi
+Rəvvadilər dövlətinin siyasi tarixində mühüm rol oynayan şəhər hansı idi?|Təbriz|Gəncə|Bərdə|Marağa
+Xürrəmilər hərəkatının sosial dayaqları arasında hansı təbəqələr mühüm yer tuturdu?|Kəndli və şəhər əhalisi|Ərəb feodalları və vergi yığanlar|Xilafət məmurları və zadəganlar|Muzdlu ordu sərkərdələri
+Sacilər və Salarilər dövlətlərinin oxşar cəhətlərindən biri hansı idi?|Azərbaycan ərazisində yaranmış və Azərbaycanın böyük hissəsini vahid hakimiyyət altında birləşdirmişdilər|Hər ikisi Səlcuq sülaləsinin davamı idi|Hər ikisi Xilafətin bilavasitə valiliyi idi|Hər ikisi yalnız Şirvan ərazisində fəaliyyət göstərirdi
+Hülakü xanın yürüşlərinin Azərbaycan tarixində mühüm nəticələrindən biri hansı idi?|Hülakü dövlətinin yaranması|Atabəylər dövlətinin yaranması|Səlcuq imperiyasının qurulması|Qaraqoyunlu dövlətinin yaranması
+837-ci və 838-ci illər hansı hadisələrlə əlaqəlidir?|837 – Bəzz qalası tutulur, süqut edir; 838 – Babəkin edamı|837 – Xürrəmilər üsyanı başlayır; 838 – Babək Xilafətə qalib gəlir|837 – Babək hakimiyyətə gəlir; 838 – Bəzz qalası qurulur|837 – Cavidan öldürülür; 838 – Babək rəhbər seçilir
+Aşağıdakı dövlətlərdən hansı XII əsrdə Səlcuq siyasi sistemi ilə bağlı meydana çıxan Atabəylər dövlətidir?|Atabəylər (Eldənizlər) dövləti|Sacilər dövləti|Rəvvadilər dövləti|Salarilər dövləti
+Aşağıdakılardan hansı Atabəylər dövlətinin yaranması ilə bağlı düzgün fikirdir?|Səlcuqlar zəifləyir və yerli siyasi hakimiyyət güclənir|Səlcuqlar güclənir və mərkəzi hakimiyyət möhkəmlənir|Dövlət monqol yürüşləri nəticəsində yaranıb|Dövləti Xilafət özü qurub
+Manna hökmdarı İranzunun Assuriya ilə ittifaq yaratmasının əsas səbəbi nə idi?|İranzu Assuriya ilə ittifaq münasibətinə üstünlük verirdi|Midiya tərəfindən məcbur edilməsi|Ticarət yollarını Urartuya vermək istəməsi|Dini birlik yaratmaq istəməsi
+Sacilər dövlətinin Azərbaycan tarixində əhəmiyyətli xüsusiyyətlərindən biri hansı idi?
+1231-ci ildə monqolların Azərbaycana yürüşü ilə bağlı hansı fikir doğrudur?|Gəncə tutuldu, Cəlaləddin məğlub edildi|Monqollar Gəncəni sülh yolu ilə aldılar|Cəlaləddin monqolları məğlub etdi|Yürüş Təbrizin tutulması ilə başladı
+Ərəb xilafəti dövründə xərac və cizyənin tətbiqi hansı məqsədlə bağlı idi?|Xəzinəni artırmaq və vergi idarəçiliyini möhkəmləndirmək|Yerli əhalini ərəb dilinə keçirmək|Torpaqları kəndlilərə paylamaq|Hərbi donanma yaratmaq
+Salarilər dövlətinin Azərbaycan tarixində mövqeyini müəyyən edən əsas xüsusiyyət hansı idi?|Azərbaycanın böyük hissəsini birləşdirməsi və Şirvanşahları vergi ödəməyə məcbur etməsi|Xilafətin təyin etdiyi valilik olması|Yalnız Gəncə ətrafı ilə məhdudlaşması|Şirvanşahlarla ittifaqda olması
+Manna dövlətinin Assuriya və Urartu arasında yerləşməsi onun xarici siyasətinə necə təsir edirdi?|Assuriyaya qarşı çıxmaq|Hər iki dövlətə tam tabe olmaq|Xarici siyasətdən çəkilmək|Yalnız Urartu ilə ittifaq qurmaq
+Albaniyada xristianlığın dövlət dini kimi qəbul edilməsi hansı əsrə aid edilir?|IV əsrdə|II əsrdə|VI əsrdə|VIII əsrdə
+Şirvanşahlar dövlətinin coğrafi mövqeyi onun siyasi fəaliyyətinə hansı imkan yaradırdı?|Qafqaz və Xəzər ətrafı siyasi və iqtisadi əlaqələr qurmaq|Okeanlara çıxışla ticarət etmək|Yalnız Orta Asiya ilə əlaqə saxlamaq|Hindistanla birbaşa sərhəd olmaq
+Babəkin Xürrəmilər hərəkatında rəhbər mövqeyə gəlməsi hansı hadisədən sonra baş verdi?|Cavidandan sonra|Bəzz qalasının tutulmasından sonra|Xilafətlə sülhdən sonra|Xürrəmilərin Gəncədə məğlubiyyətindən sonra
+Atabəylər dövlətinin ən qüdrətli hökmdarları arasında hansı adlar xüsusi yer tutur?|İ. Eldəniz, Məhəmməd Cahan Pəhlivan, Qızıl Arslan|Uzun Həsən, Cahanşah, Yaqub|Şirvanşah İbrahim, Axsitan, Fəridun|Qara Yusif, Qara Məhəmməd, İskəndər
+Monqolların 1220-ci il yürüşləri ilə 1231-ci il yürüşləri arasındakı əsas fərq hansı idi?|1220-ci il yürüşü daha tez hücum xarakterli idi, 1231-ci ildə isə Azərbaycanın işğalı başladı|1220-də ölkə işğal olundu, 1231-də yalnız kəşfiyyat aparıldı|Hər iki yürüş yalnız ticarət missiyası idi|1231-də monqollar geri çəkildilər
+İbtidai icma cəmiyyətində insanların birlikdə yaşamasının əsas səbəblərindən biri nə idi?|Əmək alətləri hazırlamaq və qorunmaq|Pul dövriyyəsi yaratmaq|Dövlət idarəçiliyi qurmaq|Ticarət yolları açmaq
+Qaraqoyunlu dövlətinin əsasını təşkil edən tayfa ittifaqı hansı idi?|Baharlı tayfasının başçılığı ilə oğuz-türk tayfaları|Bayat tayfasının başçılığı ilə qıpçaq tayfaları|Əfşar tayfasının başçılığı ilə monqol tayfaları|Qacar tayfasının başçılığı ilə ərəb tayfaları
+Cahanşahın hakimiyyəti dövründə Qaraqoyunlu dövlətində hansı proses müşahidə olunurdu?|Ərazi genişləndi və Təbriz inkişaf etdi|Dövlət tamamilə dağıldı|Hakimiyyət Ağqoyunlulara keçdi|Paytaxt Bağdada köçürüldü
+Otlukbeli döyüşünün Ağqoyunlu dövləti üçün nəticəsi hansı idi?|Qərbə doğru genişlənmə imkanı məhdudlaşdı|Osmanlı ərazisi ələ keçirildi|Qaraqoyunlu ləğv edildi|Gürcüstan fəth edildi
+Xilafətin Azərbaycan ərazisində qarnizonlar yerləşdirməsinin əsas məqsədi nə idi?|Əhalini itaətdə saxlamaq və sərhədləri müdafiə etmək|Ticarəti dayandırmaq|Yeni şəhərlər salmaq|Dini mərasimləri təşkil etmək
+Şirvanşahlar, Sacilər, Salarilər və Rəvvadilər dövlətlərinin ümumi xüsusiyyəti hansı idi?|Orta əsrlərdə dövlətçilik ənənələrinin inkişafında iştirak etmələri|Hamısı Xilafətin vilayətləri idi|Hamısı Səlcuq dövləti qurmuşdu|Hamısı monqol ulusuna daxil idi
+Uzun Həsənin "Qanunnamə"si əsasən hansı məsələləri tənzimləməyə yönəlmişdi?|Vergi sistemi|Dəniz ticarəti|Din məsələləri|Yalnız hərbi quruculuq
+Ərəb hakimiyyətinə qarşı Xürrəmilər hərəkatının meydana gəlməsinə təsir edən amillərdən biri hansı idi?|Ağır vergilər və sosial təzyiq|Ərəb dilinin qadağan edilməsi|Monqol hücumu|Torpaq azadlığı
+Aşağıdakı xronoloji ardıcıllıqlardan hansı düzgündür?
+Qara Yusifin 1406-cı ildə Təbrizi ələ keçirməsinin əsas əhəmiyyəti nə idi?|Qaraqoyunlu hakimiyyətinin möhkəmlənməsi|Ağqoyunluların hakimiyyətə gəlməsi|Teymurun ölümü|Şirvanşahların süqutu
+Babək hərəkatının məğlubiyyətinə baxmayaraq siyasi nəticəsi necə oldu?
+Atabəylər dövlətinin yaranması ilə bağlı aşağıdakı hadisələrdən hansı səbəb-nəticə baxımından daha düzgündür?
+Aşağıdakı hadisələrdən hansı digərlərindən daha gec baş vermişdir?
+Uzun Həsənin hakimiyyəti dövründə həyata keçirilən islahatların əsas istiqaməti hansı idi?|Mərkəzi hakimiyyəti gücləndirmək, iqtisadiyyatı və vergiləri nizama salmaq|Hərbi qüvvələri ləğv etmək|Dövləti Osmanlıya tabe etmək|Torpaqları dövlətsizləşdirmək
+III–VII əsrlərdə Azərbaycan ərazisində feodal münasibətlərinin formalaşmasının əsas göstəricisi nə idi?|Torpaq əsas istehsal vasitəsinə çevrildi, feodal kəndlilərdən vergi almağa başladı|Qul əməyi geniş yayıldı|İbtidai icma qaydaları bərpa edildi|Pul dövriyyəsi ləğv olundu
+Aşağıdakılardan hansı Şirvanşahlar dövlətinin siyasi tarixində mühüm xüsusiyyət kimi göstərilə bilər?
+Atabəylər dövlətinin güclənməsində hansı amil mühüm rol oynadı?|Səlcuqların zəifləməsi|Monqol hökmranlığı|Xilafətin dəstəyi|Bizansın müdaxiləsi
+1467-ci ildə Muş döyüşündə Cahanşahın məğlubiyyətinin əsas siyasi nəticəsi nə oldu?|Qaraqoyunlu süqut etdi, 1468-də Ağqoyunlu əsas qüvvəyə çevrildi|Qaraqoyunlu Ağqoyunlunu ələ keçirdi|Sülh bağlanıb dövlət bölündü|Cahanşah yenidən taxta çıxdı`.split("\n").map(l=>{const p=l.split("|");if(p.length<2)return{q:p[0],none:1,o:["Cavab yoxdur","Cavab yoxdur","Cavab yoxdur","Cavab yoxdur"],c:-1};
+const c=p[1],o=p.slice(1).map((t,i)=>({t,i})).sort(()=>Math.random()-.5);return{q:p[0],o:o.map(x=>x.t),c:o.findIndex(x=>x.i==0),ans:c}});
+let cur=0,A=D.map(()=>null),H=D.map(()=>false),done=false;
+const $=document.getElementById("app"),AC=new(window.AudioContext||window.webkitAudioContext)();
+function snd(ok){try{AC.resume();const t=AC.currentTime,seq=ok?[[660,0],[880,.12]]:[[220,0],[150,.15]];seq.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.15,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+.25);o.connect(g).connect(AC.destination);o.start(t+d);o.stop(t+d+.26)})}catch(e){}}
+function pick(i){const d=D[cur];if(A[cur]!==null)return;A[cur]=i;if(!d.none)snd(i==d.c);else snd(true);render()}
+function render(){if(done)return result();const d=D[cur],a=A[cur],ans=a!==null;
+const done_n=A.filter(x=>x!==null).length;
+$.innerHTML=`<div class="w" style="padding:0"><h1>Azərbaycan tarixi II kollekvium</h1><div class="bar"><i style="width:${done_n/D.length*100}%"></i></div>
+<div class="card"><div class="n">Sual ${cur+1} / ${D.length} · cavablanıb: ${done_n}</div><div class="q">${d.q}</div>
+${d.o.map((t,i)=>`<button class="o ${ans?(d.none?(i==a?"ok":""):i==d.c?"ok":i==a?"no":""):""}" ${ans?"disabled":""} onclick="pick(${i})">${t}</button>`).join("")}
+<div class="hint">${d.none?"":(H[cur]?`<div class="hx">💡 İpucu: düzgün cavab — <b>${d.ans}</b></div>`:`<button class="hb" onclick="H[cur]=1;render()">💡 İpucu</button>`)}</div></div>
+<div class="nav"><button class="b g" ${cur?"":"disabled"} onclick="cur--;render()">← Geri</button><button class="b g" ${cur<D.length-1?"":"disabled"} onclick="cur++;render()">İrəli →</button></div>
+<div class="grid">${D.map((x,i)=>`<button class="g1 ${A[i]===null?"":x.none||A[i]==x.c?"ok":"no"} ${i==cur?"cur":""}" onclick="cur=${i};render()">${i+1}</button>`).join("")}</div>
+<div class="nav" style="margin-top:14px"><button class="b r" onclick="fin()">Testi bitir</button></div></div>`;scrollTo(0,0)}
+function fin(){const left=A.filter(x=>x===null).length;if(left&&!confirm(left+" sual cavabsız qalıb. Testi bitirək?"))return;done=true;render()}
+function result(){const S=D.map((d,i)=>({d,i,a:A[i]})).filter(x=>!x.d.none);const ok=S.filter(x=>x.a!==null&&x.a==x.d.c).length,bad=S.filter(x=>x.a!==null&&x.a!=x.d.c),skip=S.filter(x=>x.a===null);
+$.innerHTML=`<div class="w" style="padding:0"><h1>Nəticə</h1><div class="card"><div class="big">${ok} / ${S.length}</div><p style="text-align:center;color:var(--mut)">Düzgün: ${ok} · Səhv: ${bad.length} · Cavabsız: ${skip.length}<br>(cavabı olmayan ${D.length-S.length} sual hesaba alınmadı)</p></div>
+${bad.length?`<h1>Səhvlər</h1>`+bad.map(x=>`<div class="e"><b>${x.i+1}. ${x.d.q}</b><small>Sizin cavab: ${x.d.o[x.a]}</small><small style="color:var(--ok)">Düzgün cavab: ${x.d.ans}</small></div>`).join(""):"<div class='card'>🎉 Səhv yoxdur!</div>"}
+${skip.length?`<h1>Cavabsız suallar</h1>`+skip.map(x=>`<div class="e" style="border-color:var(--mut)"><b>${x.i+1}. ${x.d.q}</b><small style="color:var(--ok)">Düzgün cavab: ${x.d.ans}</small></div>`).join(""):""}
+<div class="nav"><button class="b" onclick="location.reload()">Yenidən başla</button><button class="b g" onclick="done=false;cur=0;render()">Testə qayıt</button></div></div>`;scrollTo(0,0)}
+render();
+</script></body></html>
