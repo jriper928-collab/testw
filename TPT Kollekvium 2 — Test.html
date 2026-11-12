@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TPT Kollekvium 2 — Test</title>
+<style>
+:root{color-scheme:light;--bg:#fff;--sf:#f5f7fb;--bd:#e2e8f0;--tx:#111827;--mu:#64748b;--pr:#2563eb;--ok:#16a34a;--okb:#e8f7ee;--bad:#dc2626;--badb:#fdecec;--hint:#fff8e1;--hb:#f5c542;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+.w{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 2px}.sub{color:var(--mu);font-size:14px;margin-bottom:12px}
+.bar{height:8px;background:var(--sf);border-radius:8px;overflow:hidden;border:1px solid var(--bd)}
+.bar i{display:block;height:100%;background:var(--pr);width:0;transition:width .3s}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:6px;margin:14px 0}
+.grid button{padding:6px 0;border:1px solid var(--bd);background:var(--bg);border-radius:8px;font-size:13px;cursor:pointer;color:var(--tx)}
+.grid .cur{border-color:var(--pr);box-shadow:0 0 0 2px #2563eb33;font-weight:700}
+.grid .g{background:var(--okb);border-color:var(--ok);color:var(--ok)}.grid .r{background:var(--badb);border-color:var(--bad);color:var(--bad)}
+.card{background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:18px;box-shadow:0 2px 10px #0f172a0d}
+.qn{color:var(--pr);font-weight:700;font-size:13px}.q{font-size:18px;font-weight:600;margin:4px 0 14px}
+.o{display:flex;gap:10px;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border:1.5px solid var(--bd);background:var(--sf);border-radius:10px;font-size:15px;cursor:pointer;color:var(--tx);font-family:inherit}
+.o:hover:not(:disabled){border-color:var(--pr);background:#eef4ff}
+.o b{min-width:22px;color:var(--mu)}
+.o.ok{background:var(--okb);border-color:var(--ok)}.o.bad{background:var(--badb);border-color:var(--bad)}
+.o:disabled{cursor:default}
+.hb{margin-top:6px;padding:8px 14px;border:1px solid var(--hb);background:var(--hint);border-radius:10px;cursor:pointer;font-size:14px;font-family:inherit;color:var(--tx)}
+.hbox{display:none;margin-top:10px;padding:12px 14px;background:var(--hint);border-left:4px solid var(--hb);border-radius:8px;font-size:14px}
+.hbox.s{display:block}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:16px;flex-wrap:wrap}
+.b{padding:10px 18px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);cursor:pointer;font-size:15px;font-family:inherit;color:var(--tx)}
+.b.p{background:var(--pr);border-color:var(--pr);color:#fff}.b:disabled{opacity:.4;cursor:default}
+.sc{text-align:center;padding:10px 0}.big{font-size:44px;font-weight:800;color:var(--pr)}
+.st{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.st span{padding:6px 12px;border-radius:20px;background:var(--sf);border:1px solid var(--bd);font-size:14px}
+.err{border:1px solid var(--bd);border-left:4px solid var(--bad);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--bg)}
+.err .t{font-weight:600;margin-bottom:6px}.m{font-size:14px;margin:3px 0}
+.red{color:var(--bad)}.grn{color:var(--ok)}.none{color:var(--mu)}
+.hid{display:none}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>📝 TPT Kollekvium 2 — Test</h1>
+<div class="sub" id="sub"></div>
+<div id="quiz">
+ <div class="bar"><i id="pb"></i></div>
+ <div class="grid" id="grid"></div>
+ <div class="card" id="card"></div>
+ <div class="nav">
+  <button class="b" id="prev">← Əvvəlki</button>
+  <button class="b" id="fin">Nəticəni göstər</button>
+  <button class="b p" id="next">Növbəti →</button>
+ </div>
+</div>
+<div id="res" class="hid"></div>
+</div>
+<script>
+const Q=(q,c,w,h)=>({q,c,w,h});
+const D=[
+Q("Elektron cədvəldə diapazon nədir?","Seçilmiş bir və ya bir neçə xanadan ibarət sahə (məs., A1:C5)",["Yalnız bir sütundan ibarət xanalar qrupu","İşçi vərəqin bütün sətir və sütunlarının cəmi","Düsturun nəticəsini göstərən xana"]),
+Q("Excel proqramında işçi vərəqi adlandırdıqda hansı simvollardan istifadə etmək olmaz?",": \\ / ? * [ ]",[": \\ / ? * ( )","< > | ; , &","; , . ! @ #"]),
+Q("Word proqramında cədvələ axırıncı sətri necə əlavə etmək olar?","Sonuncu xanada kursor olduqda Tab düyməsini sıxmaqla",["Sonuncu xanada kursor olduqda Enter düyməsini sıxmaqla","Sonuncu xanada Ctrl+Enter sıxmaqla","Layout → Insert Left əmri ilə"]),
+Q("“Shift+End” və “Shift+Home” əmrləri nə üçün istifadə edilir?","Kursordan sətrin sonuna / əvvəlinə qədər mətni seçir",["Kursoru sənədin sonuna / əvvəlinə aparır","Kursordan sənədin sonuna / əvvəlinə qədər mətni seçir","Kursorun olduğu sətri silir"],"Shift+End — kursorun olduğu yerdən sətrin sonuna qədər, Shift+Home isə sətrin əvvəlinə qədər mətni seçir."),
+Q("MS Word proqramında səhifələri nömrələmək üçün hansı əmrdən istifadə olunur?","Insert (Daxil et) → Page Number",["Layout → Page Number","Insert → Page Break","View → Page Number"]),
+Q("Seçilmiş mətn hissəsini altıxətli, kursiv və qalın etmək üçün hansı qısayollardan istifadə olunur?","Altıxətli — Ctrl+U; kursiv — Ctrl+I; qalın — Ctrl+B",["Altıxətli — Ctrl+I; kursiv — Ctrl+U; qalın — Ctrl+B","Altıxətli — Ctrl+B; kursiv — Ctrl+I; qalın — Ctrl+U","Altıxətli — Ctrl+U; kursiv — Ctrl+B; qalın — Ctrl+I"]),
+Q("Word-də “Save As” əmri ilə nəyi dəyişmək olmaz?","Sənədin mətnini və məzmununu",["Sənədin adını","Sənədin saxlanma yerini","Sənədin fayl formatını"],"Save As əmri sənədin adını, saxlanma yerini və fayl formatını dəyişməyə imkan verir. Sənədin mətnini və məzmununu redaktə etmir; məzmunu dəyişmək üçün sənədin özündə redaktə aparılmalıdır."),
+Q("Excel-də proqram pəncərəsinin ünvan sətrində nə göstərilir?","Aktiv xananın və ya seçilmiş diapazonun ünvanı (Name Box)",["Aktiv xanaya daxil edilmiş düstur (Formula Bar)","Cari vərəqin adı (Sheet Tab)","Faylın saxlanma yolu"]),
+Q("Excel-də sənədin birinci xanasına keçmək üçün klaviatura qısayolu hansıdır?","Ctrl+Home",["Ctrl+End","Home","Ctrl+A"]),
+Q("MS Word-də sadə riyazi düsturlar əlavə etmək üçün hansı qısayol istifadə olunur?","Alt+=",["Ctrl+=","Alt+Shift+=","Shift+="],"Alt+= (Equation/Düstur sahəsi əlavə etmək üçün)."),
+Q("Hansı Excel-də yaradılmış sənəddir?","Hesabat.xlsx",["Hesabat.docx","Hesabat.pptx","Hesabat.txt"],"Faylda bu sualın variantları yoxdur. Qeyd: Excel faylının tipik uzantısı .xlsx-dir (köhnə versiyalarda .xls). Buradakı variantlar nümunə kimi əlavə edilib."),
+Q("MS Word-də cədvəllərlə iş zamanı Design lentində Pen Color əmri nə üçündür?","Qələmin (xəttin) rəngini dəyişir",["Xanaların fon rəngini dəyişir","Cədvəl daxilindəki mətnin rəngini dəyişir","Cədvəl üslubunun rəng sxemini seçir"],"Cədvəlin sərhədlərini çəkərkən istifadə edilən qələmin/xəttin rəngini dəyişmək üçündür."),
+Q("MS Excel-də yeni işçi vərəq əlavə etmək üçün nədən istifadə olunur?","+ (New Sheet) düyməsindən və ya Shift+F11 qısayolundan",["Ctrl+N qısayolundan","Shift+F10 qısayolundan","Ctrl+F11 qısayolundan"],"Vərəq nişanlarının yanındakı + (New Sheet) düyməsindən və ya Shift+F11 qısayolundan istifadə olunur."),
+Q("MS Excel-də bir vərəqdəki sütunların sayı nə qədərdir?","16 384 (A-dan XFD-yə qədər)",["1 048 576","16 348","65 536"]),
+Q("Aşağıdakılardan hansı cədvəl prosessorudur?","Microsoft Excel",["Microsoft Word","Microsoft PowerPoint","Microsoft Access"]),
+Q("Elektron cədvəllərdə sətrlər necə nömrələnir?","Rəqəmlərlə (1, 2, 3, ...)",["Latın hərfləri ilə (A, B, C, ...)","Hərf və rəqəm birlikdə (A1, A2, ...)","Roma rəqəmləri ilə (I, II, III, ...)"]),
+Q("MS Word-də cədvəllərlə iş zamanı Layout lentində Insert Right əmri nə üçündür?","Seçilmiş xananın sağ tərəfinə yeni sütun əlavə edir",["Seçilmiş xananın sağ tərəfinə yeni sətir əlavə edir","Seçilmiş xananın aşağısına yeni sətir əlavə edir","Seçilmiş xananı sağdakı xana ilə birləşdirir"]),
+Q("MS Word-də sənədə düstur əlavə etmək üçün hansı menyudan istifadə olunur?","Insert (Daxil et) → Equation (Düstur)",["Insert → Symbol","Design → Equation","References → Equation"]),
+Q("MS Excel proqramında düsturlar hansı simvolla başlayır?","Bərabərlik işarəsi (=)",["Nömrə işarəsi (#)","At işarəsi (@)","İkinöqtə (:)"]),
+Q("Aşağıdakılardan hansı Excel pəncərəsinə aiddir?","Düstur sətri (Formula Bar)",["Natiq qeydləri (Speaker Notes)","Xətkeş (Ruler)","Naviqasiya paneli (Navigation Pane)"],"Excel pəncərəsinin əsas elementləri: başlıq sətri (Title Bar), lent (Ribbon), ad sahəsi (Name Box), düstur sətri (Formula Bar), işçi vərəq/sahə, sətir və sütun başlıqları, vərəq nişanları (Sheet Tabs) və vəziyyət sətri (Status Bar)."),
+Q("MS Word-də Convert Text to Table əmri nə üçündür?","Mətni seçilmiş ayırıcıya (tab, vergül) görə cədvələ çevirmək",["Cədvəli ayırıcılı mətnə çevirmək","Cədvəlin xanalarını əlifba sırası ilə düzmək","Cədvəlin xanalarını birləşdirmək"]),
+Q("MS Excel-də seçilmiş xanalar çoxluğu necə adlanır?","Diapazon (Range)",["Vərəq (Sheet)","Kitab (Workbook)","Cədvəl (Table)"]),
+Q("MS Word-də cədvəlin bir xanasını bir neçə xanaya bölmək üçün hansı əmrdən istifadə olunur?","Layout → Split Cells (Xanaları böl)",["Layout → Split Table (Cədvəli böl)","Design → Split Cells","Layout → Merge Cells"]),
+Q("MS Excel-də bir vərəqdəki xanaların sayı nə qədərdir?","17 179 869 184 (1 048 576 sətir × 16 384 sütun)",["17 179 869 148","268 435 456","1 073 741 824"]),
+Q("MS Word-də cədvəldə seçilmiş xanaları birləşdirmək üçün hansı əmrdən istifadə olunur?","Layout → Merge Cells (Xanaları birləşdir)",["Layout → Split Cells","Design → Merge Cells","Home → Merge & Center"]),
+Q("MS Word-də sənədə proqramın özünə aid simvolik şəkil daxil etmək üçün Insert menyusunun hansı əmrindən istifadə edilir?","Clip Art",["WordArt","SmartArt","Shapes"],"Köhnə MS Word versiyalarında Insert → Clip Art; müasir versiyalarda isə Insert → Icons və ya Online Pictures. Test köhnə Word versiyasına əsaslanırsa, gözlənilən cavab Clip Art-dır."),
+Q("MS Word-də cədvəllərlə iş zamanı Layout lentində Insert Above əmri nə üçündür?","Seçilmiş xananın yuxarısına yeni sətir əlavə edir",["Seçilmiş xananın aşağısına yeni sətir əlavə edir","Seçilmiş xananın yuxarısına yeni sütun əlavə edir","Seçilmiş xananı yuxarıdakı xana ilə birləşdirir"]),
+Q("MS Word-də sözlərin axtarışı və başqa sözlə əvəzlənməsi hansı əmrlərlə yerinə yetirilir?","Find (Axtar) və Replace (Əvəz et)",["Find (Axtar) və Go To (Get)","Find (Axtar) və Select (Seç)","Replace (Əvəz et) və Paste (Yapışdır)"]),
+Q("MS Word-də cədvəllərlə iş zamanı Design lentində Draw Table əmri nə üçündür?","Cədvəli və xanalarını qələmlə əl ilə çəkmək üçün",["Cədvəlin sərhəd xətlərini silmək üçün","Cədvəl xəttinin qalınlığını dəyişmək üçün","Hazır cədvəl şablonunu seçmək üçün"]),
+Q("Symbols qrupu hansı tab vərəqindədir?","Insert (Daxil et)",["Home (Əsas)","Layout (Maket)","References (İstinadlar)"]),
+Q("Aşağıdakılardan hansı düz deyil?","İşçi vərəqin adında ? və * simvollarından istifadə etmək olar",["Ctrl+Home Excel-də birinci xanaya keçir","Excel-də düsturlar = işarəsi ilə başlayır","İşçi vərəqin adı maksimum 31 simvol ola bilər"],"Faylda bu sualın variantları yoxdur və cavab kimi “Cavab yoxdur” yazılıb. Buradakı variantlar nümunə kimi əlavə edilib."),
+Q("İşçi vərəqinin adının uzunluğu maksimum neçə simvol ola bilər?","31 simvol",["32 simvol","30 simvol","255 simvol"]),
+Q("MS Word-də sənədə yuxarı sərlövhə əlavə etmək üçün hansı əmrdən istifadə edilir?","Insert → Header (Yuxarı sərlövhə)",["Insert → Footer (Aşağı sərlövhə)","Layout → Header","References → Header"]),
+Q("MS Word-də cədvəllərlə iş zamanı Layout lentində Insert Left əmri nə üçündür?","Seçilmiş xananın sol tərəfinə yeni sütun əlavə edir",["Seçilmiş xananın sol tərəfinə yeni sətir əlavə edir","Seçilmiş xananın yuxarısına yeni sətir əlavə edir","Seçilmiş xananı soldakı xana ilə birləşdirir"]),
+Q("MS Word-də sənədə əlfəcin əlavə etmək üçün hansı əmrdən istifadə edilir?","Insert → Bookmark (Əlfəcin)",["Insert → Hyperlink","Insert → Cross-reference","References → Bookmark"]),
+Q("Mətnin xanada şaquli şəkildə yerləşməsi üçün hansı əmrdən istifadə olunur?","Table Tools → Layout → Text Direction",["Table Tools → Layout → Cell Margins","Table Tools → Layout → Align Center","Table Tools → Layout → Split Cells"],"Word cədvəlində mətnin istiqamətini dəyişmək üçün Table Tools → Layout → Text Direction. Excel-də isə Home → Alignment → Orientation (və ya Format Cells → Alignment → Orientation). Sual Word cədvəlinə aiddirsə, cavab Text Direction-dır."),
+Q("MS Excel-də Number (Ədəd) lent qrupu hansı lent tabında yerləşir?","Home (Əsas)",["Insert (Daxil et)","Formulas (Düsturlar)","Data (Məlumat)"]),
+Q("Aşağıdakılardan hansı cədvəl prosessorudur?","Microsoft Excel",["Microsoft Outlook","Notepad","Paint"]),
+Q("Aşağıdakı ünvanlardan hansının yazılışı doğrudur?","B5",["5B","B-5","BB"],"Düzgün Excel xana ünvanı sütun hərfi və sətir nömrəsindən ibarət olur (A1, B5, C10). Faylda variantlar yoxdur; buradakı variantlar nümunə kimi əlavə edilib."),
+Q("MS Word-də cədvəllərlə iş zamanı Design lentində Eraser əmri nə üçündür?","Çəkilmiş sərhəd xətlərini silmək üçün",["Seçilmiş sətri və ya sütunu cədvəldən silir (Delete)","Xanadakı mətni silir","Bütün cədvəli silir"],"Cədvəldə çəkilmiş sərhəd xətlərini silmək üçündür.")
+];
+const $=id=>document.getElementById(id);
+let S,cur=0,ac;
+function sh(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function init(){S=D.map(d=>({o:sh([{t:d.c,ok:1},...d.w.map(t=>({t,ok:0}))]),a:-1,h:0}));cur=0;$("res").classList.add("hid");$("quiz").classList.remove("hid");render()}
+function snd(ok){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const n=ac.currentTime;
+(ok?[[660,0],[880,.12],[1175,.24]]:[[220,0],[160,.18]]).forEach(([f,t])=>{const o=ac.createOscillator(),g=ac.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.0001,n+t);g.gain.exponentialRampToValueAtTime(ok?.25:.18,n+t+.02);g.gain.exponentialRampToValueAtTime(.0001,n+t+(ok?.22:.35));o.connect(g).connect(ac.destination);o.start(n+t);o.stop(n+t+.4)})}catch(e){}}
+function render(){
+ const done=S.filter(s=>s.a>=0).length;
+ $("sub").textContent=`${D.length} sual · cavablandı: ${done}`;
+ $("pb").style.width=done/D.length*100+"%";
+ $("grid").innerHTML=S.map((s,i)=>`<button class="${i==cur?"cur ":""}${s.a>=0?(s.o[s.a].ok?"g":"r"):""}" onclick="go(${i})">${i+1}</button>`).join("");
+ const s=S[cur],d=D[cur],L="ABCD";
+ $("card").innerHTML=`<div class="qn">Sual ${cur+1} / ${D.length}</div><div class="q">${d.q}</div>`+
+ s.o.map((o,i)=>`<button class="o ${s.a>=0?(o.ok?"ok":(i==s.a?"bad":"")):""}" ${s.a>=0?"disabled":""} onclick="pick(${i})"><b>${L[i]}</b><span>${o.t}</span></button>`).join("")+
+ `<button class="hb" onclick="hint()">💡 İpucu</button><div class="hbox ${s.h?"s":""}" id="hb"><b>Sənəddəki cavab:</b> ${d.h||d.c}</div>`;
+ $("prev").disabled=cur==0;$("next").disabled=cur==D.length-1;
+}
+function go(i){cur=i;render()}
+function pick(i){const s=S[cur];if(s.a>=0)return;s.a=i;snd(s.o[i].ok);render()}
+function hint(){S[cur].h=1;$("hb").classList.add("s")}
+$("prev").onclick=()=>go(cur-1);$("next").onclick=()=>go(cur+1);
+$("fin").onclick=()=>{const u=S.filter(s=>s.a<0).length;if(u&&!confirm(`${u} sual cavablanmayıb. Yenə də nəticəni göstərək?`))return;result()};
+function result(){
+ const c=S.filter(s=>s.a>=0&&s.o[s.a].ok).length,u=S.filter(s=>s.a<0).length,w=D.length-c-u,p=Math.round(c/D.length*100),hu=S.filter(s=>s.h).length;
+ const errs=S.map((s,i)=>({s,i})).filter(x=>x.s.a<0||!x.s.o[x.s.a].ok);
+ $("quiz").classList.add("hid");$("sub").textContent="Nəticə";
+ $("res").innerHTML=`<div class="card sc"><div>Düzgün cavab</div><div class="big">${c} / ${D.length}</div><div>${p}%</div>
+ <div class="st"><span class="grn">✔ Düz: ${c}</span><span class="red">✘ Səhv: ${w}</span><span>– Cavabsız: ${u}</span><span>💡 İpucu: ${hu}</span></div></div>
+ <h2 style="font-size:18px;margin:18px 0 4px">${errs.length?"Səhvlər (sual sırası ilə)":"🎉 Səhviniz yoxdur!"}</h2>`+
+ errs.map(({s,i})=>`<div class="err"><div class="t">${i+1}. ${D[i].q}</div>
+ <div class="m">Sizin cavabınız: ${s.a<0?'<span class="none">cavablanmayıb</span>':`<span class="red">${s.o[s.a].t}</span>`}</div>
+ <div class="m">Düzgün cavab: <span class="grn">${D[i].c}</span></div>${D[i].h&&D[i].h!==D[i].c?`<div class="m none">Sənəddə: ${D[i].h}</div>`:""}</div>`).join("")+
+ `<div class="nav"><button class="b" onclick="back()">← Testə qayıt</button><button class="b p" onclick="init()">🔄 Yenidən başla</button></div>`;
+ $("res").classList.remove("hid");scrollTo(0,0)}
+function back(){$("res").classList.add("hid");$("quiz").classList.remove("hid");render()}
+init();
+</script>
+</body>
+</html>
