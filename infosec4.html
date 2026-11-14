@@ -1,0 +1,479 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>İnformasiya Təhlükəsizliyi Testi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centered column, quiz card on top, question map below. Light theme only, by request. */
+:root{
+  --bg:#f5f8fc; --card:#ffffff; --ink:#14233b; --muted:#5d6e87; --line:#dbe4f0;
+  --accent:#2457d6; --accent-soft:#e8effd;
+  --good:#16885a; --good-soft:#e5f6ee; --bad:#cf3b34; --bad-soft:#fdeceb;
+  --hint:#fff7e0; --hint-line:#f0d98a; --hint-ink:#6b5200;
+  --font-head:"Space Grotesk","Segoe UI",Arial,sans-serif;
+  --font-body:"Inter","Segoe UI",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--font-head);font-size:1.35rem;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);font-size:.85rem}
+.tools{display:flex;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:500;color:var(--muted)}
+.chip b{color:var(--ink);font-variant-numeric:tabular-nums}
+.progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,35,59,.05),0 8px 24px rgba(20,35,59,.05)}
+.qno{font-family:var(--font-head);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.q{font-family:var(--font-head);font-size:1.3rem;line-height:1.35;font-weight:600;margin:6px 0 18px;text-wrap:balance}
+.opts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.opt{width:100%;display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;transition:border-color .12s,background .12s}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt .l{flex:none;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--font-head);font-weight:600;font-size:.85rem;color:var(--muted)}
+.opt .t{min-width:0;overflow-wrap:anywhere}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.right .l{background:var(--good);border-color:var(--good);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .l{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt.dim{opacity:.6}
+.verdict{margin-top:14px;font-weight:600;min-height:1.5em}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+.hintbox{margin-top:16px}
+.hintbtn{display:inline-flex;align-items:center;gap:8px;border:1.5px dashed var(--hint-line);background:var(--hint);color:var(--hint-ink);border-radius:10px;padding:8px 14px;font-weight:600;font-size:.9rem}
+.hintbtn:hover{filter:brightness(.97)}
+.hinttext{margin-top:10px;background:var(--hint);border:1px solid var(--hint-line);color:var(--hint-ink);border-radius:10px;padding:12px 14px;font-size:.93rem}
+.hinttext b{display:block;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:10px 18px;font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover:not(:disabled){background:#1c46b3;color:#fff}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.map button{height:38px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);font-weight:600;font-size:.85rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.map button.good{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.map button.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.map button.cur{box-shadow:0 0 0 3px var(--accent-soft);border-color:var(--accent)}
+.maplabel{font-size:.8rem;color:var(--muted);margin-bottom:8px}
+.finish{display:flex;justify-content:flex-end}
+/* results */
+.score{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ring{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring span{width:84px;height:84px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-family:var(--font-head);font-weight:700;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{border-radius:10px;padding:8px 14px;font-weight:600;font-size:.9rem}
+.stat.g{background:var(--good-soft);color:var(--good)} .stat.r{background:var(--bad-soft);color:var(--bad)} .stat.n{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+h2{font-family:var(--font-head);font-size:1.15rem;margin:0 0 4px}
+.mist{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+.m{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card)}
+.m .mq{font-weight:600;margin:2px 0 10px;overflow-wrap:anywhere}
+.m .row{display:flex;gap:10px;font-size:.92rem;margin-top:6px;overflow-wrap:anywhere}
+.m .tag{flex:none;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:6px;height:fit-content;margin-top:2px}
+.tag.bad{background:var(--bad-soft);color:var(--bad)} .tag.good{background:var(--good-soft);color:var(--good)} .tag.none{background:var(--bg);color:var(--muted)}
+.perfect{padding:16px;border-radius:12px;background:var(--good-soft);color:var(--good);font-weight:600;margin-top:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+@media (max-width:480px){.card{padding:16px}.q{font-size:1.15rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>İnformasiya Təhlükəsizliyi</h1>
+      <div class="sub">Variantlı test · 39 sual</div>
+    </div>
+    <div class="tools">
+      <span class="chip">Düzgün: <b id="cGood">0</b></span>
+      <span class="chip">Səhv: <b id="cBad">0</b></span>
+      <button class="chip" id="muteBtn" type="button" aria-pressed="false">Səs: açıq</button>
+    </div>
+  </header>
+
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+
+  <section id="quiz" class="wrap" style="gap:18px">
+    <div class="card">
+      <div class="qno" id="qno"></div>
+      <h2 class="q" id="qtext"></h2>
+      <ul class="opts" id="opts"></ul>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+      <div class="hintbox">
+        <button class="hintbtn" id="hintBtn" type="button" aria-expanded="false">💡 İpucu</button>
+        <div class="hinttext" id="hintText" hidden></div>
+      </div>
+      <div class="nav">
+        <button class="btn" id="prev" type="button">← Əvvəlki</button>
+        <button class="btn pri" id="next" type="button">Növbəti →</button>
+      </div>
+    </div>
+    <div>
+      <div class="maplabel">Suallar arasında keçid</div>
+      <div class="map" id="map"></div>
+    </div>
+    <div class="finish"><button class="btn pri" id="finish" type="button">Testi bitir və nəticəyə bax</button></div>
+  </section>
+
+  <section id="result" hidden>
+    <div class="card">
+      <div class="score">
+        <div class="ring" id="ring"><span id="pct"></span></div>
+        <div>
+          <h2 id="verd"></h2>
+          <div class="stats" id="stats"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn pri" id="again" type="button">Yenidən başla</button>
+        <button class="btn" id="retry" type="button">Yalnız səhvləri təkrar et</button>
+        <button class="btn" id="back" type="button">Suallara qayıt</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>Səhvlər və cavabsız suallar</h2>
+      <div class="sub">Suallar test ardıcıllığı ilə verilib.</div>
+      <div id="mist"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+var DATA = [
+{q:"Aşağıdakılardan hansı informasiyanın sızmasının əsas səbəblərindən biridir?",
+ c:"İcazəsiz giriş və istifadəçi hesablarının ələ keçirilməsi",
+ w:["Verilənlər bazasının müntəzəm ehtiyat nüsxələrinin yaradılması","Şəbəkə avadanlıqlarının proqram təminatının vaxtında yenilənməsi","İstifadəçilərin təhlükəsizlik təlimlərində iştirakı"],
+ h:"İcazəsiz giriş və istifadəçi hesablarının ələ keçirilməsi informasiyanın sızmasının əsas səbəblərindəndir. Buna parolun oğurlanması, qeydiyyatdan keçmiş istifadəçinin terminalından icazəsiz istifadə və səlahiyyətlərdən sui-istifadə nümunədir."},
+{q:"Aşağıdakılardan hansı sahiblik amilinə aiddir?",
+ c:"İstifadəçinin malik olduğu fiziki və ya rəqəmsal vasitə (elektron açar, smart-kart, qeydiyyatlı mobil qurğu)",
+ w:["İstifadəçinin yadda saxladığı gizli məlumat (parol, PİN-kod)","İstifadəçinin bədən və ya davranış xüsusiyyəti (barmaq izi, yeriş)","İstifadəçinin giriş etdiyi coğrafi məkan və vaxt"],
+ h:"İstifadəçinin malik olduğu fiziki və ya rəqəmsal vasitə sahiblik amilidir. Elektron təhlükəsizlik açarı, smart-kart və qeydiyyatdan keçmiş mobil qurğu buna nümunədir."},
+{q:"Hansı fizioloji biometrik parametrdir?",
+ c:"Barmaq izi",
+ w:["Klaviatura dinamikası","Yeriş tərzi","Dinamik əl imzası"],
+ h:"Barmaq izi fizioloji biometrik parametrdir. Digər nümunələrə üz xüsusiyyətləri və gözün qüzehli qişasının naxışı daxildir."},
+{q:"Biometrik şablonun oğurlanması niyə ciddi risk sayılır?",
+ c:"Biometrik xüsusiyyətlər insanla uzun müddət əlaqəli qalır və parol kimi asanlıqla dəyişdirilə bilmir",
+ w:["Biometrik şablon həmişə şifrələnmiş saxlanıldığı üçün ələ keçirilsə belə zərər vermir","Biometrik şablon yalnız bir dəfə istifadə olunur və sonra avtomatik etibarsız olur","Biometrik şablon parol kimi tez-tez dəyişdirildiyi üçün oğurlanması yalnız müvəqqəti risk yaradır"],
+ h:"Biometrik xüsusiyyətlər insanla uzun müddət əlaqəli qalır və parol kimi asanlıqla dəyişdirilə bilmir. Şablonun ələ keçirilməsi məxfilik riskləri, saxta biometrik nümunələrin təqdim edilməsi və məlumatların icazəsiz istifadəsi ilə nəticələnə bilər."},
+{q:"Süni intellektlə yaradılmış saxta səs riskini azaltmaq üçün hansı yanaşma daha uyğundur?",
+ c:"Canlılığın yoxlanılması, saxtalaşdırma əlamətlərinin təhlili və riskli əməliyyatlarda əlavə autentifikasiya",
+ w:["Səs uyğunluq həddini aşağı salmaq ki, istifadəçilər daha rahat daxil olsun","Yalnız səs tembrinə əsaslanan tək amilli autentifikasiyaya keçid","Səs nümunəsinin bir dəfə qeydiyyatı və sonrakı yoxlamaların sadələşdirilməsi"],
+ h:"Canlılığın yoxlanılması, saxtalaşdırma əlamətlərinin təhlili və riskli əməliyyatlarda əlavə autentifikasiyanın tətbiqi uyğundur. Qeyri-adi giriş davranışları da aşkarlanmalıdır."},
+{q:"1:1 biometrik müqayisəsi nə deməkdir?",
+ c:"Təqdim edilən biometrik nümunənin konkret istifadəçinin əvvəlcədən qeydiyyata alınmış biometrik məlumatı ilə müqayisə edilməsi",
+ w:["Təqdim edilən nümunənin bazadakı bütün istifadəçilərin məlumatları ilə müqayisə edilməsi","Eyni istifadəçinin biometrik məlumatının və parolunun eyni anda yoxlanılması","Hər istifadəçiyə yalnız bir qurğudan daxil olmağa icazə verilməsi"],
+ h:"Təqdim edilən biometrik nümunənin konkret istifadəçinin əvvəlcədən qeydiyyata alınmış biometrik məlumatı ilə müqayisə edilməsidir."},
+{q:"İnformasiya təhlükəsizliyinin tədbirlər kompleksi neçə hissədən ibarətdir?",
+ c:"Üç hissədən: konsepsiya, strategiya və siyasət",
+ w:["İki hissədən: konsepsiya və siyasət","Dörd hissədən: konsepsiya, strategiya, siyasət və audit","Üç hissədən: risk, nəzarət və audit"],
+ h:"Üç hissədən ibarətdir: informasiya təhlükəsizliyinin konsepsiyası, strategiyası və siyasəti."},
+{q:"İnformasiya təhlükəsizliyi konsepsiyası nədir?",
+ c:"Müasir texnologiyalar nəzərə alınmaqla təhlükəsizlik probleminə və həlli yollarına dair rəsmi qəbul edilmiş baxışlar sistemi",
+ w:["Etibarlı qorunma sisteminin məqsədlərini, kriteriyalarını və prosedurlarını müəyyən edən sənəd","Strategiyadan sonra formalaşan, girişə nəzarət və parol qaydalarını əhatə edən qaydalar toplusu","Təşkilatda istifadə olunan texniki vasitələrin (antivirus, VPN) siyahısı"],
+ h:"Müasir texnologiyalar və tendensiyalar nəzərə alınmaqla informasiya təhlükəsizliyi probleminə və onun həlli yollarına dair rəsmi qəbul edilmiş baxışlar sistemidir. Konsepsiya təhlükəsizliyin təmin edilməsi üsullarını və prinsiplərini müəyyən edir."},
+{q:"İnformasiya təhlükəsizlik strategiyası nəyi müəyyən edir?",
+ c:"İnformasiyanın etibarlı qorunması sisteminin qurulmasının məqsədlərini, kriteriyalarını, prinsiplərini və prosedurlarını",
+ w:["Təhlükəsizlik probleminə dair rəsmi qəbul edilmiş baxışlar sistemini və təmin etmə üsullarını","Yalnız istifadə olunacaq texniki avadanlığın və proqramların siyahısını","İstifadəçilərin giriş hüquqlarının fərdi cədvəlini və parol dəyişmə qaydalarını"],
+ h:"İnformasiyanın etibarlı qorunması sisteminin qurulmasının məqsədlərini, kriteriyalarını, prinsiplərini və prosedurlarını müəyyən edir."},
+{q:"Təhlükəsizlik siyasəti nə vaxt formalaşdırılır?",
+ c:"İnformasiya təhlükəsizliyi strategiyası hazırlandıqdan sonra",
+ w:["Konsepsiyadan əvvəl, tədbirlər kompleksinin ilk mərhələsində","Konsepsiya və strategiya ilə eyni vaxtda, onlardan asılı olmayaraq","Yalnız təhlükəsizlik pozuntusu baş verdikdən sonra"],
+ h:"İnformasiya təhlükəsizliyi strategiyası hazırlandıqdan sonra, təhlükəsizliyin təmin edilməsi üçün formalaşdırılır."},
+{q:"Təhlükəsizlik siyasəti yalnız texniki vasitələrdən ibarətdirmi?",
+ c:"Xeyr, texniki vasitələrlə yanaşı insanların davranışlarını, təşkilati məsuliyyətləri və informasiya ilə işləmə qaydalarını da əhatə edir",
+ w:["Bəli, yalnız antivirus, şəbəkələrarası ekran və şifrələmə kimi texniki vasitələrdən ibarətdir","Bəli, texniki vasitələr əsasdır, insan davranışı siyasətə aid deyil","Xeyr, yalnız hüquqi sənədlərdən və cərimə qaydalarından ibarətdir"],
+ h:"Xeyr. O, texniki vasitələrlə yanaşı insanların davranışlarını, təşkilati məsuliyyətləri və informasiya ilə işləmə qaydalarını da əhatə edir. Girişə nəzarət, parol siyasəti, hadisələrin idarə edilməsi, istifadəçi məsuliyyəti, nəzarət və audit də siyasətin tərkib hissələridir."},
+{q:"Müasir dövrdə təşkilatlar təhlükəsizlik səviyyəsinə görə necə kateqoriyaya bölünür?",
+ c:"Dörd kateqoriyaya: birinci, ikinci, üçüncü və dördüncü",
+ w:["Üç kateqoriyaya: aşağı, orta və yüksək","İki kateqoriyaya: qorunan və qorunmayan","Beş kateqoriyaya: birincidən beşinciyə qədər"],
+ h:"Dörd kateqoriyaya bölünür: birinci, ikinci, üçüncü və dördüncü kateqoriya."},
+{q:"Birinci kateqoriyaya aid təşkilatlarda təhlükəsizlik necə həyata keçirilir?",
+ c:"Təhlükəsizliyə xüsusi diqqət verilmir, əsasən əməliyyat sistemlərinin, VBİS-in və əlavə proqramların daxili imkanları hesabına təmin edilir",
+ w:["Təhlükəsizliyə texniki problem kimi baxılır, antivirus, şəbəkələrarası ekran və VPN tətbiq edilir","Vahid proqram çərçivəsində hüquqi, təşkilati və texniki vasitələr birlikdə tətbiq edilir","Korporativ təhlükəsizlik formalaşır və pozuntulara reaksiya qrupu fəaliyyət göstərir"],
+ h:"İnformasiya təhlükəsizliyinə xüsusi diqqət verilmir. Təhlükəsizlik əsasən əməliyyat sistemlərinin, verilənlər bazasının idarəetmə sistemlərinin və əlavə proqramların daxili imkanları hesabına təmin edilir."},
+{q:"İkinci kateqoriya təhlükəsizliyə necə baxılır və hansı vasitələr tətbiq olunur?",
+ c:"Texniki problem kimi baxılır, vahid proqram və siyasət olmur; antivirus, şəbəkələrarası ekran və VPN tətbiq edilir",
+ w:["Xüsusi diqqət verilmir, yalnız əməliyyat sisteminin daxili imkanlarından istifadə olunur","Vahid konsepsiya, strategiya və siyasət mövcuddur, hüquqi və təşkilati tədbirlər tətbiq edilir","Korporativ təhlükəsizlik formalaşır, idarəetmə sistemi və reaksiya qrupu fəaliyyət göstərir"],
+ h:"İnformasiya təhlükəsizliyinə texniki problem kimi baxılır; vahid proqram, konsepsiya, strategiya və ya siyasət olmur. Antivirus proqramları, şəbəkələrarası ekran və VPN kimi vasitələr tətbiq edilir."},
+{q:"İnformasiya təhlükəsizliyi konsepsiyasında hansı tədbirlər həyata keçirilir?",
+ c:"Əvvəlcə qorunmalı resurslar və əhəmiyyətlilik dərəcəsi təsnif edilir, sonra potensial təhlükələr araşdırılır, daha sonra mövcud vəziyyət və qorunma vasitələri təhlil edilir",
+ w:["Əvvəlcə qorunma vasitələri alınır, sonra resurslar təsnif edilir və təhlükələr araşdırılır","Yalnız antivirus və şəbəkələrarası ekran quraşdırılır, təhlükə təhlili aparılmır","Əvvəlcə reaksiya qrupu yaradılır, resursların təsnifatı və təhlükələrin araşdırılması sonraya saxlanılır"],
+ h:"Əvvəlcə qorunmalı informasiya resursları və onların əhəmiyyətlilik dərəcəsi təsnif edilir. Sonra həmin resurslara qarşı potensial təhlükələr və zərərli hərəkətlər araşdırılır. Daha sonra mövcud təhlükəsizlik vəziyyəti, təşkilatın şəraiti və tətbiq oluna biləcək qorunma üsul və vasitələri təhlil edilir."},
+{q:"Fraqmentar yanaşma nə üçün nəzərdə tutulur?",
+ c:"Müəyyən şəraitdə konkret təhlükələrin qarşısını almaq üçün ayrı-ayrı müdafiə vasitələrinin tətbiqi üçün",
+ w:["Təhlükəsizlik məsələlərinin vahid proqram çərçivəsində təhlili və bütün vasitələrin birgə tətbiqi üçün","Korporativ təhlükəsizlik idarəetmə sisteminin formalaşdırılması üçün","Yalnız hüquqi və mənəvi-etik tədbirlərin həyata keçirilməsi üçün"],
+ h:"Müəyyən edilmiş şəraitdə konkret təhlükələrin qarşısını almaq üçün ayrı-ayrı müdafiə vasitələrinin tətbiqinə yönəlir. Məsələn, antivirus, girişə nəzarət və ya şifrələmə vasitələrinin ayrıca istifadəsi."},
+{q:"Kompleks yanaşma hansı kateqoriyalarda həyata keçirilir və nəyi nəzərdə tutur?",
+ c:"Üçüncü və dördüncü kateqoriyalarda; vahid proqram çərçivəsində hüquqi, mənəvi-etik, təşkilati, proqram və texniki vasitələrin birlikdə tətbiqini",
+ w:["Birinci və ikinci kateqoriyalarda; ayrı-ayrı müdafiə vasitələrinin ayrıca tətbiqini","Yalnız dördüncü kateqoriyada; yalnız texniki vasitələrin tətbiqini","İkinci və üçüncü kateqoriyalarda; vahid proqram olmadan təhlükə yarandıqca tədbir görülməsini"],
+ h:"Üçüncü və dördüncü kateqoriyalı təşkilatlarda həyata keçirilir. Təhlükəsizlik məsələlərinin vahid proqram çərçivəsində təhlilini və təhlükələrin qarşısını almaq üçün hüquqi, mənəvi-etik, təşkilati, proqram və texniki vasitələrin birlikdə tətbiqini nəzərdə tutur."},
+{q:"Hansı kateqoriyada informasiya təhlükəsizliyi formalaşır, idarəetmə sistemi reallaşır və pozulma hallarına reaksiya qrupu fəaliyyət göstərir?",
+ c:"Dördüncü kateqoriyada",
+ w:["Üçüncü kateqoriyada","İkinci kateqoriyada","Birinci kateqoriyada"],
+ h:"Dördüncü kateqoriyada. Bu təşkilatlarda korporativ informasiya təhlükəsizliyi formalaşır, idarəetmə sistemi və təhlükəsizlik pozuntularına reaksiya qrupu fəaliyyət göstərir."},
+{q:"Autentifikasiya istifadəçinin təqdim etdiyi sübutun növünə görə neçə amilə əsaslanır?",
+ c:"Üç əsas amilə: bilik, sahiblik və biometrik amil",
+ w:["İki amilə: bilik və sahiblik","Dörd amilə: bilik, sahiblik, biometrik və məkan","Üç amilə: bilik, sahiblik və vaxt"],
+ h:"Üç əsas amilə: bilik amili, sahiblik amili və biometrik amil."},
+{q:"Parol, PİN-kod və gizli ifadələr hansı amilə aiddir?",
+ c:"Bilik amilinə",
+ w:["Sahiblik amilinə","Biometrik amilə","Məkan amilinə"],
+ h:"Bilik amilinə aiddir, çünki istifadəçinin bildiyi məlumatlardır."},
+{q:"Elektron təhlükəsizlik açarı, smart-kart və qeydiyyatdan keçmiş mobil qurğu hansı amilə nümunədir?",
+ c:"Sahiblik amilinə",
+ w:["Bilik amilinə","Biometrik amilə","Çoxamilli amilə"],
+ h:"Sahiblik amilinə nümunədir, çünki istifadəçinin malik olduğu fiziki və ya rəqəmsal vasitələrdir."},
+{q:"İki və ya daha çox fərqli autentifikasiya amilinin birlikdə tətbiqi necə adlanır?",
+ c:"Çoxamilli autentifikasiya",
+ w:["Birdəfəlik giriş (Single Sign-On)","Tək amilli autentifikasiya","1:N identifikasiya"],
+ h:"Çoxamilli autentifikasiya adlanır."},
+{q:"Barmaq izi hansı xüsusiyyətə əsaslanır?",
+ c:"Barmaq səthindəki xətlərin, onların sonlanma və ayrılma nöqtələrinin quruluşuna",
+ w:["Gözün qüzehli qişasının naxışına və rəngi","Üz cizgilərinin həndəsi nisbətlərinə","Barmağın təzyiq qüvvəsinə və hərəkət sürətinə"],
+ h:"Barmaq səthindəki xətlərin, onların sonlanma və ayrılma nöqtələrinin quruluşuna əsaslanır."},
+{q:"Əl imzasının hansı emal üsulu etibarsızdır?",
+ c:"Nümunə ilə sadə müqayisə",
+ w:["Dinamik verifikasiya","Əlin hərəkət sürətinə görə təhlil","İmzanın mərhələ müddətlərinə görə təhlil"],
+ h:"Nümunə ilə sadə müqayisə etibarsızdır. Bu üsul daxil edilən imzanı bazada saxlanılan qrafik nümunə ilə müqayisə edir və imzanın hər dəfə eyni olmaması səbəbindən səhv faizi yüksək ola bilər."},
+{q:"Dinamik verifikasiya imzanın hansı parametrlərini qeydə alır?",
+ c:"Əlin hərəkət sürətini, təzyiq qüvvəsini və imzanın müxtəlif mərhələlərinin müddətini real vaxtda",
+ w:["İmzanın qrafik şəklini bazadakı nümunə ilə sadə üst-üstə düşməsini","Barmaq xətlərinin sonlanma və ayrılma nöqtələrini","İmza atılan kağızın növünü və mürəkkəbin rəngini"],
+ h:"İmza zamanı əlin hərəkət sürətini, təzyiq qüvvəsini və imzanın müxtəlif mərhələlərinin müddətini real vaxtda qeydə alır."},
+{q:"Aşağıdakılardan hansı davranış biometrikasına aid deyil?",
+ c:"Barmaq izi",
+ w:["Klaviatura dinamikası","Yeriş","Səs"],
+ h:"Barmaq izi davranış biometrikasına aid deyil; fizioloji biometrik parametrdir. Davranış biometrikasına klaviatura dinamikası, səs, yeriş və rəqəmsal davranış analizi daxildir."},
+{q:"Biometrik autentifikasiya sisteminin iş prinsipi mərhələlərinin düzgün ardıcıllığı hansıdır?",
+ c:"Qeydiyyat → məlumatın emalı → biometrik şablonun yaradılması → müqayisə və qərar",
+ w:["Məlumatın emalı → qeydiyyat → müqayisə və qərar → biometrik şablonun yaradılması","Qeydiyyat → biometrik şablonun yaradılması → məlumatın emalı → müqayisə və qərar","Müqayisə və qərar → qeydiyyat → məlumatın emalı → biometrik şablonun yaradılması"],
+ h:"Qeydiyyat → məlumatın emalı → biometrik şablonun yaradılması → müqayisə və qərar."},
+{q:"Biometrik məlumatların itirilməsi və ya icazəsiz əldə edilməsi nəyə səbəb ola bilər və risklərin azaldılması üçün nə edilməlidir?",
+ c:"Məxfilik risklərinə, saxta nümunələrin təqdim edilməsinə və icazəsiz istifadəyə; şablonlar qorunan mühitdə saxlanmalı, giriş məhdudlaşdırılmalı, ötürülmədə şifrələmə və saxtalaşdırmaya qarşı mexanizmlər tətbiq edilməlidir",
+ w:["Yalnız avadanlığın dəyişdirilməsinə; müqayisə sürətlənsin deyə şablonlar sadə mətn formatında açıq saxlanmalıdır","Heç bir ciddi nəticəyə; biometrik şablon geri bərpa olunmaz olduğundan əlavə tədbir tələb olunmur","Yalnız parolun dəyişdirilməsinə; riski azaltmaq üçün istifadəçi yeni biometrik xüsusiyyət qeydiyyatdan keçirməlidir"],
+ h:"Ciddi məxfilik risklərinə, saxta biometrik nümunələrin təqdim edilməsinə və məlumatların icazəsiz istifadəsinə səbəb ola bilər. Riskləri azaltmaq üçün şablonlar qorunan mühitdə saxlanmalı, giriş məhdudlaşdırılmalı, ötürülmə zamanı şifrələmə və saxtalaşdırmaya qarşı mexanizmlər tətbiq edilməlidir."},
+{q:"İcazələrin idarə edilməsinin əsas məqsədi nədir?",
+ c:"Giriş hüquqlarını müəyyən etmək, vermək, dəyişdirmək, yoxlamaq və ləğv etməklə məxfiliyi, bütövlüyü və əlçatanlığı qorumaq, icazəsiz əməliyyatların qarşısını almaq",
+ w:["İstifadəçilərin sayını artırmaq və bütün hüquqları hamıya eyni şəkildə vermək","Yalnız istifadəçilərin kimliyini parol ilə təsdiqləmək","Yalnız təhlükəsizlik hadisələrini jurnalda qeydə almaq və audit aparmaq"],
+ h:"İstifadəçilərin giriş hüquqlarını müəyyən etmək, vermək, dəyişdirmək, yoxlamaq və ləğv etməklə informasiyanın məxfiliyini, bütövlüyünü və əlçatanlığını qorumaq, icazəsiz əməliyyatların qarşısını almaqdır."},
+{q:"Aşağıdakılardan hansı subyektə nümunədir?",
+ c:"Elektron jurnala qiymət daxil edən müəllim və ya avtomatik ehtiyat nüsxə yaradan proqram",
+ w:["Elektron jurnalın özü","Təşkilatın verilənlər bazası","Sistem funksiyası"],
+ h:"İnformasiya sistemində əməliyyatı yerinə yetirmək istəyən istifadəçi və ya proqram prosesi subyektdir. Məsələn, elektron jurnalda qiymət daxil edən müəllim və ya avtomatik ehtiyat nüsxə yaradan proqram."},
+{q:"Obyekt nədir?",
+ c:"Subyektin müraciət etdiyi və üzərində əməliyyat aparmaq istədiyi resurs",
+ w:["İnformasiya sistemində əməliyyatı yerinə yetirmək istəyən istifadəçi və ya proqram prosesi","Girişi təsdiqləyən autentifikasiya mexanizmi","Subyektə verilmiş giriş hüquqlarının siyahısı"],
+ h:"Subyektin müraciət etdiyi və üzərində əməliyyat aparmaq istədiyi resursdur. Məsələn, fayl, verilənlər bazası, elektron jurnal və ya sistem funksiyası."},
+{q:"Ən az səlahiyyət prinsipinə görə istifadəçiyə hansı hüquqlar verilməlidir?",
+ c:"Yalnız öz vəzifəsini yerinə yetirmək üçün zəruri olan minimum hüquqlar",
+ w:["Vəzifəsindən asılı olmayaraq bütün sistem resurslarına tam giriş hüququ","Gələcəkdə lazım ola biləcəyi ehtimal edilən bütün hüquqlar","Rəhbərin tələb etdiyi qədər hüquqlar, vəzifə ilə əlaqəsindən asılı olmayaraq"],
+ h:"İstifadəçiyə yalnız öz vəzifəsini yerinə yetirmək üçün zəruri olan minimum hüquqlar verilməlidir. Lazımsız və artıq səlahiyyətlər verilməməlidir."},
+{q:"Just-in-Time giriş yanaşmasının məqsədi nədir?",
+ c:"Yüksək səlahiyyətləri yalnız ehtiyac yarandıqda və məhdud müddət üçün vermək",
+ w:["Bütün istifadəçilərə yüksək səlahiyyətləri daimi vermək ki, gecikmə olmasın","Uyğun icazə təsdiqlənmədikdə sorğunu avtomatik rədd etmək","İstifadəçiyə yalnız vəzifəsi üçün zəruri minimum hüquqları vermək"],
+ h:"Yüksək səlahiyyətləri yalnız ehtiyac yarandıqda və məhdud müddət üçün verməkdir. Beləliklə, istifadəçi daimi yüksək səlahiyyət daşımır."},
+{q:"Deny by Default prinsipi nəyi nəzərdə tutur?",
+ c:"Uyğun icazə təsdiqlənmədikdə sorğu avtomatik rədd olunur; açıq icazə verilməyən giriş standart olaraq qadağandır",
+ w:["Açıq şəkildə qadağan olunmayan hər giriş standart olaraq icazəlidir","Yüksək səlahiyyətlər yalnız ehtiyac olduqda və məhdud müddətə verilir","Yeni istifadəçilərə ilkin olaraq bütün resurslara oxuma hüququ verilir"],
+ h:"Sistem sorğu üçün uyğun icazəni təsdiqləyə bilmirsə, sorğu avtomatik qəbul edilmir, rədd olunur. Yəni açıq şəkildə icazə verilməyən giriş standart olaraq qadağandır."},
+{q:"İnformasiya təhlükəsizlik sisteminin strukturunun düzgün müəyyən edilməsi nədən asılıdır?",
+ c:"Qorunacaq resurslardan, fəaliyyət mühitindən, təhlükəsizlik məqsədlərindən və mümkün məhdudiyyətlərdən",
+ w:["Yalnız alınmış proqram təminatının və avadanlığın qiymətindən","Təşkilatın işçi sayından və ofislərinin sayından","Yalnız istifadəçilərin parol uzunluğundan və dəyişmə tezliyindən"],
+ h:"Qorunacaq informasiya resurslarından, sistemin fəaliyyət mühitindən, qarşıya qoyulan təhlükəsizlik məqsədlərindən və mümkün məhdudiyyətlərdən asılıdır. Həmçinin komponentlərin təşkili, funksiyaların bölüşdürülməsi və onlar arasındakı əlaqələr nəzərə alınmalıdır."},
+{q:"Funksiyanın tamlığı dedikdə nə nəzərdə tutulur?",
+ c:"Təhlükəsizlik məqsədlərinin hər birinin müvafiq mexanizmlərlə təmin olunması, heç bir zəruri funksiyanın kənarda qalmaması",
+ w:["Eyni funksiyanın bir neçə komponent tərəfindən təkrar yerinə yetirilməsi","Komponentlərin bir-birindən təcrid olunmuş şəkildə işləməsi","Təhlükəsizlik sisteminin yalnız texniki vasitələrdən ibarət olması"],
+ h:"Təhlükəsizlik məqsədlərinin hər birinin müvafiq mexanizmlərlə təmin olunması nəzərdə tutulur. Sistemin bütün zəruri funksiyaları əhatə etməsi, hər hansı funksiyanın kənarda qalmaması vacibdir."},
+{q:"Təhlükəsizlik sisteminin komponentləri necə fəaliyyət göstərməlidir?",
+ c:"Bir-birindən təcrid olunmadan, vahid struktur daxilində və əlaqəli şəkildə",
+ w:["Hər biri müstəqil və digərlərindən təcrid olunmuş şəkildə","Əlaqə mexanizmləri və məsuliyyət bölgüsü sistem işə düşdükdən sonra müəyyən edilməklə","Yalnız bir əsas komponentin nəzarəti altında, qalanları passiv rejimdə"],
+ h:"Bir-birindən təcrid olunmuş deyil, vahid struktur daxilində və əlaqəli şəkildə fəaliyyət göstərməlidir. Qarşılıqlı əlaqə mexanizmləri, funksional asılılıqlar və məsuliyyət bölgüsü əvvəlcədən müəyyən edilməlidir."},
+{q:"ISO/IEC 27001 standartı nəyi müəyyən edir?",
+ c:"İnformasiya təhlükəsizliyinin idarə edilməsi sistemlərinə dair tələbləri",
+ w:["Biometrik autentifikasiya sistemlərinin texniki parametrlərini","Şəbəkə protokollarının ötürmə sürəti normalarını","Verilənlərin şifrələnməsi alqoritmlərinin siyahısını"],
+ h:"İnformasiya təhlükəsizliyinin idarə edilməsi sistemlərinə dair tələbləri müəyyən edən beynəlxalq standartdır."},
+{q:"Strukturun qiymətləndirilməsi zamanı hansı üsullardan istifadə edilir?",
+ c:"Struktur sənədlərinin təhlili, layihə tələblərinin yoxlanılması, funksional sınaqlar və təhlükəsizlik arxitekturasının təhlili",
+ w:["Yalnız istifadəçi sorğuları və rəy anketləri","Yalnız avadanlıq qiymətlərinin müqayisəsi və təchizatçı seçimi","Yalnız parolların mürəkkəbliyinin avtomatik yoxlanması"],
+ h:"Struktur sənədlərinin təhlili, layihə tələblərinin yoxlanılması, funksional sınaqlar və təhlükəsizlik arxitekturasının təhlili üsullarından istifadə edilir."}
+];
+
+var LETTERS = ["A","B","C","D"];
+var $ = function(id){return document.getElementById(id)};
+var items = [];   // active questions: {q,c,h,opts:[{t,ok}], pick:null|index}
+var cur = 0, muted = false, ac = null;
+
+function shuffle(a){ for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+function build(src){
+  items = src.map(function(d){
+    var opts = shuffle([{t:d.h,ok:true}].concat(d.w.map(function(x){return {t:x,ok:false}})));
+    return {q:d.q,c:d.h,h:d.h,opts:opts,pick:null,hint:false,src:d};
+  });
+  cur = 0;
+  $("map").innerHTML = "";
+  items.forEach(function(_,i){
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = i+1; b.setAttribute("aria-label","Sual "+(i+1));
+    b.onclick = function(){ go(i); };
+    $("map").appendChild(b);
+  });
+  $("quiz").hidden = false; $("result").hidden = true;
+  document.querySelector(".sub").textContent = "Variantlı test · " + items.length + " sual";
+  render();
+}
+
+/* ---------- sounds ---------- */
+function ctx(){
+  if(!ac){ try{ ac = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ac = null; } }
+  if(ac && ac.state === "suspended"){ try{ ac.resume(); }catch(e){} }
+  return ac;
+}
+function tone(freq, start, dur, type, vol){
+  var a = ctx(); if(!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, a.currentTime+start);
+  g.gain.setValueAtTime(0.0001, a.currentTime+start);
+  g.gain.exponentialRampToValueAtTime(vol, a.currentTime+start+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime+start+dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(a.currentTime+start); o.stop(a.currentTime+start+dur+0.05);
+}
+function soundGood(){ if(muted) return; tone(660,0,0.16,"sine",0.25); tone(880,0.12,0.16,"sine",0.25); tone(1320,0.24,0.28,"sine",0.22); }
+function soundBad(){ if(muted) return; tone(220,0,0.22,"sawtooth",0.18); tone(150,0.18,0.38,"sawtooth",0.18); }
+
+/* ---------- render ---------- */
+function stats(){
+  var g=0,b=0; items.forEach(function(it){ if(it.pick!==null){ if(it.opts[it.pick].ok) g++; else b++; } });
+  return {g:g,b:b,n:items.length-g-b};
+}
+function render(){
+  var it = items[cur];
+  $("qno").textContent = "Sual " + (cur+1) + " / " + items.length;
+  $("qtext").textContent = it.q;
+  var ul = $("opts"); ul.innerHTML = "";
+  it.opts.forEach(function(o,i){
+    var li = document.createElement("li");
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opt";
+    var l = document.createElement("span"); l.className = "l"; l.textContent = LETTERS[i];
+    var t = document.createElement("span"); t.className = "t"; t.textContent = o.t;
+    b.appendChild(l); b.appendChild(t);
+    if(it.pick !== null){
+      b.disabled = true;
+      if(o.ok) b.classList.add("right");
+      else if(i === it.pick) b.classList.add("wrong");
+      else b.classList.add("dim");
+    }
+    b.onclick = function(){ choose(i); };
+    li.appendChild(b); ul.appendChild(li);
+  });
+  var v = $("verdict");
+  if(it.pick === null){ v.textContent = ""; v.className = "verdict"; }
+  else if(it.opts[it.pick].ok){ v.textContent = "Düzgündür!"; v.className = "verdict ok"; }
+  else { v.textContent = "Səhvdir. Düzgün cavab yaşıl rənglə göstərilib."; v.className = "verdict no"; }
+  $("hintText").hidden = !it.hint;
+  $("hintText").innerHTML = "<b>Sənəddəki cavab</b>";
+  var p = document.createElement("span"); p.textContent = it.h; $("hintText").appendChild(p);
+  $("hintBtn").setAttribute("aria-expanded", String(it.hint));
+  $("hintBtn").textContent = it.hint ? "💡 İpucunu gizlət" : "💡 İpucu";
+  $("prev").disabled = cur === 0;
+  $("next").disabled = cur === items.length-1;
+  var s = stats();
+  $("cGood").textContent = s.g; $("cBad").textContent = s.b;
+  $("bar").style.width = ((s.g+s.b)/items.length*100) + "%";
+  var btns = $("map").children;
+  for(var i=0;i<btns.length;i++){
+    var x = items[i], c = "";
+    if(x.pick !== null) c = x.opts[x.pick].ok ? "good" : "bad";
+    if(i === cur) c += " cur";
+    btns[i].className = c;
+  }
+}
+function choose(i){
+  var it = items[cur];
+  if(it.pick !== null) return;
+  it.pick = i;
+  if(it.opts[i].ok) soundGood(); else soundBad();
+  render();
+}
+function go(i){ if(i<0||i>=items.length) return; cur = i; render(); }
+
+$("prev").onclick = function(){ go(cur-1); };
+$("next").onclick = function(){ go(cur+1); };
+$("hintBtn").onclick = function(){ items[cur].hint = !items[cur].hint; render(); };
+$("muteBtn").onclick = function(){
+  muted = !muted;
+  this.textContent = "Səs: " + (muted ? "bağlı" : "açıq");
+  this.setAttribute("aria-pressed", String(muted));
+  if(!muted) tone(660,0,0.12,"sine",0.15);
+};
+document.addEventListener("keydown", function(e){
+  if($("quiz").hidden) return;
+  if(e.key === "ArrowRight") go(cur+1);
+  else if(e.key === "ArrowLeft") go(cur-1);
+  else {
+    var k = e.key.toUpperCase(), idx = LETTERS.indexOf(k);
+    if(idx < 0 && "1234".indexOf(e.key) >= 0) idx = +e.key - 1;
+    if(idx >= 0 && idx < 4) choose(idx);
+  }
+});
+
+/* ---------- results ---------- */
+$("finish").onclick = showResult;
+function showResult(){
+  var s = stats(), total = items.length;
+  var pct = Math.round(s.g/total*100);
+  var col = pct >= 80 ? "var(--good)" : pct >= 50 ? "var(--accent)" : "var(--bad)";
+  $("ring").style.background = "conic-gradient(" + col + " " + pct + "%, var(--line) 0)";
+  $("pct").textContent = pct + "%";
+  $("verd").textContent = pct === 100 ? "Əla nəticə!" : pct >= 80 ? "Çox yaxşı nəticə" : pct >= 50 ? "Orta nəticə, təkrar etmək faydalıdır" : "Təkrar öyrənmək lazımdır";
+  $("stats").innerHTML =
+    '<span class="stat g">Düzgün: '+s.g+'</span><span class="stat r">Səhv: '+s.b+'</span><span class="stat n">Cavablanmayıb: '+s.n+'</span>';
+  var box = $("mist"); box.innerHTML = "";
+  var list = [];
+  items.forEach(function(it,i){ if(it.pick === null || !it.opts[it.pick].ok) list.push(i); });
+  $("retry").hidden = list.length === 0;
+  if(list.length === 0){
+    box.innerHTML = '<div class="perfect">Bütün suallara düzgün cavab verdiniz. Səhv yoxdur.</div>';
+  } else {
+    var wrap = document.createElement("div"); wrap.className = "mist";
+    list.forEach(function(i){
+      var it = items[i], m = document.createElement("div"); m.className = "m";
+      var no = document.createElement("div"); no.className = "qno"; no.textContent = "Sual " + (i+1);
+      var q = document.createElement("div"); q.className = "mq"; q.textContent = it.q;
+      m.appendChild(no); m.appendChild(q);
+      function row(cls, label, text){
+        var r = document.createElement("div"); r.className = "row";
+        var t = document.createElement("span"); t.className = "tag " + cls; t.textContent = label;
+        var x = document.createElement("span"); x.textContent = text;
+        r.appendChild(t); r.appendChild(x); m.appendChild(r);
+      }
+      if(it.pick === null) row("none","Cavabsız","Bu suala cavab verilməyib.");
+      else row("bad","Sizin cavab", it.opts[it.pick].t);
+      row("good","Düzgün cavab", it.c);
+      wrap.appendChild(m);
+    });
+    box.appendChild(wrap);
+  }
+  $("quiz").hidden = true; $("result").hidden = false;
+  window.scrollTo(0,0);
+}
+$("again").onclick = function(){ build(DATA); window.scrollTo(0,0); };
+$("back").onclick = function(){ $("quiz").hidden = false; $("result").hidden = true; render(); window.scrollTo(0,0); };
+$("retry").onclick = function(){
+  var wrong = [];
+  items.forEach(function(it){ if(it.pick === null || !it.opts[it.pick].ok) wrong.push(it.src); });
+  build(wrong); window.scrollTo(0,0);
+};
+
+build(DATA);
+</script>
+
+</body></html>
