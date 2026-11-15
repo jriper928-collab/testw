@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>II kollokvium — Test</title>
+<style>
+:root{color-scheme:light;--bg:#f5f7fc;--c:#fff;--t:#1d2433;--m:#6b7589;--p:#3b6cf6;--ok:#16a34a;--okb:#e8f8ee;--no:#dc2626;--nob:#fdecec;--b:#e2e7f2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t);font:16px/1.5 system-ui,"Segoe UI",Arial,sans-serif}
+.w{max-width:780px;margin:0 auto;padding:16px}
+.card{background:var(--c);border:1px solid var(--b);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(30,50,100,.06);margin-bottom:14px}
+h1{font-size:20px;margin:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.bar{height:8px;background:var(--b);border-radius:8px;overflow:hidden;margin:12px 0 0}
+.bar i{display:block;height:100%;background:var(--p);width:0;transition:width .3s}
+.q{font-size:19px;font-weight:600;margin:6px 0 16px}
+.o{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--b);border-radius:12px;padding:12px 14px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer;transition:.15s}
+.o:hover:not(:disabled){border-color:var(--p);background:#f3f6ff}
+.o b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:14px}
+.o.ok{border-color:var(--ok);background:var(--okb)}.o.ok b{background:var(--ok);color:#fff}
+.o.no{border-color:var(--no);background:var(--nob)}.o.no b{background:var(--no);color:#fff}
+.o:disabled{cursor:default}
+button.b{font:inherit;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:var(--p);color:#fff}
+button.g{background:#eef1f9;color:var(--t)}
+button.b:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.hint{background:#fff8e1;border:1px solid #f3d98b;border-radius:12px;padding:12px 14px;margin:6px 0 14px}
+.ex{color:var(--m);margin-top:6px;font-size:15px}
+.grid{display:flex;flex-wrap:wrap;gap:6px}
+.grid button{width:34px;height:34px;border-radius:8px;border:1px solid var(--b);background:#fff;font:13px system-ui;cursor:pointer;color:var(--t)}
+.grid .ok{background:var(--ok);border-color:var(--ok);color:#fff}.grid .no{background:var(--no);border-color:var(--no);color:#fff}
+.grid .cur{outline:3px solid var(--p);outline-offset:1px}
+.big{font-size:44px;font-weight:700;color:var(--p);margin:4px 0}
+.err{border-left:4px solid var(--no);background:var(--nob);border-radius:10px;padding:12px 14px;margin:10px 0}
+.err small{display:block;color:var(--m)}
+.tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:13px;margin-right:6px}
+</style>
+</head>
+<body><div class="w" id="app"></div>
+<script>
+const G={
+n:{dl:"İki və ya daha çox insan arasında sual-cavab və qarşılıqlı söhbət şəklində aparılan nitqdir.",mn:"Bir nəfərin ardıcıl və müstəqil şəkildə danışmasıdır.",dx:"İnsanın öz-özünə, daxilində düşündüyü nitqdir.",xr:"Fikrin başqalarına şifahi və ya yazılı şəkildə çatdırılmasıdır.",sf:"Sözlərin səslər vasitəsilə ifadə olunmasıdır.",yz:"Fikirlərin yazı vasitəsilə ifadə olunmasıdır."},
+s:{el:"Elmi məlumatların dəqiq, məntiqli və terminlərlə ifadə olunmasıdır.",bd:"Obrazlı və emosional ifadələrlə zəngin olan üslubdur.",rs:"Rəsmi sənədlərdə və idarəçilik sahəsində istifadə olunan üslubdur.",pb:"İctimai-siyasi məsələləri işıqlandıran üslubdur.",tx:"Texniki məlumatların dəqiq və aydın ifadə olunduğu üslubdur.",dn:"Gündəlik ünsiyyətdə istifadə olunan sərbəst üslubdur."},
+f:{el:"Dəqiqlik, məntiqilik və terminlərdən istifadə.",bd:"Obrazlılıq, emosionallıq və ifadəlilik.",rs:"Dəqiqlik, standartlıq və rəsmi ifadələrdən istifadə.",sf:"Səslə ifadə olunması və intonasiyadan istifadə edilməsidir.",yz:"Hərflə ifadə olunması, saxlanılması və təkrar oxunmasıdır.",dn:"Sərbəstlik, qısalıq və danışıq sözlərindən istifadə."},
+v:{ts:"Təşxis (canlandırma).",mt:"Metafora (istiarə).",ep:"Epitet.",tb:"Təşbeh (bənzətmə).",mb:"Mübaliğə (şişirtmə)."}
+};
+const R=[
+["Dialoji nitq nədir?","n","dl","","Məsələn, iki dostun söhbəti: biri danışır, digəri cavab verir."],
+["Monoloji nitqin əsas xüsusiyyəti nədir?","n","mn","","Məsələn, müəllimin dərsi izah etməsi."],
+["Daxili nitq nədir?","n","dx","","Heç kimə demədən ürəyində fikirləşmək."],
+["Xarici nitq nədir?","n","xr","","Danışmaq və ya yazmaq vasitəsilə fikri ifadə etmək."],
+["Şifahi nitq nədir?","n","sf","","Üz-üzə danışmaq və ya telefonla söhbət etmək."],
+["Yazılı nitq nədir?","n","yz","","Məktub, ərizə, mesaj və inşa yazmaq."],
+["Mühazirə hansı nitq növüdür?","","","Monoloji nitqdir.","Çünki mühazirədə əsasən bir nəfər danışır.",["Dialoji nitqdir.","Daxili nitqdir.","Yazılı nitqdir."]],
+["Rəsmi üslub harada işlənir?","","","Dövlət idarələrində, rəsmi sənədlərdə və işgüzar münasibətlərdə.","Ərizə, əmr, protokol və müqavilələrdə istifadə olunur.",["Gündəlik söhbətdə, dostlar və ailə arasında.","Bədii əsərlərdə, şeir və romanlarda.","Qəzet və televiziya xəbərlərində, publisistik mətnlərdə."]],
+["Elmi üslubun xüsusiyyəti nədir?","f","el","","Elmi məlumatlar aydın və sübutlara əsaslanaraq verilir."],
+["Bədii üslubun xüsusiyyəti nədir?","f","bd","","Oxucuda hiss və təsəvvür yaratmaq üçün istifadə olunur."],
+["Danışıq üslubu nədir?","s","dn","","Dostlarla və ailə üzvləri ilə danışığımız."],
+["Məruzənin məqsədi nədir?","","","Müəyyən mövzu haqqında məlumat vermək və onu dinləyicilərə çatdırmaqdır.","",["Dinləyiciləri əyləndirmək və güldürməkdir.","Mövzusuz sərbəst söhbət aparmaqdır.","Yalnız şəxsi fikirləri gizli saxlamaqdır."]],
+["Dialoji nitqdə əsas bacarıq nədir?","","","Dinləmək və qarşılıqlı cavab vermək.","Söhbətdə yalnız danışmaq yox, qarşı tərəfi dinləmək də vacibdir.",["Yalnız uzun-uzadı danışmaq.","Qarşı tərəfin sözünü kəsmək.","Cavab vermədən susmaq."]],
+["Monoloji nitqdə cümlələr necə olur?","","","Ardıcıl, məntiqli və bir-biri ilə əlaqəli olur.","",["Qısa, qarışıq və əlaqəsiz olur.","Sual-cavab şəklində olur.","Yalnız səssiz olur."]],
+["Üslubiyyat nəyi öyrənir?","","","Dilin üslublarını və ifadə vasitələrini öyrənir.","Fikrin hansı şəraitdə və necə ifadə edilməsini araşdırır.",["Səslərin əmələ gəlməsini və tələffüzünü öyrənir.","Sözlərin mənşəyini və tarixini öyrənir.","Cümlə üzvlərinin sintaktik əlaqəsini öyrənir."]],
+["Ritorika nədir?","","","Gözəl, düzgün və təsirli danışmaq sənətidir.","İnsanları inandırmaq və fikri aydın çatdırmaq bacarığıdır.",["Dilin üslublarını öyrənən elmdir.","Sözlərin düzgün yazılış qaydalarıdır.","Rəsmi sənəd hazırlama qaydasıdır."]],
+["Elmi üslubda nədən istifadə olunur?","","","Elmi terminlərdən, dəqiq faktlardan və məntiqi ifadələrdən.","",["Metafora, epitet və emosional ifadələrdən.","Danışıq sözlərindən və jarqondan.","Yalnız rəsmi şablon ifadələrdən."]],
+["Publisistik üslub nədir?","s","pb","","Qəzet, jurnal, televiziya və xəbər mətnlərində istifadə olunur."],
+["Texniki üslub nədir?","s","tx","","Təlimatlarda, texniki sənədlərdə və avadanlıqların təsvirində istifadə edilir."],
+["Şifahi nitqin xüsusiyyəti nədir?","f","sf","","" ],
+["Nitq etiketi — rəsmi müraciət necə olur?","","","“Hörmətli müəllim”, “Hörmətli direktor” və s.","",["“Ay qardaş, nə var nə yox?”","“Ey, bura bax!”","“Salam, necəsən?”"]],
+["Nitq etiketi nədir?","","","Ünsiyyət zamanı nəzakət və hörmət qaydalarına əməl etməkdir.","Salam vermək, təşəkkür etmək və üzr istəmək.",["Gözəl danışmaq sənətidir.","Dilin üslublarını öyrənən sahədir.","Yalnız yazılı sənəd hazırlama qaydalarıdır."]],
+["Yazılı nitqin üstünlüyü nədir?","","","Fikirlərin saxlanılması və sonradan yenidən oxuna bilməsidir.","",["Səs və intonasiya ilə təsir göstərməsidir.","Dərhal cavab almaq imkanıdır.","Mimika və jestlərdən istifadə edilməsidir."]],
+["Daxili nitq nədir?","n","dx","İnsanın öz daxilində fikirləşməsidir.",""],
+["Xarici nitq nədir?","n","xr","",""],
+["Monoloji nitq nədir?","n","mn","Bir nəfərin ardıcıl və müstəqil danışığıdır.",""],
+["Dialoji nitq nədir?","n","dl","İki və ya daha çox şəxs arasında qarşılıqlı söhbətdir.",""],
+["Daxili nitq nədir?","n","dx","İnsanın öz-özünə düşünməsi və fikirləşməsidir.",""],
+["Xarici nitq nədir?","n","xr","Fikirlərin başqalarına çatdırılmasıdır.",""],
+["Şifahi nitq nədir?","n","sf","Səslə, danışıq yolu ilə ifadə olunan nitqdir.",""],
+["Şifahi nitqin əsas xüsusiyyəti hansıdır?","f","sf","Səs, intonasiya, vurğu və mimikadan istifadə olunmasıdır.",""],
+["Elmi üslub nədir?","s","el","",""],
+["Rəsmi üslub nədir?","s","rs","",""],
+["Publisistik üslub nədir?","s","pb","İctimai məsələlər haqqında məlumat vermək və insanlara təsir etmək üçün istifadə olunan üslubdur.",""],
+["Bədii üslub nədir?","s","bd","",""],
+["Bədii üslubda hansı vasitələrdən istifadə olunur?","","","Bədii təsvir və ifadə vasitələrindən istifadə olunur.","Metafora, epitet, təşbeh və mübaliğə kimi vasitələr.",["Yalnız terminlərdən və dəqiq rəqəmlərdən istifadə olunur.","Rəsmi şablon və standart ifadələrdən istifadə olunur.","Heç bir ifadə vasitəsindən istifadə olunmur."]],
+["Bədii üslubun xüsusiyyəti nədir?","f","bd","",""],
+["“Hava sanki ağlayırdı” cümləsi hansı xüsusiyyəti göstərir?","v","ts","","Hava insan kimi ağlayırmış kimi təsvir olunur. İnsana aid xüsusiyyət cansız varlığa verilir."],
+["Bədii üslubun digər üslublardan əsas fərqi nədir?","","","Obrazlılıq və emosional-ekspressivlik.","Bədii üslub oxucuda hiss və təsəvvür yaradır.",["Dəqiqlik və terminlərdən istifadə.","Standartlıq və rəsmi ifadələr.","Sərbəstlik və danışıq sözləri."]],
+["Bədii üslubda istifadə olunan epitet nədir?","","","Əşyanın və ya hadisənin obrazlı, bədii şəkildə təsvir edilməsidir.","Məsələn, “qızıl saçlar”, “şirin sözlər”, “soyuq baxışlar”.",["İnsana aid xüsusiyyətin cansız varlığa verilməsidir.","Bir əşyanın başqa əşyaya bənzədilməsidir.","Hadisənin həddindən artıq şişirdilməsidir."]],
+["Monoloji nitq nədir?","n","mn","Bir nəfərin danışığıdır.",""],
+["Dialoji nitq nədir?","n","dl","Qarşılıqlı danışıqdır.",""],
+["Elmi üslub nədir?","s","el","Dəqiq, məntiqli və terminoloji üslubdur.",""],
+["Rəsmi üsluba aid xüsusiyyət hansıdır?","f","rs","","Rəsmi sənədlərdə emosional sözlərdən istifadə olunmur."],
+["Şifahi nitq nədir?","n","sf","Danışıq vasitəsilə ifadə olunan nitqdir.",""],
+["Yazılı nitq nədir?","n","yz","Fikrin hərflər və yazı vasitəsilə ifadə edilməsidir.",""],
+["Müraciət etiketinə nümunə göstərin.","","","“Hörmətli müəllim”, “Əziz dostum”, “Hörmətli xanım”.","",["“Ay oğlan, bura gəl”, “Ədə, dayan”, “Ey, sən”.","“Bəli”, “Xeyr”, “Yaxşı”.","“Sağ ol”, “Bağışlayın”, “Əfv edin”."]],
+["Rəsmi mühitdə müəllimə necə müraciət etmək düzgündür?","","","“Hörmətli müəllim”.","Bu müraciət nəzakətli və rəsmi xarakter daşıyır.",["“Ay müəllim, bura bax”.","“Ey müəllim”.","“Salam, necəsən müəllim?”"]],
+["Dialoji nitqin əsas xüsusiyyəti hansıdır?","","","Qarşılıqlı ünsiyyət və fikir mübadiləsi.","",["Bir nəfərin fasiləsiz danışması.","Yalnız daxili düşüncə.","Yalnız yazılı ifadə."]],
+["Daxili nitq nədir?","n","dx","İnsanın daxilində, səssiz şəkildə düşünməsidir.",""],
+["Xarici nitq nədir?","n","xr","Fikirlərin danışıq və yazı ilə ifadə olunmasıdır.",""],
+["Dialoji nitq nədir?","n","dl","İki və ya daha çox insanın qarşılıqlı söhbətidir.",""],
+["Monoloji nitq nədir?","n","mn","Bir nəfərin ardıcıl danışığıdır.",""],
+["Daxili nitq nədir?","n","dx","İnsanın öz daxilində fikirləşməsidir.",""],
+["Xarici nitq nədir?","n","xr","Fikirlərin başqalarına çatdırılmasıdır.",""],
+["Şifahi nitq nədir?","n","sf","Sözlərin səslə ifadə olunmasıdır.",""],
+["Yazılı nitq nədir?","n","yz","",""],
+["Elmi üslubun əsas xüsusiyyəti nədir?","f","el","",""],
+["Bədii üslubun xüsusiyyəti nədir?","f","bd","",""],
+["Rəsmi üslub nədir?","s","rs","Rəsmi sənədlərdə və dövlət idarələrində istifadə olunan üslubdur.",""],
+["Publisistik üslub nədir?","s","pb","İctimai-siyasi məlumatların çatdırılmasında istifadə olunan üslubdur.",""],
+["“Həsrət qəlbimi yandıran bir od idi” cümləsində hansı bədii vasitə işlənib?","v","mt","","Həsrət həqiqi od deyil. Burada həsrət oda bənzədilərək obrazlı şəkildə ifadə olunub."],
+["Hansı parçada bədii üslubla yanaşı emosional-ekspressivlik daha güclüdür?","","","Hisslərin, duyğuların və obrazlı ifadələrin daha çox istifadə olunduğu parçada.","Məsələn, sevinc, kədər, həsrət və məhəbbətin təsirli təsviri.",["Rəqəm və terminlərin daha çox işləndiyi parçada.","Rəsmi sənəd ifadələrinin işləndiyi parçada.","Quru faktların sadalandığı parçada."]],
+["Mühazirə hansı nitqə aiddir?","","","Monoloji nitqə.","Mühazirəni əsasən bir nəfər təqdim edir.",["Dialoji nitqə.","Daxili nitqə.","Yazılı nitqə."]],
+["Məruzənin əsas xüsusiyyəti nədir?","","","Müəyyən mövzu haqqında məlumatın ardıcıl və sistemli şəkildə təqdim edilməsidir.","",["Mövzudan kənar sərbəst söhbət aparılmasıdır.","Yalnız sual-cavab formasında aparılmasıdır.","Məlumatın yalnız daxilən düşünülməsidir."]],
+["Üslubiyyat nəyi öyrənir?","","","Dilin üslublarını və ifadə vasitələrini.","",["Səslərin əmələ gəlməsini və tələffüzünü.","Sözlərin mənşəyini və tarixini.","Cümlə üzvlərinin sintaktik əlaqəsini."]],
+["Bədii üslubda dil zənginliyini artıran vasitə deyil nədir?","","","Bədii təsvir vasitəsi olmayan, məsələn, rəsmi-işgüzar standart ifadələr.","Bədii üslubda metafora, epitet və təşbeh kimi vasitələr dilin zənginliyini artırır.",["Metafora.","Epitet.","Təşbeh."]],
+["Dialoji nitqdə əsas nədir?","","","Qarşılıqlı danışıq, dinləmə və cavab vermək.","",["Bir nəfərin fasiləsiz monoloqu.","Səssiz daxili düşüncə.","Yalnız yazılı mətn hazırlamaq."]],
+["Monoloji nitqdə əsas nədir?","","","Bir nəfərin fikirlərini ardıcıl və məntiqli ifadə etməsi.","",["Hər iki tərəfin növbə ilə danışması.","Fikirlərin yalnız daxildə qalması.","Qarşı tərəfə sual verib cavab gözləmək."]],
+["Şifahi nitqin xüsusiyyəti nədir?","f","sf","Səs, intonasiya və vurğudan istifadə olunması.",""],
+["Etik müraciət ifadəsinə nümunə göstərin.","","","“Hörmətli müəllim, zəhmət olmasa, mənə kömək edərdiniz?”","“Hörmətli müəllim” nəzakətli müraciətdir.",["“Ay müəllim, mənə kömək elə!”","“Ədə, bura gəl, kömək et.”","“Müəllim, tez ol, kömək et.”"]],
+["Rəsmi məktubda müraciət necə verilir?","","","“Hörmətli cənab”, “Hörmətli xanım” və ya şəxsin vəzifəsinə uyğun rəsmi müraciətlə.","",["“Salam dostum”, “Necəsən qardaş” kimi sərbəst müraciətlə.","Müraciətsiz, birbaşa məsələyə keçməklə.","“Ay ağa”, “Ay bacı” kimi danışıq müraciəti ilə."]],
+["Yaşca böyük birinə müraciət edərkən hansı forma uyğundur?","","","“Siz” formasından istifadə etmək.","Bu, hörmət və nəzakət əlamətidir.",["“Sən” formasından istifadə etmək.","Müraciətsiz, adı ilə çağırmaq.","Danışıq jarqonundan istifadə etmək."]],
+["Yazılı nitqin üstünlüyü nədir?","","","Məlumatın saxlanılması, təkrar oxunması və ötürülməsidir.","",["Səs və intonasiya ilə dərhal təsir etməsi.","Mimika və jestlərlə müşayiət olunması.","Yalnız daxildə, səssiz baş verməsi."]],
+["Daxili nitqin xüsusiyyəti nədir?","n","dx","Səssiz şəkildə, insanın öz daxilində baş verməsidir.",""],
+["Xarici nitq nədir?","n","xr","Fikirlərin şifahi və yazılı formada başqalarına çatdırılmasıdır.",""]
+];
+const Q=R.map((r,i)=>{let[q,g,k,a,e,d]=r,ds;if(g){a=a||G[g][k];const ks=Object.keys(G[g]).filter(x=>x!=k);ds=[0,1,2].map(j=>G[g][ks[(i+j)%ks.length]])}else ds=d;const pos=(i*5+2)%4,o=ds.slice();o.splice(pos,0,a);return{q,o,c:pos,e}});
+const N=Q.length,L="ABCD";
+let cur=0,ans=Array(N).fill(-1),hint=Array(N).fill(false),mute=false,done=false,ctx;
+const $=document.getElementById("app");
+function snd(ok){if(mute)return;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime;(ok?[660,990]:[220,150]).forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;const s=t+i*.15;g.gain.setValueAtTime(.18,s);g.gain.exponentialRampToValueAtTime(.001,s+.25);o.connect(g);g.connect(ctx.destination);o.start(s);o.stop(s+.27)})}catch(e){}}
+function pick(i){if(ans[cur]>=0)return;ans[cur]=i;snd(i===Q[cur].c);render()}
+function go(n){cur=Math.max(0,Math.min(N-1,n));done=false;render()}
+function right(){return ans.filter((a,i)=>a===Q[i].c).length}
+function render(){
+if(done)return result();
+const q=Q[cur],a=ans[cur],ak=a>=0,answered=ans.filter(x=>x>=0).length;
+let h=`<div class="card"><div class="top"><h1>II kollokvium — Test</h1><div><span style="color:var(--m)">Düzgün: <b>${right()}</b> · Cavablanan: <b>${answered}/${N}</b></span> <button class="b g" onclick="mute=!mute;render()" title="Səs">${mute?"🔇":"🔊"}</button></div></div><div class="bar"><i style="width:${answered/N*100}%"></i></div></div>`;
+h+=`<div class="card"><div style="color:var(--m);font-size:14px">Sual ${cur+1} / ${N}</div><div class="q">${q.q}</div>`;
+if(hint[cur])h+=`<div class="hint">💡 <b>İpucu — cavab:</b> ${q.o[q.c]}${q.e?`<div class="ex">${q.e}</div>`:""}</div>`;
+q.o.forEach((t,i)=>{let c="";if(ak){if(i===q.c)c="ok";else if(i===a)c="no"}h+=`<button class="o ${c}" ${ak?"disabled":""} onclick="pick(${i})"><b>${L[i]}</b><span>${t}</span></button>`});
+if(ak)h+=`<div class="ex">${a===q.c?"✅ Düzgündür!":"❌ Səhvdir. Düzgün cavab: <b>"+L[q.c]+"</b>"}${q.e?" — "+q.e:""}</div>`;
+h+=`<div class="row" style="margin-top:14px"><button class="b g" ${hint[cur]?"disabled":""} onclick="hint[cur]=true;render()">💡 İpucu</button><div style="display:flex;gap:10px"><button class="b g" ${cur==0?"disabled":""} onclick="go(cur-1)">← Əvvəlki</button><button class="b" ${cur==N-1?"disabled":""} onclick="go(cur+1)">Sonrakı →</button></div></div></div>`;
+h+=`<div class="card"><div class="grid">${Q.map((x,i)=>`<button class="${ans[i]<0?"":ans[i]===x.c?"ok":"no"} ${i==cur?"cur":""}" onclick="go(${i})">${i+1}</button>`).join("")}</div><div class="row" style="margin-top:14px"><span style="color:var(--m)">Sualları nömrəyə basaraq da dəyişə bilərsiniz.</span><button class="b" onclick="done=true;render()">Nəticəni göstər</button></div></div>`;
+$.innerHTML=h}
+function result(){
+const r=right(),w=[],u=[];Q.forEach((q,i)=>{if(ans[i]<0)u.push(i+1);else if(ans[i]!==q.c)w.push(i)});
+const p=Math.round(r/N*100),hc=hint.filter(Boolean).length;
+let h=`<div class="card" style="text-align:center"><h1>Nəticə</h1><div class="big">${r} / ${N}</div><div>${p}% düzgün</div><div style="color:var(--m);margin-top:6px">Səhv: <b style="color:var(--no)">${w.length}</b> · Cavablanmayan: <b>${u.length}</b> · İpucu istifadəsi: <b>${hc}</b></div><div class="row" style="justify-content:center;margin-top:14px"><button class="b g" onclick="done=false;render()">← Testə qayıt</button><button class="b" onclick="ans=Array(N).fill(-1);hint=Array(N).fill(false);cur=0;done=false;render()">Yenidən başla</button></div></div>`;
+h+=`<div class="card"><h1 style="font-size:18px">Səhvlər (${w.length})</h1>`;
+if(!w.length)h+=`<p>🎉 Cavablanan suallarda səhv yoxdur!</p>`;
+w.forEach(i=>{const q=Q[i];h+=`<div class="err"><b>${i+1}. ${q.q}</b><small>Sizin cavab: <span style="color:var(--no)">${q.o[ans[i]]}</span></small><small>Düzgün cavab: <span style="color:var(--ok)"><b>${q.o[q.c]}</b></span></small>${q.e?`<small>${q.e}</small>`:""}<button class="b g" style="margin-top:8px;padding:4px 10px" onclick="go(${i})">Suala get</button></div>`});
+if(u.length)h+=`<p style="color:var(--m)">Cavablanmayan suallar: ${u.join(", ")}</p>`;
+$.innerHTML=h+"</div>";window.scrollTo(0,0)}
+render();
+</script>
+</body>
+</html>
