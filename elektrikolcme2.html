@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elektrik ölçmələri testi</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff;--card:#f6f8fb;--tx:#1b2430;--ac:#2563eb;--ok:#16a34a;--no:#dc2626;--bd:#d9e0ea}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,Segoe UI,Arial,sans-serif}
+.w{max-width:680px;margin:0 auto;padding:18px}
+h1{font-size:20px;margin:0 0 4px}.bar{height:8px;background:var(--bd);border-radius:6px;margin:10px 0 16px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
+.q{font-size:18px;font-weight:600;margin:0 0 14px}
+.o{display:block;width:100%;text-align:left;padding:12px 14px;margin:8px 0;background:#fff;border:2px solid var(--bd);border-radius:10px;font:inherit;color:inherit;cursor:pointer}
+.o:hover:not(:disabled){border-color:var(--ac)}.o.ok{border-color:var(--ok);background:#e8f8ee}.o.no{border-color:var(--no);background:#fdecec}
+.hint{background:#fff8e1;border:1px dashed #e0b400;border-radius:10px;padding:10px 12px;margin-top:10px;cursor:pointer}
+.gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px;margin:0 0 14px}.gr button{padding:6px 0;border:2px solid var(--bd);border-radius:8px;background:#fff;font:inherit;font-size:14px;cursor:pointer;color:inherit}.gr .cur{border-color:var(--ac);font-weight:700}.gr .ok{background:#e8f8ee}.gr .no{background:#fdecec}.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.b.r{background:var(--no)}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.b{padding:10px 16px;border:0;border-radius:10px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}.b.g{background:#e5eaf1;color:var(--tx)}.b:disabled{opacity:.4;cursor:default}
+.s{font-size:44px;font-weight:700;color:var(--ac)}.e{background:#fff;border:1px solid var(--bd);border-left:4px solid var(--no);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:15px}
+.e b{display:block}
+</style></head><body><div class="w">
+<div class="top"><h1>⚡ Elektrik ölçmələri testi</h1><button class="b r" onclick="fin()">İmtahanı bitir</button></div><div id="info" style="color:#5b6777;font-size:14px"></div><div class="bar"><i id="pb"></i></div><div class="gr" id="grid"></div>
+<div id="app"></div></div>
+<script>
+const D=[
+["Rabitə dövrələrində elektrik cərəyanını ölçmək üçün hansı cihazdan istifadə olunur?","Ampermetr","Voltmetr","Vattmetr","Ohmmetr"],
+["Ampermetrin daxili müqaviməti necə olmalıdır?","Çox kiçik","Çox böyük","Sonsuz","Dövrənin müqavimətinə bərabər"],
+["Ampermetrin ölçmə diapazonunu artırmaq üçün nədən istifadə olunur?","Şunt və ölçü transformatorları","Əlavə rezistor və kondensator","Gərginlik bölücüsü","Stabilizator"],
+["Sabit cərəyan dövrələrində ölçmə üçün hansı tip ampermetrdən istifadə olunur?","Maqnitoelektrik","Elektrostatik","İnduksiya","Termoelektrik"],
+["Azərbaycanda elektrik şəbəkəsinin standart tezliyi neçədir?","50 Hz","60 Hz","100 Hz","25 Hz"],
+["Dövrədə cərəyan yoxdursa, ideal ampermetr nə göstərər?","0","Maksimum qiymət","Şəbəkə gərginliyini","Sonsuzluq"],
+["Cərəyanın ölçülməsi zamanı cihazın düzgün seçilməsi nəyi təmin edir?","Dəqiq ölçməni və rejimin pozulmamasını","Dövrənin müqavimətinin artmasını","Gərginliyin azalmasını","Tezliyin dəyişməsini"],
+["Ampermetr dövrəyə qoşularkən hansı qaydaya əməl olunmalıdır?","Daxili müqavimət kiçik olmalı, paralel qoşulmamalı, hədd düzgün seçilməli, dövrə enerjisiz olmalı","Paralel qoşulmalı və hədd ən kiçik seçilməlidir","Cihaz yalnız enerjili dövrəyə qoşulmalıdır","Daxili müqavimət çox böyük olmalıdır"],
+["Sabit və dəyişən cərəyan dövrələrində ölçmə üçün hansı tip ampermetrlər istifadə olunur?","Elektromaqnit, elektrodinamik","Yalnız maqnitoelektrik","Yalnız elektrostatik","Yalnız raqemli (rəqəmsal) detektor"],
+["Cərəyan şiddətinin kiçik qiymətlərini ölçmək üçün sarğı necə birləşdirilir?","Ardıcıl","Paralel","Qarışıq","Üçbucaq"],
+["Elektrik gərginliyi hansı cihazla ölçülür?","Voltmetr","Ampermetr","Vattmetr","Sayğac"],
+["Voltmetr elektrik dövrəsinə necə qoşulur?","Paralel","Ardıcıl","Qısa qapanma ilə","Yalnız şuntla"],
+["İki nöqtə arasındakı gərginlik nəyi ifadə edir?","Bu nöqtələr arasındakı potensiallar fərqini","Cərəyanın istiqamətini","Dövrənin müqavimətini","Cərəyanın tezliyini"],
+["Radiotexniki qurğularda gərginlik ölçülməsi niyə vacibdir?","İş rejimini yoxlamaq, nasazlıqları tapmaq, siqnal səviyyəsinə nəzarət","Yalnız qurğunun çəkisini təyin etmək","Cərəyanın istiqamətini dəyişmək","Qurğunun rəngini yoxlamaq"],
+["Voltmetrin daxili müqaviməti necə olmalıdır?","Çox böyük","Çox kiçik","Sıfıra bərabər","Dövrənin müqavimətinə bərabər"],
+["Radiotexniki dövrələrdə gərginliyin ölçülməsi hansı cihazla daha universal aparılır?","Osiloqraf və elektron voltmetr","Yalnız ampermetr","Yalnız vattmetr","Termometr"],
+["Tam gücün ölçü vahidi hansıdır?","Voltamper","Vatt","Coul","Amper"],
+["Vattmetr dövrəyə necə qoşulur?","Cərəyan sarğısı ardıcıl, gərginlik sarğısı paralel","Hər iki sarğı ardıcıl","Hər iki sarğı paralel","Cərəyan sarğısı paralel, gərginlik sarğısı ardıcıl"],
+["Elektrik gücünün ölçü vahidi hansıdır?","Vatt","Voltamper","Amper","Om"],
+["Sabit cərəyan dövrəsində gücün ölçülməsi üçün hansı cihazlardan istifadə etmək olar?","Elektrodinamik, ferrodinamik","Elektrostatik, induksiya","Yalnız maqnitoelektrik voltmetr","Termometr, manometr"],
+["Vattmetrdə cərəyan sarğısı necə qoşulur?","Ardıcıl","Paralel","Qısa qapanmış","Heç bir yerə qoşulmur"],
+["Ampermetr dövrəyə necə qoşulur?","Ardıcıl","Paralel","Qarışıq","Yalnız mənbəyə paralel"],
+["Cərəyan şiddətinin ölçü vahidi hansıdır?","Amper","Volt","Vatt","Om"],
+["Dəyişən cərəyanı ölçdükdə nəticənin dəqiqliyi nədən asılıdır?","Cihazın dəqiqlik sinfindən, tezlik və ölçmə diapazonundan","Yalnız cihazın rəngindən","Yalnız naqilin uzunluğundan","Havanın rütubətindən yalnız"],
+["Cərəyan şiddətinin böyük qiymətlərini ölçmək üçün sarğı necə birləşdirilir?","Paralel","Ardıcıl","Qarışıq","Birləşdirilmir"],
+["Rabitə dövrələrində cərəyan nə ilə ötürülür?","Naqil vasitəsilə","Yalnız su ilə","Yalnız hava ilə","Yalnız vakuumla"],
+["Gərginliyin ölçü vahidi hansıdır?","Volt","Amper","Vatt","Coul"],
+["Ölçüləcək gərginliyin qiyməti məlum deyilsə, ölçməyə necə başlamaq daha düzgündür?","Ən böyük hədddən başlamaq","Ən kiçik hədddən başlamaq","Orta hədddən başlamaq","Həddi söndürmək"],
+["Gərginlik hansı qanunla cərəyan və müqavimətlə əlaqəlidir?","Om qanunu (U = I·R)","Kirxhof qanunu (yalnız qüvvə)","Faradey qanunu","Nyuton qanunu"],
+["Radiotexniki qurğularda gərginlik ölçülməsi niyə vacibdir?","İş rejimini yoxlamaq, nasazlıqları tapmaq, siqnal səviyyəsinə nəzarət","Yalnız qurğunun çəkisini təyin etmək","Cərəyanın istiqamətini dəyişmək","Qurğunun rəngini yoxlamaq"],
+["Gərginlik ölçülərkən təhlükəsizlik üçün nə vacibdir?","Ölçü həddini düzgün seçmək, izolyasiyanı yoxlamaq, dövrəni enerjisiz qoşmaq","Cihazı sürətlə çıxarmaq","Hədd ən kiçik seçilməlidir","Cihazı dövrəyə ardıcıl qoşmaq"],
+["Voltmetr dövrəyə ardıcıl qoşularsa nə baş verə bilər?","Dövrədə cərəyan kəsilir","Cərəyan iki dəfə artır","Heç nə dəyişmir","Gərginlik sıfır olur"],
+["Radiotexniki dövrələrdə ölçmə zamanı cihazın düzgün qoşulmaması nə yarada bilər?","Ölçmə xətası, cihaz və komponentlərin zədələnməsi","Yalnız dəqiqliyin artması","Heç bir təsir göstərməz","Gərginliyin sabit qalması"],
+["Vattmetrin cərəyan sarğısı necə xarakterizə olunur?","Ardıcıl qoşulur","Paralel qoşulur","Qısa qapanır","Dövrədən ayrılır"],
+["Reaktiv gücün ölçü vahidi hansıdır?","Var (voltamper reaktiv)","Vatt","Amper","Coul"],
+["Sabit cərəyan dövrəsində güc hansı düsturla hesablanır?","P = U·I","P = U/I","P = I/U","P = U + I"],
+["Elektrik enerjisinin ölçü vahidi hansıdır?","Coul","Vatt","Amper","Volt"],
+["Vattmetrdə gərginlik sarğısı necə qoşulur?","Paralel","Ardıcıl","Qısa qapanmış","Qarışıq"],
+["Aktiv güc nəyi göstərir?","Enerjinin sürətini (faydalı gücü)","Yalnız cərəyanın istiqamətini","Naqilin uzunluğunu","Tezliyi"],
+["Elektrik gücünü ölçən cihaz hansıdır?","Vattmetr","Voltmetr","Ampermetr","Ohmmetr"]
+];
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const Q=D.map(d=>({q:d[0],c:d[1],o:sh(d.slice(1)),a:null,h:false}));
+let i=0,ctx;
+function snd(ok){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime;
+(ok?[[660,0],[880,.12]]:[[220,0],[160,.15]]).forEach(([f,d])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type=ok?'sine':'sawtooth';o.frequency.value=f;g.gain.setValueAtTime(.2,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+.25);o.connect(g);g.connect(ctx.destination);o.start(t+d);o.stop(t+d+.26)})}catch(e){}}
+const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function r(){const q=Q[i],n=Q.length,done=Q.filter(x=>x.a!==null).length;
+$('info').textContent=`Sual ${i+1} / ${n} · Cavablanan: ${done}`;$('pb').style.width=(done/n*100)+'%';
+$('grid').innerHTML=Q.map((x,k)=>`<button class="${k===i?'cur ':''}${x.a===null?'':(x.o[x.a]===x.c?'ok':'no')}" onclick="i=${k};r()">${k+1}</button>`).join('');
+let h=`<div class="card"><p class="q">${i+1}. ${esc(q.q)}</p>`;
+q.o.forEach((t,k)=>{let c='';if(q.a!==null){if(t===q.c)c='ok';else if(k===q.a)c='no'}
+h+=`<button class="o ${c}" ${q.a!==null?'disabled':''} onclick="pick(${k})">${esc(t)}</button>`});
+h+=`<div class="hint" onclick="Q[i].h=true;r()">${q.h?'💡 Düzgün cavab: <b>'+esc(q.c)+'</b>':'💡 İpucu üçün toxunun'}</div></div>
+<div class="nav"><button class="b g" ${i?'':'disabled'} onclick="go(-1)">← Geri</button>
+${i<n-1?'<button class="b" onclick="go(1)">İrəli →</button>':'<button class="b" onclick="fin()">Nəticəni göstər</button>'}</div>`;
+$('app').innerHTML=h}
+function pick(k){const q=Q[i];if(q.a!==null)return;q.a=k;snd(q.o[k]===q.c);r()}
+function go(d){i+=d;r()}
+function fin(){const un=Q.filter(x=>x.a===null).length;
+const w=Q.map((x,n)=>({x,n})).filter(({x})=>x.a===null||x.o[x.a]!==x.c),ok=Q.length-w.length;
+$('pb').style.width='100%';$('info').textContent='Nəticə';$('grid').innerHTML='';
+let h=`<div class="card" style="text-align:center"><div class="s">${ok} / ${Q.length}</div><div>${Math.round(ok/Q.length*100)}% düzgün</div></div>`;
+if(w.length){h+=`<h2 style="font-size:17px;margin:18px 0 6px">Səhvlər (${w.length})</h2>`;
+w.forEach(({x,n})=>{h+=`<div class="e"><b>${n+1}. ${esc(x.q)}</b>Sizin cavab: ${x.a===null?'<i>cavablanmayıb</i>':esc(x.o[x.a])}<br>Düzgün cavab: <span style="color:var(--ok);font-weight:600">${esc(x.c)}</span></div>`})}
+else h+='<p style="text-align:center">🎉 Heç bir səhv yoxdur!</p>';
+h+='<div class="nav"><button class="b g" onclick="i=0;r()">Suallara bax</button><button class="b" onclick="location.reload()">Yenidən başla</button></div>';
+$('app').innerHTML=h}
+r();
+</script></body></html>
