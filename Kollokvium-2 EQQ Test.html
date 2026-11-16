@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kollokvium-2 Test</title>
+<style>
+:root{color-scheme:light;--bg:#f6f8fc;--card:#fff;--tx:#1b2a41;--mu:#6b7a90;--pr:#2f6fed;--ok:#1f9d55;--okb:#e5f6ec;--no:#d64545;--nob:#fdeaea;--bd:#dde4ef;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.w{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:6px 0 2px;color:#1d3a6b}.sub{color:var(--mu);font-size:13px;margin-bottom:12px}
+.bar{height:8px;background:#e3e9f4;border-radius:9px;overflow:hidden;margin:8px 0 12px}.bar i{display:block;height:100%;background:var(--pr);width:0;transition:.3s}
+.grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.grid button{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:#fff;color:var(--tx);font-size:13px;cursor:pointer}
+.grid .ok{background:var(--okb);border-color:var(--ok)}.grid .no{background:var(--nob);border-color:var(--no)}.grid .cur{outline:2px solid var(--pr)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(30,60,120,.06)}
+.qn{color:var(--pr);font-weight:600;font-size:13px}.q{font-size:18px;font-weight:600;margin:6px 0 14px;line-height:1.4}
+.o{display:flex;gap:10px;width:100%;text-align:left;padding:12px 14px;margin:8px 0;border:1.5px solid var(--bd);border-radius:12px;background:#fff;color:var(--tx);font-size:15px;cursor:pointer;line-height:1.4}
+.o:hover:not(:disabled){border-color:var(--pr);background:#f3f7ff}.o b{color:var(--pr)}
+.o.ok{background:var(--okb);border-color:var(--ok)}.o.no{background:var(--nob);border-color:var(--no)}.o:disabled{cursor:default}
+.hint{margin-top:12px;border:1.5px dashed #e0b84c;background:#fff9e6;border-radius:12px;padding:10px 14px;cursor:pointer;font-size:14px;color:#7a5b00}
+.nav{display:flex;gap:10px;margin-top:16px;justify-content:space-between;flex-wrap:wrap}
+.b{padding:11px 18px;border-radius:10px;border:1px solid var(--bd);background:#fff;color:var(--tx);font-size:15px;cursor:pointer}
+.b.p{background:var(--pr);border-color:var(--pr);color:#fff}.b:disabled{opacity:.4;cursor:default}
+.sc{text-align:center;padding:10px 0}.sc .n{font-size:46px;font-weight:700;color:var(--pr)}
+.er{border:1px solid var(--bd);border-left:4px solid var(--no);border-radius:10px;padding:12px;margin:10px 0;background:#fff}
+.er .a{color:var(--no)}.er .c{color:var(--ok)}.er div{margin-top:4px;font-size:14px}
+</style></head><body><div class="w">
+<h1>Kollokvium-2 — EQQ Test</h1><div class="sub">Dizel-generator qurğuları və düzləndiricilər</div>
+<div class="bar"><i id="pb"></i></div><div class="grid" id="gr"></div><div id="m"></div>
+</div>
+<script>
+const D=[
+["Dizel-generator qurğularının əsas tərkib hissələrini hansı qurğular təşkil edir?","Dizel mühərriki, generator, starter (işəsalma qurğusu), idarəetmə paneli və baza.","Yalnız mühərrik və yanacaq çəni.","Transformator, düzləndirici, diod və yük.","Kompressor, turbin, reduktor və akkumulyator."],
+["Dizel-generator qurğularında generator hissəsinin vəzifəsi nədir?","Mexanik enerjini elektrik enerjisinə çevirmək.","Elektrik enerjisini mexaniki enerjiyə çevirmək.","Yanacağı soyutmaq.","Yağı filtrdən keçirmək."],
+["Dizel-generator qurğularının yağlanmasının faydaları hansılardır?","Bütün variantlar (1–5) düzgündür.","Yalnız sürtünməni azaldır.","Yalnız mühərriki soyudur.","Yalnız yanacaq sərfini artırır."],
+["Dizel-generator qurğularının maye ilə soyutma sistemi hansı hissələrdən ibarətdir?","Su nasosu, radiator, termostat, genişlənmə qabı, ventilyator və borular.","Karter, yağ nasosu, filtr və yağ radiatoru.","Starter, akkumulyator, transformator və diod.","Silindr, porşen, şam və yanacaq nasosu."],
+["Dörd taktlı dizel generatorunun iş prosesi necə taktda baş verir və hansılardır?","4 takt: sorma → sıxma → yanma (iş) → egzoz.","4 takt: sıxma → sorma → egzoz → yanma.","2 takt: sıxma → yanma.","4 takt: sorma → yanma → sıxma → egzoz."],
+["Yağlama sistemi hissələrini düzgün ardıcıllıqla göstərin.","Karter → nasos → filtr → yağ radiatoru → sürtünən hissələr → kartero qayıdış.","Nasos → karter → radiator → filtr → sürtünən hissələr.","Filtr → karter → sürtünən hissələr → nasos → radiator.","Karter → sürtünən hissələr → nasos → filtr → radiator."],
+["Soyutma sistemində termostatın vəzifəsi nədir?","Mühərriki optimal temperaturda (~85–90 °C) saxlamaq.","Mühərriki daim 20 °C-də saxlamaq.","Yanacağı qızdırmaq.","Yağın təzyiqini artırmaq."],
+["Dizellərin soyutma sistemində hansı sudan istifadə etmək məqsədə uyğundur?","Yumşaq, təmiz su (mümkünsə distillə + antifiriz).","Sərt kran suyu.","Dəniz suyu.","Heç bir qatqısı olmayan yağış suyu."],
+["Biryarımperiodlu düzləndiricinin əsas elementləri hansılardır?","Transformator, bir diod (ventil) və yük.","Transformator, dörd diod və yük.","İki diod, kondensator və induktivlik.","Yalnız diod körpüsü və akkumulyator."],
+["Biryarımperiodlu düzləndiricinin çıxış gərginliyi necə olmalıdır?","U₀ = 0,45·U₂.","U₀ = 0,9·U₂.","U₀ = 1,41·U₂.","U₀ = 2,83·U₂."],
+["Aktiv yükə işləyən biryarımperiodlu düzləndiricilərdə əks gərginliyin maksimum qiyməti nəyə bərabərdir?","Uə.max = 1,41·U₂.","Uə.max = 0,45·U₂.","Uə.max = 2,83·U₂.","Uə.max = 0,9·U₂."],
+["Aktiv yükə işləyən ikiyarımperiodlu düzləndiricilərdə döyünmə əmsalı nəyə bərabərdir?","q = 0,67 (67%).","q = 1,57 (157%).","q = 0,45 (45%).","q = 1,41 (141%)."],
+["Aktiv yükə işləyən ikiyarımperiodlu düzləndiricilərdə düzlənmiş gərginliyin orta qiyməti nəyə bərabərdir?","U₀ = 0,9·U₂.","U₀ = 0,45·U₂.","U₀ = 1,41·U₂.","U₀ = 2,83·U₂."],
+["Verilmiş k sxemdə ikinci yarımperiodda (π–2π) transformatorun ikinci dolağının c nöqtəsinin potensialı a nöqtəsindən yüksək olarsa hansı ventillər açılar və cərəyan necə axar?","V₂ açılır: c → V₂ → yük → orta nöqtə.","V₁ açılır: a → V₁ → yük → orta nöqtə.","V₁ və V₂ eyni anda açılır.","Hər iki ventil bağlanır, cərəyan axmır."],
+["Dizel generatorunun əsas üstünlüyü nədir?","Şəbəkədən asılı olmadan müstəqil işləyir; etibarlı ehtiyat mənbədir.","Elektrik enerjisini yalnız şəbəkədən alır.","Heç vaxt ehtiyat mənbə kimi istifadə olunmur.","Yanacaq tələb etmir."],
+["Dörd taktlı dizel mühərrikinin iş tsiklinin ikinci taktında silindrdə nə baş verir?","Sıxma: hava sıxılır, temperatur ~500–600 °C-ə yüksəlir.","Yanacaq alışır və porşen aşağı hərəkət edir.","Egzoz qazları xaric olunur.","Hava silindrə sorulur, temperatur dəyişmir."],
+["Bir fazalı yarımperiodlu düzləndiricinin iş prinsipi haqqında verilmiş fikirlərdən hansı doğrudur?","Yalnız müsbət yarımperiodda açılır, bir istiqamətli pulsasiyalı cərəyan verir.","Hər iki yarımperiodda açılır, tam sabit cərəyan verir.","Yalnız mənfi yarımperiodda açılır, dəyişən cərəyan verir.","Cərəyanı iki istiqamətdə buraxır."],
+["Birfazalı körpü düzləndirmə sxeminin mənfi xüsusiyyətləri nədir?","4 ventil lazımdır; iki dioddan gərginlik düşür (böyük itkisi).","Yalnız 1 ventil lazımdır.","Transformatorun orta çıxışı tələb olunur.","Əks gərginlik 2,83·U₂-dir."],
+["Şəbəkənin tezliyi f = 50 Hs olarsa, bir fazalı iki yarımperiodlu düzləndiricinin çıxışındakı döyünmə tezliyi necə olar?","fd = 2f = 100 Hs.","fd = f = 50 Hs.","fd = f/2 = 25 Hs.","fd = 4f = 200 Hs."],
+["Verilmiş iki yarımperiodlu sxemdə birinci yarımperiodda (0–π) hansı ventil (diod) açılır və cərəyan necə axır?","V₁ açılır: a → V₁ → yük → orta nöqtə.","V₂ açılır: c → V₂ → yük → orta nöqtə.","V₁ və V₂ eyni anda açılır.","Heç bir ventil açılmır."],
+["Daxili yanma mühərrikinin vəzifəsi nədir?","Yanacağın kimyəvi enerjisini mexaniki işə çevirmək.","Mexaniki enerjini elektrik enerjisinə çevirmək.","Dəyişən cərəyanı düzləndirmək.","Suyu soyutmaq."],
+["Dizel-generator qurğuları hansı sistemləri özündə birləşdirir?","1, 2, 3, 4 — yanacaq, yağlama, soyutma, işəsalma sistemləri.","Yalnız yanacaq və yağlama sistemləri.","Yalnız soyutma və işəsalma sistemləri.","Düzləndirici və transformator sistemləri."],
+["Dizel-generator qurğularının yağlama sistemi hansı hissələrdən ibarətdir?","Karter, nasos, filtr, yağ radiatoru, yağ xətləri və göstəricilər.","Su nasosu, radiator, termostat və ventilyator.","Starter, akkumulyator və idarəetmə paneli.","Transformator, diod və yük."],
+["Aşağıda göstərilən fikirlərdən hansıları dizel tipli daxili yanma mühərriklərinə aiddir?","2, 3, 5 — hava sorulur və sıxılır; yanacaq dizeldir, alışma yüksək temperaturda olur.","1, 4 — qarışıq şamla alışır, yanacaq benzindir.","1, 2 — yanacaq benzindir, qaz şamla alışır.","4, 5 — hava sıxılmır, alışma xaricdən qızdırma ilə olur."],
+["Antifirizdən nə məqsəd üçün istifadə olunur?","Suyun donma temperaturunu aşağı salır, korroziyadan qoruyur.","Suyun donma temperaturunu yüksəldir.","Yağın özlülüyünü artırır.","Yanacağın setan ədədini azaldır."],
+["Yağ nasosu ilə yağ karteri arasındakı əlaqə necədir?","Sorğu borusu ilə bağlıdır: nasos karterdən yağı çəkir və təzyiqlə paylayır.","Yağ nasosu karterlə əlaqəsizdir.","Yağ karterdən özü axır, nasos təzyiq yaratmır.","Nasos yağı radiatordan çəkib havaya buraxır."],
+["Dizel generatorunda akkumulyator batareyasının əsas vəzifəsi nədir?","Startera başlanğıc cərəyan vermək — dizeli işəsalmaq.","Generatorun çıxışını düzləndirmək.","Mühərriki soyutmaq.","Yağı filtrləmək."],
+["Rabitə müəssisələrində dizel-generator qurğularından nə kimi istifadə olunur?","Fövqəladə/ehtiyat elektrik mənbəyi kimi.","Yalnız əsas mənbə kimi, şəbəkə əvəzinə.","Yalnız yanacaq istehsalı üçün.","Transformator əvəzinə."],
+["Düzləndiricinin vəzifəsi nədir?","Dəyişən cərəyanı düz (bir istiqamətli) cərəyana çevirmək.","Düz cərəyanı dəyişən cərəyana çevirmək.","Gərginliyi yalnız artırmaq.","Tezliyi 50 Hs-dən 100 Hs-ə qaldırmaq."],
+["Aktiv yükə işləyən biryarımperiodlu düzləndiricilərdə döyünmə əmsalı nəyə bərabərdir?","q = 1,57 (157%).","q = 0,67 (67%).","q = 0,45 (45%).","q = 1,41 (141%)."],
+["Bir fazalı yarımperiodlu düzləndiricinin çatışmazlıqlarına nə aiddir?","Böyük döyünmə (157%), yüksək əks gərginlik (1,41·U₂), transformatorun pis istifadəsi.","Kiçik döyünmə (67%), aşağı əks gərginlik, transformatorun yaxşı istifadəsi.","Yalnız 4 ventil tələb olunması.","Yalnız çıxış tezliyinin 100 Hs olması."],
+["Aktiv yükə işləyən biryarımperiodlu düzləndiricilərdə düzlənmiş gərginliyin orta qiyməti nəyə bərabərdir?","U₀ = 0,45·U₂.","U₀ = 0,9·U₂.","U₀ = 1,41·U₂.","U₀ = 2,83·U₂."],
+["Transformatorun ikinci dolağının orta nöqtəsindən çıxışı olan ikiyarımperiodlu düzləndiricilərdə əks gərginliyin amplitud qiyməti nəyə bərabərdir?","Uə.max = 2,83·U₂.","Uə.max = 1,41·U₂.","Uə.max = 0,9·U₂.","Uə.max = 0,45·U₂."],
+["Dizel mühərriklərində silindrə daxil olan havanın alışması hansı üsulla həyata keçirilir?","Təbii aspirasiya ilə — atmosfer təzyiqi ilə sorulur.","Yalnız kompressorla zorla sıxılaraq.","Elektrik ventilyatoru ilə.","Starter vasitəsilə."],
+["Verilmiş sxemdə birinci yarımperiodda (0–π) transformatorun ikinci dolağının a nöqtəsinin potensialı c nöqtəsindən yüksək olarsa hansı ventillər açılar və cərəyan necə axar?","V₁ açılır: a → V₁ → yük → orta nöqtə.","V₂ açılır: c → V₂ → yük → orta nöqtə.","V₁ və V₂ eyni anda açılır.","Hər iki ventil bağlanır."],
+["Verilmiş sxemdə ikinci yarımperiodda (π–2π) hansı diod açılır və cərəyan necə axar?","V₂ açılır: c → V₂ → yük → orta nöqtə (yükdə istiqamət eyni qalır).","V₁ açılır: a → V₁ → yük → orta nöqtə.","V₂ açılır, yükdə cərəyan istiqaməti dəyişir.","Heç bir diod açılmır."],
+["Aşağıdakı fikirlərdən hansıları birfazalı körpü düzləndirmə sxeminə aid deyil?","Aid deyil: 1, 2, 3, 5, 8. (Aid olan: 4, 6, 7.)","Aid deyil: 4, 6, 7.","Aid deyil: 1, 3, 4, 6.","Aid deyil: 2, 5, 7, 8."],
+["Dizel generatorlarında soyutma sisteminin əsas məqsədi nədir?","Mühərriki artıq qızmaqdan qorumaq, optimal temperaturu saxlamaq.","Mühərriki maksimum soyuq saxlamaq.","Yanacaq sərfini artırmaq.","Yağı buxarlandırmaq."],
+["Bir yarımperiodlu düzləndiricilər gərginliyin periodunun hansı hissəsində cərəyan keçirir?","Yalnız müsbət yarımperiodda (0–π).","Yalnız mənfi yarımperiodda (π–2π).","Bütün periodda (0–2π).","Heç bir hissəsində."]
+];
+const L="ABCD",N=D.length;let S,cur,fin;
+const $=id=>document.getElementById(id);
+let ac;function beep(ok){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const t=ac.currentTime;
+const n=ok?[[660,0],[880,.12],[1175,.24]]:[[220,0],[165,.18]];
+n.forEach(([f,d])=>{const o=ac.createOscillator(),g=ac.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.25,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+(ok?.18:.3));o.connect(g);g.connect(ac.destination);o.start(t+d);o.stop(t+d+.35)})}catch(e){}}
+function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){S=D.map(d=>({o:shuf(d.slice(1)),sel:null,h:false}));cur=0;fin=false;render()}
+function grid(){$("gr").innerHTML=S.map((s,i)=>{let c="";if(s.sel!==null)c=s.sel===D[i][1]?"ok":"no";if(!fin&&i===cur)c+=" cur";return `<button class="${c}" onclick="go(${i})">${i+1}</button>`}).join("");
+$("pb").style.width=(S.filter(s=>s.sel!==null).length/N*100)+"%"}
+function go(i){if(i<0||i>=N)return;fin=false;cur=i;render()}
+function pick(k){const s=S[cur];if(s.sel!==null)return;s.sel=s.o[k];beep(s.sel===D[cur][1]);render()}
+function hint(){S[cur].h=true;render()}
+function render(){grid();if(fin)return result();const s=S[cur],d=D[cur],a=s.sel!==null;
+let h=`<div class="card"><div class="qn">Sual ${cur+1} / ${N}</div><div class="q">${d[0]}</div>`;
+s.o.forEach((t,k)=>{let c="";if(a){if(t===d[1])c="ok";else if(t===s.sel)c="no"}
+h+=`<button class="o ${c}" ${a?"disabled":""} onclick="pick(${k})"><b>${L[k]}.</b><span>${t}</span></button>`});
+h+=s.h?`<div class="hint">💡 <b>İpucu:</b> ${d[1]}</div>`:`<div class="hint" onclick="hint()">💡 İpucu — cavabı görmək üçün bas</div>`;
+h+=`<div class="nav"><button class="b" onclick="go(cur-1)" ${cur?"":"disabled"}>← Geri</button>`;
+h+=`<button class="b p" onclick="finish()">Nəticəyə bax</button>`;
+h+=`<button class="b" onclick="go(cur+1)" ${cur<N-1?"":"disabled"}>İrəli →</button></div></div>`;
+$("m").innerHTML=h}
+function finish(){const u=S.filter(s=>s.sel===null).length;if(u&&!confirm(u+" sual cavablandırılmayıb. Yenə də nəticəyə baxmaq istəyirsən?"))return;fin=true;render()}
+function result(){let ok=0,er="";S.forEach((s,i)=>{if(s.sel===D[i][1])ok++;else er+=`<div class="er"><b>${i+1}. ${D[i][0]}</b><div class="a">${s.sel===null?"❌ Cavab verilməyib":"❌ Sənin cavabın: "+s.sel}</div><div class="c">✅ Düzgün cavab: ${D[i][1]}</div></div>`});
+const p=Math.round(ok/N*100);
+$("m").innerHTML=`<div class="card"><div class="sc"><div class="n">${ok} / ${N}</div><div>${p}% düzgün · ${N-ok} səhv</div></div>
+<h3>${N-ok?"Səhvlər (sıra ilə):":"🎉 Heç bir səhv yoxdur!"}</h3>${er}
+<div class="nav"><button class="b" onclick="go(0)">Suallara qayıt</button><button class="b p" onclick="start()">Yenidən başla</button></div></div>`}
+start();
+</script></body></html>
