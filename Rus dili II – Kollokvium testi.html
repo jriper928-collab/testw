@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rus dili II – Kollokvium testi</title>
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f8fc;--card:#fff;--tx:#1d2433;--mu:#6b7488;--pr:#3b6cf4;--ok:#1f9d55;--okb:#e6f7ee;--no:#d93a3a;--nob:#fdeaea;--br:#e1e6f0}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-color:#f6f8fc}
+.w{max-width:680px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 12px}
+.bar{height:8px;background:var(--br);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pr);transition:width .3s}
+.meta{display:flex;justify-content:space-between;color:var(--mu);font-size:14px;margin:8px 0}
+.card{background:var(--card);border:1px solid var(--br);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(30,50,100,.06)}
+.q{font-size:19px;font-weight:600;margin:0 0 16px}
+.o{display:block;width:100%;text-align:left;padding:13px 15px;margin:9px 0;border:2px solid var(--br);background:#fff;border-radius:12px;font:inherit;color:var(--tx);cursor:pointer;transition:.15s}
+.o:hover:not(:disabled){border-color:var(--pr);background:#f2f6ff}
+.o.ok{border-color:var(--ok);background:var(--okb)}.o.no{border-color:var(--no);background:var(--nob)}
+.o:disabled{cursor:default}
+.hb{width:100%;margin-top:6px;padding:11px;border:2px dashed #f0b429;background:#fff9e6;border-radius:12px;font:inherit;color:#7a5a00;cursor:pointer;text-align:left}
+.nav{display:flex;gap:10px;margin-top:14px}
+.b{flex:1;padding:12px;border:0;border-radius:12px;font:inherit;font-weight:600;cursor:pointer;background:var(--pr);color:#fff}
+.b.g{background:#fff;color:var(--tx);border:2px solid var(--br)}.b:disabled{opacity:.4;cursor:default}
+.dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.d{width:26px;height:26px;border-radius:7px;border:1px solid var(--br);background:#fff;font-size:11px;color:var(--mu);cursor:pointer;padding:0}
+.d.ok{background:var(--ok);color:#fff;border-color:var(--ok)}.d.no{background:var(--no);color:#fff;border-color:var(--no)}.d.cur{outline:2px solid var(--pr)}
+.big{font-size:44px;font-weight:800;text-align:center;margin:6px 0;color:var(--pr)}
+.m{border-left:4px solid var(--no);background:var(--nob);padding:10px 12px;border-radius:8px;margin:10px 0;font-size:15px}
+.m b{display:block;margin-bottom:3px}
+</style></head><body><div class="w">
+<h1>🇷🇺 Rus dili II – Kollokvium testi</h1><div id="app"></div></div>
+<script>
+const Q=[
+["Укажите словосочетание в переносном значении.",["Золотое кольцо","Золотое сердце","Золотая цепочка"],1,"Bir ifadədə material deyil, insanın xasiyyəti nəzərdə tutulur. Qızıl əşyalara baxma."],
+["Имя существительное отвечает на вопросы:",["Какой? Какая?","Что делать?","Кто? Что?"],2,"İsim şəxs və əşyanı soruşur: «kim?» və «nə?». Digər suallar əlamət və hərəkət üçündür."],
+["Укажите лишнее слово:",["Лес","Лесной","Лестница"],2,"İkisi eyni kökdəndir. Üçüncüsü səsə görə oxşar görünür, amma kökü fərqlidir."],
+["Как переводится: «Я люблю гулять с друзьями»?",["Mən dostlarımla gəzməyi sevirəm.","Mən kitab oxumağı sevirəm.","Mən evdə yatmağı sevirəm."],0,"гулять = gəzmək, с друзьями = dostlarla. Cümlədə nə kitab var, nə yatmaq."],
+["В каком слове 6 букв и 5 звуков?",["Семья","Молоко","Кошка"],0,"Yumşaqlıq işarəsi səs vermir, «я» isə iki səs verə bilər. Ən qısa sözə fikir ver."],
+["Антоним к слову «друг»:",["Товарищ","Враг","Брат"],1,"Əks mənalı söz axtarılır. Digər ikisi dostun yaxın mənalılarıdır."],
+["«Кот наплакал» означает:",["Очень много","Очень мало","Очень быстро"],1,"Pişik az göz yaşı tökər. Ölçü və miqdar haqqında ifadədir."],
+["Раздел науки о языке, изучающий словарный состав:",["Фонетика","Лексикология","Морфология"],1,"Söz tərkibi = lüğət. Səslər və söz hissələri başqa bölmələrin işidir."],
+["Противоположные по значению слова называются:",["Синонимы","Антонимы","Омонимы"],1,"«Anti» = qarşı. Adın özü cavabı verir."],
+["Укажите одушевлённое существительное:",["Стол","Книга","Учитель"],2,"Canlı varlıq: nəfəs alan, hərəkət edən. İkisi əşyadır."],
+["Основа слова – это:",["Часть слова без окончания","Только корень","Окончание слова"],0,"Sonluğu çıxarırsan, qalan hissə əsasdır. Yalnız kök deyil, şəkilçilər də ola bilər."],
+["В какой паре нет антонимов?",["День – ночь","Добрый – злой","Красивый – прекрасный"],2,"Hansı cütlük bir-birinə yaxın mənalıdır? O, antonim deyil."],
+["Всегда мягкие согласные:",["Ж, Ш, Ц","Й, Ч, Щ","Б, В, Г"],1,"Ж, Ш, Ц həmişə sərtdir. Bir cütlük isə heç vaxt sərtləşmir."],
+["Дополните пословицу: «Повторение – мать ...»",["Учения","Работы","Дружбы"],0,"Təkrar nəyin anasıdır? Təhsil və öyrənmə ilə bağlıdır."],
+["Укажите лишнее слово:",["Вода","Водный","Водитель"],2,"Su ilə bağlı sözləri seç, sürücü isə fərqli mənadadır."],
+["Имя существительное – это часть речи, которая обозначает:",["Признак предмета","Действие предмета","Предмет"],2,"İsim nəyi bildirir? Əlamət və hərəkət başqa nitq hissələrinindir."],
+["Выберите синонимы:",["Грустный – весёлый","Смелый – храбрый","Большой – маленький"],1,"Yaxın mənalı cütlük axtarılır. Qalan ikisi əksdir."],
+["В каком слове звуков больше, чем букв?",["Ёлка","Стол","Дом"],0,"Bir hərf sözün əvvəlində iki səs verir (й+о)."],
+["Как называется наука, изучающая словарный состав языка?",["Лексикология","Фонетика","Синтаксис"],0,"Söz tərkibi = лексика. Başlanğıcı «леке» ilə bağlıdır."],
+["В каком предложении нет антонимов?",["Летом жарко, зимой холодно.","День сменяет ночь.","Мама читает книгу."],2,"Əks mənalı söz cütləri olmayan sadə cümləni tap."],
+["Дополните пословицу: «Терпение и труд всё ...»",["Испортят","Перетрут","Забудут"],1,"Səbir və zəhmət hər şeyi yenir. Mənası müsbətdir."],
+["Сколько букв в русском алфавите?",["32","33","30"],1,"Ən çox yayılan səhv 32-dir. 32-dən bir çoxdur."],
+["Антоним к слову «горячий»:",["Тёплый","Холодный","Жаркий"],1,"Tam əks, orta dərəcə yox. Birincisi orta, üçüncüsü yaxın mənalıdır."],
+["Имя существительное обозначает:",["Предмет","Признак","Действие"],0,"Kim? nə? sualına cavab verən. Əlamət sifətin, hərəkət feilin işidir."],
+["Синоним к слову «смелый»:",["Трусливый","Храбрый","Слабый"],1,"Cəsur və igid. Qalan ikisi əks və ya aidiyyətsizdir."],
+["В каком слове буква Ё обозначает один звук?",["Ёж","Мёд","Ёлка"],1,"Ё samitdən sonra gələndə yalnız bir sait səsdir. Sözün əvvəlində isə iki səs."],
+["Сколько корней в слове «пароход»?",["Один","Два","Три"],1,"Mürəkkəb sözdür: «buxar» və «getmək» kökləri."],
+["Как звучит пословица «Лучше поздно, чем никогда» на азербайджанском?",["Heç vaxt etməməkdənsə, gec etmək yaxşıdır.","Tez gələn tez gedər.","Yaxşı dost dar gündə tanınar."],0,"Gec də olsa, heç etməməkdən yaxşıdır. Tərcümə sözbəsöz olmalıdır."],
+["«Золотые руки» означает:",["Руки из золота","Умелый, способный человек","Богатый человек"],1,"Məcazidir: əlindən hər iş gələn. Nə qızıldan, nə də zəngin."],
+["Сколько гласных букв в русском языке?",["10","6","12"],0,"Rus dilində sait hərflər sayca onlarladır, amma sait səslər 6-dır. Sual hərfləri soruşur."],
+["В каком словосочетании слово «золотой» употреблено в переносном значении?",["Золотое кольцо","Золотая монета","Золотой характер"],2,"Material olmayan, insanın xüsusiyyətini bildirən ifadəni tap."],
+["В каком слове букв больше, чем звуков?",["Мяч","Дом","Сок"],0,"Üçü də 3 hərfdir. Birində yumşaqlıq işarəsi var, amma sənəd bu cavabı verir."],
+["Антоним к слову «старый»:",["Древний","Новый","Ветхий"],1,"Köhnənin əksi. Qalan ikisi daha da köhnə deməkdir."],
+["Как звучит пословица «Семь раз отмерь, один раз отрежь»?",["Yeddi ölç, bir biç.","Dost dar gündə tanınar.","İşləməyən dişləməz."],0,"Sözbəsöz tərcümə: say və fel eyni qalır. Əvvəl düşün, sonra et."],
+["Укажите словосочетание с прямым значением слова «тяжёлый»:",["Тяжёлый характер","Тяжёлая сумка","Тяжёлый день"],1,"Həqiqi mənada fiziki çəki ilə bağlı olan."],
+["«Водить за нос» означает:",["Обманывать","Помогать","Учить"],0,"Frazeoloji ifadə. Müsbət mənası yoxdur."],
+["Близкие по значению слова называются:",["Антонимы","Синонимы","Фразеологизмы"],1,"«Син» = birlikdə, yaxın. Antonimlər əks, frazeologizmlər isə sabit birləşmələrdir."],
+["Укажите одушевлённое существительное:",["Окно","Птица","Море"],1,"Uçan və nəfəs alan varlıq. Qalanları cansızdır."],
+["«Спустя рукава» означает:",["Старательно","Небрежно, плохо","Быстро"],1,"Qolları aşağı salıb iş görmək = səliqəsiz."],
+["Как переводится «Я учусь в колледже»?",["Mən kollecdə oxuyuram.","Mən məktəbdə işləyirəm.","Mən evə gedirəm."],0,"учусь = oxuyuram, в колледже = kollecdə. İş və getmək yoxdur."],
+["Как переводится «Вы хорошо говорите по-русски?»",["Siz rus dilində yaxşı danışırsınız?","Siz rus dilini sevirsiniz?","Siz rus dilində yazırsınız?"],0,"говорите = danışırsınız, хорошо = yaxşı. Yazmaq və sevmək yoxdur."]
+];
+const L=["А","Б","В"],N=Q.length,A=Array(N).fill(null),H=Array(N).fill(false);let i=0,done=false,ac;
+function snd(ok){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const t=ac.currentTime;
+(ok?[[660,0],[880,.12],[1175,.24]]:[[220,0],[165,.18]]).forEach(([f,d])=>{const o=ac.createOscillator(),g=ac.createGain();
+o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.18,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+(ok?.2:.3));
+o.connect(g);g.connect(ac.destination);o.start(t+d);o.stop(t+d+.32)})}catch(e){}}
+function pick(k){if(A[i]!==null)return;A[i]=k;snd(k===Q[i][2]);draw()}
+function go(n){i=Math.max(0,Math.min(N-1,n));draw()}
+function hint(){H[i]=!H[i];draw()}
+function draw(){const app=document.getElementById("app");if(done)return res(app);
+const q=Q[i],a=A[i],n=A.filter(x=>x!==null).length;
+app.innerHTML=`<div class="bar"><i style="width:${n/N*100}%"></i></div>
+<div class="meta"><span>Sual ${i+1} / ${N}</span><span>Cavablanıb: ${n}</span></div>
+<div class="card"><p class="q">${i+1}. ${q[0]}</p>
+${q[1].map((t,k)=>`<button class="o ${a!==null?(k===q[2]?"ok":k===a?"no":""):""}" ${a!==null?"disabled":""} onclick="pick(${k})"><b>${L[k]})</b> ${t}</button>`).join("")}
+<button class="hb" onclick="hint()">💡 ${H[i]?"İpucu – düzgün cavab: <b>"+L[q[2]]+") "+q[1][q[2]]+"</b><br><small>"+q[3]+"</small>":"İpucu qutusu – toxun"}</button></div>
+<div class="nav"><button class="b g" ${i==0?"disabled":""} onclick="go(i-1)">← Geri</button>
+<button class="b g" ${i==N-1?"disabled":""} onclick="go(i+1)">İrəli →</button></div>
+<div class="nav"><button class="b" onclick="fin()">Testi bitir</button></div>
+<div class="dots">${Q.map((_,k)=>`<button class="d ${A[k]===null?"":A[k]===Q[k][2]?"ok":"no"} ${k==i?"cur":""}" onclick="go(${k})">${k+1}</button>`).join("")}</div>`}
+function fin(){const e=A.filter(x=>x===null).length;done=true;draw();scrollTo(0,0)}
+function res(app){const ok=Q.filter((q,k)=>A[k]===q[2]).length,bad=Q.map((q,k)=>[q,k]).filter(([q,k])=>A[k]!==q[2]);
+app.innerHTML=`<div class="card"><div class="meta"><span>Nəticə</span></div><div class="big">${ok} / ${N}</div>
+<p style="text-align:center;margin:0;color:var(--mu)">${Math.round(ok/N*100)}% düzgün • ${bad.length} səhv</p></div>
+<h1 style="margin-top:20px">${bad.length?"Səhvlər (sual sırası ilə)":"Səhvin yoxdur, əla! 🎉"}</h1>
+${bad.map(([q,k])=>`<div class="m"><b>${k+1}. ${q[0]}</b>Sənin cavabın: ${A[k]===null?"<i>cavab verilməyib</i>":L[A[k]]+") "+q[1][A[k]]}<br>Düzgün cavab: <strong>${L[q[2]]}) ${q[1][q[2]]}</strong></div>`).join("")}
+<div class="nav"><button class="b" onclick="A.fill(null);H.fill(false);done=false;i=0;draw()">Yenidən başla</button></div>`}
+draw();
+</script></body></html>
