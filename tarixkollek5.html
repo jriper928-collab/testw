@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Azərbaycan tarixi — II kollekvium testi</title>
+<style>
+:root{color-scheme:light;--bg:#fff;--sf:#f6f7f9;--tx:#1b1f27;--mu:#667085;--bd:#e2e5ea;--ac:#2f6fed;--acb:#eaf1ff;--ok:#16794a;--okb:#e6f6ee;--er:#b42318;--erb:#fdeceb;--wr:#8a5a00;--wrb:#fff6e0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+.w{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--mu);font-size:14px;margin:0 0 16px}
+.bar{height:6px;background:var(--sf);border-radius:3px;overflow:hidden;margin:0 0 14px}
+.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .25s}
+.grid{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.grid button{width:34px;height:34px;padding:0;font-size:13px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer}
+.grid button.ok{background:var(--okb);border-color:var(--ok);color:var(--ok)}
+.grid button.er{background:var(--erb);border-color:var(--er);color:var(--er)}
+.grid button.cur{outline:2px solid var(--ac);outline-offset:1px}
+.card{border:1px solid var(--bd);border-radius:14px;padding:20px;background:var(--bg)}
+.num{font-size:13px;color:var(--mu);margin:0 0 6px}
+.q{font-size:18px;font-weight:600;margin:0 0 16px}
+.opt{display:block;width:100%;text-align:left;margin:0 0 10px;padding:12px 14px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit;font-size:15px;cursor:pointer}
+.opt:hover{background:var(--sf)}
+.opt.ok{background:var(--okb);border-color:var(--ok);color:var(--ok)}
+.opt.er{background:var(--erb);border-color:var(--er);color:var(--er)}
+.opt.lock{cursor:default}
+.opt.lock:hover{background:var(--bg)}
+.opt.ok.lock:hover{background:var(--okb)}.opt.er.lock:hover{background:var(--erb)}
+.hint{margin-top:6px;padding:10px 14px;border:1px dashed #e0b84a;background:var(--wrb);color:var(--wr);border-radius:10px;font-size:14px;cursor:pointer;user-select:none}
+.hint b{display:block;margin-bottom:2px}
+.hint span{display:none}
+.hint.open span{display:block}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit;font-size:15px;cursor:pointer}
+.btn:hover{background:var(--sf)}
+.btn.pr{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.pr:hover{background:#2559c4}
+.sc{font-size:40px;font-weight:700;margin:4px 0}
+.mi{border:1px solid var(--bd);border-radius:12px;padding:14px;margin:0 0 10px}
+.mi p{margin:0 0 4px;font-size:14px}
+.mi .q2{font-weight:600;font-size:15px}
+.bad{color:var(--er)}.good{color:var(--ok)}
+.mets{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 18px}
+.mets div{background:var(--sf);border-radius:10px;padding:10px 16px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="w" id="app"></div>
+<script>
+var D=[
+["1812-ci ildə baş vermiş döyüşlərin nəticəsi hansıdır?","Aslanduz döyüşündə rus qoşunları Qacar qoşunlarını məğlub etdi",["Lənkəran döyüşü 1812-ci ildə, Aslanduz isə 1813-cü ildə baş verdi","Aslanduz döyüşündə Qacar qoşunları qalib gəldi","Gəncə 1812-ci ildə rus qoşunları tərəfindən tutuldu"],"Tarixləri qarışdırma: Aslanduz — 1812, Lənkəran — 1813."],
+["Kürəkçay müqaviləsi Qarabağ xanlığının xarici siyasətini necə məhdudlaşdırırdı?","İbrahimxəlil xan müstəqil xarici əlaqə hüququnu itirərək Rusiyanın himayəsini qəbul etdi",["Qarabağ xanlığı Qacarların vassalına çevrildi","Xanlıq ləğv edilib Rusiyaya tam birləşdirildi","İbrahimxəlil xan yalnız vergi ödəməli oldu, xarici siyasətə toxunulmadı"],"Söhbət xarici siyasətdən və himayədən gedir."],
+["1828-ci il Türkmənçay müqaviləsinin əsas şərtlərindən biri hansıdır?","İrəvan və Naxçıvan xanlıqları Rusiyaya verildi; Araz çayı sərhəd oldu",["Qarabağ və Gəncə Rusiyaya verildi; Kür çayı sərhəd oldu","Quba və Talış Rusiyaya verildi, İrəvan Qacarlarda qaldı","Araz çayı Rusiya ilə Osmanlı arasında sərhəd oldu"],"Sərhəd çayı Araz idi; Rusiya ilə Qacarlar arasında."],
+["1804-cü ildə İrəvan uğrunda mübarizədə rus qoşunlarının geri çəkilməsinin səbəbi nə idi?","İrəvan qalasının möhkəm müdafiəsi və yerli qüvvələrin müqaviməti",["Çar I Pavelin geri çəkilmə əmri","Osmanlı qoşunlarının köməyə gəlməsi","Qarabağ xanının xəyanəti"],"Qalanın müdafiəsi və yerli müqavimət."],
+["Gülüstan müqaviləsinə əsasən Qacarların hakimiyyəti altında qalan xanlıqlar hansılardır?","İrəvan və Naxçıvan xanlıqları",["Qarabağ və Gəncə xanlıqları","Şəki və Şirvan xanlıqları","Bakı və Quba xanlıqları"],"İrəvan və Naxçıvan 1828-ə qədər Qacarlarda qaldı."],
+["1510-cu ildə Mərv yaxınlığındakı döyüşün nəticəsi nə oldu?","Səfəvilər qalib gəldi, Şeybani xan öldürüldü, Xorasanda mövqe gücləndi",["Şeybani xan qalib gəldi, Şah İsmayıl geri çəkildi","Osmanlılar Səfəvilərə qalib gəldi","Döyüş heç-heçə bitdi, Xorasan bölündü"],"Xorasan bölgəsi və Şeybani xanın aqibəti."],
+["Komendantların səlahiyyətləri hansılar idi?","İnzibati, hərbi, polis və məhkəmə işlərinə nəzarət",["Yalnız vergi toplamaq","Yalnız ticarət və gömrük işləri","Yalnız dini məsələlər"],"Dörd sahə: inzibati, hərbi, polis, məhkəmə."],
+["1761-ci il Qaraçəmən döyüşündə Fətəli xan Əfşarın vəziyyətini çətinləşdirən hadisə nə idi?","Müttəfiqlərin xəyanəti",["Osmanlı dövlətinin müdaxiləsi","Ərzaq çatışmazlığı","Kərim xanın ordusunun sayca üstünlüyü"],"Diqqət: PDF-də bu cavab ehtimal kimi göstərilib, variantlarla yoxlamaq lazımdır."],
+["Qaradağ xanlığının müstəqil siyasi qurum kimi fəaliyyətini dayandırması nə ilə bağlıdır?","Rusiya-Qacar müharibələri və 1828-ci il Türkmənçay müqaviləsindən sonrakı proseslər",["1752-ci il Qızılqaya hadisəsi","Əfqanların İsfahanı tutması","Kərim xan Zəndin yürüşü"],"Diqqət: dəqiq tarix variantlarla yoxlanmalıdır."],
+["Xanlıqlar arasında vahid siyasi birliyin yaranmamasının nəticəsi nə oldu?","Parçalanmış vəziyyət xarici qüvvələrin işğalını asanlaşdırdı",["Xanlıqlar gücləndi, işğal mümkünsüz oldu","Xanlıqlar Rusiyaya könüllü birləşdi","Qacarlar xanlıqlara müstəqillik verdi"],"Parçalanma = işğala açıq qapı."],
+["Ağa Məhəmməd şah Qacarın 1797-ci il yürüşünün nəticəsi nə oldu?","Şuşada öldürüldü; Qacar qoşunları Qarabağı tərk etdi",["Təbrizdə öldürüldü; Qarabağ tutuldu","Şuşa tutuldu, İbrahimxəlil xan həlak oldu","Gəncədə rus qoşunları tərəfindən əsir alındı"],"1797 — Şuşada öldürülmə."],
+["1803-cü il Car-Balakən müqaviləsinin əsas şərti nə idi?","Camaatlıq Rusiyanın hakimiyyətini və asılılığını qəbul etməli oldu",["Qacarlara vergi ödəməli oldu","Quba xanlığına birləşdi","Osmanlı himayəsini qəbul etdi"],"Rusiyadan asılılıq."],
+["I Şah Abbasın mərkəzləşdirmə siyasətinin məqsədi nə idi?","Mərkəzi hakimiyyəti gücləndirmək, qızılbaş əmirlərinin nüfuzunu azaltmaq, vahid ordu yaratmaq",["Qızılbaş əmirlərinin nüfuzunu artırmaq","Dövləti müstəqil bəyliklərə bölmək","Ordunu ləğv edib yalnız muzdlu qoşuna keçmək"],"Mərkəzləşdirmə: güclü şah, zəif əmirlər, vahid ordu."],
+["1500–1501-ci illərdə Şah İsmayılın hakimiyyətə gəlməsi hansı ardıcıllıqla baş verdi?","Ərzincan, Şirvan yürüşü, Cabanı, Bakı, Şərur, Təbriz; 1501-də şah elan edildi",["Ərzincan, Şərur, Cabanı, Təbriz, Bakı; 1503-də şah elan edildi","Ərdəbil, Mərv, Çaldıran, Təbriz; 1514-də şah elan edildi","Şirvan, Çaldıran, Bakı, Təbriz; 1500-də şah elan edildi"],"Təbrizin tutulması və 1501-də şah elan olunma sonda gəlir."],
+["Səfəvilər dövlətinin yaranmasına zəmin yaradan təşkilat və ilkin mərkəzi hansıdır?","Səfəviyyə təriqəti; mərkəzi Ərdəbil",["Qızılbaş təriqəti; mərkəzi Təbriz","Bektaşilik; mərkəzi Şamaxı","Qadiriyyə; mərkəzi İsfahan"],"Banisi Şeyx Səfiəddin Ərdəbili sayılır."],
+["1796-cı ildə Rusiyanın Azərbaycana yürüşünün nəticəsi nə oldu?","Bir sıra ərazilər tutuldu, II Yekaterinanın ölümündən sonra I Pavel qoşunları geri çağırdı",["Rusiya bütün Azərbaycanı ilhaq etdi","Qacarlar rus qoşunlarını məğlub etdi","Osmanlı müdaxiləsi ilə rus qoşunları geri çəkildi"],"Hökmdarın ölümü və yeni çarın qərarı."],
+["Kərim xan Zəndin Urmiya yürüşü necə nəticələndi?","Urmiya mühasirəyə alındı, müqavimətdən sonra tutuldu, Fətəli xan Əfşar məğlub edildi",["Kərim xan məğlub olub geri çəkildi","Urmiya mühasirəsiz təslim oldu, Fətəli xan Kərim xana qoşuldu","Fətəli xan qalib gəldi, Kərim xanın ordusu dağıldı"],"Diqqət: hadisələrin ardıcıllığı variantlarla dəqiqləşdirilməlidir."],
+["Hacı Çələbi xanın siyasi fəaliyyətinin əsas istiqaməti nə idi?","Şəki xanlığının müstəqilliyini qorumaq və ərazisini genişləndirmək",["Şəkini Qacarlara birləşdirmək","Şəkini Rusiyanın himayəsinə vermək","Şəkini Quba xanlığına tabe etmək"],"Müstəqillik + genişlənmə."],
+["Car-Balakən camaatlığının siyasi quruluşu necə idi?","Ayrı-ayrı icmaların birliyi; idarəçilikdə icma rəhbərləri və ağsaqqallar mühüm rol oynayırdı",["İrsi xan monarxiyası","Qacar canişinliyi","Hərbi komendant idarəsi"],"İcma + ağsaqqallar."],
+["I Rusiya-Qacar müharibəsi hansı illərdə baş verdi?","1804–1813",["1796–1804","1826–1828","1813–1828"],"Diqqət: PDF-də bu sual variantsız idi; müharibə 1804–1813 illərini əhatə edir."],
+["Car-Balakən camaatlığının xanlıqlardan fərqi nə idi?","İrsi xan hakimiyyəti deyil, icma idarəçiliyi formasında təşkil olunmuşdu",["İrsi xan hakimiyyəti idi, lakin daha kiçik ərazidə","Qacar canişinliyi idi","Osmanlı sancağı idi"],"Xanlıq = irsi xan; camaatlıq = icma."],
+["Səfəvilər dövlətinin tənəzzülünü sürətləndirən hadisə hansıdır?","Əfqanların 1722-ci ildə İsfahanı ələ keçirməsi",["Amasiya sülhünün imzalanması","Mərv döyüşü","Paytaxtın İsfahana köçürülməsi"],"1722."],
+["Fətəli xanın 1784-cü il yürüşü necə nəticələndi?","Ərdəbil və Məşkin istiqamətində yürüş etdi, lakin Rusiya təzyiqi ilə geri çəkildi",["Təbriz və Urmiyaya yürüşdə qələbə qazandı","Gəncə və Qarabağa yürüşdə Şuşanı tutdu","Dərbəndə yürüş edib Quba ilə birləşdi"],"Diqqət: dəqiq ifadə test variantları ilə yoxlanmalıdır."],
+["Əhməd xanın hakimiyyəti dövründə Xoy xanlığı necə dəyişdi?","Xoy xanlığının nüfuzu artdı və Cənubi Azərbaycanın siyasi həyatında fəal rol oynadı",["Xoy xanlığı ləğv edildi","Xoy Rusiyaya tabe oldu","Xoy Qarabağ xanlığına birləşdi"],"Diqqət: variantlarla dəqiqləşdirmək məsləhətdir."],
+["Ağa Məhəmməd xan Qacarın 1795-ci il yürüş planı hansı istiqamətləri əhatə edirdi?","Qarabağ, İrəvan və Talış istiqamətləri",["Şəki, Şirvan və Dərbənd","Gəncə, Bakı və Naxçıvan","Təbriz, Ərdəbil və Xoy"],"Diqqət: üç istiqamətin dəqiq bölgüsü variantlarla yoxlanmalıdır."],
+["“Qızılbaş” adının mənşəyi nədir?","Qırmızıbaş deməkdir; 12 imamı simvolizə edən 12 qırmızı zolaqlı başlıq taxırdılar",["Qızıl rəngli papaq; 4 xəlifəni simvolizə edirdi","Qırmızı bayraq; 7 imamı simvolizə edirdi","Qırmızıbaş deməkdir; 40 şeyxi simvolizə edirdi"],"12 imam — 12 zolaq."],
+["I Rusiya-Qacar müharibəsinin başlanmasına səbəb olan hadisə hansıdır?","Rusiyanın 1801-ci ildə Şərqi Gürcüstanı ilhaq etməsi",["1796-cı il yürüşü","Gülüstan müqaviləsi","Kürəkçay müqaviləsi"],"Müharibə 1804-də başladı."],
+["Fətəli xanın birləşdirmə siyasəti nəyə yönəlmişdi?","Dərbənd, Bakı, Şamaxı və digər əraziləri Quba xanlığı altında birləşdirməyə",["Qarabağ və Gəncəni Şəki xanlığı altında birləşdirməyə","Təbriz, Xoy və Urmiyanı Quba altında birləşdirməyə","Ərdəbil və Talışı Rusiya altında birləşdirməyə"],"Diqqət: dəqiq tarix ardıcıllığı dərslik və variantlarla yoxlanmalıdır."],
+["Paytaxtın İsfahana köçürülməsinin məqsədi nə idi?","I Şah Abbas 1598-ci ildə dövlətin idarəçiliyini və iqtisadi-siyasi mövqeyini gücləndirmək istəyirdi",["1501-ci ildə paytaxtı Təbrizdən Ərdəbilə köçürmək","1555-ci ildə paytaxtı İsfahandan Qəzvinə qaytarmaq","1722-ci ildə paytaxtı İsfahandan Təbrizə köçürmək"],"Tarix: 1598."],
+["1795-ci ildə Şuşa qalasının müdafiəsi necə nəticələndi?","İbrahimxəlil xan müdafiəni təşkil etdi; Qacar qoşunları qalanı ala bilmədi",["Qacarlar Şuşanı tutdu","Müdafiəyə Rusiya qoşunları başçılıq etdi","Şuşa təslim oldu, İbrahimxəlil xan Gürcüstana qaçdı"],"Qala alınmadı."],
+["Cənubi Qafqazın baş hakiminin səlahiyyətləri hansılar idi?","Ümumi inzibati və hərbi idarəçilik, komendantların fəaliyyətinə nəzarət",["Yalnız məhkəmə işləri","Yalnız maliyyə işləri","Yalnız ticarət işləri"],"Diqqət: dəqiq səlahiyyət bölgüsü variantlarla yoxlanmalıdır."],
+["Qızılqaya xəyanəti nədir?","1752-ci ildə II İrakli Azərbaycan xanlarını hiylə ilə əsir aldı; xanların birləşməsinə mane oldu",["1752-ci ildə Kərim xan xanları əsir aldı","1722-ci ildə II İrakli xanları məğlub etdi","1795-ci ildə Ağa Məhəmməd xan xanları əsir aldı"],"Tarix: 1752. Əsir alan: II İrakli."],
+["Gəncə xanlığının işğalı necə baş verdi?","1804-cü ildə rus qoşunları tərəfindən işğal edildi; Cavad xan döyüşdə həlak oldu",["1804-də işğal edildi, Cavad xan Qacarlara qaçdı","1813-də sülh yolu ilə Rusiyaya birləşdi","1797-də Qacarlar tərəfindən tutuldu"],"1804, Cavad xan həlak oldu."],
+["I Təhmasib dövründə Osmanlılarla hansı sülh imzalandı?","1555-ci ildə Amasiya sülhü",["1510-cu ildə Mərv sülhü","1598-ci ildə İsfahan sülhü","1813-cü ildə Gülüstan sülhü"],"Tarix: 1555."],
+["Qarabağ xanlığının müdafiə qalalarının ardıcıllığı necədir?","Bayat qalası → Şahbulaq qalası → Şuşa qalası",["Şahbulaq qalası → Bayat qalası → Şuşa qalası","Şuşa qalası → Bayat qalası → Şahbulaq qalası","Bayat qalası → Şuşa qalası → Şahbulaq qalası"],"Şuşa sonuncu, ən möhkəm qaladır."],
+["Fətəli xan Əfşar dövründə Urmiya xanlığının mövqeyi necə idi?","Cənubi Azərbaycanda güclü siyasi-hərbi mərkəzə çevrildi",["Rusiyanın vassalı oldu","Ləğv edilərək Xoyla birləşdirildi","Qacar canişinliyinə çevrildi"],"Güclü mərkəz."],
+["Gülüstan müqaviləsinin şərtləri hansılardır?","1813; Qarabağ, Gəncə, Şəki, Şirvan, Quba, Bakı və Talışın bir hissəsi Rusiyaya keçdi; İrəvan və Naxçıvan Qacarlarda qaldı",["1828; Qarabağ, Gəncə, Şəki, Şirvan, Quba və Bakı Rusiyaya keçdi","1813; İrəvan və Naxçıvan Rusiyaya keçdi","1813; yalnız Qarabağ və Gəncə Rusiyaya keçdi"],"1813 — Gülüstan; 1828 — Türkmənçay."],
+["Təbriz xanlığı nə vaxt yarandı?","XVIII əsrin ortalarında",["XVI əsrin əvvəlində","XIX əsrin əvvəlində","XVII əsrin sonunda"],"Diqqət: Əmiraslan xanla bağlı dəqiq variant PDF-də göstərilməyib."],
+["İrəvan xanlığının yaranması və Rusiyaya birləşdirilməsi necə olub?","XVIII əsr ortasında yarandı; 1827-də tutuldu, 1828-ci il Türkmənçay ilə Rusiyaya verildi",["XVIII əsrdə yarandı; 1804-də tutuldu, Gülüstan ilə verildi","XVI əsrdə yarandı; 1813-də Gülüstan ilə verildi","XVIII əsrdə yarandı; 1795-də Qacarlar tutdu, 1828-də Osmanlıya verildi"],"1827 — tutulma, 1828 — Türkmənçay."],
+["Quba xanlığının banisi kimdir və mərkəz nə vaxt Qubaya köçürülüb?","Hüseynəli xan; 1758",["Fətəli xan; 1758","Hüseynəli xan; 1795","Hacı Çələbi xan; 1752"],"Bani: Hüseynəli xan; tarix: 1758."]
+];
+var P=[
+["1812-ci ildə Aslanduz döyüşündə rus qoşunları Qacar qoşunlarını məğlub etdi. Lənkəran döyüşü isə 1813-cü ilin əvvəlində baş verdi.","Tarixləri qarışdırma: Aslanduz — 1812, Lənkəran — 1813."],
+["İbrahimxəlil xan xarici dövlətlərlə müstəqil əlaqə saxlamaq hüququnu itirərək Rusiyanın himayəsini qəbul etdi."],
+["İrəvan və Naxçıvan xanlıqları Rusiyaya verildi; Araz çayı Rusiya ilə Qacarlar arasında sərhəd oldu."],
+["İrəvan qalasının möhkəm müdafiəsi və yerli qüvvələrin müqaviməti rus qoşunlarının geri çəkilməsinə səbəb oldu."],
+["İrəvan və Naxçıvan xanlıqları Qacarların hakimiyyəti altında qaldı."],
+["Səfəvilər qalib gəldi, Şeybani xan öldürüldü və Səfəvilərin Xorasan bölgəsində mövqeyi gücləndi."],
+["İnzibati, hərbi, polis və məhkəmə işlərinə nəzarət edirdilər."],
+["Müttəfiqlərin xəyanəti",null,"Cavab: Bu sualın dəqiq cavabını variantlarla yoxlamaq lazımdır; əvvəlki cavabda müttəfiqlərin xəyanəti ehtimal kimi göstərilmişdi. Diqqət: Variantlar olmadığı üçün cavab tam təsdiqlənmir."],
+["Qaradağ xanlığının müstəqilliyi Rusiya-Qacar müharibələri və 1828-ci il Türkmənçay müqaviləsindən sonrakı proseslər nəticəsində aradan qalxdı.","Dəqiq tarix və hadisə variantlarla yoxlanmalıdır."],
+["Xanlıqların parçalanmış vəziyyətdə qalması xarici qüvvələrin Azərbaycan torpaqlarını işğal etməsini asanlaşdırdı."],
+["Ağa Məhəmməd şah Qacar Şuşada öldürüldü; Qacar qoşunları Qarabağı tərk etdi."],
+["Car-Balakən camaatlığı Rusiyanın hakimiyyətini və asılılığını qəbul etməli oldu."],
+["Mərkəzi hakimiyyəti gücləndirmək, qızılbaş əmirlərinin nüfuzunu azaltmaq və vahid ordu yaratmaq."],
+["Ərzincana toplanma, Şirvan yürüşü, Cabanı döyüşü, Bakının tutulması, Şərur döyüşü və Təbrizin tutulması; 1501-ci ildə Şah İsmayıl şah elan edildi."],
+["Səfəviyyə təriqəti; ilkin mərkəzi Ərdəbil şəhəri idi. Təriqətin banisi Şeyx Səfiəddin Ərdəbili sayılır."],
+["Rusiya qoşunları bir sıra əraziləri tutdu, lakin II Yekaterinanın ölümündən sonra I Pavel qoşunları geri çağırdı."],
+["Urmiya mühasirəyə alındı, müqavimətdən sonra şəhər tutuldu və Fətəli xan Əfşar məğlub edildi.","Hadisələrin dəqiq ardıcıllığı variantlarla dəqiqləşdirilməlidir."],
+["Şəki xanlığının müstəqilliyini qorumaq və ərazilərini genişləndirmək."],
+["Ayrı-ayrı icmaların birliyi idi; idarəçilikdə icma rəhbərləri və ağsaqqallar mühüm rol oynayırdı."],
+["Müharibə 1804–1813-cü illərdə baş verdi.",null,"Cavab: Müharibə 1804–1813-cü illərdə baş verdi. Döyüş variantları təqdim edilmədiyi üçün aid olmayan döyüşü seçmək mümkün deyil. Diqqət: Variantlar mütləq lazımdır."],
+["İrsi xan hakimiyyəti deyil, icma/camaat idarəçiliyi formasında təşkil olunmuşdu."],
+["Əfqanların 1722-ci ildə İsfahanı ələ keçirməsi."],
+["Fətəli xan Ərdəbil və Məşkin istiqamətində yürüş etdi, lakin Rusiya təzyiqi ilə geri çəkilməli oldu.","Dəqiq ifadə test variantları ilə yoxlanmalıdır."],
+["Əhməd xan dövründə Xoy xanlığının nüfuzu artdı və o, Cənubi Azərbaycanın siyasi həyatında fəal rol oynadı.","Variantlarla dəqiqləşdirmək məsləhətdir."],
+["Qarabağ, İrəvan və Talış istiqamətləri",null,"Cavab: Əvvəlki cavabda Qarabağ, İrəvan və Talış istiqamətləri göstərilmişdi; üç istiqamətin dəqiq bölgüsü variantlarla yoxlanmalıdır. Diqqət: Variantlar olmadan qəti cavab vermək olmaz."],
+["“Qızılbaş” qırmızıbaş deməkdir. Qızılbaşlar 12 imamı simvolizə edən 12 qırmızı zolaqlı başlıq taxırdılar."],
+["Rusiyanın 1801-ci ildə Şərqi Gürcüstanı ilhaq etməsi və bölgədə genişlənməsi Qacarlarla münasibətləri kəskinləşdirdi; 1804-cü ildə müharibə başladı."],
+["Fətəli xan Dərbənd, Bakı, Şamaxı və digər əraziləri Quba xanlığının hakimiyyəti altında birləşdirməyə çalışdı.","Dəqiq tarix ardıcıllığı dərslik və variantlarla yoxlanmalıdır."],
+["I Şah Abbas 1598-ci ildə paytaxtı İsfahana köçürərək dövlətin idarəçiliyini və iqtisadi-siyasi mövqeyini gücləndirmək istəyirdi."],
+["İbrahimxəlil xan Şuşanın müdafiəsini təşkil etdi; Qacar qoşunları qalanı ala bilmədi."],
+["Ümumi inzibati və hərbi idarəçilik, komendantların fəaliyyətinə nəzarət.","Dəqiq səlahiyyət bölgüsü variantlarla yoxlanmalıdır."],
+["1752-ci ildə II İrakli Azərbaycan xanlarını Qızılqayada hiylə ilə əsir aldı; bu hadisə xanların birləşməsinə mane oldu."],
+["Gəncə xanlığı 1804-cü ildə rus qoşunları tərəfindən işğal edildi; Cavad xan döyüşdə həlak oldu."],
+["1555-ci ildə Amasiya sülh müqaviləsi imzalandı."],
+["Bayat qalası → Şahbulaq qalası → Şuşa qalası."],
+["Urmiya xanlığı Fətəli xan Əfşarın dövründə Cənubi Azərbaycanda güclü siyasi-hərbi mərkəzə çevrildi."],
+["1813-cü ildə imzalandı. Qarabağ, Gəncə, Şəki, Şirvan, Quba, Bakı və Talışın bir hissəsi Rusiyaya keçdi; İrəvan və Naxçıvan Qacarların hakimiyyətində qaldı."],
+["Təbriz xanlığı XVIII əsrin ortalarında yarandı.",null,"Cavab: Təbriz xanlığı XVIII əsrin ortalarında yarandı. Əmiraslan xanın fəaliyyəti ilə bağlı dəqiq variantı görmək lazımdır. Diqqət: Bu sualın cavabı variantlarla dəqiqləşdirilməlidir."],
+["İrəvan xanlığı XVIII əsrin ortalarında yarandı; 1827-ci ildə rus qoşunları tərəfindən tutuldu, 1828-ci il Türkmənçay müqaviləsi ilə Rusiyaya verildi."],
+["Quba xanlığının banisi Hüseynəli xan idi; xanlığın mərkəzi 1758-ci ildə Qubaya köçürüldü."]
+];
+D.forEach(function(d,i){var p=P[i];d[1]=p[0];d[3]=p[2]||("Cavab: "+p[0]+(p[1]?" Diqqət: "+p[1]:""))});
+var S=D.map(function(d){var o=[d[1]].concat(d[2]);for(var i=o.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=o[i];o[i]=o[j];o[j]=t}return{q:d[0],c:d[1],o:o,h:d[3],a:null,hs:false}});
+var cur=0,fin=false,A=document.getElementById("app"),ac=null;
+function snd(ok){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();var t=ac.currentTime;var seq=ok?[[660,0],[880,.12],[1175,.24]]:[[200,0],[150,.16]];seq.forEach(function(s){var o=ac.createOscillator(),g=ac.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=s[0];g.gain.setValueAtTime(.0001,t+s[1]);g.gain.exponentialRampToValueAtTime(.18,t+s[1]+.02);g.gain.exponentialRampToValueAtTime(.0001,t+s[1]+(ok?.22:.3));o.connect(g);g.connect(ac.destination);o.start(t+s[1]);o.stop(t+s[1]+.32)})}catch(e){}}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function done(){return S.filter(function(s){return s.a!==null}).length}
+function render(){
+if(fin){return result()}
+var s=S[cur],h='<h1>Azərbaycan tarixi — II kollekvium</h1><p class="sub">40 sualluq test. Cavab seçin, ipucu üçün sarı qutuya toxunun.</p>';
+if(ask)h+='<div style="border:1px solid #e0b84a;background:var(--wrb);color:var(--wr);border-radius:12px;padding:14px;margin:0 0 14px"><p style="margin:0 0 10px"><b>'+(40-done())+' sual cavabsız qalıb.</b> Yenə də testi bitirmək istəyirsiniz?</p><button class="btn pr" onclick="finish(true)">Bəli, bitir</button> <button class="btn" onclick="cancelAsk()">Davam et</button></div>';
+h+='<div class="bar"><i style="width:'+(done()/40*100)+'%"></i></div><div class="grid">';
+S.forEach(function(x,i){var c=x.a===null?"":(x.a===x.c?"ok":"er");if(i===cur)c+=" cur";h+='<button class="'+c+'" onclick="go('+i+')" aria-label="Sual '+(i+1)+'">'+(i+1)+'</button>'});
+h+='</div><div class="card"><p class="num">Sual '+(cur+1)+' / 40</p><p class="q">'+esc(s.q)+'</p>';
+s.o.forEach(function(o,i){var c="opt";if(s.a!==null){c+=" lock";if(o===s.c)c+=" ok";else if(o===s.a)c+=" er"}h+='<button class="'+c+'" onclick="pick('+i+')">'+esc(o)+'</button>'});
+h+='<div class="hint'+(s.hs?" open":"")+'" onclick="hint()"><b>İpucu (toxunun)</b><span>'+esc(s.h)+'</span></div>';
+h+='<div class="nav"><button class="btn" onclick="go('+(cur-1)+')"'+(cur===0?' style="visibility:hidden"':'')+'>← Əvvəlki</button>';
+if(cur<39)h+='<button class="btn pr" onclick="go('+(cur+1)+')">Növbəti →</button>';
+else h+='<button class="btn pr" onclick="finish()">Nəticəni göstər</button>';
+h+='</div></div>';
+if(cur<39)h+='<p style="text-align:right;margin:12px 0 0"><button class="btn" onclick="finish()">Testi bitir</button></p>';
+A.innerHTML=h}
+function go(i){if(i<0||i>39)return;cur=i;render();window.scrollTo(0,0)}
+function pick(i){var s=S[cur];if(s.a!==null)return;s.a=s.o[i];snd(s.a===s.c);render()}
+function hint(){S[cur].hs=!S[cur].hs;render()}
+var ask=false;
+function finish(f){if(done()<40&&f!==true){ask=true;render();window.scrollTo(0,0);return}ask=false;fin=true;render();window.scrollTo(0,0)}
+function cancelAsk(){ask=false;render()}
+function result(){
+var ok=S.filter(function(s){return s.a===s.c}).length,un=S.filter(function(s){return s.a===null}).length,bad=40-ok-un;
+var h='<h1>Nəticə</h1><div class="sc">'+ok+' / 40</div><p class="sub">'+Math.round(ok/40*100)+'% düzgün cavab</p>';
+h+='<div class="mets"><div class="good">Düzgün: '+ok+'</div><div class="bad">Səhv: '+bad+'</div><div>Cavabsız: '+un+'</div></div>';
+var n=0;h+='<h2 style="font-size:17px;margin:0 0 10px">Səhvlər və cavabsız suallar</h2>';
+S.forEach(function(s,i){if(s.a===s.c)return;n++;h+='<div class="mi"><p class="q2">'+(i+1)+'. '+esc(s.q)+'</p>'+(s.a===null?'<p class="bad">Cavab verilməyib</p>':'<p class="bad">Sizin cavab: '+esc(s.a)+'</p>')+'<p class="good">Düzgün cavab: '+esc(s.c)+'</p></div>'});
+if(!n)h+='<p class="good">Səhv yoxdur. Əla nəticə!</p>';
+h+='<div class="nav"><button class="btn" onclick="fin=false;render()">← Suallara qayıt</button><button class="btn pr" onclick="location.reload()">Yenidən başla</button></div>';
+A.innerHTML=h}
+render();
+</script>
+</body>
+</html>
