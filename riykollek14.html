@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kollokvium Test</title>
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f8fc;--card:#fff;--ink:#1d2433;--mut:#6b7488;--line:#e1e6f0;--pri:#3b6cf6;--ok:#1f9d55;--okbg:#e6f6ec;--bad:#d64545;--badbg:#fdecec;--hint:#fff7df}
+*{box-sizing:border-box}
+html,body{margin:0}body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.w{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 12px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri);transition:width .3s}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.nav button{width:34px;height:34px;border:1px solid var(--line);background:var(--card);border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink)}
+.nav button.cur{border-color:var(--pri);box-shadow:0 0 0 2px #3b6cf633}
+.nav button.ok{background:var(--okbg);border-color:var(--ok)}.nav button.bad{background:var(--badbg);border-color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px #1d24330d}
+.qn{color:var(--mut);font-size:13px}.q{font-size:18px;font-weight:600;margin:6px 0 16px}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;margin:8px 0;border:1.5px solid var(--line);background:#fff;border-radius:12px;font-size:16px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--pri);background:#f2f6ff}
+.opt:disabled{cursor:default}.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.hb{margin-top:12px;border:1.5px dashed #e0b84a;background:var(--hint);border-radius:12px;padding:10px 14px;cursor:pointer;font-size:14px}
+.hb b{display:block}.hb span{display:none;margin-top:6px}.hb.open span{display:block}
+.row{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
+.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:15px;color:var(--ink)}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn:disabled{opacity:.4;cursor:default}
+.score{font-size:42px;font-weight:700;text-align:center;color:var(--pri);margin:6px 0}
+.err{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:10px;padding:10px 12px;margin:10px 0;background:#fff}
+.err small{display:block;color:var(--mut)}.g{color:var(--ok)}.r{color:var(--bad)}
+</style></head><body><div class="w">
+<h1>📘 Kollokvium Test</h1>
+<div class="bar"><i id="pb"></i></div>
+<div class="nav" id="nav"></div>
+<div id="main"></div>
+</div>
+<script>
+// [sual, düzgün, [3 səhv], ipucu(sənəddəki cavab)]
+const D=[
+["Xətti cəbri tənliklər sisteminin Kramer üsulu","","Əvvəlcə Δ hesablanır. Δ ≠ 0 olarsa, hər dəyişən üçün sütun sərbəst hədlərlə əvəz edilir: x = Δx/Δ, y = Δy/Δ, z = Δz/Δ",["Əvvəlcə Δ hesablanır. Δ = 0 olarsa, hər dəyişən üçün x = Δ/Δx, y = Δ/Δy, z = Δ/Δz","Sətirlər üzərində elementar çevirmələr aparılır, sonra geri yerinəqoyma edilir","A matrisinin tərsi tapılır və B-yə vurulur: X = A⁻¹B"],"Əvvəlcə əmsallar determinantı hesablanır: Δ. Əgər Δ ≠ 0-dırsa, sistemin yeganə həlli var. Sonra hər dəyişən üçün uyğun sütun sərbəst hədlərlə əvəz edilir: x = Δx/Δ, y = Δy/Δ (üç dəyişənlidə z = Δz/Δ)."],
+["Xətti cəbri tənliklər sisteminin matris üsulu","","AX = B yazılır; det(A) ≠ 0 olarsa A⁻¹ mövcuddur və X = A⁻¹B",["AX = B yazılır; det(A) ≠ 0 olarsa X = B·A⁻¹","AX = B yazılır; det(A) = 0 olarsa X = A⁻¹B","AX = B yazılır; X = Δx/Δ düsturu ilə tapılır"],"Sistem AX = B şəklində yazılır. Əgər det(A) ≠ 0-dırsa, A⁻¹ mövcuddur və həll X = A⁻¹B düsturu ilə tapılır. Yəni əvvəl A matrisinin tərsi, sonra onun B-yə hasili hesablanır."],
+["Ellips və onun kanonik tənliyi","","x²/a² + y²/b² = 1 (a,b > 0); a və b yarımoxlardır, tam oxlar 2a və 2b",["x²/a² − y²/b² = 1 (a,b > 0); a və b yarımoxlardır, tam oxlar 2a və 2b","x²/a² + y²/b² = 1 (a,b > 0); a və b tam oxlardır, yarımoxlar 2a və 2b","y² = 2px (p > 0); p parametrdir, oxların uzunluğu 2p"],"Mərkəzi koordinat başlanğıcında olan ellipsin kanonik tənliyi x²/a² + y²/b² = 1-dir (a,b > 0). a və b yarımoxlardır; oxların tam uzunluqları 2a və 2b-dir."],
+["Hiperbolanın absis oxu üzərindəki təpə nöqtələri","x²/a² − y²/b² = 1 hiperbolası","A₁(−a; 0) və A₂(a; 0)",["A₁(0; −a) və A₂(0; a)","B₁(0; −b) və B₂(0; b)","A₁(−c; 0) və A₂(c; 0)"],"x²/a² − y²/b² = 1 formasında hiperbolanın təpələri absis oxundadır: A₁(−a; 0) və A₂(a; 0)."],
+["Kramer üsulunun tətbiq şərti","","Əsas determinant sıfırdan fərqli olmalıdır: Δ ≠ 0",["Əsas determinant sıfra bərabər olmalıdır: Δ = 0","Bütün Δx, Δy, Δz sıfır olmalıdır","Əsas determinant 1-ə bərabər olmalıdır: Δ = 1"],"Əsas determinant sıfırdan fərqli olmalıdır: Δ ≠ 0. Bu şərtdə sistemin yeganə həlli olur və Kramer düsturlarından istifadə edilir."],
+["Qaus üsulu","","Genişləndirilmiş matris qurulur, sətir çevirmələri ilə pilləli formaya gətirilir, sonra sonuncu tənlikdən başlayaraq geri yerinəqoyma aparılır",["Əmsallar matrisinin determinantı hesablanır, sonra hər sütun sərbəst hədlərlə əvəz edilir","A matrisinin tərsi tapılır, sonra B-yə vurulur","Hər tənlik ayrıca inteqrallanır, sonra dəyişənlər tapılır"],"Tənliklər sisteminin genişləndirilmiş matrisi qurulur. Sətirlər üzərində elementar çevirmələr aparılaraq matris pilləli formaya gətirilir. Sonra sonuncu tənlikdən başlayaraq dəyişənlər ardıcıl tapılır (geri yerinəqoyma)."],
+["A·B matrisini tapın","A = [[2,1],[1,4],[3,0]], B = [[4,2],[1,5]]","[[9,9],[8,22],[12,6]]",["[[9,8],[9,22],[12,6]]","[[8,9],[9,22],[6,12]]","[[9,9],[8,20],[12,6]]"],"A = [[2,1],[1,4],[3,0]], B = [[4,2],[1,5]]. Sətir-sütun vururuq: AB = [[2·4+1·1, 2·2+1·5],[1·4+4·1, 1·2+4·5],[3·4+0·1, 3·2+0·5]] = [[9,9],[8,22],[12,6]]."],
+["A + 2B matrisinin birinci sətir elementlərinin cəmi","A = [[3,1],[2,4],[1,5]], B = [[0,1],[3,4],[1,2]]","6",["9","12","3"],"2B = [[0,2],[6,8],[2,4]]. Deməli A+2B = [[3,3],[8,12],[3,9]]. Birinci sətirin cəmi 3+3 = 6."],
+["y² = 36x parabolasının direktrisi və fokusu","","F(9;0), direktris x=−9",["F(−9;0), direktris x=9","F(18;0), direktris x=−18","F(0;9), direktris y=−9"],"Standart forma y² = 4px-dir. 4p=36 olduğuna görə p=9. Fokus F(9;0), direktris isə x=−9."],
+["A matrisinin tərs matrisinin baş diaqonal elementlərinin cəmi","A = [[5,6],[4,5]]","10",["9","11","1"],"A = [[5,6],[4,5]]. det(A)=5·5−6·4=1. A⁻¹ = 1/1·[[5,−6],[−4,5]] = [[5,−6],[−4,5]]. Baş diaqonal elementlərinin cəmi 5+5=10."],
+["Sistem və 3A₁₁+x ifadəsi","x+3y=5, 2x+y=5","x=2, y=1 müəyyən olunur; 3A₁₁+x tam hesablanmır (A₁₁ üçün matris verilməyib)",["x=1, y=2 müəyyən olunur; 3A₁₁+x = 5","x=2, y=−1 müəyyən olunur; 3A₁₁+x = 4","x=3, y=1 müəyyən olunur; 3A₁₁+x = 12"],"Verilən sistem: x+3y=5, 2x+y=5. Birinci tənlikdən x=5−3y. Yerinə qoyaq: 2(5−3y)+y=5 ⇒ 10−5y=5 ⇒ y=1, x=2. Qeyddəki A₁₁ işarəsi üçün ayrıca matris verilmədiyindən 3A₁₁+x ifadəsini tam hesablamaq mümkün deyil; x=2, y=1 müəyyən olunur."],
+["y² = 24x parabolasının fokusu","","F(6;0)",["F(24;0)","F(12;0)","F(0;6)"],"y²=4px ilə müqayisə edirik: 4p=24 ⇒ p=6. Fokus F(6;0)."],
+["Matrisin baş diaqonal elementlərinin cəmi","[[−6,3,2],[4,7,9],[1,5,8]]","9",["21","15","6"],"Matris [[−6,3,2],[4,7,9],[1,5,8]] şəklindədir. Baş diaqonal elementləri −6, 7 və 8-dir. Cəm: −6+7+8=9."],
+["2A₁₁ + 3A₂₁ hesablayın","A=[[3,2],[5,1]]","−4",["4","8","−2"],"A=[[3,2],[5,1]]. A₁₁ və A₂₁ — uyğun cəbri tamamlayıcılardır. A₁₁=1, A₂₁=−2. Buna görə 2·1+3·(−2)=−4."],
+["9x²+25y²=225 ellipsinin yarımoxları cəmi","","8",["16","34","6"],"Tənliyi 225-ə bölək: x²/25 + y²/9 = 1. Yarımoxlar 5 və 3-dür. Cəm 5+3=8."],
+["4A₁₁+y ifadəsi","Sistem: 6x+3y=3, 3x+y=2","3 (A₁₁ birinci dəyişən x₁ kimi nəzərdə tutulubsa; işarə sənəddə aydın deyil)",["5 (A₁₁ birinci dəyişən x₁ kimi nəzərdə tutulubsa)","−3 (A₁₁ birinci dəyişən x₁ kimi nəzərdə tutulubsa)","2 (A₁₁ birinci dəyişən x₁ kimi nəzərdə tutulubsa)"],"Sistem: 6x+3y=3, 3x+y=2. İkinci tənlikdən y=2−3x. Birinciyə qoyaq: 6x+3(2−3x)=3 ⇒ x=1, y=−1. Əgər yazıdakı A₁₁ x₁-i (birinci dəyişəni) bildirirsə, 4·1+(−1)=3. İşarə sənəddə aydın deyil."],
+["5A₁₁+y ifadəsi","Sistem: 6x+3y=3, 3x+y=2","4 (A₁₁ x₁ kimi nəzərdə tutulubsa; işarənin mənası dəqiq göstərilməyib)",["3 (A₁₁ x₁ kimi nəzərdə tutulubsa)","6 (A₁₁ x₁ kimi nəzərdə tutulubsa)","−1 (A₁₁ x₁ kimi nəzərdə tutulubsa)"],"16-cı sualdakı eyni sistemin həlli x=1, y=−1-dir. A₁₁ burada x₁ kimi nəzərdə tutulubsa, 5·1−1=4. İşarənin mənası sənəddə dəqiq göstərilməyib."],
+["lim x→0 (1−cos x)/x²","","1/2",["0","1","2"],"Məşhur limitdən istifadə edirik: lim(x→0)(1−cos x)/x² = 1/2. Cavab: 1/2."],
+["lim x→0 (9ˣ−1)/sin x","","ln9",["9","ln3","1"],"9ˣ−1 ≈ x·ln9, sin x ≈ x (x radianla). Buna görə limit ln9-dir. Cavab: ln9."],
+["∫₀¹ (3x²+2x−4) dx","","−2",["2","0","−4"],"İbtidai funksiya x³+x²−4x-dir. Sərhədlərdə hesablayaq: [x³+x²−4x]₀¹ = (1+1−4)−0 = −2."],
+["∫₁³ (5x+3) dx","","26",["24","28","13"],"İbtidai funksiya (5/2)x²+3x-dir. [ (5/2)x²+3x ]₁³ = (45/2+9)−(5/2+3)=26. Cavab: 26."],
+["∫₂³ (2x−1)³ dx","","68",["34","136","70"],"u=2x−1 götürək, du=2dx. İbtidai funksiya (2x−1)⁴/8-dir. [ (2x−1)⁴/8 ]₂³ = (625−81)/8 = 68."],
+["∫₁² x⁴ dx","","31/5",["32/5","31/4","5"],"İbtidai funksiya x⁵/5-dir. [x⁵/5]₁² = (32−1)/5 = 31/5."],
+["∫₀² 5x⁴ dx","","32",["16","31","160"],"İbtidai funksiya x⁵-dir. [x⁵]₀² = 32−0 = 32."],
+["∫₀¹ (2x+4) dx","","5",["4","6","3"],"İbtidai funksiya x²+4x-dir. [x²+4x]₀¹ = 1+4=5."],
+["∫₀¹ (2x+1)³ dx","","10",["20","80","5"],"İbtidai funksiya (2x+1)⁴/8-dir. [ (2x+1)⁴/8 ]₀¹ = (81−1)/8 = 10."],
+["Determinantı hesablayın","|1 3 1; 1 4 1; 3 0 2|","−1",["1","0","−2"],"Determinant |1 3 1; 1 4 1; 3 0 2|. İkinci sətirdən birinci sətri çıxaq: |1 3 1; 0 1 0; 3 0 2|. İkinci sətir üzrə açırıq: 1·(1·2−1·3)=−1. Cavab: −1."],
+["3A₁₁+2A₂₂ hesablayın","A=[[9,7],[1,3]]","27",["21","33","9"],"A=[[9,7],[1,3]]. Cəbri tamamlayıcılar: A₁₁=3, A₂₂=9. 3·3+2·9=9+18=27."],
+["lim x→1 (√(x+3)−2)/(x−1)","","1/4",["1/2","1/8","0"],"Surəti qoşma ifadəyə vururuq: [(x+3)−4]/[(x−1)(√(x+3)+2)] = 1/[√(x+3)+2]. x=1 qoysaq 1/(2+2)=1/4."],
+["Determinantı hesablayın","|5 2 4; 1 3 1; 1 3 2|","13",["15","−13","10"],"Determinant |5 2 4; 1 3 1; 1 3 2|. Üçüncü sətirdən ikinci sətri çıxaq: |5 2 4; 1 3 1; 0 0 1|. Determinant = 5·3−2·1=13."],
+["Qaus üsulu ilə sistemi həll edin","x+y+z=6; 2x−y+z=3; x+2y+3z=14","x=1, y=2, z=3",["x=3, y=2, z=1","x=2, y=1, z=3","x=1, y=3, z=2"],"x+y+z=6; 2x−y+z=3; x+2y+3z=14. Həll: x=1, y=2, z=3. Yoxlama: 1+2+3=6; 2−2+3=3; 1+4+9=14. Qaus üsulunda genişləndirilmiş matris sətir çevirmələri ilə pilləli formaya gətirilir, sonra geri yerinəqoyma edilir."],
+["Kramer üsulu ilə sistemi həll edin","2x+4y+3z=5; x+3y+4z=6; 2x+y+z=0","x=−1, y=1, z=1",["x=1, y=−1, z=1","x=−1, y=1, z=−1","x=1, y=1, z=−1"],"2x+4y+3z=5; x+3y+4z=6; 2x+y+z=0. Əmsallar determinantı Δ=11 (sıfır deyil), deməli Kramer üsulu tətbiq olunur. Həll: x=−1, y=1, z=1. Yoxlama: −2+4+3=5; −1+3+4=6; −2+1+1=0."],
+["x²/144−y²/25=1 hiperbolasının ekssentrisiteti","","13/12",["12/13","5/12","13/5"],"a²=144, b²=25. Hiperbola üçün c²=a²+b²=144+25=169, c=13. Ekssentrisitet e=c/a=13/12."],
+["x²/169+y²/25=1 ellipsinin oxlarının cəmi","","36",["18","26","30"],"a=13, b=5. Tam oxların uzunluqları 2a=26 və 2b=10-dur. Cəm 26+10=36."],
+["16x²+25y²=400 ellipsinin oxlarının cəmi","","18",["9","20","10"],"400-ə bölək: x²/25+y²/16=1. Yarımoxlar 5 və 4-dür; tam oxlar 10 və 8. Cəm 18."],
+["lim x→5 (√(x−1)−2)/(x−5)","","1/4",["1/2","1/8","4"],"Qoşma ifadə ilə vururuq: [(x−1)−4]/[(x−5)(√(x−1)+2)] = 1/[√(x−1)+2]. x=5 qoyduqda 1/(2+2)=1/4."],
+["lim x→3 (x²−5x+6)/(x−3)","","1",["0","2","3"],"Surəti vuruqlara ayıraq: x²−5x+6=(x−2)(x−3). (x−3) ixtisar olunur, qalan x−2 ifadəsində x=3: cavab 1."],
+["lim x→0 (8ˣ−1)/sin x","","ln8",["8","ln3","0"],"Eyni qayda ilə 8ˣ−1 ≈ x·ln8 və sin x≈x. Limit ln8-dir."],
+["lim x→2 (x²−4)/(3x−6)","","4/3",["4","2/3","1/3"],"Vuruqlara ayıraq: (x−2)(x+2)/[3(x−2)]. İxtisar etdikdən sonra (x+2)/3 qalır. x=2 qoyuruq: 4/3."],
+["x²/64−y²/36=1 hiperbolasının yarımoxları və fokusları","","Həqiqi yarımox 8, qoşma yarımox 6; fokuslar F₁(−10;0), F₂(10;0)",["Həqiqi yarımox 6, qoşma yarımox 8; fokuslar F₁(−10;0), F₂(10;0)","Həqiqi yarımox 8, qoşma yarımox 6; fokuslar F₁(−√28;0), F₂(√28;0)","Həqiqi yarımox 64, qoşma yarımox 36; fokuslar F₁(−10;0), F₂(10;0)"],"a²=64 ⇒ a=8; b²=36 ⇒ b=6. c²=a²+b²=64+36=100 ⇒ c=10. Həqiqi yarımox 8, qoşma yarımox 6; fokuslar F₁(−10;0), F₂(10;0)."]
+];const O=[
+["Əvvəlcə əmsallar determinantı hesablanır: Δ. Əgər Δ ≠ 0-dırsa, sistemin yeganə həlli var. Sonra hər dəyişən üçün uyğun sütun sərbəst hədlərlə əvəz edilir: x = Δx/Δ, y = Δy/Δ (üç dəyişənlidə z = Δz/Δ).","Əvvəlcə əmsallar determinantı hesablanır: Δ. Əgər Δ = 0-dırsa, sistemin yeganə həlli var. Sonra hər dəyişən üçün uyğun sütun sərbəst hədlərlə əvəz edilir: x = Δ/Δx, y = Δ/Δy (üç dəyişənlidə z = Δ/Δz).","Əvvəlcə əmsallar determinantı hesablanır: Δ. Əgər Δ ≠ 0-dırsa, sistemin yeganə həlli var. Sonra hər dəyişən üçün uyğun sətir sərbəst hədlərlə əvəz edilir: x = Δx·Δ, y = Δy·Δ (üç dəyişənlidə z = Δz·Δ).","Əvvəlcə əmsallar determinantı hesablanır: Δ. Əgər Δ ≠ 0-dırsa, sistemin yeganə həlli var. Sonra hər dəyişən üçün uyğun sütun sərbəst hədlərlə əvəz edilir: x = Δx/Δy, y = Δy/Δz (üç dəyişənlidə z = Δz/Δx)."],
+["Sistem AX = B şəklində yazılır. Əgər det(A) ≠ 0-dırsa, A⁻¹ mövcuddur və həll X = A⁻¹B düsturu ilə tapılır. Yəni əvvəl A matrisinin tərsi, sonra onun B-yə hasili hesablanır.","Sistem AX = B şəklində yazılır. Əgər det(A) ≠ 0-dırsa, A⁻¹ mövcuddur və həll X = B·A⁻¹ düsturu ilə tapılır. Yəni əvvəl A matrisinin tərsi, sonra B-nin ona hasili hesablanır.","Sistem AX = B şəklində yazılır. Əgər det(A) = 0-dırsa, A⁻¹ mövcuddur və həll X = A⁻¹B düsturu ilə tapılır. Yəni əvvəl A matrisinin tərsi, sonra onun B-yə hasili hesablanır.","Sistem AX = B şəklində yazılır. Əgər det(A) ≠ 0-dırsa, Aᵀ mövcuddur və həll X = AᵀB düsturu ilə tapılır. Yəni əvvəl A matrisinin transponatı, sonra onun B-yə hasili hesablanır."],
+["Mərkəzi koordinat başlanğıcında olan ellipsin kanonik tənliyi x²/a² + y²/b² = 1-dir (a,b > 0). a və b yarımoxlardır; oxların tam uzunluqları 2a və 2b-dir.","Mərkəzi koordinat başlanğıcında olan ellipsin kanonik tənliyi x²/a² − y²/b² = 1-dir (a,b > 0). a və b yarımoxlardır; oxların tam uzunluqları 2a və 2b-dir.","Mərkəzi koordinat başlanğıcında olan ellipsin kanonik tənliyi x²/a² + y²/b² = 1-dir (a,b > 0). a və b tam oxlardır; yarımoxların uzunluqları 2a və 2b-dir.","Mərkəzi koordinat başlanğıcında olan ellipsin kanonik tənliyi x²/a² + y²/b² = 1-dir (a,b > 0). a və b yarımoxlardır; oxların tam uzunluqları a və b-dir."],
+["x²/a² − y²/b² = 1 formasında hiperbolanın təpələri absis oxundadır: A₁(−a; 0) və A₂(a; 0).","x²/a² − y²/b² = 1 formasında hiperbolanın təpələri ordinat oxundadır: A₁(0; −a) və A₂(0; a).","x²/a² − y²/b² = 1 formasında hiperbolanın təpələri absis oxundadır: A₁(−b; 0) və A₂(b; 0).","x²/a² − y²/b² = 1 formasında hiperbolanın təpələri absis oxundadır: A₁(−c; 0) və A₂(c; 0)."],
+["Əsas determinant sıfırdan fərqli olmalıdır: Δ ≠ 0. Bu şərtdə sistemin yeganə həlli olur və Kramer düsturlarından istifadə edilir.","Əsas determinant sıfra bərabər olmalıdır: Δ = 0. Bu şərtdə sistemin yeganə həlli olur və Kramer düsturlarından istifadə edilir.","Əsas determinant sıfırdan fərqli olmalıdır: Δ ≠ 0. Bu şərtdə sistemin sonsuz sayda həlli olur və Kramer düsturlarından istifadə edilir.","Köməkçi determinantlar sıfırdan fərqli olmalıdır: Δx ≠ 0, Δy ≠ 0. Bu şərtdə sistemin yeganə həlli olur və Kramer düsturlarından istifadə edilir."],
+["Tənliklər sisteminin genişləndirilmiş matrisi qurulur. Sətirlər üzərində elementar çevirmələr aparılaraq matris pilləli formaya gətirilir. Sonra sonuncu tənlikdən başlayaraq dəyişənlər ardıcıl tapılır (geri yerinəqoyma).","Tənliklər sisteminin genişləndirilmiş matrisi qurulur. Sətirlər üzərində elementar çevirmələr aparılaraq matris pilləli formaya gətirilir. Sonra birinci tənlikdən başlayaraq dəyişənlər ardıcıl tapılır (düz yerinəqoyma).","Tənliklər sisteminin əmsallar matrisi qurulur. Sütunlar üzərində elementar çevirmələr aparılaraq matris diaqonal formaya gətirilir. Sonra sonuncu tənlikdən başlayaraq dəyişənlər ardıcıl tapılır (geri yerinəqoyma).","Tənliklər sisteminin genişləndirilmiş matrisi qurulur. Sonra determinantı hesablanır və hər dəyişən üçün sütun sərbəst hədlərlə əvəz edilir (Kramer düsturu)."],
+["[[9,9],[8,22],[12,6]]","[[9,8],[9,22],[12,6]]","[[8,9],[9,22],[6,12]]","[[9,9],[8,20],[12,6]]"],
+["Birinci sətirin cəmi 3+3 = 6.","Birinci sətirin cəmi 3+6 = 9.","Birinci sətirin cəmi 3+9 = 12.","Birinci sətirin cəmi 3+0 = 3."],
+["Fokus F(9;0), direktris isə x=−9.","Fokus F(−9;0), direktris isə x=9.","Fokus F(18;0), direktris isə x=−18.","Fokus F(0;9), direktris isə y=−9."],
+["Baş diaqonal elementlərinin cəmi 5+5=10.","Baş diaqonal elementlərinin cəmi 5+6=11.","Baş diaqonal elementlərinin cəmi 5−5=0.","Baş diaqonal elementlərinin cəmi 5+4=9."],
+["Qeyddəki A₁₁ işarəsi üçün ayrıca matris verilmədiyindən 3A₁₁+x ifadəsini tam hesablamaq mümkün deyil; x=2, y=1 müəyyən olunur.","Qeyddəki A₁₁ işarəsi üçün ayrıca matris verilmədiyindən 3A₁₁+x ifadəsini tam hesablamaq mümkün deyil; x=1, y=2 müəyyən olunur.","A₁₁ işarəsi x-ə bərabərdir, buna görə 3A₁₁+x = 3·2+2 = 8; x=2, y=1 müəyyən olunur.","Qeyddəki A₁₁ işarəsi üçün ayrıca matris verilmədiyindən 3A₁₁+x ifadəsini tam hesablamaq mümkün deyil; x=2, y=−1 müəyyən olunur."],
+["Fokus F(6;0).","Fokus F(24;0).","Fokus F(12;0).","Fokus F(0;6)."],
+["Cəm: −6+7+8=9.","Cəm: −6+3+8=5.","Cəm: 6+7+8=21.","Cəm: −6+9+8=11."],
+["Buna görə 2·1+3·(−2)=−4.","Buna görə 2·1+3·2=8.","Buna görə 2·(−1)+3·(−2)=−8.","Buna görə 2·1+3·(−1)=−1."],
+["Cəm 5+3=8.","Cəm 25+9=34.","Cəm 3+3=6.","Cəm 5+4=9."],
+["Əgər yazıdakı A₁₁ x₁-i (birinci dəyişəni) bildirirsə, 4·1+(−1)=3.","Əgər yazıdakı A₁₁ x₁-i (birinci dəyişəni) bildirirsə, 4·1+1=5.","Əgər yazıdakı A₁₁ x₁-i (birinci dəyişəni) bildirirsə, 4·(−1)+1=−3.","Əgər yazıdakı A₁₁ x₁-i (birinci dəyişəni) bildirirsə, 4·1−2=2."],
+["A₁₁ burada x₁ kimi nəzərdə tutulubsa, 5·1−1=4.","A₁₁ burada x₁ kimi nəzərdə tutulubsa, 5·1+1=6.","A₁₁ burada x₁ kimi nəzərdə tutulubsa, 5·1−2=3.","A₁₁ burada x₁ kimi nəzərdə tutulubsa, 5·(−1)+1=−4."],
+["Cavab: 1/2.","Cavab: 0.","Cavab: 1.","Cavab: 2."],
+["Cavab: ln9.","Cavab: 9.","Cavab: ln3.","Cavab: 1."],
+["[x³+x²−4x]₀¹ = (1+1−4)−0 = −2.","[x³+x²−4x]₀¹ = (1+1+4)−0 = 6.","[x³+x²−4x]₀¹ = (1+1−4)−1 = −3.","[x³+x²−4x]₀¹ = (3+2−4)−0 = 1."],
+["Cavab: 26.","Cavab: 24.","Cavab: 28.","Cavab: 13."],
+["[ (2x−1)⁴/8 ]₂³ = (625−81)/8 = 68.","[ (2x−1)⁴/8 ]₂³ = (625−81)/16 = 34.","[ (2x−1)⁴/8 ]₂³ = (625−1)/8 = 78.","[ (2x−1)⁴/4 ]₂³ = (625−81)/4 = 136."],
+["[x⁵/5]₁² = (32−1)/5 = 31/5.","[x⁵/5]₁² = (32−0)/5 = 32/5.","[x⁵/5]₁² = (16−1)/5 = 3.","[x⁵]₁² = 32−1 = 31."],
+["[x⁵]₀² = 32−0 = 32.","[x⁵]₀² = 16−0 = 16.","[x⁵/5]₀² = 32/5.","[x⁵]₀² = 32−1 = 31."],
+["[x²+4x]₀¹ = 1+4=5.","[x²+4x]₀¹ = 1+4−1 = 4.","[x²+4x]₀¹ = 2+4=6.","[x²+4x]₀¹ = 1+2=3."],
+["[ (2x+1)⁴/8 ]₀¹ = (81−1)/8 = 10.","[ (2x+1)⁴/4 ]₀¹ = (81−1)/4 = 20.","[ (2x+1)⁴/8 ]₀¹ = (81−0)/8 = 81/8.","[ (2x+1)⁴/8 ]₀¹ = (16−1)/8 = 15/8."],
+["Cavab: −1.","Cavab: 1.","Cavab: 0.","Cavab: −2."],
+["3·3+2·9=9+18=27.","3·3+2·7=9+14=23.","3·9+2·3=27+6=33.","3·3+2·3=9+6=15."],
+["x=1 qoysaq 1/(2+2)=1/4.","x=1 qoysaq 1/(2+0)=1/2.","x=1 qoysaq 1/(4+4)=1/8.","x=1 qoysaq 1/(2−2) — sıfır."],
+["Determinant = 5·3−2·1=13.","Determinant = 5·3+2·1=17.","Determinant = 5·1−2·3=−1.","Determinant = 5·3−2·1·0=15."],
+["Həll: x=1, y=2, z=3.","Həll: x=3, y=2, z=1.","Həll: x=2, y=1, z=3.","Həll: x=1, y=3, z=2."],
+["Həll: x=−1, y=1, z=1.","Həll: x=1, y=−1, z=1.","Həll: x=−1, y=1, z=−1.","Həll: x=1, y=1, z=−1."],
+["Ekssentrisitet e=c/a=13/12.","Ekssentrisitet e=a/c=12/13.","Ekssentrisitet e=c/b=13/5.","Ekssentrisitet e=b/a=5/12."],
+["Cəm 26+10=36.","Cəm 13+5=18.","Cəm 26+5=31.","Cəm 169+25=194."],
+["Cəm 18.","Cəm 9.","Cəm 20.","Cəm 41."],
+["x=5 qoyduqda 1/(2+2)=1/4.","x=5 qoyduqda 1/(2+0)=1/2.","x=5 qoyduqda 1/(4+4)=1/8.","x=5 qoyduqda 4/(2+2)=1."],
+["(x−3) ixtisar olunur, qalan x−2 ifadəsində x=3: cavab 1.","(x−3) ixtisar olunur, qalan x−2 ifadəsində x=3: cavab 0.","(x−3) ixtisar olunur, qalan x+2 ifadəsində x=3: cavab 5.","(x−3) ixtisar olunur, qalan x−3 ifadəsində x=3: cavab 0."],
+["Limit ln8-dir.","Limit 8-dir.","Limit ln3-dür.","Limit 0-dır."],
+["İxtisar etdikdən sonra (x+2)/3 qalır. x=2 qoyuruq: 4/3.","İxtisar etdikdən sonra (x+2)/3 qalır. x=2 qoyuruq: 4.","İxtisar etdikdən sonra (x−2)/3 qalır. x=2 qoyuruq: 0.","İxtisar etdikdən sonra (x+2)/6 qalır. x=2 qoyuruq: 2/3."],
+["Həqiqi yarımox 8, qoşma yarımox 6; fokuslar F₁(−10;0), F₂(10;0).","Həqiqi yarımox 6, qoşma yarımox 8; fokuslar F₁(−10;0), F₂(10;0).","Həqiqi yarımox 8, qoşma yarımox 6; fokuslar F₁(−√28;0), F₂(√28;0).","Həqiqi yarımox 64, qoşma yarımox 36; fokuslar F₁(−10;0), F₂(10;0)."]
+];
+const W={0:["Δ = 0 olarsa, x = Δ/Δx, y = Δ/Δy, z = Δ/Δz.","Sətirlər üzərində çevirmələr aparılır, sonra geri yerinəqoyma edilir.","A matrisinin tərsi tapılır və B-yə vurulur."],
+1:["X = B·A⁻¹ düsturu ilə tapılır.","det(A) = 0 olduqda A⁻¹ mövcuddur, X = A⁻¹B.","X = Δx/Δ düsturu ilə tapılır."],
+2:["x²/a² − y²/b² = 1.","y² = 2px.","x²/a² + y²/b² = 0, oxların tam uzunluqları a və b."],
+3:["A₁(0; −a) və A₂(0; a).","A₁(−b; 0) və A₂(b; 0).","A₁(−c; 0) və A₂(c; 0)."],
+4:["Δ = 0 olmalıdır.","Δx ≠ 0 və Δy ≠ 0 olmalıdır.","Δ = 1 olmalıdır."],
+5:["Əmsallar matrisinin determinantı hesablanır, sütunlar sərbəst hədlərlə əvəz edilir.","Matris diaqonal formaya gətirilir, birinci tənlikdən başlanır.","A matrisinin tərsi tapılıb B-yə vurulur."],
+10:["x=1, y=2 müəyyən olunur.","A₁₁ = x olduğundan 3A₁₁+x = 8.","x=2, y=−1 müəyyən olunur."],
+15:["4·1+1=5.","4·(−1)+1=−3.","4·1−2=2."],
+16:["5·1+1=6.","5·1−2=3.","5·(−1)+1=−4."],
+36:["cavab 0.","cavab 5.","cavab 3."],
+38:["x=2 qoyuruq: 4.","x=2 qoyuruq: 0.","x=2 qoyuruq: 2/3."]};
+D.forEach((d,i)=>{const h=d[4],c=O[i][0];d[1]='';d[2]=h;d[3]=W[i]||O[i].slice(1)});
+
+const N=D.length;let cur=0,Q=[],A=[],done=false;
+const $=id=>document.getElementById(id);
+function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function init(){Q=D.map(d=>{const o=shuf([{t:d[2],c:1},...d[3].map(t=>({t,c:0}))]);return{q:d[0],d:d[1],o,h:d[4],hs:false}});A=Array(N).fill(-1);cur=0;done=false;render()}
+let ac;function tone(f,t,d,type,v){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+d);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+d)}
+function snd(ok){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ok){tone(660,0,.15,'sine',.25);tone(880,.12,.15,'sine',.25);tone(1320,.24,.3,'sine',.25)}else{tone(180,0,.25,'sawtooth',.2);tone(130,.2,.35,'sawtooth',.2)}}catch(e){}}
+function pick(i){if(A[cur]>=0)return;A[cur]=i;snd(Q[cur].o[i].c==1);render()}
+function go(n){cur=Math.max(0,Math.min(N-1,n));done=false;render()}
+function togH(){Q[cur].hs=!Q[cur].hs;render()}
+function render(){
+ const ans=A.filter(x=>x>=0).length;$('pb').style.width=ans/N*100+'%';
+ $('nav').innerHTML=Q.map((q,i)=>{const a=A[i];const c=(a>=0?(q.o[a].c?'ok':'bad'):'')+(i==cur&&!done?' cur':'');return`<button class="${c}" onclick="go(${i})">${i+1}</button>`}).join('');
+ if(done)return result();
+ const q=Q[cur],a=A[cur];
+ $('main').innerHTML=`<div class="card"><div class="qn">Sual ${cur+1} / ${N}</div><div class="q">${q.q}</div>${q.d?`<div style="margin:-8px 0 14px;color:var(--mut);font-size:15px">${q.d}</div>`:''}`+
+ q.o.map((o,i)=>{let c='';if(a>=0){if(o.c)c='ok';else if(i==a)c='bad'}return`<button class="opt ${c}" ${a>=0?'disabled':''} onclick="pick(${i})">${'ABCD'[i]}) ${o.t}</button>`}).join('')+
+ `<div class="hb ${q.hs?'open':''}" onclick="togH()"><b>💡 İpucu (sənəddəki cavab) — ${q.hs?'bağla':'aç'}</b><span>${q.h}</span></div>
+ <div class="row"><button class="btn" onclick="go(cur-1)" ${cur==0?'disabled':''}>← Geri</button>
+ ${cur==N-1?'<button class="btn p" onclick="fin()">Nəticəni göstər</button>':'<button class="btn p" onclick="go(cur+1)">İrəli →</button>'}</div></div>
+ <div style="text-align:center;margin-top:12px"><button class="btn" onclick="fin()">Testi bitir</button></div>`}
+function fin(){done=true;render();window.scrollTo(0,0)}
+function result(){
+ let ok=0,bad=[],skip=0;Q.forEach((q,i)=>{const a=A[i];if(a<0)skip++;else if(q.o[a].c)ok++;else bad.push(i)});
+ const pct=Math.round(ok/N*100);
+ $('main').innerHTML=`<div class="card"><div class="qn" style="text-align:center">Nəticə</div><div class="score">${ok} / ${N} (${pct}%)</div>
+ <p style="text-align:center"><span class="g">✓ Düz: ${ok}</span> · <span class="r">✗ Səhv: ${bad.length}</span> · Cavabsız: ${skip}</p>
+ <h3>Səhvlər${bad.length?'':' — yoxdur 🎉'}</h3>`+
+ bad.map(i=>{const q=Q[i];return`<div class="err"><b>${i+1}. ${q.q}</b><small>Sizin cavab: <span class="r">${q.o[A[i]].t}</span></small><small>Düzgün cavab: <span class="g">${q.o.find(o=>o.c).t}</span></small></div>`}).join('')+
+ (skip?`<h3>Cavabsız suallar</h3><p>${Q.map((q,i)=>A[i]<0?`<button class="btn" onclick="go(${i})">${i+1}</button> `:'').join('')}</p>`:'')+
+ `<div class="row"><button class="btn" onclick="go(0)">Suallara qayıt</button><button class="btn p" onclick="init()">Yenidən başla</button></div></div>`}
+init();
+</script></body></html>
