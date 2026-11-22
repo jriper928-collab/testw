@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Naqilsiz Rabitə – 2-ci kollekvium testi</title>
+<style>
+:root{color-scheme:light;--bg:#fff;--fg:#1d2433;--mu:#6b7385;--bd:#dfe3ec;--pr:#2f6bff;--ok:#16a34a;--okb:#e8f7ee;--no:#dc2626;--nob:#fdecec;--sf:#f5f7fb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}.sub{color:var(--mu);font-size:14px;margin-bottom:14px}
+.bar{height:6px;background:var(--sf);border-radius:9px;overflow:hidden;margin-bottom:12px}.bar i{display:block;height:100%;background:var(--pr);transition:width .3s}
+.grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.grid button{width:34px;height:34px;border:1px solid var(--bd);background:#fff;border-radius:8px;font-size:13px;cursor:pointer;color:var(--fg)}
+.grid .cur{outline:2px solid var(--pr)}.grid .ok{background:var(--okb);border-color:var(--ok)}.grid .no{background:var(--nob);border-color:var(--no)}
+.card{border:1px solid var(--bd);border-radius:14px;padding:18px;background:#fff;box-shadow:0 2px 10px rgba(30,40,80,.05)}
+.q{font-size:18px;font-weight:600;line-height:1.4;margin:0 0 14px}.n{color:var(--pr);font-size:13px;font-weight:600;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:9px;border:1.5px solid var(--bd);background:#fff;border-radius:10px;font-size:15px;line-height:1.4;cursor:pointer;color:var(--fg);font-family:inherit}
+.opt:hover:not(:disabled){border-color:var(--pr);background:var(--sf)}
+.opt.ok{border-color:var(--ok);background:var(--okb)}.opt.no{border-color:var(--no);background:var(--nob)}.opt:disabled{cursor:default}
+.hint{margin-top:6px;border:1.5px dashed var(--bd);background:var(--sf);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--mu);cursor:pointer}
+.hint.open{color:var(--fg);border-style:solid;border-color:#f0b429;background:#fff8e6}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.b{padding:11px 20px;border-radius:10px;border:1.5px solid var(--bd);background:#fff;font-size:15px;cursor:pointer;color:var(--fg);font-family:inherit}
+.b.p{background:var(--pr);border-color:var(--pr);color:#fff}.b:disabled{opacity:.4;cursor:default}
+.score{font-size:42px;font-weight:700;color:var(--pr)}
+.err{border:1px solid var(--bd);border-left:4px solid var(--no);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+.err b{display:block;margin-bottom:6px}.err .w1{color:var(--no)}.err .r1{color:var(--ok)}
+</style></head><body><div class="w">
+<h1>Naqilsiz Rabitə Texnologiyası</h1><div class="sub">2-ci kollekvium · test</div>
+<div id="app"></div></div>
+<script>
+const RAW=`Rəqəmli rabitə sisteminin ümumi modelində analoq siqnalı rəqəm formasına nə çevirir?|ARÇ (analoq-rəqəm çevirici)|RAÇ (rəqəm-analoq çevirici)|Modulyator|Kanal koderi
+Kanal koderinin əsas vəzifəsi nədir?|Zərfə əlavə nişan qoyulur ki, yolda itki və ya zədə olarsa bilinsin (səhvaşkarlama üçün əlavə bitlər)|Siqnalı daşıyıcı tezliyə köçürmək|Analoq siqnalı rəqəmə çevirmək|Mənbə informasiyasını sıxmaq
+Modulyator nə edir?|Poçt maşını məktubu nəqliyyat vasitəsinə yükləyir və yola salır (siqnalı kanala ötürmək üçün daşıyıcıya mindirir)|Səhvləri aşkar edib düzəldir|Zərfi açıb yoxlayır|Analoq siqnalı rəqəm formasına çevirir
+Qəbuledicidə demodulyatorun vəzifəsi nədir?|Zərfin açılması və yoxlanılması (daşıyıcıdan informasiyanın ayrılması)|Zərfə əlavə nişan qoymaq|Siqnalı daşıyıcıya yükləmək|Rəqəm siqnalını analoqa çevirmək
+Kanal dekoderi nə edir?|Səhvləri aşkar edir və düzəldir|Siqnalı daşıyıcıya mindirir|Analoq siqnalı rəqəmləşdirir|Tezlik zolağını bölüşdürür
+RAÇ nəyi ifadə edir?|Rəqəm-analoq çevirici|Analoq-rəqəm çevirici|Radio aşkarlama çeviricisi|Rabitə analiz cihazı
+Sıxlaşdırmanın (multipleksləşdirmənin) əsas məqsədi nədir?|Bir neçə istifadəçiyə eyni mühiti qarşılıqlı maneələri minimuma endirməklə birgə istifadə etməyə imkan verir|Siqnalı gücləndirmək|Səhvləri düzəltmək|Hər istifadəçiyə ayrıca fiziki kanal ayırmaq
+Naqilsiz kommunikasiya sistemlərində sıxlaşdırma neçə xüsusiyyətə görə yerinə yetirilə bilər?|4|3|2|5
+Sıxlaşdırmanın növləri hansılardır?|Fəzaya, zamana, tezliyə və koda görə|Yalnız tezliyə və zamana görə|Gücə, tezliyə və fazaya görə|Fəzaya, gücə, zamana və modulyasiyaya görə
+SDM nəyi bildirir?|Fəzaya görə ayrılma – müxtəlif kanal və müxtəlif fəza obrazlarına ayrılır|Zamana görə ayrılma|Tezliyə görə ayrılma|Koda görə ayrılma
+FDM sxeminin əsas çatışmazlığı nədir?|Tezlik zolağından səmərəsiz istifadə|Dəqiq sinxronizasiya tələb olunması|Təhlükəsizliyin zəif olması|Kod ardıcıllıqlarının çatışmaması
+FDM sxemində əsas vəzifə nədir?|Hər istifadəçiyə tezlik zolağı ayırmaq|Hər istifadəçiyə vaxt intervalı ayırmaq|Hər istifadəçiyə fərdi kod vermək|Hər istifadəçiyə ayrıca antenna vermək
+Mobil kommunikasiyalar üçün ən münasib sıxlaşdırma sxemi hansıdır?|TDM|FDM|SDM|Heç biri
+TDM sxeminin əsas çatışmazlığı nədir?|Müxtəlif vericilərin dəqiq sinxronlaşdırılmasının təmin olunması|Tezlik zolağından səmərəsiz istifadə|Zəif təhlükəsizlik|Hər istifadəçiyə ayrıca tezlik tələb olunması
+GSM standartında hansı sıxlaşdırma sxemləri birləşdirilir?|FDMA–TDMA|CDMA–TDMA|FDMA–CDMA|SDMA–CDMA
+CDM sxemində bütün kanallar nəyi eyni vaxtda istifadə edir?|Tezlik zolağını|Zaman intervalını|Fəza sektorunu|Polyarizasiyanı
+CDM sxemi tarixən ilkin olaraq hansı sahə üçün istifadə olunub?|Naqilsiz kommunikasiya – hərbi sahə|Peyk televiziyası|Məişət radiosu|Kabel televiziyası
+CDM sxeminin əsas üstünlüyü nədir?|Yüksək təhlükəsizlik xüsusiyyətlərinə malik olur|Sadə sinxronizasiya|Dar tezlik zolağı|Ən ucuz avadanlıq
+Fiziki mühitə çoxsaylı daxilolma (Multiple Access) anlayışı nə ilə bağlıdır?|Hər tezlik kanalı bir neçə istifadəçi arasında zamana görə bölünən kanalla müəyyən zaman intervalları ilə təqdim olunur – TDMA|Bütün istifadəçilər eyni zamanda eyni tezlikdə işləyir|Hər istifadəçiyə ayrıca tezlik verilir – FDMA|İstifadəçilər polyarizasiyaya görə ayrılır
+Klassik yanaşmada çoxsaylı daxilolmanın neçə variantı fərqləndirilir?|3 variant: FDMA, CDMA, TDMA|2 variant|4 variant|5 variant
+Şanvari rabitə üçün hansı üç üsul xüsusi maraq doğurur?|FDMA, CDMA, TDMA|SDMA, PDMA, FDMA|TDMA, SDMA, PDMA|CDMA, SDMA, FDMA
+Rabitə nəzəriyyəsində çoxsaylı daxilolma dedikdə nə başa düşülür?|Bir neçə MS-in bir verici-qəbuledici BS-ə qoşulması və ya peyk retranslyatoruna müraciəti|Bir MS-in bir neçə BS-ə eyni vaxtda qoşulması|Bir BS-in bir neçə peykə qoşulması|Bir kanalda yalnız bir istifadəçinin işləməsi
+Rəqəm sistemləri üçün rabitə kanalının tutumu nə ilə ifadə olunur?|bit/s|Hz|dB|Vt
+Praktiki tətbiqi barədə ən az məlumat olan çoxsaylı daxilolma üsulu hansıdır?|Polyarizasiya ayrılması ilə ÇD|FDMA|TDMA|CDMA
+Analoq şanvari sistemlərdə FDMA-da Δf tezlik zolağı neçəyə bərabərdir?|10–30 KHz|1–5 KHz|200–400 KHz|1,25 MHz
+FDMA hansı nəsil şanvari rabitə sistemlərində istifadə olunur?|1G – 1-ci nəsil (AMPS, NMT, TACS)|2G – GSM|3G – UMTS|4G – LTE
+FDMA üsulunun əsas zəif yeri nədir?|Tezlik zolağından səmərəsiz istifadə|Dəqiq vaxt sinxronizasiyası|Kodların korrelyasiyası|Yüksək təhlükəsizlik tələbi
+TDMA üsulunun mahiyyəti nədən ibarətdir?|Eyni tezlik zolağı zaman intervallarına bölünür və hər istifadəçiyə öz vaxt aralığı ayrılır|Hər istifadəçiyə ayrıca tezlik zolağı verilir|Hər istifadəçiyə fərdi kod verilir|Hər istifadəçi ayrıca fəza sektorunda işləyir
+TDMA hansı standartlarda istifadə olunur?|D-AMPS, GSM, PDC|AMPS, NMT, TACS|Yalnız IS-95|Bluetooth, Wi-Fi
+TDD (Time Division Duplex) nə deməkdir?|Eyni tezliyi müxtəlif zaman intervalında istifadə edir|Qəbul və ötürmə üçün müxtəlif tezliklər istifadə edir|Hər istifadəçiyə fərdi kod verir|Yalnız qəbulu zamana görə bölür
+CDMA-da istifadəçilər eyni vaxtda hansı zolaqdan istifadə edir?|Bütün kanallar eyni tezliyi eyni vaxtda istifadə edir|Hər kanal ayrıca dar zolaqdan|Hər kanal ayrıca zaman intervalından|Növbə ilə eyni tezlikdən
+CDMA-da istifadəçilər bir-birindən nə ilə ayrılır?|Hər birinin öz fərdi kodu var|Hər birinin öz tezliyi var|Hər birinin öz vaxt aralığı var|Hər birinin öz polyarizasiyası var
+Aşağıdakılardan hansı CDMA-nın üstünlüyü DEYİL?|Tezlik zolağından səmərəsiz istifadə|Yüksək təhlükəsizlik|Maneələrə qarşı davamlılıq|Eyni tezlikdən çoxlu istifadəçinin istifadəsi
+"Bluetooth" adı haradan götürülüb?|Danimarka ilə Norveçi birləşdirmiş Danimarka kralı Harald Blåtand-dan (Bluetooth)|İsveç kralı Qustavdan|Norveç kralı Olafdan|Finlandiya kralı Haraldan
+Bluetooth hansı tezlik zolağında işləyir?|2400–2483,5 MHz|900–928 MHz|5150–5350 MHz|1800–1900 MHz
+Bluetooth-da tezlik sıçrayışı üçün neçə altkanal (şablon) istifadə olunur?|79 və ya 23|64 və ya 32|100 və ya 50|40 və ya 20
+Bluetooth qurğularının tipik rabitə məsafəsi nə qədərdir?|10–100 metr qədər|1–5 metr|500–1000 metr|5–10 km
+Wi-Fi hansı standart ailəsinə əsaslanır?|IEEE 802.11|IEEE 802.3|IEEE 802.15|IEEE 802.16
+"Wi-Fi" termini nədən qısaldılıb?|Wireless Fidelity|Wide Frequency|Wireless Fiber|Wave Field
+Wi-Fi-ın əsas çatışmazlıqlarından biri kimi hansı doğrudur?|Məhdud əhatə dairəsi – divarların sayı, mərtəbə sayı və qalınlığından asılıdır|Yalnız kabellə işləyir|Yalnız 1 metr məsafədə işləyir|Kodlaşdırmanı dəstəkləmir`;
+const Q=RAW.split("\n").map(l=>{const p=l.split("|");return{q:p[0],a:p[1],o:p.slice(1)}});
+const $=s=>document.getElementById(s),app=$("app");
+let st,AC;
+function sh(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function snd(ok){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;(ok?[660,880]:[220,150]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?"sine":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.15,t+i*.15);g.gain.exponentialRampToValueAtTime(.001,t+i*.15+.25);o.connect(g);g.connect(AC.destination);o.start(t+i*.15);o.stop(t+i*.15+.26)})}catch(e){}}
+function start(){st={i:0,ans:Q.map(()=>null),hint:Q.map(()=>false),opts:Q.map(q=>sh(q.o)),done:false};render()}
+function pick(k){if(st.ans[st.i]!==null)return;st.ans[st.i]=k;snd(st.opts[st.i][k]===Q[st.i].a);render()}
+function go(d){st.i=Math.max(0,Math.min(Q.length-1,st.i+d));render()}
+function jump(i){st.i=i;render()}
+function hint(){st.hint[st.i]=!st.hint[st.i];render()}
+function render(){
+ if(st.done)return result();
+ const i=st.i,q=Q[i],a=st.ans[i],n=st.ans.filter(x=>x!==null).length;
+ let g="";Q.forEach((_,k)=>{const r=st.ans[k];const c=(k==i?"cur ":"")+(r===null?"":st.opts[k][r]===Q[k].a?"ok":"no");g+=`<button class="${c}" onclick="jump(${k})">${k+1}</button>`});
+ let o=st.opts[i].map((t,k)=>{let c="opt";if(a!==null){if(t===q.a)c+=" ok";else if(k===a)c+=" no"}return`<button class="${c}" ${a!==null?"disabled":""} onclick="pick(${k})">${t}</button>`}).join("");
+ app.innerHTML=`<div class="sub">Cavablanıb: ${n}/${Q.length}</div><div class="bar"><i style="width:${n/Q.length*100}%"></i></div><div class="grid">${g}</div>
+ <div class="card"><div class="n">Sual ${i+1} / ${Q.length}</div><p class="q">${q.q}</p>${o}
+ <div class="hint ${st.hint[i]?"open":""}" onclick="hint()">${st.hint[i]?"💡 Sənəddəki cavab: "+q.a:"💡 İpucu – cavabı görmək üçün toxun"}</div></div>
+ <div class="nav"><button class="b" onclick="go(-1)" ${i==0?"disabled":""}>← Geri</button>
+ ${i==Q.length-1?`<button class="b p" onclick="fin()">Nəticəni göstər</button>`:`<button class="b p" onclick="go(1)">İrəli →</button>`}</div>
+ ${n==Q.length&&i!=Q.length-1?`<div class="nav"><button class="b p" style="margin-left:auto" onclick="fin()">Bitir</button></div>`:""}`}
+function fin(){const l=st.ans.filter(x=>x===null).length;if(l&&!confirm(l+" sual cavabsızdır. Yenə də bitirək?"))return;st.done=true;render()}
+function result(){
+ let ok=0,er="";Q.forEach((q,k)=>{const r=st.ans[k];if(r!==null&&st.opts[k][r]===q.a)ok++;else er+=`<div class="err"><b>${k+1}. ${q.q}</b><div class="w1">Sizin cavab: ${r===null?"cavablanmayıb":st.opts[k][r]}</div><div class="r1">Düzgün cavab: ${q.a}</div></div>`});
+ const w=Q.length-ok;
+ app.innerHTML=`<div class="card" style="text-align:center"><div class="score">${ok} / ${Q.length}</div><div class="sub">Düzgün: ${ok} · Səhv/cavabsız: ${w} · ${Math.round(ok/Q.length*100)}%</div>
+ <button class="b p" onclick="start()">Yenidən başla</button> <button class="b" onclick="st.done=false;st.i=0;render()">Suallara qayıt</button></div>
+ <h3>${w?"Səhv buraxdığınız suallar":"Əla! Səhv yoxdur 🎉"}</h3>${er}`;scrollTo(0,0)}
+start();
+</script></body></html>
